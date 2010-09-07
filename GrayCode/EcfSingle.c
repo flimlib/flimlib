@@ -60,7 +60,7 @@ int GCI_triple_integral(float xincr, float y[],
 						float *fitted, float *residuals,
 						float *chisq, int division)
 {
-    printf("ECSingle 63: IN GCI TRIPLE INTEGRAL");
+//printf("ECSingle 63: IN GCI TRIPLE INTEGRAL");
 	float d1, d2, d3, d12, d23;
 	float t0, dt, exp_dt_tau, exp_t0_tau;
 	int width;
@@ -100,7 +100,7 @@ t0 = (fit_start - start_x) * xincr;
 	*A = d12 / ((*tau) * exp_t0_tau * (1 - 2*exp_dt_tau + exp_dt_tau*exp_dt_tau));
 	*Z = (d1 - (*A) * (*tau) * exp_t0_tau * (1 - exp_dt_tau)) / dt;
 
-        printf("ECFSingle 98: A %f tau %f Z %f\n", (double)*A, (double)*Z, (double)*tau);
+//printf("ECFSingle 98: A %f tau %f Z %f\n", (double)*A, (double)*Z, (double)*tau);
 
 	/* Now calculate the fitted curve and chi-squared if wanted. */
 	if (fitted == NULL)
@@ -611,7 +611,7 @@ int GCI_marquardt_instr(float xincr, float y[],
 					float **covar, float **alpha, float *chisq,
 					float chisq_percent, float **erraxes)
 {
-    printf("EcfSingle 603: GCI_marquardt_instr\n");
+//printf("EcfSingle 603: GCI_marquardt_instr\n");
 	float alambda, ochisq;
 	int mfit, mfit2;
 	float evals[MAXFIT];
@@ -643,7 +643,7 @@ int GCI_marquardt_instr(float xincr, float y[],
 								 &mfit2, &ochisq2, paramtry, beta, dparam,
 								 &fnvals, &dy_dparam_pure, &dy_dparam_conv,
 								 &fnvals_len, &dy_dparam_nparam_size);
-        printf("EcfSingle 635: first call GCI_marquardt_step_instr retnValue is %d\n", retnValue);
+//printf("EcfSingle 635: first call GCI_marquardt_step_instr retnValue is %d\n", retnValue);
         if (retnValue != 0) {
 		do_frees
 		return -1;
@@ -670,7 +670,7 @@ int GCI_marquardt_instr(float xincr, float y[],
 			do_frees
 			return -2;
 		}
-                printf("EcfSingle 662: GCI_marquardt_step_instr iteration %d\n", k);
+//printf("EcfSingle 662: GCI_marquardt_step_instr iteration %d\n", k);
 
 		ochisq = *chisq;
 		if (GCI_marquardt_step_instr(xincr, y, ndata, fit_start, fit_end,
@@ -695,7 +695,7 @@ int GCI_marquardt_instr(float xincr, float y[],
 		if (itst < itst_max) continue;
 
 		/* Endgame */
-                printf("EcfSingle 687: calling GCI_marquardt_step_instr last time with alamda == 0\n");
+//printf("EcfSingle 687: calling GCI_marquardt_step_instr last time with alamda == 0\n");
 		alambda = 0.0;
 		if (GCI_marquardt_step_instr(xincr, y, ndata, fit_start, fit_end,
 									 instr, ninstr, noise, sig,
@@ -850,7 +850,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 //	static int mfit;   // was static but now thread safe
 //	static float ochisq, paramtry[MAXFIT], beta[MAXFIT], dparam[MAXFIT];   // was static but now thread safe
 
-        printf("EcfSingle 842: GCI_marquardt_step_instr alambda is %g\n", *alambda);
+//printf("EcfSingle 842: GCI_marquardt_step_instr alambda is %g\n", *alambda);
 
 	if (nparam > MAXFIT)
 		return -10;
@@ -867,7 +867,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 			if (paramfree[j])
 				(*pmfit)++;
 
-                        printf("EcfSingle 859: alambda < 0.0 compute first time, fit %d\n", *pmfit);
+//printf("EcfSingle 859: alambda < 0.0 compute first time, fit %d\n", *pmfit);
 
 		if (GCI_marquardt_compute_fn_instr(xincr, y, ndata, fit_start, fit_end,
 										   instr, ninstr, noise, sig,
@@ -894,14 +894,22 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		dparam[j] = beta[j];
 	}
 
+//int m,n;
+//for (m = 0; m < (*pmfit); ++m) {
+//for (n = 0; n < (*pmfit); ++n) {
+//printf("covar[%d][%d] %g ", m, n, covar[m][n]);
+//}
+//printf("dparm[%d] %g\n", m, dparam[m]);
+//}
+
 	/* Matrix solution; GCI_gauss_jordan solves Ax=b rather than AX=B */
 	if (GCI_gauss_jordan(covar, *pmfit, dparam) != 0) {
-            printf("EcfSingle 888: GCI_gauss_jordan failed\n");
+//printf("EcfSingle 888: GCI_gauss_jordan failed\n");
 		return -1; }
 
 	/* Once converged, evaluate covariance matrix */
 	if (*alambda == 0) {
-            printf("EcfSingle 893: alambda is 0, final compute\n");
+//printf("EcfSingle 893: alambda is 0, final compute\n");
 		if (GCI_marquardt_compute_fn_final_instr(
 									xincr, y, ndata, fit_start, fit_end,
 									instr, ninstr, noise, sig,
@@ -920,19 +928,19 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 	/* Did the trial succeed? */
 	for (j=0, l=0; l<nparam; l++)
 		if (paramfree[l]) {
-                    printf("EcfSingle 912: paramfree[%d]\n", l);
+//printf("EcfSingle 912: paramfree[%d]\n", l);
 			paramtry[l] = param[l] + dparam[j++];
-                 printf("EcfSingle 914: paramtry[%d] becomes %g param[%d] %g + dparam[%d] %g\n", l, paramtry[l], l, param[l], (j-1), dparam[j-1]);
+//printf("EcfSingle 914: paramtry[%d] becomes %g param[%d] %g + dparam[%d] %g\n", l, paramtry[l], l, param[l], (j-1), dparam[j-1]);
 }
 
 	if (restrain == ECF_RESTRAIN_DEFAULT) {
-            printf("EcfSIngle 918: ECF_RESTRAIN_DEFAULT\n");
+//printf("EcfSIngle 918: ECF_RESTRAIN_DEFAULT\n");
 		ret = check_ecf_params (paramtry, nparam, fitfunc);
         }
 	else {
 		ret = check_ecf_user_params (paramtry, nparam, fitfunc);
         }
-     printf("EcfSingle 924: checking restrain ret is %d\n", ret);
+//printf("EcfSingle 924: checking restrain ret is %d\n", ret);
 
 	if (0 && ret != 0) { //TODO ARG
 		/* Bad parameters, increase alambda and return */
@@ -940,7 +948,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		return 0;
 	}
 
-     printf("EcfSIngle 932: about to call GCI_marquardt_compute_fn_instr\n");
+//printf("EcfSIngle 932: about to call GCI_marquardt_compute_fn_instr\n");
 
 	if (GCI_marquardt_compute_fn_instr(xincr, y, ndata, fit_start, fit_end,
 									   instr, ninstr, noise, sig,
@@ -954,7 +962,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 	/* Success, accept the new solution */
 	if (*chisq < *pochisq) {
 		*alambda *= 0.1;
-                printf("EcfSIngle 946: success, alambda becomes %g\n", *alambda);
+//printf("EcfSIngle 946: success, alambda becomes %g\n", *alambda);
 		*pochisq = *chisq;
 		for (j=0; j<(*pmfit); j++) {
 			for (k=0; k<(*pmfit); k++)
@@ -965,7 +973,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 			param[l] = paramtry[l];
 	} else { /* Failure, increase alambda and return */
 		*alambda *= 10.0;
-                printf("EcfSingle 957: failure, alambda becomes %g\n", *alambda);
+//printf("EcfSingle 957: failure, alambda becomes %g\n", *alambda);
 		*chisq = *pochisq;
 	}
 
@@ -1286,6 +1294,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 	/* Need to calculate unconvolved values all the way down to 0 for
 	   the instrument response case */
 	if (ninstr > 0) {
+//printf("NINSTR > 0\n");
 		if (fitfunc == GCI_multiexp_lambda)
 			ret = multiexp_lambda_array(xincr, param, (*pfnvals),
 										(*pdy_dparam_pure), fit_end, nparam);
@@ -1336,27 +1345,53 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 		}
 	} else {
 		/* Can go straight into the final arrays in this case */
-		if (fitfunc == GCI_multiexp_lambda)
+		if (fitfunc == GCI_multiexp_lambda) {
+ //printf("lllamda\n");
 			ret = multiexp_lambda_array(xincr, param, yfit,
-										(*pdy_dparam_conv), fit_end, nparam);
-		else if (fitfunc == GCI_multiexp_tau)
+                        (*pdy_dparam_conv), fit_end, nparam);
+                        
+//printf("calling fitfunc in a loop");
+
+                        for (i=0; i<fit_end; i++) {
+//printf("x is %g params %g %g %g nparam %d\n", xincr*i, param[0], param[1], param[2], nparam);
+				(*fitfunc)(xincr*i, param, &yfit[i],
+						   (*pdy_dparam_conv)[i], nparam);
+//printf("yfit[%d] is %g\n", i, yfit[i]);
+                        }
+                        
+                        
+        }
+		else if (fitfunc == GCI_multiexp_tau) {
+//printf("tau\n");
 			ret = multiexp_tau_array(xincr, param, yfit,
 									 (*pdy_dparam_conv), fit_end, nparam);
+                }
 		else if (fitfunc == GCI_stretchedexp)
 			ret = stretchedexp_array(xincr, param, yfit,
 									 (*pdy_dparam_conv), fit_end, nparam);
 		else
 			ret = -1;
+//printf("ret is %d\n", ret);
 
-		if (ret < 0)
+		if (ret < 0) {
+//printf("ret was %d", ret);
 			for (i=0; i<fit_end; i++)
 				(*fitfunc)(xincr*i, param, &yfit[i],
-						   (*pdy_dparam_conv)[i], nparam);
+						   (*pdy_dparam_conv)[i], nparam); }
 	}
 	 
 	/* OK, now we've got our (possibly convolved) data, we can do the
 	   rest almost exactly as above. */
 
+//printf("noise is %d\n", noise);
+//printf("params are %g %g %g\n", param[0], param[1], param[2]);
+//int ii, jj;
+//for (ii = fit_start; ii < fit_end; ++ii) {
+//for (jj = 0; jj < nparam; ++jj) {
+//printf("pdy_dparam_conv[%d][%d] is %g\n", ii, jj, (*pdy_dparam_conv)[ii][jj]);
+//}
+//printf("y fit is %g\n", yfit[ii]);
+//}
 	switch (noise) {
 	case NOISE_CONST:
 		*chisq = 0.0;
@@ -1920,7 +1955,7 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 
 	if (ecf_exportParams) ecf_ExportParams_OpenFile ();
 
-        printf("EcfSingle 1912: before GCI_marquardt_instr, param is %g %g %g\n", param[0], param[1], param[2]);
+//printf("EcfSingle 1912: before GCI_marquardt_instr, param is %g %g %g\n", param[0], param[1], param[2]);
 
 	// All of the work is done by the ECF module 
 	ret = GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
@@ -1929,9 +1964,9 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 							  fitted, residuals, covar, alpha, &local_chisq,
 							  chisq_percent, erraxes);
 
-        printf("EcfSIngle 1921: param is %g %g %g\n", param[0], param[1], param[2]);
+//printf("EcfSIngle 1921: param is %g %g %g\n", param[0], param[1], param[2]);
 
-        printf("EcfSIngle 1923: after GCI_marquardt_instr first call local chiSq is %g\n", local_chisq);
+//printf("EcfSIngle 1923: after GCI_marquardt_instr first call local chiSq is %g\n", local_chisq);
 							  
 	// changed this for version 2, did a quick test with 2150ps_200ps_50cts_450cts.ics to see that the results are the same
 	// NB this is also in GCI_SPA_1D_marquardt_instr() and GCI_SPA_2D_marquardt_instr()
@@ -1940,20 +1975,20 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 	{
 		oldChisq = local_chisq; 
 		tries++;
-                printf("EcfSingle 1932: before GCI_marquardt_instr, try %d\n", tries);
+//printf("EcfSingle 1932: before GCI_marquardt_instr, try %d\n", tries);
 		ret += GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
 							  prompt, nprompt, noise, sig,
 							  param, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, covar, alpha, &local_chisq,
 							  chisq_percent, erraxes);
-                printf("EcfSIngle 1938: looping, oldChiSq %g localChiSq %g chiSqTarget %g\n", oldChisq, local_chisq, chisq_target);
+//printf("EcfSIngle 1938: looping, oldChiSq %g localChiSq %g chiSqTarget %g\n", oldChisq, local_chisq, chisq_target);
 	}						  
 
 	if (chisq!=NULL) *chisq = local_chisq;
 
 	if (ecf_exportParams) ecf_ExportParams_CloseFile ();
 
-        printf("EcfSingle 1945: ret (iterations) is %d param %g %g %g\n", ret, param[0], param[1], param[2]);
+//printf("EcfSingle 1945: ret (iterations) is %d param %g %g %g\n", ret, param[0], param[1], param[2]);
 
 	return ret;		// summed number of iterations
 }
