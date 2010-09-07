@@ -68,7 +68,7 @@ int GCI_gauss_jordan(float **a, int n, float *b)
 		indxr[i] = irow;
 		indxc[i] = icol;
 		if (a[icol][icol] == 0.0) {
-                    printf("EcfUtil 71: Singular matrix");
+                    printf("EcfUtil 71: Singular matrix\n");
 			return -2; /* Singular Matrix */
         }
 
@@ -287,6 +287,8 @@ int multiexp_lambda_array(float xincr, float param[],
 	float ex;
 	double exincr[MAXFIT];  /* exp(-lambda*xincr) */
 	double excur[MAXFIT];   /* exp(-lambda*x)     */
+
+//printf("in multiexp_lambda_array xincr %g nx is %d nparam %d\n", xincr, nx, nparam);
 
 	if (xincr <= 0) return -1;
 
