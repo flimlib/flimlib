@@ -76,6 +76,7 @@
       <properties>
         <picUrl>http://loci.wisc.edu/files/loci/images/people/Aivar.jpg</picUrl>
       </properties>
+    </developer>
     <developer>
       <id>curtis</id>
       <name>Curtis Rueden</name>
