@@ -8,7 +8,7 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>loci-base-pom</artifactId>
-    <version>1.04</version>
+    <version>1.06</version>
   </parent>
 
   <groupId>loci</groupId>
