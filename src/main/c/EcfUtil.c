@@ -1,4 +1,4 @@
-#include <ansi_c.h>
+//#include <ansi_c.h>
 /* The 2010 version of the ECF library.  This has basically been
    completely rewritten to avoid license issues.  
    Also, this takes account of the fact that we may be
