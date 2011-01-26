@@ -102,4 +102,12 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+    <!-- NB: for maven-nar-plugin -->
+    <pluginRepository>
+      <id>loci.snapshots</id>
+      <url>http://dev.loci.wisc.edu:8081/content/repositories/snapshots</url>
+    </pluginRepository>
+  </pluginRepositories>
+
 </project>
