@@ -2,23 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-    http://maven.apache.org/maven-v4_0_0.xsd">
+    http://maven.apache.org/xsd/maven-v4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>loci</groupId>
-    <artifactId>loci-base-pom</artifactId>
-    <version>1.06</version>
+    <artifactId>loci-base</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>loci</groupId>
   <artifactId>slim-curve</artifactId>
-  <version>1.0-SNAPSHOT</version>
   <packaging>nar</packaging>
 
   <name>SLIM-Curve</name>
   <description>A package for exponential curve fitting of combined spectral lifetime image data.</description>
-  <url>http://loci.wisc.edu/software</url>
   <inceptionYear>2010</inceptionYear>
 
   <licenses>
@@ -94,20 +91,16 @@
     </developer>
   </developers>
 
+  <!-- NB: for loci-base, in case of partial checkout -->
   <repositories>
-    <!-- NB: for loci-base-pom -->
     <repository>
       <id>loci.releases</id>
       <url>http://dev.loci.wisc.edu:8081/content/repositories/releases</url>
     </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <!-- NB: for maven-nar-plugin -->
-    <pluginRepository>
+    <repository>
       <id>loci.snapshots</id>
       <url>http://dev.loci.wisc.edu:8081/content/repositories/snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
+    </repository>
+  </repositories>
 
 </project>
