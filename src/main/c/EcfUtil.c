@@ -205,7 +205,7 @@ void GCI_covar_sort(float **covar, int nparam, int paramfree[], int mfit)
 /********************************************************************
 
 					  ARRAY ALLOCATION ROUTINES
-
+http://www.nr.com/public-domain.html
 *********************************************************************/
 
 /* This function allocates a float matrix with subscript range
@@ -216,14 +216,16 @@ float **GCI_ecf_matrix(long nrows, long ncols)
     int row_size = nrows * sizeof(float *);
     int data_size = nrows * ncols * sizeof(float);
     unsigned char *raw = malloc(row_size + data_size);
-    if (NULL == raw)
-    {
-        return NULL;
-    }
     float **row = (float **) raw;
     float *data = (float *) (row + nrows);
     int i;
-    for (i = 0; i < nrows; ++i)
+
+	if (NULL == raw)
+    {
+        return NULL;
+    }
+
+	for (i = 0; i < nrows; ++i)
     {
         row[i] = data;
         data += ncols;
@@ -241,6 +243,52 @@ void GCI_ecf_free_matrix(float **m)
     }
 }
 
+float ***GCI_ecf_matrix_array(long nblocks, long nrows, long ncols)
+/* allocate a float matrix array with range
+   marr[0..nblocks][0..nrows][0..ncols] */
+{
+	long i;
+	float ***marr;
+
+	/* allocate pointers to blocks */
+	if ((marr = (float ***) malloc(nblocks * sizeof(float **))) == NULL)
+		return NULL;
+
+	/* allocate blocks (= pointers to rows) and set pointers to them */
+	if ((marr[0] = (float **) malloc(nblocks * nrows * sizeof(float *)))
+		== NULL) {
+		free(marr);
+		return NULL;
+	}
+
+	for (i=1; i<nblocks; i++)
+		marr[i] = marr[i-1] + nrows;
+
+	/* allocate rows (= pointers to column entries) and set pointers to them */
+	if ((marr[0][0] = (float *)malloc(nblocks * nrows * ncols * sizeof(float)))
+		== NULL) {
+		free(marr[0]);
+		free(marr);
+		return NULL;
+	}
+
+	/* This sneaky loop does the whole lot!  For note that
+	   marr[block][row] = marr[0][block*nrows + row] */
+	for (i=1; i < nblocks * nrows; i++)
+		marr[0][i] = marr[0][i-1] + ncols;
+
+	return marr;
+}
+
+
+void GCI_ecf_free_matrix_array(float ***marr)
+{
+	if (marr != NULL) {
+		free(marr[0][0]);
+		free(marr[0]);
+		free(marr);
+	}
+}
 
 /********************************************************************
 

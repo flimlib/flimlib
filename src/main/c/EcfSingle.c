@@ -489,6 +489,19 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 */
 
 /* This functions does the whole job */
+
+int GCI_marquardt(float x[], float y[], int ndata,
+				  noise_type noise, float sig[],
+				  float param[], int paramfree[], int nparam,
+				  restrain_type restrain,
+				  void (*fitfunc)(float, float [], float *, float [], int),
+				  float *fitted, float *residuals,
+				  float **covar, float **alpha, float *chisq,
+				  float chisq_delta, float chisq_percent, float **erraxes)
+{
+	// Empty fn to allow compile in TRI2
+}
+
 #define do_frees \
 	if (fnvals) free(fnvals);\
 	if (dy_dparam_pure) GCI_ecf_free_matrix(dy_dparam_pure);\
@@ -906,14 +919,23 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 
 	/* OK, now we've got our (possibly convolved) data, we can do the
 	   rest almost exactly as above. */
-
+	{
         float alpha_weight[256]; //TODO establish maximum # bins and use elsewhere (#define)
         float beta_weight[256];
-
-        *chisq = 0.0f;
         int q;
         float weight;
-        switch (noise) {
+
+        int i_free;
+        int j_free;
+        float dot_product;
+        float beta_sum;
+        float dy_dparam_k_i;
+        float *alpha_weight_ptr;
+        float *beta_weight_ptr;
+
+        *chisq = 0.0f;
+
+		switch (noise) {
             case NOISE_CONST:
             {
                 float *alpha_ptr = &alpha_weight[fit_start];
@@ -1008,7 +1030,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
                             : 2.0 * (yfit[q] - y[q]) - 2.0 * y[q] * log(yfit[q] / y[q]);
                 }
 	        if (*chisq <= 0.0f) {
-                    *chisq = 1.0e308f; // don't let chisq=0 through yfit being all -ve
+                    *chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
                 }
                 break;
             }
@@ -1023,14 +1045,6 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
             // don't bother to set up the matrices for solution
             return 0;
         }
-
-        int i_free;
-        int j_free;
-        float dot_product;
-        float beta_sum;
-        float dy_dparam_k_i;
-        float *alpha_weight_ptr;
-        float *beta_weight_ptr;
 
         i_free = 0;
         // for all columns
@@ -1071,7 +1085,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
                 ++i_free;
             }
         } // i loop
-
+	}
 	return 0;
 }
 
