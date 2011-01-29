@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include "EcfInternal.h"
-#include <utility.h>
 
 typedef struct {
 	float **P, **Q, ***S;
