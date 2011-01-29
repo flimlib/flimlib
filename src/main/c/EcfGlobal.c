@@ -2999,7 +2999,7 @@ int GCI_marquardt_global_generic_global_step(
 				float instr[], int ninstr,
 				noise_type noise, float sig[],
 				float **param, int paramfree[], int nparam, int gparam[],
-				restrain_type restrain,
+				restrain_type restrain, float chisq_delta,
 				void (*fitfunc)(float, float [], float *, float [], int),
 				float **yfit, float **dy,
 				float *chisq_trans, float *chisq_global,
