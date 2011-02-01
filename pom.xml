@@ -95,11 +95,11 @@
   <repositories>
     <repository>
       <id>loci.releases</id>
-      <url>http://dev.loci.wisc.edu:8081/content/repositories/releases</url>
+      <url>http://dev.loci.wisc.edu/maven2/releases</url>
     </repository>
     <repository>
       <id>loci.snapshots</id>
-      <url>http://dev.loci.wisc.edu:8081/content/repositories/snapshots</url>
+      <url>http://dev.loci.wisc.edu/maven2/snapshots</url>
     </repository>
   </repositories>
 
