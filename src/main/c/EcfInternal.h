@@ -32,7 +32,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 				   float param[], int paramfree[], int nparam,
 				   void (*fitfunc)(float, float [], float *, float [], int),
 				   float yfit[], float dy[],
-				   float **alpha, float beta[], float *chisq,
+				   float **alpha, float beta[], float *chisq, float old_chisq,
 				   float alambda,	
 					float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 					int *pfnvals_len, int *pdy_dparam_nparam_size);

@@ -26,7 +26,6 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 					int *pfnvals_len, int *pdy_dparam_nparam_size);
 
 /* Globals */
-static float global_chisq = 0.0f;
 //static float *fnvals, **dy_dparam_pure, **dy_dparam_conv;
 //static int fnvals_len=0, dy_dparam_nparam_size=0;
 // was Global, now thread safe
@@ -653,11 +652,11 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		for ((*pmfit)=0, j=0; j<nparam; j++)
 			if (paramfree[j])
 				(*pmfit)++;
-    global_chisq = 0.0f;
+
 		if (GCI_marquardt_compute_fn_instr(xincr, y, ndata, fit_start, fit_end,
 										   instr, ninstr, noise, sig,
 										   param, paramfree, nparam, fitfunc,
-										   yfit, dy, alpha, beta, chisq,
+										   yfit, dy, alpha, beta, chisq, 0.0,
 										   *alambda,	
 											pfnvals, pdy_dparam_pure, pdy_dparam_conv,
 											pfnvals_len, pdy_dparam_nparam_size) != 0) {
@@ -704,10 +703,20 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		return 0;
 	}
 
-	/* Did the trial succeed? */
+	/* Did the trial succeed? *
+        int allzeroes = 1;
 	for (j=0, l=0; l<nparam; l++)
-		if (paramfree[l])
+		if (paramfree[l]) {
+//TODO I don't think it ever recovers if all dparams are zero; alambda grows and grows, goes from int to inf!!
+// could be an early way to detect we're done.
+// at least, if delta params is all zeroes, there is no point in calculating a new alpha and beta.
+//                    printf("paramtry[%d] was %f becomes %f, param[%d] or %f plus dparam[%d] or %f\n", l, paramtry[l], param[l] + dparam[j], l, param[l], j, dparam[j]);
+                    if (dparam[j] != 0.0) allzeroes = 0;
 			paramtry[l] = param[l] + dparam[j++];
+}
+     //TODO experimental:
+     //  gave about a 10% speedup
+        if (allzeroes) return -12345; */
 
 	if (restrain == ECF_RESTRAIN_DEFAULT)
 		ret = check_ecf_params (paramtry, nparam, fitfunc);
@@ -719,12 +728,11 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		*alambda *= 10.0;
 		return 0;
 	}
-    global_chisq = *pochisq; //TODO this is a cheap mechanism to "pass in" the original chisq by using a global variable; seems to be a valid optimization, within this function don't setup matrices if chisq is not an improvment
 	if (GCI_marquardt_compute_fn_instr(xincr, y, ndata, fit_start, fit_end,
 									   instr, ninstr, noise, sig,
 									   paramtry, paramfree, nparam, fitfunc,
 									   yfit, dy, covar, dparam,
-									   chisq, *alambda,	
+									   chisq, *pochisq, *alambda,
 									   pfnvals, pdy_dparam_pure, pdy_dparam_conv,
 									   pfnvals_len, pdy_dparam_nparam_size) != 0) {
 		return -2;
@@ -732,6 +740,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 
 	/* Success, accept the new solution */
 	if (*chisq < *pochisq) {
+//            printf("success, alambda goes from %f to %f\n", *alambda, (*alambda)*0.1);
 		*alambda *= 0.1;
 		*pochisq = *chisq;
 		for (j=0; j<(*pmfit); j++) {
@@ -742,6 +751,8 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		for (l=0; l<nparam; l++)
 			param[l] = paramtry[l];
 	} else { /* Failure, increase alambda and return */
+//TODO if alambda goes to inf, can we recover?
+//            printf("failure, alambda goes from %f to %f\n", *alambda, (*alambda)*10.0);
 		*alambda *= 10.0;
 		*chisq = *pochisq;
 	}
@@ -788,7 +799,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 				   float param[], int paramfree[], int nparam,
 				   void (*fitfunc)(float, float [], float *, float [], int),
 				   float yfit[], float dy[],
-				   float **alpha, float beta[], float *chisq,
+				   float **alpha, float beta[], float *chisq, float old_chisq,
 				   float alambda,
 					float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 					int *pfnvals_len, int *pdy_dparam_nparam_size)
@@ -1041,7 +1052,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
         }
 
         // Check if chi square worsened:
-        if (0.0f != global_chisq && *chisq >= global_chisq) { //TODO pass in the old chi square as a parameter
+        if (0.0f != old_chisq && *chisq >= old_chisq) {
             // don't bother to set up the matrices for solution
             return 0;
         }
@@ -1084,7 +1095,18 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
                 beta[i_free] = beta_sum;
                 ++i_free;
             }
+            //else printf("param not free %d\n", i);
         } // i loop
+
+ /*       printf("i_free is %d j_free %d\n", i_free, j_free);
+        //TODO try padding with zeroes; leftovers would affect AX=B solution
+        for (i = i_free; i < nparam; ++i) {
+            for (j = 0; j < nparam; ++j) {
+                alpha[i][j] = alpha[j][i] = 0.0f;
+            }
+            beta[i] = 0.0f;
+        }*/
+
 	}
 	return 0;
 }

@@ -3244,7 +3244,7 @@ int GCI_marquardt_global_compute_global_generic_fn(
 					param[i], paramfree, nparam, fitfunc,
 ////					yfit[i], dy[i], alpha_scratch, beta_scratch,
 					yfit[0], dy[0], alpha_scratch, beta_scratch,
-					&chisq_trans[i], (i == 0) ? alambda : 0.0,
+					&chisq_trans[i], 0.0f, (i == 0) ? alambda : 0.0, //TODO ARG added 0.0f here for new old_chisq parameter
 					pfnvals, pdy_dparam_pure, pdy_dparam_conv,
 					pfnvals_len, pdy_dparam_nparam_size);
 
