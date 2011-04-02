@@ -21,36 +21,37 @@ int RLD_fit(
 
     int noise = 0;
     int n_data = fit_end + 1;
-
     float *y_float = (float *)malloc(n_data * sizeof(float));
     float *sig_float = (float *)malloc(n_data * sizeof(float));
-    int i;
-    for (i = 0; i < n_data; ++i) {
-       y_float[i] = (float) y[i];
-       sig_float[i] = ( sig ? (float) sig[i] : 1.0f );
-    }
-
     float *instr_float = 0;
-    if (instr) {
-        instr_float = (float *)malloc(n_instr * sizeof(float));
-        int i;
-        for (i = 0; i < n_instr; ++i) {
-            instr_float[i] = (float) instr[i];
-        }
-    }
     float *fitted_float = 0;
-    if (fitted) {
-        fitted_float = (float*)malloc(n_data * sizeof(float));
-    }
     float *residuals_float = (float *)malloc(n_data * sizeof(float));
-
     float x_inc_float      = (float) x_inc;
     float z_float          = (float) *z;
     float a_float          = (float) *a;
     float tau_float        = (float) *tau;
     float chi_square_float = (float) *chi_square;
+    int return_value;
+    int i;
 
-    int returnValue =  GCI_triple_integral_fitting_engine(
+    for (i = 0; i < n_data; ++i) {
+       y_float[i] = (float) y[i];
+       sig_float[i] = ( sig ? (float) sig[i] : 1.0f );
+    }
+
+    if (instr) {
+        int i;
+        instr_float = (float *)malloc(n_instr * sizeof(float));
+        for (i = 0; i < n_instr; ++i) {
+            instr_float[i] = (float) instr[i];
+        }
+    }
+
+    if (fitted) {
+        fitted_float = (float*)malloc(n_data * sizeof(float));
+    }
+
+    return_value =  GCI_triple_integral_fitting_engine(
             x_inc_float,
             y_float,
             fit_start,
@@ -88,7 +89,7 @@ int RLD_fit(
     }
     free(residuals_float);
 
-    return returnValue;
+    return return_value;
 }
 
 int LMA_fit(
@@ -112,28 +113,38 @@ int LMA_fit(
     float chi_square_delta = 0;
     float chi_square_percent = 500;
     int n_data = fit_end + 1;
-
     float *y_float = (float *)malloc(n_data * sizeof(float));
     float *sig_float = (float *)malloc(n_data * sizeof(float));
+    float *instr_float = 0;
+    float *fitted_float = 0;
+    float *param_float;
+    float *residuals_float = (float *)malloc(n_data * sizeof(float));
+    float **covar_float    = GCI_ecf_matrix(n_data, n_data);
+    float **alpha_float    = GCI_ecf_matrix(n_data, n_data);
+    float **err_axes_float = GCI_ecf_matrix(n_data, n_data);
+    float x_inc_float      = (float) x_inc;
+    float chi_square_float = (float) *chi_square;
+    void (*fitfunc)(float, float [], float *, float[], int) = NULL;
+    int return_value;
     int i;
+
     for (i = 0; i < n_data; ++i) {
        y_float[i] = (float) y[i];
        sig_float[i] = ( sig ? (float) sig[i] : 1.0f );
     }
 
-    float *instr_float = 0;
     if (instr) {
-        instr_float = (float *)malloc(n_instr * sizeof(float));
         int i;
+        instr_float = (float *)malloc(n_instr * sizeof(float));
         for (i = 0; i < n_instr; ++i) {
             instr_float[i] = (float) instr[i];
         }
     }
-    float *fitted_float = 0;
+
     if (fitted) {
         fitted_float = (float*)malloc(n_data * sizeof(float));
     }
-    float *param_float = (float *)malloc(n_param * sizeof(float));
+    param_float = (float *)malloc(n_param * sizeof(float));
     switch (n_param) {
         case 3:
             // single exponential fit
@@ -170,16 +181,7 @@ int LMA_fit(
             break;
     }
 
-    float *residuals_float = (float *)malloc(n_data * sizeof(float));
-    float **covar_float    = GCI_ecf_matrix(n_data, n_data);
-    float **alpha_float    = GCI_ecf_matrix(n_data, n_data);
-    float **err_axes_float = GCI_ecf_matrix(n_data, n_data);
-
-    float x_inc_float      = (float) x_inc;
-    float chi_square_float = (float) *chi_square;
-
     // choose appropriate fitting function
-    void (*fitfunc)(float, float [], float *, float[], int) = NULL;
     if (4 == n_param) {
         fitfunc = GCI_stretchedexp;
     }
@@ -187,7 +189,7 @@ int LMA_fit(
         fitfunc = GCI_multiexp_tau;
     }
 
-    int returnValue = GCI_marquardt_fitting_engine(
+    return_value = GCI_marquardt_fitting_engine(
             x_inc_float, //TODO not necessary, just cast it, I think
             y_float,
             n_data,
@@ -275,6 +277,6 @@ int LMA_fit(
     //    printf("returnValue is %d\n", returnValue);
     //}
 
-    return returnValue;
+    return return_value;
 }
 
