@@ -1,0 +1,19 @@
+PATH added:
+
+C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE;C:\Program Files\Microsoft Visual Studio 9.0\VC\BIN;C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\;
+
+previous was just:
+
+%SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem
+
+INCLUDE didn't exist, added:
+
+C:\Program Files\Microsoft Visual Studio 9.0\VC\INCLUDE
+
+LIB didn't exist, added:
+
+C:\Program Files\Microsoft Visual Studio 9.0\VC\LIB;C:\Program Files\Microsoft SDKs\Windows\v6.0A\lib
+
+LIBPATH didn't exist, added:
+
+C:\Program Files\Microsoft Visual Studio 9.0\VC\LIB
