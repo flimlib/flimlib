@@ -11,18 +11,18 @@ extern "C" {
 /*
  * Class:     loci_curvefitter_SLIMCurveFitter
  * Method:    RLD_fit
- * Signature: (D[DII[DI[DLjava/lang/Double;Ljava/lang/Double;Ljava/lang/Double;[DLjava/lang/Double;D)I
+ * Signature: (D[DII[DI[D[D[D[D[D[DD)I
  */
 JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_RLD_1fit
-  (JNIEnv *, jobject, jdouble, jdoubleArray, jint, jint, jdoubleArray, jint, jdoubleArray, jobject, jobject, jobject, jdoubleArray, jobject, jdouble);
+  (JNIEnv *, jobject, jdouble, jdoubleArray, jint, jint, jdoubleArray, jint, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdoubleArray, jdouble);
 
 /*
  * Class:     loci_curvefitter_SLIMCurveFitter
  * Method:    LMA_fit
- * Signature: (D[DII[DI[D[D[II[DLjava/lang/Double;D)I
+ * Signature: (D[DII[DI[D[D[II[D[DD)I
  */
 JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_LMA_1fit
-  (JNIEnv *, jobject, jdouble, jdoubleArray, jint, jint, jdoubleArray, jint, jdoubleArray, jdoubleArray, jintArray, jint, jdoubleArray, jobject, jdouble);
+  (JNIEnv *, jobject, jdouble, jdoubleArray, jint, jint, jdoubleArray, jint, jdoubleArray, jdoubleArray, jintArray, jint, jdoubleArray, jdoubleArray, jdouble);
 
 #ifdef __cplusplus
 }

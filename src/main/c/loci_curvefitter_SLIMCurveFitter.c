@@ -12,25 +12,35 @@ JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_RLD_1fit
         jdoubleArray sig, jdoubleArray z, jdoubleArray a, jdoubleArray tau,
         jdoubleArray fitted, jdoubleArray chi_square, jdouble chi_square_target) {
 
+    jdouble *y_array;
+    jdouble *instr_array;
+    jdouble *sig_array;
+    jdouble *fitted_array;
+    jdouble *z_ref;
+    jdouble *a_ref;
+    jdouble *tau_ref;
+    jdouble *chi_square_ref;
+    int return_value;
+
     // convert the arrays
-    jdouble *y_array = (*env)->GetDoubleArrayElements(env, y, 0);
-    jdouble *instr_array = NULL;
+    y_array = (*env)->GetDoubleArrayElements(env, y, 0);
+    instr_array = NULL;
     if (NULL != instr) {
         instr_array  = (*env)->GetDoubleArrayElements(env, instr, 0);
     }
-    jdouble *sig_array = NULL;
+    sig_array = NULL;
     if (NULL != sig) {
         sig_array    = (*env)->GetDoubleArrayElements(env, sig, 0);
     }
-    jdouble *fitted_array = (*env)->GetDoubleArrayElements(env, fitted, 0);
+    fitted_array = (*env)->GetDoubleArrayElements(env, fitted, 0);
 
     // also handle double by reference as arrays
-    jdouble *z_ref = (*env)->GetDoubleArrayElements(env, z, 0);
-    jdouble *a_ref = (*env)->GetDoubleArrayElements(env, z, 0);
-    jdouble *tau_ref = (*env)->GetDoubleArrayElements(env, tau, 0);
-    jdouble *chi_square_ref = (*env)->GetDoubleArrayElements(env, chi_square, 0);
+    z_ref = (*env)->GetDoubleArrayElements(env, z, 0);
+    a_ref = (*env)->GetDoubleArrayElements(env, z, 0);
+    tau_ref = (*env)->GetDoubleArrayElements(env, tau, 0);
+    chi_square_ref = (*env)->GetDoubleArrayElements(env, chi_square, 0);
 
-    int return_value = RLD_fit(x_inc, y_array, fit_start, fit_end,
+    return_value = RLD_fit(x_inc, y_array, fit_start, fit_end,
             instr_array, n_instr, sig_array, z_ref, a_ref, tau_ref,
             fitted_array, chi_square_ref, chi_square_target);
 
@@ -64,24 +74,33 @@ JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_LMA_1fit
         jdoubleArray sig, jdoubleArray param, jintArray param_free, jint n_param,
         jdoubleArray fitted, jdoubleArray chi_square, jdouble chi_square_target) {
 
+    jdouble *y_array;
+    jdouble *instr_array;
+    jdouble *sig_array;
+    jdouble *param_array;
+    jint *param_free_array;
+    jdouble *fitted_array;
+    jdouble *chi_square_ref;
+    int return_value;
+
     // convert the arrays
-    jdouble *y_array = (*env)->GetDoubleArrayElements(env, y, 0);
-    jdouble *instr_array = NULL;
+    y_array = (*env)->GetDoubleArrayElements(env, y, 0);
+    instr_array = NULL;
     if (NULL != instr) {
         instr_array  = (*env)->GetDoubleArrayElements(env, instr, 0);
     }
-    jdouble *sig_array = NULL;
+    sig_array = NULL;
     if (NULL != sig) {
         sig_array    = (*env)->GetDoubleArrayElements(env, sig, 0);
     }
-    jdouble *param_array = (*env)->GetDoubleArrayElements(env, param, 0);
-    jint *param_free_array = (*env)->GetIntArrayElements(env, param_free, 0);
-    jdouble *fitted_array = (*env)->GetDoubleArrayElements(env, fitted, 0);
+    param_array = (*env)->GetDoubleArrayElements(env, param, 0);
+    param_free_array = (*env)->GetIntArrayElements(env, param_free, 0);
+    fitted_array = (*env)->GetDoubleArrayElements(env, fitted, 0);
 
     // also handle double by reference as array
-    jdouble *chi_square_ref = (*env)->GetDoubleArrayElements(env, chi_square, 0);
+    chi_square_ref = (*env)->GetDoubleArrayElements(env, chi_square, 0);
 
-    int return_value = LMA_fit(x_inc, y_array, fit_start, fit_end,
+    return_value = LMA_fit(x_inc, y_array, fit_start, fit_end,
             instr_array, n_instr, sig_array, param_array, param_free_array, n_param,
             fitted_array, chi_square_ref, chi_square_target);
 
