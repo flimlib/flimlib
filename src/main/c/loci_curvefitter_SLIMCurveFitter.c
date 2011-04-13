@@ -36,7 +36,7 @@ JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_RLD_1fit
 
     // also handle double by reference as arrays
     z_ref = (*env)->GetDoubleArrayElements(env, z, 0);
-    a_ref = (*env)->GetDoubleArrayElements(env, z, 0);
+    a_ref = (*env)->GetDoubleArrayElements(env, a, 0);
     tau_ref = (*env)->GetDoubleArrayElements(env, tau, 0);
     chi_square_ref = (*env)->GetDoubleArrayElements(env, chi_square, 0);
 
