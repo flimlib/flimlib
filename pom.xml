@@ -32,6 +32,10 @@
         <artifactId>maven-nar-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
+          <!-- doesn't do anything arch>ppc</arch -->
+          <!-- NPE aol>x86-MacOSX-gpp</aol -->
+          <!-- aol>i386-MacOSX-gpp</aol -->
+          <arch>i386</arch>
           <libraries>
             <library>
               <type>shared</type>

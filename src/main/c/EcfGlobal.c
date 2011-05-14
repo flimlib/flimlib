@@ -161,7 +161,7 @@ int GCI_marquardt_global_compute_global_generic_fn(
 		void (*fitfunc)(float, float [], float *, float [], int),
 		float **yfit, float **dy, global_matrix alpha, global_vector beta,
 		float **alpha_scratch, float *chisq_trans, float *chisq_global,
-		float alambda,	
+		float alambda,
 		float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 		int *pfnvals_len, int *pdy_dparam_nparam_size);
 int GCI_marquardt_global_compute_global_generic_fn_final(
@@ -172,7 +172,7 @@ int GCI_marquardt_global_compute_global_generic_fn_final(
 		int mfit_global, int mfit_local, int gindex[], int lindex[],
 		void (*fitfunc)(float, float [], float *, float [], int),
 		float **yfit, float **dy,
-		float *chisq_trans, float *chisq_global,	
+		float *chisq_trans, float *chisq_global,
 		float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 		int *pfnvals_len, int *pdy_dparam_nparam_size);
 
@@ -433,7 +433,7 @@ int GCI_marquardt_global_exps_instr(float xincr, float **trans,
 //	printf("that took: %f secs.\n", Timer()-time); time=Timer();
 	/* Copy the estimated global taus to the parameters array */
 
-	switch (ftype) 
+	switch (ftype)
 	{
 		case FIT_GLOBAL_MULTIEXP:
 			for (i=2; i<nparam; i+=2)
@@ -472,7 +472,7 @@ int GCI_marquardt_global_exps_instr(float xincr, float **trans,
 		free(exp_conv[0]);
 		return -20 + ret;
 	}
-	
+
 //	printf("that took: %f secs.\n", Timer()-time); time=Timer();
 	dbgprintf(2, "About to enter step (3)\n");
 
@@ -516,7 +516,7 @@ int GCI_marquardt_global_exps_instr(float xincr, float **trans,
 
 	mglobal = mlocal = 0;
 
-	switch (ftype) 
+	switch (ftype)
 	{
 	case FIT_GLOBAL_MULTIEXP:
 		for (i=2; i<nparam; i+=2)
@@ -581,8 +581,8 @@ int GCI_marquardt_global_exps_est_globals_instr(
 
 	ret = GCI_triple_integral_fitting_engine(xincr, summed, data_start, fit_end,
 							 				instr, ninstr, noise, sig,
-							  				&Z, &A, &tau, NULL, NULL, NULL, 1.5*(fit_end-fit_start-3));  
-	
+							  				&Z, &A, &tau, NULL, NULL, NULL, 1.5*(fit_end-fit_start-3));
+
 	dbgprintf(3, "In est_globals_instr, triple integral ret = %d\n", ret);
 
 	if (ret < 0) {
@@ -603,15 +603,15 @@ int GCI_marquardt_global_exps_est_globals_instr(
 	switch (ftype) {
 	case FIT_GLOBAL_MULTIEXP:
 		/* Z */
-		if (! paramfree[0]) 
+		if (! paramfree[0])
 		{
 			gparam[0] = 0;
 			for (j=0; j<ntrans; j++) gparam[0] += param[j][0];
 		}
 
-		/* A's */				   
+		/* A's */
 		for (i=1; i<nparam; i++)
-			if (! paramfree[i]) 
+			if (! paramfree[i])
 			{
 				gparam[i] = 0;
 				for (j=0; j<ntrans; j++) gparam[i] += param[j][i];
@@ -719,9 +719,9 @@ int GCI_marquardt_global_exps_est_globals_instr(
 	ret = GCI_marquardt_fitting_engine(xincr, summed, ndata, fit_start, fit_end,
 							  instr, ninstr, noise, sig,
 							  gparam, paramfree, nparam, restrain, fitfunc,
-							  fitted, residuals, chisq_global, covar, alpha, 
+							  fitted, residuals, chisq_global, covar, alpha,
 							  NULL, 1.5*(fit_end-fit_start-nparamfree), chisq_delta, 0);
-	
+
 	dbgprintf(3, "In est_globals_instr, marquardt ret = %d\n", ret);
 
 	free(summed);
@@ -755,7 +755,7 @@ int GCI_marquardt_global_exps_est_params_instr(
 	   largest tau is the most significant component. */
 
 	// PRB 03/07 Although **fitted and **residuals are provided only one "transient" is required and used, fitted[0] and residuals[0]
-	
+
 	if (ftype ==  FIT_GLOBAL_MULTIEXP) {
 		/* Initialise */
 		for (i=2; i<nparam; i+=2)
@@ -783,7 +783,7 @@ int GCI_marquardt_global_exps_est_params_instr(
 
 		ret = GCI_triple_integral_fitting_engine(xincr, trans[i], data_start, fit_end,
 							 				instr, ninstr, noise, sig,
-							  				&Z, &A, &tau, NULL, NULL, NULL, 1.5*(fit_end-fit_start-3));  
+							  				&Z, &A, &tau, NULL, NULL, NULL, 1.5*(fit_end-fit_start-3));
 		if (ret < 0) {
 			Z = 0;
 			ECF_Find_Float_Max(&trans[i][fit_start], fit_end - fit_start, &A);
@@ -872,7 +872,7 @@ int GCI_marquardt_global_exps_est_params_instr(
 		dbgprintf(1, "est_params_instr: please update me!\n");
 		return -1;
 	}
-		
+
 	dbgprintf(3, "In est_params_instr, after do_fit_single, "
 			  "parameters initialised to:\n");
 	for (i=0; i<ntrans; i++) {
@@ -997,7 +997,7 @@ int GCI_marquardt_global_exps_calculate_exps_instr(
 		xaincr = xincr / param[2];
 		a2inv = 1/param[2];
 		a3inv = 1/param[3];
-	
+
 		/* When x=0 */
 		exp_conv[1][0] = 1.0;
 		exp_conv[2][0] = exp_conv[3][0] = 0.0;
@@ -1018,14 +1018,14 @@ int GCI_marquardt_global_exps_calculate_exps_instr(
 		if (ninstr>0 && instr!=NULL)   // else exp_conv already contains the pure data
 		{
 			/* Now convolve these with the instrument response */
-			for (i=1; i<4; i++) 
+			for (i=1; i<4; i++)
 			{
 				expi = exp_conv[i];
-	
+
 				for (j=0; j<ndata; j++)
 					exp_pure[j] = expi[j];  /* save the array in temp storage */
-	
-				for (j=0; j<ndata; j++) 
+
+				for (j=0; j<ndata; j++)
 				{
 					expi[j] = 0;
 					convpts = (ninstr <= j) ? ninstr-1 : j;
@@ -1180,8 +1180,8 @@ int GCI_marquardt_global_exps_single_step(
 		dparam[j] = beta[j];
 	}
 
-	/* Matrix solution; GCI_gauss_jordan solves Ax=b rather than AX=B */
-	if (GCI_gauss_jordan(covar, mfit, dparam) != 0)
+	/* Matrix solution; GCI_solve solves Ax=b rather than AX=B */
+	if (GCI_solve(covar, mfit, dparam) != 0)
 		return -1;
 
 	/* Once converged, calculate corrected chi-squared values */
@@ -1805,7 +1805,7 @@ int GCI_marquardt_global_compute_exps_fn_final(
 			}
 			break;
 
-		case NOISE_MLE:	
+		case NOISE_MLE:
 			*chisq = 0.0;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
@@ -1923,7 +1923,7 @@ int GCI_marquardt_global_compute_exps_fn_final(
 			}
 			break;
 
-		case NOISE_MLE: 
+		case NOISE_MLE:
 			*chisq = 0.0;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
@@ -2327,7 +2327,7 @@ int GCI_marquardt_global_exps_global_step(
 		/* Don't need to do this here; if we wished to, we'd have to
 		   move this code (the "if (*alambda == 0)" block) to after
 		   the Gauss-Jordan call.  We'd also need to rewrite it for
-		   our situation.... */ 
+		   our situation.... */
 		//	if (mfit < nparam) {  /* no need to do this otherwise */
 		//		GCI_covar_sort(covar, nparam, paramfree, mfit);
 		//		GCI_covar_sort(alpha, nparam, paramfree, mfit);
@@ -2349,7 +2349,7 @@ int GCI_marquardt_global_exps_global_step(
 		for (j=0; j<mfit_local; j++)
 			covar.S[i][j][j] *= 1.0 + (*alambda);
 
-	/* Matrix solution; GCI_gauss_jordan solves Ax=b rather than AX=B */
+	/* Matrix solution; GCI_solve solves Ax=b rather than AX=B */
 	if (GCI_marquardt_global_solve_eqn(covar, dparam,
 									   mfit_global, mfit_local, ntrans) != 0)
 		return -3;
@@ -2455,7 +2455,7 @@ int GCI_marquardt_global_compute_global_exps_fn(
 			}
 			continue;
 		}
-			
+
 		/* This transient is fine! */
 		ret = GCI_marquardt_global_compute_exps_fn(
 					xincr, trans[i], ndata, fit_start, fit_end, noise, sig,
@@ -2527,7 +2527,7 @@ int GCI_marquardt_global_compute_global_exps_fn_final(
 	for (i=0; i<ntrans; i++) {
 		if (drop_bad_transients && chisq_trans[i] < 0)
 			continue;
-			
+
 		/* This transient is fine! */
 		ret = GCI_marquardt_global_compute_exps_fn_final(
 					xincr, trans[i], ndata, fit_start, fit_end, noise, sig,
@@ -2603,9 +2603,9 @@ int GCI_marquardt_global_solve_eqn(global_matrix A, global_vector b,
 	static global_vector x;
 	static int saved_global=0, saved_local=0, saved_ntrans=0;
 
-	/* If no local parameters, just do a straight Gauss-Jordan method */
+	/* If no local parameters, just do a straight matrix solution */
 	if (mfit_local == 0) {
-		if (GCI_gauss_jordan(A.P, mfit_global, b.global) != 0)
+		if (GCI_solve(A.P, mfit_global, b.global) != 0)
 			return -2;
 		return 0;
 	}
@@ -2632,7 +2632,7 @@ int GCI_marquardt_global_solve_eqn(global_matrix A, global_vector b,
 
 	/* Start by inverting S */
 	for (block=0; block<ntrans; block++)
-		if (GCI_gauss_jordan(A.S[block], mfit_local, NULL) != 0)
+		if (GCI_invert(A.S[block], mfit_local) != 0)
 			return -2;
 
 	/* Calculate Q.S^{-1} */
@@ -2652,7 +2652,7 @@ int GCI_marquardt_global_solve_eqn(global_matrix A, global_vector b,
 				A.P[row][col] -= QS[row][i] * A.Q[col][i];  /* Q = R^T */
 
 	/* And invert it to get P' */
-	if (GCI_gauss_jordan(A.P, mfit_global, NULL) != 0)
+	if (GCI_invert(A.P, mfit_global) != 0)
 		return -3;
 
 	/* Now overwrite Q with Q' */
@@ -2744,7 +2744,7 @@ int GCI_marquardt_global_solve_eqn(global_matrix A, global_vector b,
    Also, this function must be provided with meaningful starting
    estimates for all parameters.
    */
-   
+
 int GCI_marquardt_global_generic_instr(float xincr, float **trans,
 					int ndata, int ntrans, int fit_start, int fit_end,
 					float instr[], int ninstr,
@@ -2839,7 +2839,7 @@ int GCI_marquardt_global_generic_do_fit_instr(
 		float *chisq_trans, float *chisq_global)
 {
 	// PRB 03/07 Although **fitted and **residuals are provided only one "transient" is required and used, fitted[0] and residuals[0]
-	
+
 	float alambda, ochisq_global, *ochisq_trans;
 	int i, k, itst, itst_max;
 	int ret;
@@ -3126,7 +3126,7 @@ int GCI_marquardt_global_generic_global_step(
 		/* Don't need to do this here; if we wished to, we'd have to
 		   move this code (the "if (*alambda == 0)" block) to after
 		   the Gauss-Jordan call.  We'd also need to rewrite it for
-		   our situation.... */ 
+		   our situation.... */
 		//	if (mfit < nparam) {  /* no need to do this otherwise */
 		//		GCI_covar_sort(covar, nparam, paramfree, mfit);
 		//		GCI_covar_sort(alpha, nparam, paramfree, mfit);
@@ -3148,7 +3148,7 @@ int GCI_marquardt_global_generic_global_step(
 		for (j=0; j<mfit_local; j++)
 			covar.S[i][j][j] *= 1.0 + (*alambda);
 
-	/* Matrix solution; GCI_gauss_jordan solves Ax=b rather than AX=B */
+	/* Matrix solution; GCI_solve solves Ax=b rather than AX=B */
 	if (GCI_marquardt_global_solve_eqn(covar, dparam,
 									   mfit_global, mfit_local, ntrans) != 0)
 		return -3;
@@ -3219,7 +3219,7 @@ int GCI_marquardt_global_compute_global_generic_fn(
 		void (*fitfunc)(float, float [], float *, float [], int),
 		float **yfit, float **dy, global_matrix alpha, global_vector beta,
 		float **alpha_scratch, float *chisq_trans, float *chisq_global,
-		float alambda,	
+		float alambda,
 		float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 		int *pfnvals_len, int *pdy_dparam_nparam_size)
 {
@@ -3288,7 +3288,7 @@ int GCI_marquardt_global_compute_global_generic_fn_final(
 		int mfit_global, int mfit_local, int gindex[], int lindex[],
 		void (*fitfunc)(float, float [], float *, float [], int),
 		float **yfit, float **dy,
-		float *chisq_trans, float *chisq_global,	
+		float *chisq_trans, float *chisq_global,
 		float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 		int *pfnvals_len, int *pdy_dparam_nparam_size)
 {

@@ -6,9 +6,9 @@ previous was just:
 
 %SystemRoot%\system32;%SystemRoot%;%SystemRoot%\System32\Wbem (XP)
 
-For Windows 7 64-bit the VC\BIN part should be:
+For Windows 7 64-bit the first two parts should be:
 
-C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\BIN;
+C:\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE;C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\BIN;
 
 INCLUDE didn't exist, added:
 

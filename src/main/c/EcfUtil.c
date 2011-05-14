@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
 #include <math.h>
 #ifdef _CVI_
 #include <userint.h>
@@ -23,28 +24,32 @@ int ECF_debug = 0;
 
 /********************************************************************
 
-			   GAUSS-JORDAN AND COVAR-SORTING ROUTINES
+			   EQUATION-SOLVING AND COVAR-SORTING ROUTINES
 
 *********************************************************************/
 
-
-/* Linear equation solution by Gauss-Jordan elimination.
-   a[0..n-1][0..n-1] is the input matrix,
-   b[0..n] is input containing the single right-hand side vector.
-   On output, a is replaced by its matrix inverse and b is replaced by
-   the corresponding set of solution vectors. */
-
 #define SWAP(a,b) { temp=(a); (a)=(b); (b)=temp; }
 
-/*
- * Based on LinearEquationSolving from linearEquations.c by Henry Guennadi Levkin.
+/* Linear equation solution of Ax = b by Gaussian elimination.
+   A is the n x n input matrix, b is the right-hand side vector, length n.
+   On output, b is replaced by the corresponding set of solution vectors
+   and A is trashed.
  */
-int GCI_gauss_jordan(float **a, int n, float *b)
+int GCI_solve_Gaussian(float **a, int n, float *b)
 {
     float max;
-    float tmp;
-
+    float temp;
+    float pivotInverse[n];
     int i, j, k, m;
+
+    /*int q, w;
+    printf("----------\n");
+    for (q = 0; q < n; ++q) {
+        for (w = 0; w < n; ++w) {
+            printf("%f ", a[q][w]);
+        }
+        printf("  %f\n", b[q]);
+    } */
 
     // base row of matrix
     for (k = 0; k < n - 1; ++k)
@@ -66,13 +71,9 @@ int GCI_gauss_jordan(float **a, int n, float *b)
         {
             for (i = k; i < n; ++i)
             {
-                tmp = a[k][i];
-                a[k][i] = a[m][i];
-                a[m][i] = tmp;
+                SWAP(a[k][i], a[m][i]);
             }
-            tmp = b[k];
-            b[k] = b[m];
-            b[m] = tmp;
+            SWAP(b[k], b[m]);
         }
 
         if (0.0 == a[k][k])
@@ -81,16 +82,20 @@ int GCI_gauss_jordan(float **a, int n, float *b)
         }
 
         // triangulation of matrix with coefficients
+        pivotInverse[k] = 1.0 / a[k][k];
         for (j = k + 1; j < n; ++j) // current row of matrix
         {
-            tmp = -a[j][k] / a[k][k];
+            // want "temp = -a[j][k] / a[k][k]"
+            temp = -a[j][k] * pivotInverse[k];
             for (i = k; i < n; ++i)
             {
-                a[j][i] += tmp * a[k][i];
+                a[j][i] += temp * a[k][i];
             }
-            b[j] += tmp * b[k]; // free member recalculation
+            b[j] += temp * b[k]; // free member recalculation
         }
     }
+    // precalculate last pivot inverse
+    pivotInverse[n - 1] = 1.0 / a[n - 1][n - 1];
 
     for (k = n - 1; k >= 0; --k)
     {
@@ -98,84 +103,291 @@ int GCI_gauss_jordan(float **a, int n, float *b)
         {
             b[k] -= a[k][i] * b[i];
         }
-        b[k] /= a[k][k];
+        b[k] *= pivotInverse[k];
+    }
+
+    /*printf("====>\n");
+    for (q = 0; q < n; ++q) {
+        for (w = 0; w < n; ++w) {
+            printf("%f ", a[q][w]);
+        }
+        printf("  %f\n", b[q]);
+    }*/
+
+    return 0;
+}
+
+/* Matrix inversion by Gaussian elimination.
+   A is the n x n input matrix.
+   On output, A is replaced by its matrix inverse.
+   Returns 0 upon success, -2 if matrix is singular.
+ */
+int GCI_invert_Gaussian(float **a, int n)
+{
+    int returnValue = 0;
+    float identity[n][n];
+    float **work = GCI_ecf_matrix(n, n);
+    int i, j, k;
+
+    for (j = 0; j < n; ++j) {
+        // find inverse by columns
+        for (i = 0; i < n; ++i) {
+            identity[j][i] = 0.0;
+            // need a fresh copy of matrix a
+            for (k = 0; k < n; ++k) {
+                work[k][i] = a[k][i];
+            }
+        }
+        identity[j][j] = 1.0;
+        returnValue = GCI_solve_Gaussian(work, n, identity[j]);
+        if (returnValue < 0) {
+            return returnValue;
+        }
+    }
+    GCI_ecf_free_matrix(work);
+
+    // copy over results
+    for (j = 0; j < n; ++j) {
+        for (i = 0; i < n; ++i) {
+            a[j][i] = identity[j][i];
+        }
+    }
+    return returnValue;
+}
+
+/* Pivots matrix on given column.  Also keeps track of order.
+ */
+void pivot(float **a, int n, int *order, int col)
+{
+    int pivotRow;
+    float maxValue;
+    float rowValue;
+    int i;
+
+    // find row with maximum element value in col, below diagonal
+    pivotRow = col;
+    maxValue = fabs(a[col][col]);
+    for (i = col + 1; i < n; ++i) {
+        rowValue = fabs(a[i][col]);
+        if (rowValue > maxValue) {
+            pivotRow = i;
+            maxValue = rowValue;
+        }
+    }
+
+    // swap rows
+    if (pivotRow != col) {
+        // swap elements in a matrix
+        for (i = 0; i < n; ++i) {
+            float temp;
+            SWAP(a[col][i], a[pivotRow][i]);
+        }
+
+        // swap elements in order vector
+        {
+            int temp;
+            SWAP(order[col], order[pivotRow]);
+        }
+    }
+}
+
+/*
+  Performs an in-place Crout lower/upper decomposition of n x n matrix A.
+  Values on or below diagonals are lowers, values about the
+  diagonal are uppers, with an implicit 1.0 value for the 
+  diagonals.
+  Returns 0 upon success, -2 if matrix is singular.
+
+  Based on _Applied Numerical Analysis_, Fourth Edition, Gerald & Wheatley
+  Sections 2.5 & 2.14.
+ */
+int lu_decomp(float **a, int n, int *order)
+{
+    int i;
+    float inverse;
+    int jCol;
+    int iRow;
+    int kCol;
+    float sum;
+    
+    // initialize ordering vector
+    for (i = 0; i < n; ++i)
+    {
+        order[i] = i;
+    }
+
+    // pivot first column
+    pivot(a, n, order, 0);
+
+    // check for singularity
+    if (0.0 == a[0][0])
+    {
+        return -2;
+    }
+
+    // compute first row of upper
+    inverse = 1.0 / a[0][0];
+    for (i = 1; i < n; ++i) {
+        a[0][i] *= inverse;
+    }
+
+    // continue computing columns of lowers then rows of uppers
+    for (jCol = 1; jCol < n - 1; ++jCol) {
+        // compute column of lowers
+        for (iRow = jCol; iRow < n; ++iRow) {
+            sum = 0.0;
+            for (kCol = 0; kCol < jCol; ++kCol) {
+                sum += a[iRow][kCol] * a[kCol][jCol];
+            }
+            a[iRow][jCol] -= sum;
+        }
+
+        // find pivot for row
+        pivot(a, n, order, jCol);
+        if (0.0 == a[jCol][jCol])
+        {
+            return -2;
+        }
+
+        // build row of uppers
+        inverse = 1.0 / a[jCol][jCol];
+        for (kCol = jCol + 1; kCol < n; ++kCol) {
+            sum = 0.0;
+            for (iRow = 0; iRow < jCol; ++iRow) {
+                sum += a[jCol][iRow] * a[iRow][kCol];
+            }
+            a[jCol][kCol] -= sum;
+            a[jCol][kCol] *= inverse;
+        }
+    }
+
+    // get remaining lower
+    sum = 0.0;
+    for (kCol = 0; kCol < n - 1; ++kCol) {
+        sum += a[n - 1][kCol] * a[kCol][n - 1];
+    }
+    a[n - 1][n - 1] -= sum;
+    return 0;
+}
+
+/*
+ Given a LU decomposition of an n x n matrix A, and an order vector
+ specifying any reordering done during pivoting, solves the equation
+ Ax = b.  Returns result in b.
+ */
+//TODO check for lu[i][i] != 0?
+int solve_lu(float **lu, int n, float *b, int *order)
+{
+    int startIndex;
+    int index;
+    float temp;
+    int iRow;
+    int jCol;
+    int nvbl;
+    float sum;
+    
+    // rearrange the elements of the b vector in place.
+    startIndex = order[0];
+    index = startIndex;
+    temp = b[index];
+    while (1) {
+        int nextIndex = order[index];
+        if (nextIndex == startIndex) {
+            b[index] = temp;
+            break;
+        }
+        b[index] = b[nextIndex];
+        index = nextIndex;
+    }
+
+    // compute the b' vector
+    b[0] /= lu[0][0];
+    for (iRow = 1; iRow < n; ++iRow) {
+        sum = 0.0;
+        int jCol;
+        for (jCol = 0; jCol < iRow; ++jCol) {
+            sum += lu[iRow][jCol] * b[jCol];
+        }
+        b[iRow] -= sum;
+        b[iRow] /= lu[iRow][iRow];
+    }
+
+    // get the solution, we have b[n-1] already
+    for (iRow = 1; iRow < n; ++iRow) { // iRow goes from 1 to n-1
+        nvbl = n - iRow - 1;           // nvbl goes from n-2 to 0
+        sum = 0.0f;
+        for (jCol = nvbl + 1; jCol < n; ++jCol) {
+            sum += lu[nvbl][jCol] * b[jCol];
+        }
+        b[nvbl] -= sum;
     }
     return 0;
 }
 
-//==============================================================================
-// return 1 if system not solving
-// nDim - system dimension
-// pfMatr - matrix with coefficients
-// pfVect - vector with free members
-// pfSolution - vector with system solution
-// pfMatr becames trianglular after function call
-// pfVect changes after function call
-//
-// Developer: Henry Guennadi Levkin
-//
-//==============================================================================
-int LinearEquationsSolving(int nDim, double* pfMatr, double* pfVect, double* pfSolution)
+/* Linear equation solution of Ax = b by lower/upper decomposition.
+   A is the n x n input max, b is the right-hand side vector, length n.
+   On output, b is replaced by the corresponding set of solution vectors
+   and A is trashed.
+ */
+int GCI_solve_lu_decomp(float **a, int n, float *b)
 {
-  double fMaxElem;
-  double fAcc;
-
-  int i , j, k, m;
-
-
-  for(k=0; k<(nDim-1); k++) // base row of matrix
-  {
-    // search of line with max element
-    fMaxElem = fabs( pfMatr[k*nDim + k] );
-    m = k;
-    for(i=k+1; i<nDim; i++)
-    {
-      if(fMaxElem < fabs(pfMatr[i*nDim + k]) )
-      {
-        fMaxElem = pfMatr[i*nDim + k];
-        m = i;
-      }
+    int order[n];
+    int return_value = lu_decomp(a, n, order);
+    if (return_value >= 0) {
+        return_value = solve_lu(a, n, b, order);
     }
+    return return_value;
+}
 
-    // permutation of base line (index k) and max element line(index m)
-    if(m != k)
-    {
-      for(i=k; i<nDim; i++)
-      {
-        fAcc               = pfMatr[k*nDim + i];
-        pfMatr[k*nDim + i] = pfMatr[m*nDim + i];
-        pfMatr[m*nDim + i] = fAcc;
-      }
-      fAcc = pfVect[k];
-      pfVect[k] = pfVect[m];
-      pfVect[m] = fAcc;
+/* Matrix inversion by lower/upper decomposition.
+   A is the n x n input matrix.
+   On output, a is replaced by its matrix inverse..
+ */
+int GCI_invert_lu_decomp(float **a, int n)
+{
+    int returnValue;
+    int order[n];
+    float identity[n][n];
+    int i, j;
+
+    returnValue = lu_decomp(a, n, order);
+    if (returnValue >= 0) {
+        for (j = 0; j < n; ++j) {
+            // find inverse by columns
+            for (i = 0; i < n; ++i) {
+                identity[j][i] = 0.0;
+            }
+            identity[j][j] = 1.0;
+            solve_lu(a, n, identity[j], order);
+        }
+        for (j = 0; j < n; ++j) {
+            for (i = 0; i < n; ++i) {
+                a[j][i] = identity[j][i];
+            }
+        }
     }
+    return returnValue;
+}
 
-    if( pfMatr[k*nDim + k] == 0.) return 1; // needs improvement !!!
+/* Linear equation solution of Ax = b..
+   A is the n x n input max, b is the right-hand side vector, length n.
+   On output, b is replaced by the corresponding set of solution vectors
+   and A is trashed.
+ */
+int GCI_solve(float **a, int n, float *b)
+{
+    return GCI_solve_Gaussian(a, n, b);
+    //return GCI_solve_lu_decomp(a, n, b);
+}
 
-    // triangulation of matrix with coefficients
-    for(j=(k+1); j<nDim; j++) // current row of matrix
-    {
-      fAcc = - pfMatr[j*nDim + k] / pfMatr[k*nDim + k];
-      for(i=k; i<nDim; i++)
-      {
-        pfMatr[j*nDim + i] = pfMatr[j*nDim + i] + fAcc*pfMatr[k*nDim + i];
-      }
-      pfVect[j] = pfVect[j] + fAcc*pfVect[k]; // free member recalculation
-    }
-  }
-
-  for(k=(nDim-1); k>=0; k--)
-  {
-    pfSolution[k] = pfVect[k];
-    for(i=(k+1); i<nDim; i++)
-    {
-      pfSolution[k] -= (pfMatr[k*nDim + i]*pfSolution[i]);
-    }
-    pfSolution[k] = pfSolution[k] / pfMatr[k*nDim + k];
-  }
-
-  return 0;
+/* Matrix inversion.
+   A is the n x n input matrix.
+   On output, a is replaced by its matrix inverse..
+ */
+int GCI_invert(float **a, int n)
+{
+    return GCI_invert_Gaussian(a, n);
+    //return GCI_invert_lu_decomp(a, n);
 }
 
 

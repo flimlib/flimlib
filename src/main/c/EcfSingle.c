@@ -613,8 +613,6 @@ int GCI_marquardt_instr(float xincr, float y[],
 #undef do_frees
 
 
-int GCI_gauss_jordan(float **a, int n, float *b);
-
 int GCI_marquardt_step_instr(float xincr, float y[],
 					int ndata, int fit_start, int fit_end,
 					float instr[], int ninstr,
@@ -679,11 +677,13 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		dparam[j] = beta[j];
 	}
 
-	/* Matrix solution; GCI_gauss_jordan solves Ax=b rather than AX=B */
-	if (GCI_gauss_jordan(covar, *pmfit, dparam) != 0) {
+	/* Matrix solution; GCI_solve solves Ax=b rather than AX=B */
+	if (GCI_solve(covar, *pmfit, dparam) != 0) {
 		return -1;
         }
-        
+
+        //TODO need to make sure covar gets inverted.  Previously the Gauss
+        // Jordan solution would invert covar as a side effect.
 
 	/* Once converged, evaluate covariance matrix */
 	if (*alambda == 0) {

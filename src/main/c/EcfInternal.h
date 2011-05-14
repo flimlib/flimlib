@@ -56,7 +56,8 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 
 /* Functions from EcfUtil.c */
 
-int GCI_gauss_jordan(float **a, int n, float *b);
+int GCI_solve(float **a, int, float *b);
+int GCI_invert(float **a, int);
 void GCI_covar_sort(float **covar, int nparam, int paramfree[], int mfit);
 float ***GCI_ecf_matrix_array(long nblocks, long nrows, long ncols);
 void GCI_ecf_free_matrix_array(float ***marr);
