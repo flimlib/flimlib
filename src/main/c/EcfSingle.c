@@ -3,7 +3,8 @@
    takes account of the fact that we may be handling Poisson noise.
 
    This file contains functions for single transient analysis.
-   Utility code is found in EcfUtil.c.
+   Utility code is found in EcfUtil.c and global analysis code in
+   EcfGlobal.c.
 */
 
 #include <math.h>
@@ -12,6 +13,14 @@
 #include "EcfInternal.h"
 
 /* Predeclarations */
+int GCI_marquardt_step(float x[], float y[], int ndata,
+					noise_type noise, float sig[],
+					float param[], int paramfree[], int nparam,
+					restrain_type restrain,
+					void (*fitfunc)(float, float [], float *, float [], int),
+					float yfit[], float dy[],
+					float **covar, float **alpha, float *chisq,
+					float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam);
 int GCI_marquardt_step_instr(float xincr, float y[],
 					int ndata, int fit_start, int fit_end,
 					float instr[], int ninstr,
@@ -21,9 +30,11 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 					void (*fitfunc)(float, float [], float *, float [], int),
 					float yfit[], float dy[],
 					float **covar, float **alpha, float *chisq,
-					float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam, 	
+					float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam,
 					float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 					int *pfnvals_len, int *pdy_dparam_nparam_size);
+int GCI_marquardt_estimate_errors(float **alpha, int nparam, int mfit,
+								  float d[], float **v, float interval);
 
 /* Globals */
 //static float *fnvals, **dy_dparam_pure, **dy_dparam_conv;
@@ -348,51 +359,51 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 							  float *Z, float *A, float *tau, float *fitted, float *residuals,
 							  float *chisq, float chisq_target)
 {
-	int tries=1, division=3;		 // the data 
+	int tries=1, division=3;		 // the data
 	float local_chisq=3.0e38, oldChisq=3.0e38, oldZ, oldA, oldTau, *validFittedArray; // local_chisq a very high float but below oldChisq
-		
+
 	if (fitted==NULL)   // we require chisq but have not supplied a "fitted" array so must malloc one
 	{
 		if ((validFittedArray = malloc(fit_end * sizeof(float)))== NULL) return (-1);
 	}
 	else validFittedArray = fitted;
-	
+
 	if (instr==NULL)           // no instrument/prompt has been supplied
 	{
 		GCI_triple_integral(xincr, y, fit_start, fit_end, noise, sig,
 								Z, A, tau, validFittedArray, residuals, &local_chisq, division);
 
-		while (local_chisq>chisq_target && (local_chisq<=oldChisq) && tries<MAXREFITS)	 
+		while (local_chisq>chisq_target && (local_chisq<=oldChisq) && tries<MAXREFITS)
 		{
 			oldChisq = local_chisq;
 			oldZ = *Z;
 			oldA = *A;
 			oldTau = *tau;
-//			division++;			 
-			division+=division/3;			 
+//			division++;
+			division+=division/3;
 			tries++;
 			GCI_triple_integral(xincr, y, fit_start, fit_end, noise, sig,
 								Z, A, tau, validFittedArray, residuals, &local_chisq, division);
-		}						  
+		}
 	}
 	else
 	{
 		GCI_triple_integral_instr(xincr, y, fit_start, fit_end, instr, ninstr, noise, sig,
 								Z, A, tau, validFittedArray, residuals, &local_chisq, division);
 
-		while (local_chisq>chisq_target && (local_chisq<=oldChisq) && tries<MAXREFITS)	 
+		while (local_chisq>chisq_target && (local_chisq<=oldChisq) && tries<MAXREFITS)
 		{
-			oldChisq = local_chisq; 
+			oldChisq = local_chisq;
 			oldZ = *Z;
 			oldA = *A;
 			oldTau = *tau;
-//			division++;			 
+//			division++;
 			division+=division/3;
 			tries++;
 			GCI_triple_integral_instr(xincr, y, fit_start, fit_end, instr, ninstr, noise, sig,
 								Z, A, tau, validFittedArray, residuals, &local_chisq, division);
 
-		}						  
+		}
 	}
 
 	if (local_chisq>oldChisq) 	   // the previous fit was better
@@ -402,10 +413,10 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 		*A = oldA;
 		*tau = oldTau;
 	}
-	
+
 	if (chisq!=NULL) *chisq = local_chisq;
 
-	if (fitted==NULL)  
+	if (fitted==NULL)
 	{
 		free (validFittedArray);
 	}
@@ -453,10 +464,10 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
    variances are taken to be max(y[i],15), and if
    noise=NOISE_POISSON_FIT, the variances are taken to be
    max(yfit[i],15). If noise=NOISE_GAUSSIAN_FIT, the variances are taken to be
-   yfit[i] and if noise=NOISE_MLE then a optimisation is for the maximum 
-   likelihood approximation (Laurence and Chromy in press 2010 and 
+   yfit[i] and if noise=NOISE_MLE then a optimisation is for the maximum
+   likelihood approximation (Laurence and Chromy in press 2010 and
    G. Nishimura, and M. Tamura Phys Med Biol 2005).
-   
+
    The input array paramfree[0..nparam-1] indicates
    by nonzero entries those components that should be held fixed at
    their input values. The program returns current best-fit values for
@@ -487,8 +498,7 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
    param[0], as the fitting routines will handle this offset.
 */
 
-/* This functions does the whole job */
-
+/* These two functions do the whole job */
 int GCI_marquardt(float x[], float y[], int ndata,
 				  noise_type noise, float sig[],
 				  float param[], int paramfree[], int nparam,
@@ -498,7 +508,76 @@ int GCI_marquardt(float x[], float y[], int ndata,
 				  float **covar, float **alpha, float *chisq,
 				  float chisq_delta, float chisq_percent, float **erraxes)
 {
-	// Empty fn to allow compile in TRI2
+	float alambda, ochisq;
+	int mfit;
+	float evals[MAXFIT];
+	int i, k, itst, itst_max;
+
+	float ochisq2, paramtry[MAXFIT], beta[MAXFIT], dparam[MAXFIT];
+
+	itst_max = (restrain == ECF_RESTRAIN_DEFAULT) ? 4 : 6;
+
+	mfit = 0;
+	for (i=0; i<nparam; i++) {
+		if (paramfree[i]) mfit++;
+	}
+
+	alambda = -1;
+	if (GCI_marquardt_step(x, y, ndata, noise, sig,
+						   param, paramfree, nparam, restrain,
+						   fitfunc, fitted, residuals,
+						   covar, alpha, chisq, &alambda,
+						   &mfit, &ochisq2, paramtry, beta, dparam) != 0) {
+		return -1;
+	}
+
+	k = 1;  /* Iteration counter */
+	itst = 0;
+	for (;;) {
+		k++;
+		if (k > MAXITERS) {
+			return -2;
+		}
+
+		ochisq = *chisq;
+		if (GCI_marquardt_step(x, y, ndata, noise, sig,
+							   param, paramfree, nparam, restrain,
+							   fitfunc, fitted, residuals,
+							   covar, alpha, chisq, &alambda,
+							   &mfit, &ochisq2, paramtry, beta, dparam) != 0) {
+			return -3;
+		}
+
+		if (*chisq > ochisq)
+			itst = 0;
+		else if (ochisq - *chisq < chisq_delta)
+			itst++;
+
+		if (itst < itst_max) continue;
+
+		/* Endgame */
+		alambda = 0.0;
+		if (GCI_marquardt_step(x, y, ndata, noise, sig,
+							   param, paramfree, nparam, restrain,
+							   fitfunc, fitted, residuals,
+							   covar, alpha, chisq, &alambda,
+							   &mfit, &ochisq2, paramtry, beta, dparam) != 0) {
+			return -4;
+		}
+
+		if (erraxes == NULL)
+			return k;
+
+                //TODO ARG
+		//if (GCI_marquardt_estimate_errors(alpha, nparam, mfit, evals,
+		//								  erraxes, chisq_percent) != 0) {
+		//	return -5;
+		//}
+
+		break;  /* We're done now */
+	}
+
+	return k;
 }
 
 #define do_frees \
@@ -528,7 +607,7 @@ int GCI_marquardt_instr(float xincr, float y[],
 	// These vars were global or static before thread safety was introduced.
 	float *fnvals=NULL, **dy_dparam_pure=NULL, **dy_dparam_conv=NULL;
 	int fnvals_len=0, dy_dparam_nparam_size=0;
-	float ochisq2, paramtry[MAXFIT], beta[MAXFIT], dparam[MAXFIT]; 
+	float ochisq2, paramtry[MAXFIT], beta[MAXFIT], dparam[MAXFIT];
 
 	itst_max = (restrain == ECF_RESTRAIN_DEFAULT) ? 4 : 6;
 
@@ -544,7 +623,7 @@ int GCI_marquardt_instr(float xincr, float y[],
 								 instr, ninstr, noise, sig,
 								 param, paramfree, nparam, restrain,
 								 fitfunc, fitted, residuals,
-								 covar, alpha, chisq, &alambda, 
+								 covar, alpha, chisq, &alambda,
 								 &mfit2, &ochisq2, paramtry, beta, dparam,
 								 &fnvals, &dy_dparam_pure, &dy_dparam_conv,
 								 &fnvals_len, &dy_dparam_nparam_size) != 0) {
@@ -568,7 +647,7 @@ int GCI_marquardt_instr(float xincr, float y[],
 									 instr, ninstr, noise, sig,
 									 param, paramfree, nparam, restrain,
 									 fitfunc, fitted, residuals,
-									 covar, alpha, chisq, &alambda, 
+									 covar, alpha, chisq, &alambda,
 									 &mfit2, &ochisq2, paramtry, beta, dparam,
 									 &fnvals, &dy_dparam_pure, &dy_dparam_conv,
 									 &fnvals_len, &dy_dparam_nparam_size) != 0) {
@@ -591,7 +670,7 @@ int GCI_marquardt_instr(float xincr, float y[],
 									 instr, ninstr, noise, sig,
 									 param, paramfree, nparam, restrain,
 									 fitfunc, fitted, residuals,
-									 covar, alpha, chisq, &alambda, 
+									 covar, alpha, chisq, &alambda,
 									 &mfit2, &ochisq2, paramtry, beta, dparam,
 									 &fnvals, &dy_dparam_pure, &dy_dparam_conv,
 									 &fnvals_len, &dy_dparam_nparam_size) != 0) {
@@ -604,6 +683,13 @@ int GCI_marquardt_instr(float xincr, float y[],
 			return k;
 		}
 
+//TODO ARG this estimate errors call was deleted in my latest version
+	//	if (GCI_marquardt_estimate_errors(alpha, nparam, mfit, evals,
+	//									  erraxes, chisq_percent) != 0) {
+	//		do_frees
+	//		return -5;
+	//	}
+
 		break;  /* We're done now */
 	}
 
@@ -611,6 +697,113 @@ int GCI_marquardt_instr(float xincr, float y[],
 	return k;
 }
 #undef do_frees
+
+
+//TODO ARG deleted in my latest version
+int GCI_marquardt_step(float x[], float y[], int ndata,
+					noise_type noise, float sig[],
+					float param[], int paramfree[], int nparam,
+					restrain_type restrain,
+					void (*fitfunc)(float, float [], float *, float [], int),
+					float yfit[], float dy[],
+					float **covar, float **alpha, float *chisq,
+					float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam)
+{
+	int j, k, l, ret;
+//	static int mfit;   // was static but now thread safe
+//	static float ochisq, paramtry[MAXFIT], beta[MAXFIT], dparam[MAXFIT];   // was static but now thread safe
+	int mfit = *pmfit;
+	float ochisq = *pochisq;
+
+	if (nparam > MAXFIT)
+		return -1;
+
+	/* Initialisation */
+	/* We assume we're given sensible starting values for param[] */
+	if (*alambda < 0.0) {
+		for (mfit=0, j=0; j<nparam; j++)
+			if (paramfree[j])
+				mfit++;
+
+		if (GCI_marquardt_compute_fn(x, y, ndata, noise, sig,
+									 param, paramfree, nparam, fitfunc,
+									 yfit, dy,
+									 alpha, beta, chisq, 0.0, *alambda) != 0)
+			return -2;
+
+		*alambda = 0.001;
+		ochisq = (*chisq);
+		for (j=0; j<nparam; j++)
+			paramtry[j] = param[j];
+	}
+
+	/* Alter linearised fitting matrix by augmenting diagonal elements */
+	for (j=0; j<mfit; j++) {
+		for (k=0; k<mfit; k++)
+			covar[j][k] = alpha[j][k];
+
+		covar[j][j] = alpha[j][j] * (1.0 + (*alambda));
+		dparam[j] = beta[j];
+	}
+
+	/* Matrix solution; GCI_solve solves Ax=b rather than AX=B */
+	if (GCI_solve(covar, mfit, dparam) != 0)
+		return -1;
+
+        //TODO ARG GCI_gauss_jordan would invert the covar matrix as a side effect
+	/* Once converged, evaluate covariance matrix */
+	if (*alambda == 0) {
+		if (GCI_marquardt_compute_fn_final(x, y, ndata, noise, sig,
+										   param, paramfree, nparam, fitfunc,
+										   yfit, dy, chisq) != 0)
+			return -3;
+		if (mfit < nparam) {  /* no need to do this otherwise */
+			GCI_covar_sort(covar, nparam, paramfree, mfit);
+			GCI_covar_sort(alpha, nparam, paramfree, mfit);
+		}
+		return 0;
+	}
+
+	/* Did the trial succeed? */
+	for (j=0, l=0; l<nparam; l++)
+		if (paramfree[l])
+			paramtry[l] = param[l] + dparam[j++];
+
+	if (restrain == ECF_RESTRAIN_DEFAULT)
+		ret = check_ecf_params (paramtry, nparam, fitfunc);
+	else
+		ret = check_ecf_user_params (paramtry, nparam, fitfunc);
+
+	if (ret != 0) {
+		/* Bad parameters, increase alambda and return */
+		*alambda *= 10.0;
+		return 0;
+	}
+
+	if (GCI_marquardt_compute_fn(x, y, ndata, noise, sig,
+								 paramtry, paramfree, nparam, fitfunc,
+								 yfit, dy, covar, dparam,
+								 chisq, ochisq, *alambda) != 0)
+		return -2;
+
+	/* Success, accept the new solution */
+	if (*chisq < ochisq) {
+		*alambda *= 0.1;
+		ochisq = *chisq;
+		for (j=0; j<mfit; j++) {
+			for (k=0; k<mfit; k++)
+				alpha[j][k] = covar[j][k];
+			beta[j] = dparam[j];
+		}
+		for (l=0; l<nparam; l++)
+			param[l] = paramtry[l];
+	} else { /* Failure, increase alambda and return */
+		*alambda *= 10.0;
+		*chisq = ochisq;
+	}
+
+	return 0;
+}
 
 
 int GCI_marquardt_step_instr(float xincr, float y[],
@@ -622,7 +815,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 					void (*fitfunc)(float, float [], float *, float [], int),
 					float yfit[], float dy[],
 					float **covar, float **alpha, float *chisq,
-					float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam, 	
+					float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam,
 					float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 					int *pfnvals_len, int *pdy_dparam_nparam_size)
 {
@@ -630,18 +823,12 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 //	static int mfit;   // was static but now thread safe
 //	static float ochisq, paramtry[MAXFIT], beta[MAXFIT], dparam[MAXFIT];   // was static but now thread safe
 
-	/*if (nparam > MAXFIT) {
-            printf("GCI_marq_step_instr returns -10\n");
+	if (nparam > MAXFIT)
 		return -10;
-        }
-	if (xincr <= 0) {
-            printf("GCI_marq_step_instr returns -11\n");
+	if (xincr <= 0)
 		return -11;
-        }
-	if (fit_start < 0 || fit_start > fit_end || fit_end > ndata) {
-            printf("GCI_marq_step_instr returns -12\n");
+	if (fit_start < 0 || fit_start > fit_end || fit_end > ndata)
 		return -12;
-        }*/
 
 	/* Initialisation */
 	/* We assume we're given sensible starting values for param[] */
@@ -655,11 +842,10 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 										   instr, ninstr, noise, sig,
 										   param, paramfree, nparam, fitfunc,
 										   yfit, dy, alpha, beta, chisq, 0.0,
-										   *alambda,	
+										   *alambda,
 											pfnvals, pdy_dparam_pure, pdy_dparam_conv,
-											pfnvals_len, pdy_dparam_nparam_size) != 0) {
+											pfnvals_len, pdy_dparam_nparam_size) != 0)
 			return -2;
-                }
 
 		*alambda = 0.001;
 		*pochisq = *chisq;
@@ -677,25 +863,21 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		dparam[j] = beta[j];
 	}
 
-	/* Matrix solution; GCI_solve solves Ax=b rather than AX=B */
-	if (GCI_solve(covar, *pmfit, dparam) != 0) {
+	/* Matrix solution; GCI_gauss_jordan solves Ax=b rather than AX=B */
+	if (GCI_solve(covar, *pmfit, dparam) != 0)
 		return -1;
-        }
 
-        //TODO need to make sure covar gets inverted.  Previously the Gauss
-        // Jordan solution would invert covar as a side effect.
-
+//TODO ARG covar needs to get inverted; previously inverted as a side effect
 	/* Once converged, evaluate covariance matrix */
 	if (*alambda == 0) {
 		if (GCI_marquardt_compute_fn_final_instr(
 									xincr, y, ndata, fit_start, fit_end,
 									instr, ninstr, noise, sig,
 									param, paramfree, nparam, fitfunc,
-									yfit, dy, chisq,	
+									yfit, dy, chisq,
 									pfnvals, pdy_dparam_pure, pdy_dparam_conv,
-									pfnvals_len, pdy_dparam_nparam_size) != 0) {
+									pfnvals_len, pdy_dparam_nparam_size) != 0)
 			return -3;
-                }
 		if (*pmfit < nparam) {  /* no need to do this otherwise */
 			GCI_covar_sort(covar, nparam, paramfree, *pmfit);
 			GCI_covar_sort(alpha, nparam, paramfree, *pmfit);
@@ -703,20 +885,11 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		return 0;
 	}
 
-	/* Did the trial succeed? *
-        int allzeroes = 1;
+//TODO ARG c/b special case if dparam all zeroes; don't have to recalc alpha & beta
+	/* Did the trial succeed? */
 	for (j=0, l=0; l<nparam; l++)
-		if (paramfree[l]) {
-//TODO I don't think it ever recovers if all dparams are zero; alambda grows and grows, goes from int to inf!!
-// could be an early way to detect we're done.
-// at least, if delta params is all zeroes, there is no point in calculating a new alpha and beta.
-//                    printf("paramtry[%d] was %f becomes %f, param[%d] or %f plus dparam[%d] or %f\n", l, paramtry[l], param[l] + dparam[j], l, param[l], j, dparam[j]);
-                    if (dparam[j] != 0.0) allzeroes = 0;
+		if (paramfree[l])
 			paramtry[l] = param[l] + dparam[j++];
-}
-     //TODO experimental:
-     //  gave about a 10% speedup
-        if (allzeroes) return -12345; */
 
 	if (restrain == ECF_RESTRAIN_DEFAULT)
 		ret = check_ecf_params (paramtry, nparam, fitfunc);
@@ -728,19 +901,18 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		*alambda *= 10.0;
 		return 0;
 	}
+
 	if (GCI_marquardt_compute_fn_instr(xincr, y, ndata, fit_start, fit_end,
 									   instr, ninstr, noise, sig,
 									   paramtry, paramfree, nparam, fitfunc,
 									   yfit, dy, covar, dparam,
 									   chisq, *pochisq, *alambda,
 									   pfnvals, pdy_dparam_pure, pdy_dparam_conv,
-									   pfnvals_len, pdy_dparam_nparam_size) != 0) {
+									   pfnvals_len, pdy_dparam_nparam_size) != 0)
 		return -2;
-        }
 
 	/* Success, accept the new solution */
 	if (*chisq < *pochisq) {
-//            printf("success, alambda goes from %f to %f\n", *alambda, (*alambda)*0.1);
 		*alambda *= 0.1;
 		*pochisq = *chisq;
 		for (j=0; j<(*pmfit); j++) {
@@ -751,8 +923,6 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		for (l=0; l<nparam; l++)
 			param[l] = paramtry[l];
 	} else { /* Failure, increase alambda and return */
-//TODO if alambda goes to inf, can we recover?
-//            printf("failure, alambda goes from %f to %f\n", *alambda, (*alambda)*10.0);
 		*alambda *= 10.0;
 		*chisq = *pochisq;
 	}
@@ -788,8 +958,384 @@ int GCI_marquardt_step_instr(float xincr, float y[],
    so we do not need to alter the response function in any way to
    determined the fitted convolved response.
 
-   This is the variant which handles an instrument response. */
+   Again there are two variants of this function, corresponding to the
+   two variants of the Marquardt function.
+*/
 
+//TODO ARG deleted in my version; needs to get de-NRed!!!!
+int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
+					 noise_type noise, float sig[],
+					 float param[], int paramfree[], int nparam,
+					 void (*fitfunc)(float, float [], float *, float [], int),
+					 float yfit[], float dy[],
+					 float **alpha, float beta[], float *chisq, float old_chisq,
+					 float alambda)
+{
+	int i, j, k, l, m, mfit;
+	float wt, sig2i, y_ymod, dy_dparam[MAXFIT];
+
+	for (j=0, mfit=0; j<nparam; j++)
+		if (paramfree[j])
+			mfit++;
+
+        //TODO ARG having this section { } of code here is just temporary;
+        // o'wise have to define these vars at top of function
+	{
+        float alpha_weight[MAXBINS];
+        float beta_weight[MAXBINS];
+        int q;
+        float weight;
+
+        int i_free;
+        int j_free;
+        float dot_product;
+        float beta_sum;
+        float dy_dparam_k_i;
+
+        *chisq = 0.0f;
+
+        switch (noise) {
+            case NOISE_CONST:
+            {
+                for (q = 0; q < ndata; ++q) {
+                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam, nparam);
+                    yfit[q] += param[0];
+                    dy[q] = y[q] - yfit[q];
+                    weight = 1.0f; //TODO ARG this should be 1.0f / sig[0] !
+                    alpha_weight[q] = weight; // 1
+                    weight *= dy[q];
+                    beta_weight[q] = weight; // dy[q]
+                    weight *= dy[q];
+                    *chisq += weight; // dy[q] * dy[q]
+                }
+                break;
+            }
+            case NOISE_GIVEN:
+            {
+                for (q = 0; q < ndata; ++q) {
+                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam, nparam);
+                    yfit[q] += param[0];
+                    dy[q] = y[q] - yfit[q];
+                    weight = 1.0f / (sig[q] * sig[q]);
+                    alpha_weight[q] = weight; // 1 / (sig[q] * sig[q])
+                    weight *= dy[q];
+                    beta_weight[q] = weight; // dy[q] / (sig[q] * sig[q])
+                    weight *= dy[q];
+                    *chisq += weight; // (dy[q] * dy[q]) / (sig[q] * sig[q])
+                }
+                break;
+            }
+            case NOISE_POISSON_DATA:
+            {
+                for (q = 0; q < ndata; ++q) {
+                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam, nparam);
+                    yfit[q] += param[0];
+                    dy[q] = y[q] - yfit[q];
+                    weight = (y[q] > 15 ? 1.0f / y[q] : 1.0f / 15);
+                    alpha_weight[q] = weight; // 1 / sig(q)
+                    weight *= dy[q];
+                    beta_weight[q] = weight; // dy[q] / sig(q)
+                    weight *= dy[q];
+                    *chisq += weight; // (dy[q] * dy[q]) / sig(q)
+                }
+                break;
+            }
+            case NOISE_POISSON_FIT:
+            {
+                for (q = 0; q < ndata; ++q) {
+                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam, nparam);
+                    yfit[q] += param[0];
+                    dy[q] = y[q] - yfit[q];
+                    weight = (yfit[q] > 15 ? 1.0f / yfit[q] : 1.0f / 15);
+                    alpha_weight[q] = weight; // 1 / sig(q)
+                    weight *= dy[q];
+                    beta_weight[q] = weight; // dy(q) / sig(q)
+                    weight *= dy[q];
+                    *chisq += weight; // (dy(q) * dy(q)) / sig(q)
+                }
+                break;
+            }
+            case NOISE_GAUSSIAN_FIT:
+            {
+                 for (q = 0; q < ndata; ++q) {
+                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam, nparam);
+                    yfit[q] += param[0];
+                    dy[q] = y[q] - yfit[q];
+                    weight = (yfit[q] > 1.0f ? 1.0f / yfit[q] : 1.0f);
+                    alpha_weight[q] = weight; // 1 / sig(q)
+                    weight *= dy[q];
+                    beta_weight[q] = weight; // dy[q] / sig(q)
+                    weight *= dy[q];
+                    *chisq += weight;
+                 }
+                 break;
+           }
+            case NOISE_MLE:
+            {
+                for (q = 0; q < ndata; ++q) {
+                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam, nparam);
+                    yfit[q] += param[0];
+                    dy[q] = y[q] - yfit[q];
+                    weight = (yfit[q] > 1 ? 1.0f / yfit[i] : 1.0f);
+                    alpha_weight[q] = weight * y[q] / yfit[q]; //TODO was y_ymod = y[i]/yfit[i], but y_ymod was float, s/b modulus?
+                    beta_weight[q] = dy[q] * weight;
+                    *chisq += (0.0f == y[q])
+                            ? 2.0 * yfit[q]
+                            : 2.0 * (yfit[q] - y[q]) - 2.0 * y[q] * log(yfit[q] / y[q]);
+                }
+	        if (*chisq <= 0.0f) {
+                    *chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
+                }
+                break;
+            }
+            default:
+            {
+                return -3;
+            }
+        }
+
+        // Check if chi square worsened:
+        if (0.0f != old_chisq && *chisq >= old_chisq) {
+            // don't bother to set up the matrices for solution
+            return 0;
+        }
+
+        i_free = 0;
+        // for all columns
+        for (i = 0; i < nparam; ++i) {
+            if (paramfree[i]) {
+                j_free = 0;
+                beta_sum = 0.0f;
+                // row loop, only need to consider lower triangle
+                for (j = 0; j <= i; ++j) {
+                    if (paramfree[j]) {
+                        dot_product = 0.0f;
+                        if (0 == j_free) {
+                            // for all data
+                            for (k = 0; k < ndata; ++k) {
+                                //TODO ARG just to get this to compile, for now:
+                  //TODO ARG from the _instr version:              dy_dparam_k_i = (*pdy_dparam_conv)[k][i];
+                  //TODO ARG from the instr version              dot_product += dy_dparam_k_i * (*pdy_dparam_conv)[k][j] * alpha_weight[k]; //TODO make it [i][k] and just *dy_dparam++ it.
+                  //TODO ARG from the instr version              beta_sum += dy_dparam_k_i * beta_weight[k];
+                            }
+                        }
+                        else {
+                            // for all data
+                            for (k = 0; k < ndata; ++k) {
+                              //TODO ARG from the instr version:  dot_product += (*pdy_dparam_conv)[k][i] * (*pdy_dparam_conv)[k][j] * alpha_weight[k];
+                            }
+                        } // k loop
+
+                        alpha[j_free][i_free] = alpha[i_free][j_free] = dot_product;
+                       // if (i_free != j_free) {
+                       //     // matrix is symmetric
+                       //     alpha[i_free][j_free] = dot_product; //TODO dotProduct s/b including fixed parameters????!!!
+                       // }
+                        ++j_free;
+                    }
+                } // j loop
+                beta[i_free] = beta_sum;
+                ++i_free;
+            }
+            //else printf("param not free %d\n", i);
+        } // i loop
+	}
+
+	return 0;
+
+
+	/* Initialise (symmetric) alpha, beta */
+        //TODO ARG FRI
+	//for (j=0; j<mfit; j++) {
+	//	for (k=0; k<=j; k++)
+	//		alpha[j][k] = 0.0;
+	//	beta[j] = 0.0;
+	//}
+
+	/* Calculation of the fitting data will depend upon the type of
+	   noise and the type of instrument response */
+
+	/* There's no convolution involved in this function.  This is then
+	   fairly straightforward, depending only upon the type of noise
+	   present.  Since we calculate the standard deviation at every
+	   point in a different way depending upon the type of noise, we
+	   will place our switch(noise) around the entire loop. */
+
+	switch (noise) {
+	case NOISE_CONST:
+		*chisq = 0.0;
+		/* Summation loop over all data */
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			dy_dparam[0] = 1;
+			dy[i] = y[i] - yfit[i];
+			for (j=0, l=0; l<nparam; l++) {
+				if (paramfree[l]) {
+					wt = dy_dparam[l];	 /* taken away the *sig2i from here */
+					for (k=0, m=0; m<=l; m++)
+						if (paramfree[m])
+							alpha[j][k++] += wt * dy_dparam[m];
+					beta[j] += dy[i] * wt;
+					j++;
+				}
+			}
+			/* And find chi^2 */
+			*chisq += dy[i] * dy[i];
+		}
+
+		/* Now divide everything by sigma^2 */
+		sig2i = 1.0 / (sig[0] * sig[0]);
+		*chisq *= sig2i;
+		for (j=0; j<mfit; j++) {
+			for (k=0; k<=j; k++)
+				alpha[j][k] *= sig2i;
+			beta[j] *= sig2i;
+		}
+		break;
+
+	case NOISE_GIVEN:  /* This is essentially the NR version */
+		*chisq = 0.0;
+		/* Summation loop over all data */
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			dy_dparam[0] = 1;
+			sig2i = 1.0 / (sig[i] * sig[i]);
+			dy[i] = y[i] - yfit[i];
+			for (j=0, l=0; l<nparam; l++) {
+				if (paramfree[l]) {
+					wt = dy_dparam[l] * sig2i;
+					for (k=0, m=0; m<=l; m++)
+						if (paramfree[m])
+							alpha[j][k++] += wt * dy_dparam[m];
+					beta[j] += wt * dy[i];
+					j++;
+				}
+			}
+			/* And find chi^2 */
+			*chisq += dy[i] * dy[i] * sig2i;
+		}
+		break;
+
+	case NOISE_POISSON_DATA:
+		*chisq = 0.0;
+		/* Summation loop over all data */
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			dy_dparam[0] = 1;
+			sig2i = (y[i] > 15 ? 1.0/y[i] : 1.0/15);
+			dy[i] = y[i] - yfit[i];
+			for (j=0, l=0; l<nparam; l++) {
+				if (paramfree[l]) {
+					wt = dy_dparam[l] * sig2i;
+					for (k=0, m=0; m<=l; m++)
+						if (paramfree[m])
+							alpha[j][k++] += wt * dy_dparam[m];
+					beta[j] += wt * dy[i];
+					j++;
+				}
+			}
+			/* And find chi^2 */
+			*chisq += dy[i] * dy[i] * sig2i;
+		}
+		break;
+
+	case NOISE_POISSON_FIT:
+		*chisq = 0.0;
+  		// Summation loop over all data
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			dy_dparam[0] = 1;
+			sig2i = (yfit[i] > 15 ? 1.0/yfit[i] : 1.0/15);
+			dy[i] = y[i] - yfit[i];
+			for (j=0, l=0; l<nparam; l++) {
+				if (paramfree[l]) {
+					wt = dy_dparam[l] * sig2i;
+					for (k=0, m=0; m<=l; m++)
+						if (paramfree[m])
+							alpha[j][k++] += wt * dy_dparam[m];
+					beta[j] += wt * dy[i];
+					j++;
+				}
+			}
+			// And find chi^2
+			*chisq += dy[i] * dy[i] * sig2i;
+		}
+		break;
+
+	case NOISE_GAUSSIAN_FIT:
+		*chisq = 0.0;
+		// Summation loop over all data
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			dy_dparam[0] = 1;
+			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+			dy[i] = y[i] - yfit[i];
+			for (j=0, l=0; l<nparam; l++) {
+				if (paramfree[l]) {
+					wt = dy_dparam[l] * sig2i;
+					for (k=0, m=0; m<=l; m++)
+						if (paramfree[m])
+							alpha[j][k++] += wt * dy_dparam[m];
+					beta[j] += wt * dy[i];
+					j++;
+				}
+			}
+			// And find chi^2
+			*chisq += dy[i] * dy[i] * sig2i;
+		}
+		break;
+
+	case NOISE_MLE:
+		*chisq = 0.0;
+		/* Summation loop over all data */
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			dy_dparam[0] = 1;
+			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+			dy[i] = y[i] - yfit[i];
+			y_ymod=y[i]/yfit[i];
+			for (j=0, l=0; l<nparam; l++) {
+				if (paramfree[l]) {
+					wt = dy_dparam[l] * sig2i;
+					for (k=0, m=0; m<=l; m++)
+						if (paramfree[m])
+							alpha[j][k++] += wt*dy_dparam[m]*y_ymod; //wt * dy_dparam[m];
+					beta[j] += wt * dy[i];
+					j++;
+				}
+			}
+			// And find chi^2
+			if (yfit[i]<=0.0)
+				; // do nothing
+			else if (y[i]==0.0)
+				*chisq += 2.0*yfit[i];   // to avoid NaN from log
+			else
+				*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
+		}
+		if (*chisq <= 0.0) *chisq = 1.0e308; // don't let chisq=0 through yfit being all -ve
+		break;
+
+	default:
+		return -3;
+		/* break; */   // (unreachable code)
+	}
+
+	/* Fill in the symmetric side */
+	for (j=1; j<mfit; j++)
+		for (k=0; k<j; k++)
+			alpha[k][j] = alpha[j][k];
+
+	return 0;
+}
+
+
+/* And this is the variant which handles an instrument response. */
 /* We assume that the function values are sensible. */
 
 int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
@@ -853,6 +1399,14 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 
 	for (j=0, mfit=0; j<nparam; j++)
 		if (paramfree[j]) mfit++;
+
+//TODO ARG first change:
+//	/* Initialise (symmetric) alpha, beta */
+//	for (j=0; j<mfit; j++) {
+//		for (k=0; k<=j; k++)
+//			alpha[j][k] = 0.0;
+//		beta[j] = 0.0;
+//	}
 
 	/* Calculation of the fitting data will depend upon the type of
 	   noise and the type of instrument response */
@@ -930,9 +1484,10 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 
 	/* OK, now we've got our (possibly convolved) data, we can do the
 	   rest almost exactly as above. */
+        //TODO ARG this new section of code is just temporary; o'wise have to define all these variables at the top of the function
 	{
-        float alpha_weight[256]; //TODO establish maximum # bins and use elsewhere (#define)
-        float beta_weight[256];
+        float alpha_weight[MAXBINS];
+        float beta_weight[MAXBINS];
         int q;
         float weight;
 
@@ -941,27 +1496,20 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
         float dot_product;
         float beta_sum;
         float dy_dparam_k_i;
-        float *alpha_weight_ptr;
-        float *beta_weight_ptr;
 
         *chisq = 0.0f;
 
 		switch (noise) {
             case NOISE_CONST:
             {
-                float *alpha_ptr = &alpha_weight[fit_start];
-                float *beta_ptr = &beta_weight[fit_start];
                 for (q = fit_start; q < fit_end; ++q) {
                     (*pdy_dparam_conv)[q][0] = 1.0f;
                     yfit[q] += param[0];
                     dy[q] = y[q] - yfit[q];
-                    weight = 1.0f;
-                    *alpha_ptr++ = weight; //
-                    //alpha_weight[q] = weight; // 1
+                    weight = 1.0f; //TODO ARG this should be 1.0f / sig[0] !
+                    alpha_weight[q] = weight; // 1
                     weight *= dy[q];
-                    //printf("beta weight %d %f is y %f - yfit %f\n", q, weight, y[q], yfit[q]);
-                    *beta_ptr++ = weight; //
-                    //beta_weight[q] = weight; // dy[q]
+                    beta_weight[q] = weight; // dy[q]
                     weight *= dy[q];
                     *chisq += weight; // dy[q] * dy[q]
                 }
@@ -1067,20 +1615,18 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
                 for (j = 0; j <= i; ++j) {
                     if (paramfree[j]) {
                         dot_product = 0.0f;
-                              alpha_weight_ptr = &alpha_weight[fit_start];
                         if (0 == j_free) {
-                            beta_weight_ptr = &beta_weight[fit_start];
                             // for all data
                             for (k = fit_start; k < fit_end; ++k) {
                                 dy_dparam_k_i = (*pdy_dparam_conv)[k][i];
-                                dot_product += dy_dparam_k_i * (*pdy_dparam_conv)[k][j] * (*alpha_weight_ptr++); //alpha_weight[k]; //TODO make it [i][k] and just *dy_dparam++ it.
-                                beta_sum += dy_dparam_k_i * (*beta_weight_ptr++); ///beta_weight[k];
+                                dot_product += dy_dparam_k_i * (*pdy_dparam_conv)[k][j] * alpha_weight[k]; //TODO make it [i][k] and just *dy_dparam++ it.
+                                beta_sum += dy_dparam_k_i * beta_weight[k];
                             }
                         }
                         else {
                             // for all data
                             for (k = fit_start; k < fit_end; ++k) {
-                                dot_product += (*pdy_dparam_conv)[k][i] * (*pdy_dparam_conv)[k][j] * (*alpha_weight_ptr++); // alpha_weight[k];
+                                dot_product += (*pdy_dparam_conv)[k][i] * (*pdy_dparam_conv)[k][j] * alpha_weight[k];
                             }
                         } // k loop
 
@@ -1097,17 +1643,8 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
             }
             //else printf("param not free %d\n", i);
         } // i loop
-
- /*       printf("i_free is %d j_free %d\n", i_free, j_free);
-        //TODO try padding with zeroes; leftovers would affect AX=B solution
-        for (i = i_free; i < nparam; ++i) {
-            for (j = 0; j < nparam; ++j) {
-                alpha[i][j] = alpha[j][i] = 0.0f;
-            }
-            beta[i] = 0.0f;
-        }*/
-
 	}
+
 	return 0;
 }
 
@@ -1119,7 +1656,130 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
    value which is not modified at small data values in the POISSON
    noise models.  They do not calculate alpha or beta. */
 
-/* This is the variant which handles an instrument response. */
+int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
+					 noise_type noise, float sig[],
+					 float param[], int paramfree[], int nparam,
+					 void (*fitfunc)(float, float [], float *, float [], int),
+					 float yfit[], float dy[], float *chisq)
+{
+	int i, j, mfit;
+	float sig2i, dy_dparam[MAXFIT];  /* dy_dparam needed for fitfunc */
+
+	for (j=0, mfit=0; j<nparam; j++)
+		if (paramfree[j])
+			mfit++;
+
+	/* Calculation of the fitting data will depend upon the type of
+	   noise and the type of instrument response */
+
+	/* There's no convolution involved in this function.  This is then
+	   fairly straightforward, depending only upon the type of noise
+	   present.  Since we calculate the standard deviation at every
+	   point in a different way depending upon the type of noise, we
+	   will place our switch(noise) around the entire loop. */
+
+	switch (noise) {
+	case NOISE_CONST:
+		*chisq = 0.0;
+		/* Summation loop over all data */
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			dy[i] = y[i] - yfit[i];
+			/* And find chi^2 */
+			*chisq += dy[i] * dy[i];
+		}
+
+		/* Now divide everything by sigma^2 */
+		sig2i = 1.0 / (sig[0] * sig[0]);
+		*chisq *= sig2i;
+		break;
+
+	case NOISE_GIVEN:  /* This is essentially the NR version */
+		*chisq = 0.0;
+		/* Summation loop over all data */
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			sig2i = 1.0 / (sig[i] * sig[i]);
+			dy[i] = y[i] - yfit[i];
+			/* And find chi^2 */
+			*chisq += dy[i] * dy[i] * sig2i;
+		}
+		break;
+
+	case NOISE_POISSON_DATA:
+		*chisq = 0.0;
+		/* Summation loop over all data */
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			/* we still don't let the variance drop below 1 */
+			sig2i = (y[i] > 1 ? 1.0/y[i] : 1.0);
+			dy[i] = y[i] - yfit[i];
+			/* And find chi^2 */
+			*chisq += dy[i] * dy[i] * sig2i;
+		}
+		break;
+
+	case NOISE_POISSON_FIT:
+		*chisq = 0.0;
+		// Summation loop over all data
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			// we still don't let the variance drop below 1
+			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+			dy[i] = y[i] - yfit[i];
+			// And find chi^2
+			*chisq += dy[i] * dy[i] * sig2i;
+		}
+		break;
+
+	case NOISE_MLE:
+			*chisq = 0.0;
+			/* Summation loop over all data */
+			for (i=0; i<ndata; i++) {
+				(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+				yfit[i] += param[0];
+//				dy[i] = y[i] - yfit[i];
+
+				/* And find chi^2 */
+//				sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+//				*chisq += dy[i] * dy[i] * sig2i;
+				if (yfit[i]<=0.0)
+					; // do nothing
+				else if (y[i]==0.0)
+					*chisq += 2.0*yfit[i];   // to avoid NaN from log
+				else
+					*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
+			}
+			if (*chisq <= 0.0) *chisq = 1.0e308; // don't let chisq=0 through yfit being all -ve
+		break;
+
+	case NOISE_GAUSSIAN_FIT:
+		*chisq = 0.0;
+		// Summation loop over all data
+		for (i=0; i<ndata; i++) {
+			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
+			yfit[i] += param[0];
+			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+			dy[i] = y[i] - yfit[i];
+			// And find chi^2
+			*chisq += dy[i] * dy[i] * sig2i;
+		}
+		break;
+
+	default:
+		return -3;
+		/* break; */   // (unreachable code)
+	}
+
+	return 0;
+}
+
+
+/* And this is the variant which handles an instrument response. */
 /* We assume that the function values are sensible.  Note also that we
    have to be careful about which points which include in the
    chi-squared calculation.  Also, we are guaranteed that the
@@ -1131,7 +1791,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 				   noise_type noise, float sig[],
 				   float param[], int paramfree[], int nparam,
 				   void (*fitfunc)(float, float [], float *, float [], int),
-				   float yfit[], float dy[], float *chisq,	
+				   float yfit[], float dy[], float *chisq,
 					float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 					int *pfnvals_len, int *pdy_dparam_nparam_size)
 {
@@ -1186,7 +1846,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 
 		for (i=0; i<ndata; i++) {
 			int convpts;
-		
+
 			/* We wish to find yfit = fnvals * instr, so explicitly:
 			     yfit[i] = sum_{j=0}^i fnvals[i-j].instr[j]
 			   But instr[k]=0 for k >= ninstr, so we only need to sum:
@@ -1221,7 +1881,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 				(*fitfunc)(xincr*i, param, &yfit[i],
 						   dy_dparam_conv[i], nparam);
 	}
-	 
+
 	/* OK, now we've got our (possibly convolved) data, we can do the
 	   rest almost exactly as above. */
 
@@ -1292,7 +1952,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 
 	case NOISE_POISSON_FIT:
 		*chisq = 0.0;
-		// Summation loop over all data 
+		// Summation loop over all data
 		for (i=0; i<fit_start; i++) {
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
@@ -1300,8 +1960,8 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 		for ( ; i<fit_end; i++) {
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
-			// And find chi^2 
-			// we still don't let the variance drop below 1 
+			// And find chi^2
+			// we still don't let the variance drop below 1
 			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
 			*chisq += dy[i] * dy[i] * sig2i;
 		}
@@ -1310,10 +1970,10 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			dy[i] = y[i] - yfit[i];
 		}
 		break;
-		
+
 	case NOISE_MLE:		  		     // for the final chisq report a normal chisq measure for MLE
 		*chisq = 0.0;
-		// Summation loop over all data 
+		// Summation loop over all data
 		for (i=0; i<fit_start; i++) {
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
@@ -1321,7 +1981,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 		for ( ; i<fit_end; i++) {
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
-			// And find chi^2 
+			// And find chi^2
 //			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
 			if (yfit[i]<=0.0)
 				; // do nothing
@@ -1339,7 +1999,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 
 	case NOISE_GAUSSIAN_FIT:
 		*chisq = 0.0;
-		// Summation loop over all data 
+		// Summation loop over all data
 		for (i=0; i<fit_start; i++) {
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
@@ -1347,7 +2007,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 		for ( ; i<fit_end; i++) {
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
-			// And find chi^2 
+			// And find chi^2
 			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
 			*chisq += dy[i] * dy[i] * sig2i;
 		}
@@ -1356,7 +2016,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			dy[i] = y[i] - yfit[i];
 		}
 		break;
-	
+
 	default:
 		return -3;
 		/* break; */   // (unreachable code)
@@ -1372,7 +2032,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 // passes all the data to the ecf routine, checks the returned chisq and re-fits if it is of benefit
 // was DoEcfFittingEngine() included in EcfSingle.c by PRB, 3.9.03
 
-int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_start, int fit_end, 
+int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_start, int fit_end,
 						float prompt[], int nprompt,
 						noise_type noise, float sig[],
 						float param[], int paramfree[],
@@ -1387,38 +2047,26 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 
 	if (ecf_exportParams) ecf_ExportParams_OpenFile ();
 
-	// All of the work is done by the ECF module 
+	// All of the work is done by the ECF module
 	ret = GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
 							  prompt, nprompt, noise, sig,
 							  param, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, covar, alpha, &local_chisq,
 							  chisq_delta, chisq_percent, erraxes);
-							  
+
 	// changed this for version 2, did a quick test with 2150ps_200ps_50cts_450cts.ics to see that the results are the same
 	// NB this is also in GCI_SPA_1D_marquardt_instr() and GCI_SPA_2D_marquardt_instr()
 	oldChisq = 3.0e38;
-	while (local_chisq>chisq_target && (local_chisq<oldChisq) && tries<(MAXREFITS*3))
+	while (local_chisq>chisq_target && (local_chisq<oldChisq) && tries<MAXREFITS)
 	{
-		oldChisq = local_chisq; 
+		oldChisq = local_chisq;
 		tries++;
 		ret += GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
 							  prompt, nprompt, noise, sig,
 							  param, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, covar, alpha, &local_chisq,
 							  chisq_delta, chisq_percent, erraxes);
-	}						  
-   /*     if (local_chisq<=chisq_target) {
-            printf("local_chisq %f target %f\n", local_chisq, chisq_target);
-        }
-        if (local_chisq>=oldChisq) {
-            printf("local_chisq %f oldChisq %f\n", local_chisq, oldChisq);
-        }
-        if (tries>=(MAXREFITS*3)) {
-            printf("tries is %d\n", tries);
-            printf("local_chisq %f oldChisq %f\n", local_chisq, oldChisq);
-        }
-
-        show_timing();*/
+	}
 
 	if (chisq!=NULL) *chisq = local_chisq;
 
@@ -1439,6 +2087,7 @@ void GCI_marquardt_cleanup(void)
 	}
 */
 }
+
 
 // Emacs settings:
 // Local variables:

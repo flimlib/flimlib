@@ -21,6 +21,10 @@
 
 int ECF_debug = 0;
 
+//TODO ARG
+//#define SPEEDUP1 1
+//#define SPEEDUP2 1
+//#define SPEEDUP3 1
 
 /********************************************************************
 
@@ -175,6 +179,29 @@ void pivot(float **a, int n, int *order, int col)
         }
     }
 
+    #ifdef SPEEDUP1
+    //TODO ARG this is actually slower!
+    // swap rows
+    float *ptr1;
+    float *ptr2;
+    if (pivotRow != col) {
+        // swap elements in a matrix
+        ptr1 = &a[col][0];
+        ptr2 = &a[pivotRow][0];
+        for (i = 0; i < n; ++i) {
+            float temp;
+            SWAP(*ptr1, *ptr2);
+            ++ptr1;
+            ++ptr2;
+        }
+
+        // swap elements in order vector
+        {
+            int temp;
+            SWAP(order[col], order[pivotRow]);
+        }
+    }
+    #else
     // swap rows
     if (pivotRow != col) {
         // swap elements in a matrix
@@ -189,6 +216,7 @@ void pivot(float **a, int n, int *order, int col)
             SWAP(order[col], order[pivotRow]);
         }
     }
+    #endif
 }
 
 /*
@@ -209,12 +237,21 @@ int lu_decomp(float **a, int n, int *order)
     int iRow;
     int kCol;
     float sum;
-    
+
     // initialize ordering vector
+    #ifdef SPEEDUP2
+    //TODO ARG this is *slightly* slower
+    int *order_ptr = order;
+    for (i = 0; i < n; ++i)
+    {
+        *order_ptr++ = i;
+    }
+    #else
     for (i = 0; i < n; ++i)
     {
         order[i] = i;
     }
+    #endif
 
     // pivot first column
     pivot(a, n, order, 0);
@@ -226,10 +263,20 @@ int lu_decomp(float **a, int n, int *order)
     }
 
     // compute first row of upper
+    #ifdef SPEEDUP3
+    //TODO ARG this is *much* slower!!!
+    //  Note compiler probably realizes a[0] is a constant anyway
+    inverse = 1.0 / a[0][0];
+    float *a_0_ptr = a[0];
+    for (i = 1; i < n; ++i) {
+        *a_0_ptr++ *= inverse;
+    }
+    #else
     inverse = 1.0 / a[0][0];
     for (i = 1; i < n; ++i) {
         a[0][i] *= inverse;
     }
+    #endif
 
     // continue computing columns of lowers then rows of uppers
     for (jCol = 1; jCol < n - 1; ++jCol) {
@@ -376,8 +423,8 @@ int GCI_invert_lu_decomp(float **a, int n)
  */
 int GCI_solve(float **a, int n, float *b)
 {
-    return GCI_solve_Gaussian(a, n, b);
-    //return GCI_solve_lu_decomp(a, n, b);
+    //return GCI_solve_Gaussian(a, n, b);
+    return GCI_solve_lu_decomp(a, n, b);
 }
 
 /* Matrix inversion.
@@ -386,8 +433,8 @@ int GCI_solve(float **a, int n, float *b)
  */
 int GCI_invert(float **a, int n)
 {
-    return GCI_invert_Gaussian(a, n);
-    //return GCI_invert_lu_decomp(a, n);
+    //return GCI_invert_Gaussian(a, n);
+    return GCI_invert_lu_decomp(a, n);
 }
 
 

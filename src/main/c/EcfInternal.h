@@ -15,6 +15,7 @@
 
 #define MAXITERS 80
 #define MAXREFITS 10
+#define MAXBINS 1024 /* Maximum number of lifetime bins; saves dynamic allocation of small arrays */
 
 /* Functions from EcfSingle.c */
 
@@ -23,7 +24,7 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 					 float param[], int paramfree[], int nparam,
 					 void (*fitfunc)(float, float [], float *, float [], int),
 					 float yfit[], float dy[],
-					 float **alpha, float beta[], float *chisq,
+					 float **alpha, float beta[], float *chisq, float old_chisq,
 					 float alambda);
 int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 				   int fit_start, int fit_end,

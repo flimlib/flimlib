@@ -4,8 +4,6 @@
 #ifndef _GCI_ECF
 #define _GCI_ECF
 
-#define ELIMINATE_NR 1 //TODO ARG 9/14/10
-
 /* #defines which are publically needed */
 
 typedef enum { NOISE_CONST, NOISE_GIVEN, NOISE_POISSON_DATA,
