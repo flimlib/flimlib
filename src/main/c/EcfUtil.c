@@ -263,16 +263,15 @@ int lu_decomp(float **a, int n, int *order)
     }
 
     // compute first row of upper
+    inverse = 1.0 / a[0][0];
     #ifdef SPEEDUP3
     //TODO ARG this is *much* slower!!!
     //  Note compiler probably realizes a[0] is a constant anyway
-    inverse = 1.0 / a[0][0];
     float *a_0_ptr = a[0];
     for (i = 1; i < n; ++i) {
         *a_0_ptr++ *= inverse;
     }
     #else
-    inverse = 1.0 / a[0][0];
     for (i = 1; i < n; ++i) {
         a[0][i] *= inverse;
     }
