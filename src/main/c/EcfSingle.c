@@ -983,181 +983,174 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 {
 	int i, j, k, l, m, mfit;
 	float wt, sig2i, y_ymod, dy_dparam[MAXBINS][MAXFIT];
+	float alpha_weight[MAXBINS];
+	float beta_weight[MAXBINS];
+	int q;
+	float weight;
+	int i_free;
+	int j_free;
+	float dot_product;
+	float beta_sum;
+	float dy_dparam_k_i;
 
 	for (j=0, mfit=0; j<nparam; j++)
 		if (paramfree[j])
 			mfit++;
 
-        //TODO ARG having this section { } of code here is just temporary;
-        // o'wise have to define these vars at top of function
-	{
-        float alpha_weight[MAXBINS];
-        float beta_weight[MAXBINS];
-        int q;
-        float weight;
+	*chisq = 0.0f;
 
-        int i_free;
-        int j_free;
-        float dot_product;
-        float beta_sum;
-        float dy_dparam_k_i;
-
-        *chisq = 0.0f;
-
-        switch (noise) {
-            case NOISE_CONST:
-            {
-		float i_sig_0_squared = 1.0 / (sig[0] * sig[0]);
-                for (q = 0; q < ndata; ++q) {
-                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
-                    yfit[q] += param[0];
-		    dy_dparam[q][0] = 1.0;
-                    dy[q] = y[q] - yfit[q];
-                    weight = i_sig_0_squared;
-                    alpha_weight[q] = weight; // 1 / (sig[0] * sig[0])
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy[q] / (sig[0] * sig[0])
-                    weight *= dy[q];
-                    *chisq += weight; // (dy[q] * dy[q]) / (sig[0] * sig[0])
-                }
-                break;
-            }
-            case NOISE_GIVEN:
-            {
-                for (q = 0; q < ndata; ++q) {
-                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
-                    yfit[q] += param[0];
-		    dy_dparam[q][0] = 1.0;
-                    dy[q] = y[q] - yfit[q];
-                    weight = 1.0f / (sig[q] * sig[q]);
-                    alpha_weight[q] = weight; // 1 / (sig[q] * sig[q])
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy[q] / (sig[q] * sig[q])
-                    weight *= dy[q];
-                    *chisq += weight; // (dy[q] * dy[q]) / (sig[q] * sig[q])
-                }
-                break;
-            }
-            case NOISE_POISSON_DATA:
-            {
-                for (q = 0; q < ndata; ++q) {
-                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
-                    yfit[q] += param[0];
-		    dy_dparam[q][0] = 1.0;
-                    dy[q] = y[q] - yfit[q];
-                    weight = (y[q] > 15 ? 1.0f / y[q] : 1.0f / 15);
-                    alpha_weight[q] = weight; // 1 / sig(q)
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy[q] / sig(q)
-                    weight *= dy[q];
-                    *chisq += weight; // (dy[q] * dy[q]) / sig(q)
-                }
-                break;
-            }
-            case NOISE_POISSON_FIT:
-            {
-                for (q = 0; q < ndata; ++q) {
-                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
-                    yfit[q] += param[0];
-		    dy_dparam[q][0] = 1.0;
-                    dy[q] = y[q] - yfit[q];
-                    weight = (yfit[q] > 15 ? 1.0f / yfit[q] : 1.0f / 15);
-                    alpha_weight[q] = weight; // 1 / sig(q)
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy(q) / sig(q)
-                    weight *= dy[q];
-                    *chisq += weight; // (dy(q) * dy(q)) / sig(q)
-                }
-                break;
-            }
-            case NOISE_GAUSSIAN_FIT:
-            {
-                 for (q = 0; q < ndata; ++q) {
-                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
-                    yfit[q] += param[0];
-		    dy_dparam[q][0] = 1.0;
-                    dy[q] = y[q] - yfit[q];
-                    weight = (yfit[q] > 1.0f ? 1.0f / yfit[q] : 1.0f);
-                    alpha_weight[q] = weight; // 1 / sig(q)
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy[q] / sig(q)
-                    weight *= dy[q];
-                    *chisq += weight; // dy[q] / sig(q)
-                 }
-                 break;
-           }
-            case NOISE_MLE:
-            {
-                for (q = 0; q < ndata; ++q) {
-                    (*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
-                    yfit[q] += param[0];
-		    dy_dparam[q][0] = 1.0;
-                    dy[q] = y[q] - yfit[q];
-                    weight = (yfit[q] > 1 ? 1.0f / yfit[q] : 1.0f);
-                    alpha_weight[q] = weight * y[q] / yfit[q];
-                    beta_weight[q] = dy[q] * weight;
-		    if (yfit[q] > 0.0) {
-                        *chisq += (0.0f == y[q])
-                                ? 2.0 * yfit[q]
-                                : 2.0 * (yfit[q] - y[q]) - 2.0 * y[q] * log(yfit[q] / y[q]);
-		    }
-                }
-		if (*chisq <= 0.0f) {
-                    *chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
-                }
-                break;
-            }
-            default:
-            {
-                return -3;
-            }
-        }
-
-        // Check if chi square worsened:
-        if (0.0f != old_chisq && *chisq >= old_chisq) {
-            // don't bother to set up the matrices for solution
-            return 0;
-        }
-
-        i_free = 0;
-        // for all columns
-        for (i = 0; i < nparam; ++i) {
-            if (paramfree[i]) {
-                j_free = 0;
-                beta_sum = 0.0f;
-                // row loop, only need to consider lower triangle
-                for (j = 0; j <= i; ++j) {
-                    if (paramfree[j]) {
-                        dot_product = 0.0f;
-                        if (0 == j_free) { // true only once for each outer loop i
-                            // for all data
-                            for (k = 0; k < ndata; ++k) {
-								dot_product += dy_dparam[k][i] * dy_dparam[k][j] * alpha_weight[k];
-								beta_sum += dy_dparam[k][i] * beta_weight[k]; // compute beta only once for each i
-                            }
-                        }
-                        else {
-                            // for all data
-                            for (k = 0; k < ndata; ++k) {
-								dot_product += dy_dparam[k][i] * dy_dparam[k][j] * alpha_weight[k];
-                            }
-                        } // k loop
-
-                        alpha[j_free][i_free] = alpha[i_free][j_free] = dot_product; //TODO ARG w/n/b [i][j] more common usage?  row/column
-                       // if (i_free != j_free) { //TODO ARG this approach seemed slower at one time; c/b worth retesting:
-                       //     / is symmetric
-                       //     alpha[i_free][j_free] = dot_product; //TODO dotProduct s/b including fixed parameters????!!!
-                       // }
-                        ++j_free;
-                    }
-                } // j loop
-                beta[i_free] = beta_sum;
-                ++i_free;
-            }
-        } // i loop
-
+	switch (noise) {
+		case NOISE_CONST:
+		{
+			float i_sig_0_squared = 1.0 / (sig[0] * sig[0]);
+			for (q = 0; q < ndata; ++q) {
+				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
+				yfit[q] += param[0];
+				dy_dparam[q][0] = 1.0;
+				dy[q] = y[q] - yfit[q];
+				weight = i_sig_0_squared;
+				alpha_weight[q] = weight; // 1 / (sig[0] * sig[0])
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy[q] / (sig[0] * sig[0])
+				weight *= dy[q];
+				*chisq += weight; // (dy[q] * dy[q]) / (sig[0] * sig[0])
+			}
+			break;
+		}
+		case NOISE_GIVEN:
+		{
+			for (q = 0; q < ndata; ++q) {
+				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
+				yfit[q] += param[0];
+				dy_dparam[q][0] = 1.0;
+				dy[q] = y[q] - yfit[q];
+				weight = 1.0f / (sig[q] * sig[q]);
+				alpha_weight[q] = weight; // 1 / (sig[q] * sig[q])
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy[q] / (sig[q] * sig[q])
+				weight *= dy[q];
+				*chisq += weight; // (dy[q] * dy[q]) / (sig[q] * sig[q])
+			}
+			break;
+		}
+		case NOISE_POISSON_DATA:
+		{
+			for (q = 0; q < ndata; ++q) {
+				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
+				yfit[q] += param[0];
+				dy_dparam[q][0] = 1.0;
+				dy[q] = y[q] - yfit[q];
+				weight = (y[q] > 15 ? 1.0f / y[q] : 1.0f / 15);
+				alpha_weight[q] = weight; // 1 / sig(q)
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy[q] / sig(q)
+				weight *= dy[q];
+				*chisq += weight; // (dy[q] * dy[q]) / sig(q)
+			}
+			break;
+		}
+		case NOISE_POISSON_FIT:
+		{
+			for (q = 0; q < ndata; ++q) {
+				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
+				yfit[q] += param[0];
+				dy_dparam[q][0] = 1.0;
+				dy[q] = y[q] - yfit[q];
+				weight = (yfit[q] > 15 ? 1.0f / yfit[q] : 1.0f / 15);
+				alpha_weight[q] = weight; // 1 / sig(q)
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy(q) / sig(q)
+				weight *= dy[q];
+				*chisq += weight; // (dy(q) * dy(q)) / sig(q)
+			}
+			break;
+		}
+		case NOISE_GAUSSIAN_FIT:
+		{
+			for (q = 0; q < ndata; ++q) {
+				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
+				yfit[q] += param[0];
+				dy_dparam[q][0] = 1.0;
+				dy[q] = y[q] - yfit[q];
+				weight = (yfit[q] > 1.0f ? 1.0f / yfit[q] : 1.0f);
+				alpha_weight[q] = weight; // 1 / sig(q)
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy[q] / sig(q)
+				weight *= dy[q];
+				*chisq += weight; // dy[q] / sig(q)
+			}
+			break;
+		}
+		case NOISE_MLE:
+		{
+			for (q = 0; q < ndata; ++q) {
+				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
+				yfit[q] += param[0];
+				dy_dparam[q][0] = 1.0;
+				dy[q] = y[q] - yfit[q];
+				weight = (yfit[q] > 1 ? 1.0f / yfit[q] : 1.0f);
+				alpha_weight[q] = weight * y[q] / yfit[q];
+				beta_weight[q] = dy[q] * weight;
+				if (yfit[q] > 0.0) {
+					*chisq += (0.0f == y[q])
+							? 2.0 * yfit[q]
+							: 2.0 * (yfit[q] - y[q]) - 2.0 * y[q] * log(yfit[q] / y[q]);
+				}
+			}
+			if (*chisq <= 0.0f) {
+				*chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
+			}
+			break;
+		}
+		default:
+		{
+			return -3;
+		}
 	}
 
+	// Check if chi square worsened:
+	if (0.0f != old_chisq && *chisq >= old_chisq) {
+		// don't bother to set up the matrices for solution
+		return 0;
+	}
+
+	i_free = 0;
+	// for all columns
+	for (i = 0; i < nparam; ++i) {
+		if (paramfree[i]) {
+			j_free = 0;
+			beta_sum = 0.0f;
+			// row loop, only need to consider lower triangle
+			for (j = 0; j <= i; ++j) {
+				if (paramfree[j]) {
+					dot_product = 0.0f;
+					if (0 == j_free) { // true only once for each outer loop i
+						// for all data
+						for (k = 0; k < ndata; ++k) {
+							dot_product += dy_dparam[k][i] * dy_dparam[k][j] * alpha_weight[k];
+							beta_sum += dy_dparam[k][i] * beta_weight[k]; // compute beta only once for each i
+						}
+					}
+					else {
+						// for all data
+						for (k = 0; k < ndata; ++k) {
+							dot_product += dy_dparam[k][i] * dy_dparam[k][j] * alpha_weight[k];
+						}
+					} // k loop
+						
+					alpha[j_free][i_free] = alpha[i_free][j_free] = dot_product; //TODO ARG w/n/b [i][j] more common usage?  row/column
+					// if (i_free != j_free) { //TODO ARG this approach seemed slower at one time; c/b worth retesting:
+					//     / is symmetric
+					//     alpha[i_free][j_free] = dot_product; //TODO dotProduct s/b including fixed parameters????!!!
+					// }
+					++j_free;
+				}
+			} // j loop
+			beta[i_free] = beta_sum;
+			++i_free;
+		}
+	} // i loop
+	
 	return 0;
 }
 
@@ -1179,7 +1172,16 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 {
 	int i, j, k, l, m, mfit, ret;
 	float wt, sig2i, y_ymod;
-
+	float alpha_weight[MAXBINS];
+	float beta_weight[MAXBINS];
+	int q;
+	float weight;
+	int i_free;
+	int j_free;
+	float dot_product;
+	float beta_sum;
+	float dy_dparam_k_i;
+	
 	/* Are we initialising? */
 	// Malloc the arrays that will get used again in this fit via the pointers passed in
 	// They will be freed by the higher fn that declared them.
@@ -1303,167 +1305,154 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 
 	/* OK, now we've got our (possibly convolved) data, we can do the
 	   rest almost exactly as above. */
-        //TODO ARG this new section of code is just temporary; o'wise have to define all these variables at the top of the function
-	{
-        float alpha_weight[MAXBINS];
-        float beta_weight[MAXBINS];
-        int q;
-        float weight;
-
-        int i_free;
-        int j_free;
-        float dot_product;
-        float beta_sum;
-        float dy_dparam_k_i;
-
-        *chisq = 0.0f;
-
+	
+	*chisq = 0.0f;
+	
 	switch (noise) {
-            case NOISE_CONST:
-            {
-                for (q = fit_start; q < fit_end; ++q) {
-                    (*pdy_dparam_conv)[q][0] = 1.0f;
-                    yfit[q] += param[0];
-                    dy[q] = y[q] - yfit[q];
-                    weight = 1.0f / sig[0];
-                    alpha_weight[q] = weight; // 1 / (sig[0] * sig[0]);
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy[q] / (sig[0] * sig[0]);
-                    weight *= dy[q];
-                    *chisq += weight; // (dy[q] * dy[q]) / (sig[0] * sig[0]);
-                }
-                break;
-            }
-            case NOISE_GIVEN:
-            {
-                for (q = fit_start; q < fit_end; ++q) {
-                    (*pdy_dparam_conv)[q][0] = 1.0f;
-                    yfit[q] += param[0];
-                    dy[q] = y[q] - yfit[q];
-                    weight = 1.0f / (sig[q] * sig[q]);
-                    alpha_weight[q] = weight; // 1 / (sig[q] * sig[q])
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy[q] / (sig[q] * sig[q])
-                    weight *= dy[q];
-                    *chisq += weight; // (dy[q] * dy[q]) / (sig[q] * sig[q])
-                }
-                break;
-            }
-            case NOISE_POISSON_DATA:
-            {
-                for (q = fit_start; q < fit_end; ++q) {
-                    (*pdy_dparam_conv)[q][0] = 1.0f;
-                    yfit[q] += param[0];
-                    dy[q] = y[q] - yfit[q];
-                    weight = (y[q] > 15 ? 1.0f / y[q] : 1.0f / 15);
-                    alpha_weight[q] = weight; // 1 / sig(q)
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy[q] / sig(q)
-                    weight *= dy[q];
-                    *chisq += weight; // (dy[q] * dy[q]) / sig(q)
-                }
-                break;
-            }
-            case NOISE_POISSON_FIT:
-            {
-                for (q = fit_start; q < fit_end; ++q) {
-                    (*pdy_dparam_conv)[q][0] = 1.0f;
-                    yfit[q] += param[0];
-                    dy[q] = y[q] - yfit[q];
-                    weight = (yfit[q] > 15 ? 1.0f / yfit[q] : 1.0f / 15);
-                    alpha_weight[q] = weight; // 1 / sig(q)
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy(q) / sig(q)
-                    weight *= dy[q];
-                    *chisq += weight; // (dy(q) * dy(q)) / sig(q)
-                }
-                break;
-            }
-            case NOISE_GAUSSIAN_FIT:
-            {
-                 for (q = fit_start; q < fit_end; ++q) {
-                    (*pdy_dparam_conv)[q][0] = 1.0f;
-                    yfit[q] += param[0];
-                    dy[q] = y[q] - yfit[q];
-                    weight = (yfit[q] > 1.0f ? 1.0f / yfit[q] : 1.0f);
-                    alpha_weight[q] = weight; // 1 / sig(q)
-                    weight *= dy[q];
-                    beta_weight[q] = weight; // dy[q] / sig(q)
-                    weight *= dy[q];
-                    *chisq += weight; // dy[q] / sig(q)
-                 }
-                 break;
-           }
-            case NOISE_MLE:
-            {
-                for (q = fit_start; q < fit_end; ++q) {
-                    (*pdy_dparam_conv)[q][0] = 1.0f;
-                    yfit[q] += param[0];
-                    dy[q] = y[q] - yfit[q];
-                    weight = (yfit[q] > 1 ? 1.0f / yfit[i] : 1.0f);
-                    alpha_weight[q] = weight * y[q] / yfit[q];
-                    beta_weight[q] = dy[q] * weight;
-		    if (yfit[q] > 0.0) {
-                        *chisq += (0.0f == y[q])
-				? 2.0 * yfit[q]
-				: 2.0 * (yfit[q] - y[q]) - 2.0 * y[q] * log(yfit[q] / y[q]);
-		    }
+		case NOISE_CONST:
+		{
+			for (q = fit_start; q < fit_end; ++q) {
+				(*pdy_dparam_conv)[q][0] = 1.0f;
+				yfit[q] += param[0];
+				dy[q] = y[q] - yfit[q];
+				weight = 1.0f / sig[0];
+				alpha_weight[q] = weight; // 1 / (sig[0] * sig[0]);
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy[q] / (sig[0] * sig[0]);
+				weight *= dy[q];
+				*chisq += weight; // (dy[q] * dy[q]) / (sig[0] * sig[0]);
+			}
+			break;
 		}
-		if (*chisq <= 0.0f) {
-                    *chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
-                }
-                break;
-            }
-            default:
-            {
-                return -3;
-            }
-        }
-
-        // Check if chi square worsened:
-        if (0.0f != old_chisq && *chisq >= old_chisq) {
-            // don't bother to set up the matrices for solution
-            return 0;
-        }
-
-        i_free = 0;
-        // for all columns
-        for (i = 0; i < nparam; ++i) {
-            if (paramfree[i]) {
-                j_free = 0;
-                beta_sum = 0.0f;
-                // row loop, only need to consider lower triangle
-                for (j = 0; j <= i; ++j) {
-                    if (paramfree[j]) {
-                        dot_product = 0.0f;
-                        if (0 == j_free) { // true only once for each outer loop i
-                            // for all data
-                            for (k = fit_start; k < fit_end; ++k) {
-                                dy_dparam_k_i = (*pdy_dparam_conv)[k][i];
-                                dot_product += dy_dparam_k_i * (*pdy_dparam_conv)[k][j] * alpha_weight[k]; //TODO ARG make it [i][k] and just *dy_dparam++ it.
-                                beta_sum += dy_dparam_k_i * beta_weight[k];
-                            }
-                        }
-                        else {
-                            // for all data
-                            for (k = fit_start; k < fit_end; ++k) {
-                                dot_product += (*pdy_dparam_conv)[k][i] * (*pdy_dparam_conv)[k][j] * alpha_weight[k];
-                            }
-                        } // k loop
-
-                        alpha[j_free][i_free] = alpha[i_free][j_free] = dot_product;
-                       // if (i_free != j_free) {
-                       //     // matrix is symmetric
-                       //     alpha[i_free][j_free] = dot_product; //TODO dotProduct s/b including fixed parameters????!!!
-                       // }
-                        ++j_free;
-                    }
-                } // j loop
-                beta[i_free] = beta_sum;
-                ++i_free;
-            }
-        } // i loop
+		case NOISE_GIVEN:
+		{
+			for (q = fit_start; q < fit_end; ++q) {
+				(*pdy_dparam_conv)[q][0] = 1.0f;
+				yfit[q] += param[0];
+				dy[q] = y[q] - yfit[q];
+				weight = 1.0f / (sig[q] * sig[q]);
+				alpha_weight[q] = weight; // 1 / (sig[q] * sig[q])
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy[q] / (sig[q] * sig[q])
+				weight *= dy[q];
+				*chisq += weight; // (dy[q] * dy[q]) / (sig[q] * sig[q])
+			}
+			break;
+		}
+		case NOISE_POISSON_DATA:
+		{
+			for (q = fit_start; q < fit_end; ++q) {
+				(*pdy_dparam_conv)[q][0] = 1.0f;
+				yfit[q] += param[0];
+				dy[q] = y[q] - yfit[q];
+				weight = (y[q] > 15 ? 1.0f / y[q] : 1.0f / 15);
+				alpha_weight[q] = weight; // 1 / sig(q)
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy[q] / sig(q)
+				weight *= dy[q];
+				*chisq += weight; // (dy[q] * dy[q]) / sig(q)
+			}
+			break;
+		}
+		case NOISE_POISSON_FIT:
+		{
+			for (q = fit_start; q < fit_end; ++q) {
+				(*pdy_dparam_conv)[q][0] = 1.0f;
+				yfit[q] += param[0];
+				dy[q] = y[q] - yfit[q];
+				weight = (yfit[q] > 15 ? 1.0f / yfit[q] : 1.0f / 15);
+				alpha_weight[q] = weight; // 1 / sig(q)
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy(q) / sig(q)
+				weight *= dy[q];
+				*chisq += weight; // (dy(q) * dy(q)) / sig(q)
+			}
+			break;
+		}
+		case NOISE_GAUSSIAN_FIT:
+		{
+			for (q = fit_start; q < fit_end; ++q) {
+				(*pdy_dparam_conv)[q][0] = 1.0f;
+				yfit[q] += param[0];
+				dy[q] = y[q] - yfit[q];
+				weight = (yfit[q] > 1.0f ? 1.0f / yfit[q] : 1.0f);
+				alpha_weight[q] = weight; // 1 / sig(q)
+				weight *= dy[q];
+				beta_weight[q] = weight; // dy[q] / sig(q)
+				weight *= dy[q];
+				*chisq += weight; // dy[q] / sig(q)
+			}
+			break;
+		}
+		case NOISE_MLE:
+		{
+			for (q = fit_start; q < fit_end; ++q) {
+				(*pdy_dparam_conv)[q][0] = 1.0f;
+				yfit[q] += param[0];
+				dy[q] = y[q] - yfit[q];
+				weight = (yfit[q] > 1 ? 1.0f / yfit[i] : 1.0f);
+				alpha_weight[q] = weight * y[q] / yfit[q];
+				beta_weight[q] = dy[q] * weight;
+				if (yfit[q] > 0.0) {
+					*chisq += (0.0f == y[q])
+							? 2.0 * yfit[q]
+							: 2.0 * (yfit[q] - y[q]) - 2.0 * y[q] * log(yfit[q] / y[q]);
+				}
+			}
+			if (*chisq <= 0.0f) {
+				*chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
+			}
+			break;
+		}
+		default:
+		{
+			return -3;
+		}
 	}
+
+	// Check if chi square worsened:
+	if (0.0f != old_chisq && *chisq >= old_chisq) {
+		// don't bother to set up the matrices for solution
+		return 0;
+	}
+
+	i_free = 0;
+	// for all columns
+	for (i = 0; i < nparam; ++i) {
+		if (paramfree[i]) {
+			j_free = 0;
+			beta_sum = 0.0f;
+			// row loop, only need to consider lower triangle
+			for (j = 0; j <= i; ++j) {
+				if (paramfree[j]) {
+					dot_product = 0.0f;
+					if (0 == j_free) { // true only once for each outer loop i
+						// for all data
+						for (k = fit_start; k < fit_end; ++k) {
+							dy_dparam_k_i = (*pdy_dparam_conv)[k][i];
+							dot_product += dy_dparam_k_i * (*pdy_dparam_conv)[k][j] * alpha_weight[k]; //TODO ARG make it [i][k] and just *dy_dparam++ it.
+							beta_sum += dy_dparam_k_i * beta_weight[k];
+						}
+					}
+					else {
+						// for all data
+						for (k = fit_start; k < fit_end; ++k) {
+							dot_product += (*pdy_dparam_conv)[k][i] * (*pdy_dparam_conv)[k][j] * alpha_weight[k];
+						}
+					} // k loop
+					
+					alpha[j_free][i_free] = alpha[i_free][j_free] = dot_product;
+					// if (i_free != j_free) {
+					//     // matrix is symmetric
+					//     alpha[i_free][j_free] = dot_product; //TODO dotProduct s/b including fixed parameters????!!!
+					// }
+					++j_free;
+				}
+			} // j loop
+			beta[i_free] = beta_sum;
+			++i_free;
+		}
+	} // i loop
 
 	return 0;
 }
