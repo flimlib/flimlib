@@ -1,5 +1,5 @@
 #include "EcfWrapper.h"
-#include "ecf.h"
+#include "Ecf.h"
 #include <stdio.h>
 #include <stdlib.h>
 
