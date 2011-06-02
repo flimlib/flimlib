@@ -78,7 +78,7 @@ int GCI_marquardt_global_compute_exps_fn(
 			float param[], int paramfree[], int nparam,
 			float *exp_conv[],
 			float yfit[], float dy[],
-			float **alpha, float *beta, float *chisq);
+			float **alpha, float *beta, float *chisq, float old_chisq);
 int GCI_marquardt_global_compute_exps_fn_final(
 			float xincr, float y[],
 			int ndata, int fit_start, int fit_end,
@@ -1163,7 +1163,7 @@ int GCI_marquardt_global_exps_single_step(
 		if (GCI_marquardt_global_compute_exps_fn(
 					xincr, y, ndata, fit_start, fit_end, noise, sig,
 					ftype, param, paramfree, nparam, exp_conv,
-					yfit, dy, alpha, beta, chisq) != 0)
+					yfit, dy, alpha, beta, chisq, 0.0) != 0)
 			return -2;
 
 		*alambda = 0.001;
@@ -1218,7 +1218,7 @@ int GCI_marquardt_global_exps_single_step(
 	if (GCI_marquardt_global_compute_exps_fn(
 				xincr, y, ndata, fit_start, fit_end, noise, sig,
 				ftype, paramtry, paramfree, nparam, exp_conv,
-				yfit, dy, covar, dparam, chisq) != 0)
+				yfit, dy, covar, dparam, chisq, ochisq) != 0)
 		return -2;
 
 	/* Success, accept the new solution */
@@ -1249,453 +1249,381 @@ int GCI_marquardt_global_compute_exps_fn(
 			float param[], int paramfree[], int nparam,
 			float *exp_conv[],
 			float yfit[], float dy[],
-			float **alpha, float *beta, float *chisq)
+			float **alpha, float *beta,
+			float *chisq, float old_chisq)
 {
 	int i, j, k, l, m, mfit;
-	float wt, sig2i, y_ymod, dy_dparam[MAXFIT];
+	float wt, sig2i, y_ymod;
+	float dy_dparam[MAXBINS][MAXFIT];
+	float alpha_weight[MAXBINS];
+	float beta_weight[MAXBINS];
+	float weight;
+	int i_free;
+	int j_free;
+	float dot_product;
+	float beta_sum;
+	float dy_dparam_k_i;
 
 	for (j=0, mfit=0; j<nparam; j++)
 		if (paramfree[j])
 			mfit++;
 
-	/* Initialise (symmetric) alpha, beta */
-	for (j=0; j<mfit; j++) {
-		for (k=0; k<=j; k++)
-			alpha[j][k] = 0.0;
-		beta[j] = 0.0;
-	}
-
-	/* Calculation of the fitting data will depend upon the type of
-	   noise.  Since there's no convolution involved here, this is
-	   very easy. */
+	*chisq = 0.0;
 
 	switch (ftype) {
-	case FIT_GLOBAL_MULTIEXP:
-		switch (noise) {
-		case NOISE_CONST:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0];  /* Z */
-				dy_dparam[0] = 1.0;
+		case FIT_GLOBAL_MULTIEXP:
+			switch (noise) {
+				case NOISE_CONST:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// multi-exponential fit
+						yfit[i] = param[0];  /* Z */
+						dy_dparam[i][0] = 1.0;
 
-				for (j=1; j<nparam; j+=2) {
-					yfit[i] += param[j] * exp_conv[j+1][i];
-				        /* A_j . exp(-x/tau_j) */
-					dy_dparam[j] = exp_conv[j+1][i];
-				        /* exp(-x/tau_j) */
-					dy_dparam[j+1] = param[j] * exp_conv[j][i];
-				        /* A_j * x * exp(-x/tau_j) / tau_j^2 */
-				}
-				dy[i] = y[i] - yfit[i];
+						for (j=1; j<nparam; j+=2) {
+							yfit[i] += param[j] * exp_conv[j+1][i];
+							/* A_j . exp(-x/tau_j) */
+							dy_dparam[i][j] = exp_conv[j+1][i];
+							/* exp(-x/tau_j) */
+							dy_dparam[i][j+1] = param[j] * exp_conv[j][i];
+							/* A_j * x * exp(-x/tau_j) / tau_j^2 */
+						}
+						dy[i] = y[i] - yfit[i];
 
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l];
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
+						// constant noise
+						weight = 1.0f / sig[0];
+						alpha_weight[i] = weight; // 1 / (sig[0] * sig[0]);
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy[i] / (sig[0] * sig[0]);
+						weight *= dy[i];
+						*chisq += weight; // (dy[i] * dy[i]) / (sig[0] * sig[0]);
 					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i];
-			}
+					break;
+				case NOISE_GIVEN:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// multi-exponential fit
+						yfit[i] = param[0];  /* Z */
+						dy_dparam[i][0] = 1.0;
 
-			/* Now divide everything by sigma^2 */
-			sig2i = 1.0 / (sig[0] * sig[0]);
-			*chisq *= sig2i;
-			for (j=0; j<mfit; j++) {
-				for (k=0; k<=j; k++)
-					alpha[j][k] *= sig2i;
-				beta[j] *= sig2i;
+						for (j=1; j<nparam; j+=2) {
+							yfit[i] += param[j] * exp_conv[j+1][i];
+							/* A_j . exp(-x/tau_j) */
+							dy_dparam[i][j] = exp_conv[j+1][i];
+							/* exp(-x/tau_j) */
+							dy_dparam[i][j+1] = param[j] * exp_conv[j][i];
+							/* A_j * x * exp(-x/tau_j) / tau_j^2 */
+						}
+						dy[i] = y[i] - yfit[i];
+
+						// given noise
+						weight = 1.0f / (sig[i] * sig[i]);
+						alpha_weight[i] = weight; // 1 / (sig[i] * sig[i])
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy[i] / (sig[i] * sig[i])
+						weight *= dy[i];
+						*chisq += weight; // (dy[i] * dy[i]) / (sig[i] * sig[i])
+					}
+					break;
+				case NOISE_POISSON_DATA:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// multi-exponential fit
+						yfit[i] = param[0];  /* Z */
+						dy_dparam[i][0] = 1.0;
+
+						for (j=1; j<nparam; j+=2) {
+							yfit[i] += param[j] * exp_conv[j+1][i];
+							/* A_j . exp(-x/tau_j) */
+							dy_dparam[i][j] = exp_conv[j+1][i];
+							/* exp(-x/tau_j) */
+							dy_dparam[i][j+1] = param[j] * exp_conv[j][i];
+							/* A_j * x * exp(-x/tau_j) / tau_j^2 */
+						}
+						dy[i] = y[i] - yfit[i];
+
+						// poisson noise based on data
+						weight = (y[i] > 15 ? 1.0f / y[i] : 1.0f / 15);
+						alpha_weight[i] = weight; // 1 / sig(i)
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy[i] / sig(i)
+						weight *= dy[i];
+						*chisq += weight; // (dy[i] * dy[i]) / sig(i)
+					}
+					break;
+				case NOISE_POISSON_FIT:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// multi-exponential fit
+						yfit[i] = param[0];  /* Z */
+						dy_dparam[i][0] = 1.0;
+
+						for (j=1; j<nparam; j+=2) {
+							yfit[i] += param[j] * exp_conv[j+1][i];
+							/* A_j . exp(-x/tau_j) */
+							dy_dparam[i][j] = exp_conv[j+1][i];
+							/* exp(-x/tau_j) */
+							dy_dparam[i][j+1] = param[j] * exp_conv[j][i];
+							/* A_j * x * exp(-x/tau_j) / tau_j^2 */
+						}
+						dy[i] = y[i] - yfit[i];
+
+						// poisson noise based on fit
+						weight = (yfit[i] > 15 ? 1.0f / yfit[i] : 1.0f / 15);
+						alpha_weight[i] = weight; // 1 / sig(i)
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy(i) / sig(i)
+						weight *= dy[i];
+						*chisq += weight; // (dy(i) * dy(i)) / sig(i)
+					}
+					break;
+				case NOISE_GAUSSIAN_FIT:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// multi-exponential fit
+						yfit[i] = param[0];  /* Z */
+						dy_dparam[i][0] = 1.0;
+
+						for (j=1; j<nparam; j+=2) {
+							yfit[i] += param[j] * exp_conv[j+1][i];
+							/* A_j . exp(-x/tau_j) */
+							dy_dparam[i][j] = exp_conv[j+1][i];
+							/* exp(-x/tau_j) */
+							dy_dparam[i][j+1] = param[j] * exp_conv[j][i];
+							/* A_j * x * exp(-x/tau_j) / tau_j^2 */
+						}
+						dy[i] = y[i] - yfit[i];
+
+						// gaussian noise based on fit
+						weight = (yfit[i] > 1.0f ? 1.0f / yfit[i] : 1.0f);
+						alpha_weight[i] = weight; // 1 / sig(i)
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy[i] / sig(i)
+						weight *= dy[i];
+						*chisq += weight; // dy[i] / sig(i)
+					}
+					break;
+				case NOISE_MLE:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// multi-exponential fit
+						yfit[i] = param[0];  /* Z */
+						dy_dparam[i][0] = 1.0;
+
+						for (j=1; j<nparam; j+=2) {
+							yfit[i] += param[j] * exp_conv[j+1][i];
+							/* A_j . exp(-x/tau_j) */
+							dy_dparam[i][j] = exp_conv[j+1][i];
+							/* exp(-x/tau_j) */
+							dy_dparam[i][j+1] = param[j] * exp_conv[j][i];
+							/* A_j * x * exp(-x/tau_j) / tau_j^2 */
+						}
+						dy[i] = y[i] - yfit[i];
+
+
+						// maximum likelihood estimation noise
+						weight = (yfit[i] > 1 ? 1.0f / yfit[i] : 1.0f);
+						alpha_weight[i] = weight * y[i] / yfit[i];
+						beta_weight[i] = dy[i] * weight;
+						if (yfit[i] > 0.0) {
+							*chisq += (0.0f == y[i])
+									? 2.0 * yfit[i]
+									: 2.0 * (yfit[i] - y[i]) - 2.0 * y[i] * log(yfit[i] / y[i]);
+						}
+					}
+					if (*chisq <= 0.0f) {
+						*chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
+					}
+					break;
+				default:
+					return -3;
 			}
 			break;
+		case FIT_GLOBAL_STRETCHEDEXP:
+			switch (noise) {
+				case NOISE_CONST:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// stretched exponential fit
+						yfit[i] = param[0] + param[1] * exp_conv[1][i];
+						dy[i] = y[i] - yfit[i];
 
-		case NOISE_GIVEN:  /* This is essentially the NR version */
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0];  /* Z */
-				dy_dparam[0] = 1.0;
+						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][1] = exp_conv[1][i];
+						dy_dparam[i][2] = param[1] * exp_conv[2][i];
+						dy_dparam[i][3] = param[1] * exp_conv[3][i];
 
-				for (j=1; j<nparam; j+=2) {
-					yfit[i] += param[j] * exp_conv[j+1][i];
-				        /* A_j . exp(-x/tau_j) */
-					dy_dparam[j] = exp_conv[j+1][i];
-				        /* exp(-x/tau_j) */
-					dy_dparam[j+1] = param[j] * exp_conv[j][i];
-					    /* A_j * x * exp(-x/tau_j) / tau_j^2 */
-				}
-				sig2i = 1.0 / (sig[i] * sig[i]);
-				dy[i] = y[i] - yfit[i];
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
+						// constant noise
+						weight = 1.0f / sig[0];
+						alpha_weight[i] = weight; // 1 / (sig[0] * sig[0]);
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy[i] / (sig[0] * sig[0]);
+						weight *= dy[i];
+						*chisq += weight; // (dy[i] * dy[i]) / (sig[0] * sig[0]);
 					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i] * sig2i;
+					break;
+				case NOISE_GIVEN:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// stretched exponential fit
+						yfit[i] = param[0] + param[1] * exp_conv[1][i];
+						dy[i] = y[i] - yfit[i];
+
+						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][1] = exp_conv[1][i];
+						dy_dparam[i][2] = param[1] * exp_conv[2][i];
+						dy_dparam[i][3] = param[1] * exp_conv[3][i];
+
+						// given noise
+						weight = 1.0f / (sig[i] * sig[i]);
+						alpha_weight[i] = weight; // 1 / (sig[i] * sig[i])
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy[i] / (sig[i] * sig[i])
+						weight *= dy[i];
+						*chisq += weight; // (dy[i] * dy[i]) / (sig[i] * sig[i])
+					}
+					break;
+				case NOISE_POISSON_DATA:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// stretched exponential fit
+						yfit[i] = param[0] + param[1] * exp_conv[1][i];
+						dy[i] = y[i] - yfit[i];
+
+						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][1] = exp_conv[1][i];
+						dy_dparam[i][2] = param[1] * exp_conv[2][i];
+						dy_dparam[i][3] = param[1] * exp_conv[3][i];
+
+						// poisson noise based on data
+						weight = (y[i] > 15 ? 1.0f / y[i] : 1.0f / 15);
+						alpha_weight[i] = weight; // 1 / sig(i)
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy[i] / sig(i)
+						weight *= dy[i];
+						*chisq += weight; // (dy[i] * dy[i]) / sig(i)
+					}
+					break;
+				case NOISE_POISSON_FIT:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// stretched exponential fit
+						yfit[i] = param[0] + param[1] * exp_conv[1][i];
+						dy[i] = y[i] - yfit[i];
+
+						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][1] = exp_conv[1][i];
+						dy_dparam[i][2] = param[1] * exp_conv[2][i];
+						dy_dparam[i][3] = param[1] * exp_conv[3][i];
+
+						// poisson noise based on fit
+						weight = (yfit[i] > 15 ? 1.0f / yfit[i] : 1.0f / 15);
+						alpha_weight[i] = weight; // 1 / sig(i)
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy(i) / sig(i)
+						weight *= dy[i];
+						*chisq += weight; // (dy(i) * dy(i)) / sig(i)
+					}
+					break;
+				case NOISE_GAUSSIAN_FIT:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// stretched exponential fit
+						yfit[i] = param[0] + param[1] * exp_conv[1][i];
+						dy[i] = y[i] - yfit[i];
+
+						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][1] = exp_conv[1][i];
+						dy_dparam[i][2] = param[1] * exp_conv[2][i];
+						dy_dparam[i][3] = param[1] * exp_conv[3][i];
+
+						// gaussian noise based on fit
+						weight = (yfit[i] > 1.0f ? 1.0f / yfit[i] : 1.0f);
+						alpha_weight[i] = weight; // 1 / sig(i)
+						weight *= dy[i];
+						beta_weight[i] = weight; // dy[i] / sig(i)
+						weight *= dy[i];
+						*chisq += weight; // dy[i] / sig(i)
+					}
+					break;
+				case NOISE_MLE:
+					// loop over all data
+					for (i = fit_start; i < fit_end; ++i) {
+						// stretched exponential fit
+						yfit[i] = param[0] + param[1] * exp_conv[1][i];
+						dy[i] = y[i] - yfit[i];
+
+						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][1] = exp_conv[1][i];
+						dy_dparam[i][2] = param[1] * exp_conv[2][i];
+						dy_dparam[i][3] = param[1] * exp_conv[3][i];
+
+						// maximum likelihood estimation noise
+						weight = (yfit[i] > 1 ? 1.0f / yfit[i] : 1.0f);
+						alpha_weight[i] = weight * y[i] / yfit[i];
+						beta_weight[i] = dy[i] * weight;
+						if (yfit[i] > 0.0) {
+							*chisq += (0.0f == y[i])
+									? 2.0 * yfit[i]
+									: 2.0 * (yfit[i] - y[i]) - 2.0 * y[i] * log(yfit[i] / y[i]);
+						}
+					}
+					if (*chisq <= 0.0f) {
+						*chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
+					}
+					break;
+				default:
+					return -3;
 			}
 			break;
-
-		case NOISE_POISSON_DATA:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0];  /* Z */
-				dy_dparam[0] = 1.0;
-
-				for (j=1; j<nparam; j+=2) {
-					yfit[i] += param[j] * exp_conv[j+1][i];
-					    /* A_j . exp(-x/tau_j) */
-					dy_dparam[j] = exp_conv[j+1][i];
-					    /* exp(-x/tau_j) */
-					dy_dparam[j+1] = param[j] * exp_conv[j][i];
-					    /* A_j * x * exp(-x/tau_j) / tau_j^2 */
-				}
-				sig2i = (y[i] > 15 ? 1.0/y[i] : 1.0/15);
-				dy[i] = y[i] - yfit[i];
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i] * sig2i;
-			}
-			break;
-
-		case NOISE_POISSON_FIT:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0];  /* Z */
-				dy_dparam[0] = 1.0;
-
-				for (j=1; j<nparam; j+=2) {
-					yfit[i] += param[j] * exp_conv[j+1][i];
-					    /* A_j . exp(-x/tau_j) */
-					dy_dparam[j] = exp_conv[j+1][i];
-					    /* exp(-x/tau_j) */
-					dy_dparam[j+1] = param[j] * exp_conv[j][i];
-					    /* A_j * x * exp(-x/tau_j) / tau_j^2 */
-				}
-				sig2i = (yfit[i] > 15 ? 1.0/yfit[i] : 1.0/15);
-				dy[i] = y[i] - yfit[i];
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i] * sig2i;
-			}
-			break;
-
-		case NOISE_GAUSSIAN_FIT:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0];  /* Z */
-				dy_dparam[0] = 1.0;
-
-				for (j=1; j<nparam; j+=2) {
-					yfit[i] += param[j] * exp_conv[j+1][i];
-					    /* A_j . exp(-x/tau_j) */
-					dy_dparam[j] = exp_conv[j+1][i];
-					    /* exp(-x/tau_j) */
-					dy_dparam[j+1] = param[j] * exp_conv[j][i];
-					    /* A_j * x * exp(-x/tau_j) / tau_j^2 */
-				}
-				sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
-				dy[i] = y[i] - yfit[i];
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i] * sig2i;
-			}
-			break;
-
-		case NOISE_MLE:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0];  /* Z */
-				dy_dparam[0] = 1.0;
-
-				for (j=1; j<nparam; j+=2) {
-					yfit[i] += param[j] * exp_conv[j+1][i];
-					    /* A_j . exp(-x/tau_j) */
-					dy_dparam[j] = exp_conv[j+1][i];
-					    /* exp(-x/tau_j) */
-					dy_dparam[j+1] = param[j] * exp_conv[j][i];
-					    /* A_j * x * exp(-x/tau_j) / tau_j^2 */
-				}
-				sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
-				dy[i] = y[i] - yfit[i];
-				y_ymod=y[i]/yfit[i];
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt*dy_dparam[m]*y_ymod; // wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				// And find chi^2
-				if (yfit[i]<=0.0)
-					; // do nothing
-				else if (y[i]==0.0)
-					*chisq += 2.0*yfit[i];   // to avoid NaN from log
-				else
-					*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
-			}
-			if (*chisq <= 0.0) *chisq = 1.0e308; // don't let chisq=0 through yfit being all -ve
-			break;
-
 		default:
-			return -3;
-			/* break; */   // (unreachable code)
-		}
-		break;
-
-	case FIT_GLOBAL_STRETCHEDEXP:
-		switch (noise) {
-		case NOISE_CONST:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0] + param[1] * exp_conv[1][i];
-				dy[i] = y[i] - yfit[i];
-
-				dy_dparam[0] = 1.0;
-				dy_dparam[1] = exp_conv[1][i];
-				dy_dparam[2] = param[1] * exp_conv[2][i];
-				dy_dparam[3] = param[1] * exp_conv[3][i];
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l];
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i];
-			}
-
-			/* Now divide everything by sigma^2 */
-			sig2i = 1.0 / (sig[0] * sig[0]);
-			*chisq *= sig2i;
-			for (j=0; j<mfit; j++) {
-				for (k=0; k<=j; k++)
-					alpha[j][k] *= sig2i;
-				beta[j] *= sig2i;
-			}
-			break;
-
-		case NOISE_GIVEN:  /* This is essentially the NR version */
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0] + param[1] * exp_conv[1][i];
-				dy[i] = y[i] - yfit[i];
-
-				dy_dparam[0] = 1.0;
-				dy_dparam[1] = exp_conv[1][i];
-				dy_dparam[2] = param[1] * exp_conv[2][i];
-				dy_dparam[3] = param[1] * exp_conv[3][i];
-
-				sig2i = 1.0 / (sig[i] * sig[i]);
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i] * sig2i;
-			}
-			break;
-
-		case NOISE_POISSON_DATA:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0] + param[1] * exp_conv[1][i];
-				dy[i] = y[i] - yfit[i];
-
-				dy_dparam[0] = 1.0;
-				dy_dparam[1] = exp_conv[1][i];
-				dy_dparam[2] = param[1] * exp_conv[2][i];
-				dy_dparam[3] = param[1] * exp_conv[3][i];
-
-				sig2i = (y[i] > 15 ? 1.0/y[i] : 1.0/15);
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i] * sig2i;
-			}
-			break;
-
-		case NOISE_POISSON_FIT:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0] + param[1] * exp_conv[1][i];
-				dy[i] = y[i] - yfit[i];
-
-				dy_dparam[0] = 1.0;
-				dy_dparam[1] = exp_conv[1][i];
-				dy_dparam[2] = param[1] * exp_conv[2][i];
-				dy_dparam[3] = param[1] * exp_conv[3][i];
-
-				sig2i = (yfit[i] > 15 ? 1.0/yfit[i] : 1.0/15);
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i] * sig2i;
-			}
-			break;
-
-		case NOISE_GAUSSIAN_FIT:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0] + param[1] * exp_conv[1][i];
-				dy[i] = y[i] - yfit[i];
-
-				dy_dparam[0] = 1.0;
-				dy_dparam[1] = exp_conv[1][i];
-				dy_dparam[2] = param[1] * exp_conv[2][i];
-				dy_dparam[3] = param[1] * exp_conv[3][i];
-
-				sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				/* And find chi^2 */
-				*chisq += dy[i] * dy[i] * sig2i;
-			}
-			break;
-
-		case NOISE_MLE:
-			*chisq = 0.0;
-			/* Summation loop over all data */
-			for (i=fit_start; i<fit_end; i++) {
-				yfit[i] = param[0] + param[1] * exp_conv[1][i];
-				dy[i] = y[i] - yfit[i];
-
-				dy_dparam[0] = 1.0;
-				dy_dparam[1] = exp_conv[1][i];
-				dy_dparam[2] = param[1] * exp_conv[2][i];
-				dy_dparam[3] = param[1] * exp_conv[3][i];
-
-				sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
-				y_ymod=y[i]/yfit[i];
-
-				for (j=0, l=0; l<nparam; l++) {
-					if (paramfree[l]) {
-						wt = dy_dparam[l] * sig2i;
-						for (k=0, m=0; m<=l; m++)
-							if (paramfree[m])
-								alpha[j][k++] += wt*dy_dparam[m]*y_ymod; //wt * dy_dparam[m];
-						beta[j] += wt * dy[i];
-						j++;
-					}
-				}
-				// And find chi^2
-				if (yfit[i]<=0.0)
-					; // do nothing
-				else if (y[i]==0.0)
-					*chisq += 2.0*yfit[i];   // to avoid NaN from log
-				else
-					*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
-			}
-			if (*chisq <= 0.0) *chisq = 1.0e308; // don't let chisq=0 through yfit being all -ve
-			break;
-
-		default:
-			return -3;
-			/* break; */   // (unreachable code)
-		}
-		break;
-
-	default:
-		dbgprintf(1, "compute_exps_fn: please update me!\n");
-		return -1;
+			dbgprintf(1, "compute_exps_fn: please update me!\n");
+			return -1;
 	}
 
-	/* Fill in the symmetric side */
-	for (j=1; j<mfit; j++)
-		for (k=0; k<j; k++)
-			alpha[k][j] = alpha[j][k];
+	// Check if chi square worsened:
+	if (0.0f != old_chisq && *chisq >= old_chisq) {
+		// don't bother to set up the matrices for solution
+		return 0;
+	}
+
+	i_free = 0;
+	// for all columns
+	for (i = 0; i < nparam; ++i) {
+		if (paramfree[i]) {
+			j_free = 0;
+			beta_sum = 0.0f;
+			// row loop, only need to consider lower triangle
+			for (j = 0; j <= i; ++j) {
+				if (paramfree[j]) {
+					dot_product = 0.0f;
+					if (0 == j_free) { // true only once for each outer loop i
+						// for all data
+						for (k = fit_start; k < fit_end; ++k) {
+							dy_dparam_k_i = dy_dparam[k][i];
+							dot_product += dy_dparam_k_i * dy_dparam[k][j] * alpha_weight[k]; //TODO ARG make it [i][k] and just *dy_dparam++ it.
+							beta_sum += dy_dparam_k_i * beta_weight[k];
+						}
+					}
+					else {
+						// for all data
+						for (k = fit_start; k < fit_end; ++k) {
+							dot_product += dy_dparam[k][i] * dy_dparam[k][j] * alpha_weight[k];
+						}
+					} // k loop
+
+					alpha[j_free][i_free] = alpha[i_free][j_free] = dot_product;
+					// if (i_free != j_free) {
+					//     // matrix is symmetric
+					//     alpha[i_free][j_free] = dot_product; //TODO dotProduct s/b including fixed parameters????!!!
+					// }
+					++j_free;
+				}
+			} // j loop
+			beta[i_free] = beta_sum;
+			++i_free;
+		}
+	} // i loop
 
 	return 0;
 }
@@ -2462,7 +2390,7 @@ int GCI_marquardt_global_compute_global_exps_fn(
 					ftype, param[i], paramfree, nparam,
 ////					exp_conv, yfit[i], dy[i],
 					exp_conv, yfit[0], dy[0],
-					alpha_scratch, beta_scratch, &chisq_trans[i]);
+					alpha_scratch, beta_scratch, &chisq_trans[i], 0.0);
 
 		if (ret != 0) {
 			if (drop_bad_transients) {
