@@ -1,6 +1,6 @@
 //#include <ansi_c.h>
 /* The 2010 version of the ECF library.  This has basically been
-   completely rewritten to avoid license issues.  
+   completely rewritten to avoid license issues.
    Also, this takes account of the fact that we may be
    handling Poisson noise.
 
@@ -43,9 +43,8 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
 {
     float max;
     float temp;
-    float pivotInverse[n];
+    float *pivotInverse = (float *)malloc(n * sizeof(float));
     int i, j, k, m;
-
     /*int q, w;
     printf("----------\n");
     for (q = 0; q < n; ++q) {
@@ -82,6 +81,7 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
 
         if (0.0 == a[k][k])
         {
+			free(pivotInverse);
             return -2; // singular matrix
         }
 
@@ -118,6 +118,7 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
         printf("  %f\n", b[q]);
     }*/
 
+	free(pivotInverse);
     return 0;
 }
 
@@ -129,7 +130,7 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
 int GCI_invert_Gaussian(float **a, int n)
 {
     int returnValue = 0;
-    float identity[n][n];
+    float **identity = GCI_ecf_matrix(n, n);
     float **work = GCI_ecf_matrix(n, n);
     int i, j, k;
 
@@ -148,7 +149,6 @@ int GCI_invert_Gaussian(float **a, int n)
             return returnValue;
         }
     }
-    GCI_ecf_free_matrix(work);
 
     // copy over results
     for (j = 0; j < n; ++j) {
@@ -156,6 +156,9 @@ int GCI_invert_Gaussian(float **a, int n)
             a[j][i] = identity[j][i];
         }
     }
+
+    GCI_ecf_free_matrix(identity);
+    GCI_ecf_free_matrix(work);
     return returnValue;
 }
 
@@ -222,7 +225,7 @@ void pivot(float **a, int n, int *order, int col)
 /*
   Performs an in-place Crout lower/upper decomposition of n x n matrix A.
   Values on or below diagonals are lowers, values about the
-  diagonal are uppers, with an implicit 1.0 value for the 
+  diagonal are uppers, with an implicit 1.0 value for the
   diagonals.
   Returns 0 upon success, -2 if matrix is singular.
 
@@ -331,7 +334,7 @@ int solve_lu(float **lu, int n, float *b, int *order)
     int jCol;
     int nvbl;
     float sum;
-    
+
     // rearrange the elements of the b vector in place.
     startIndex = order[0];
     index = startIndex;
@@ -350,7 +353,6 @@ int solve_lu(float **lu, int n, float *b, int *order)
     b[0] /= lu[0][0];
     for (iRow = 1; iRow < n; ++iRow) {
         sum = 0.0;
-        int jCol;
         for (jCol = 0; jCol < iRow; ++jCol) {
             sum += lu[iRow][jCol] * b[jCol];
         }
@@ -377,11 +379,12 @@ int solve_lu(float **lu, int n, float *b, int *order)
  */
 int GCI_solve_lu_decomp(float **a, int n, float *b)
 {
-    int order[n];
+    int *order = (int *) malloc(n * sizeof(int));
     int return_value = lu_decomp(a, n, order);
     if (return_value >= 0) {
         return_value = solve_lu(a, n, b, order);
     }
+    free(order);
     return return_value;
 }
 
@@ -392,8 +395,8 @@ int GCI_solve_lu_decomp(float **a, int n, float *b)
 int GCI_invert_lu_decomp(float **a, int n)
 {
     int returnValue;
-    int order[n];
-    float identity[n][n];
+    int *order = (int *) malloc(n * sizeof(int));
+    float **identity = GCI_ecf_matrix(n, n);
     int i, j;
 
     returnValue = lu_decomp(a, n, order);
@@ -412,6 +415,9 @@ int GCI_invert_lu_decomp(float **a, int n)
             }
         }
     }
+
+	free(order);
+    GCI_ecf_free_matrix(identity);
     return returnValue;
 }
 
@@ -447,9 +453,9 @@ void GCI_covar_sort(float **covar, int nparam, int paramfree[], int mfit)
 			covar[i][j] = covar[j][i] = 0.0;
 
 	k = mfit-1;
-	for (j=nparam-1; j>=0; j--) 
+	for (j=nparam-1; j>=0; j--)
 	{
-		if (paramfree[j]) 
+		if (paramfree[j])
 		{
 			for (i=0; i<nparam; i++) SWAP(covar[i][k], covar[i][j]);
 			for (i=0; i<nparam; i++) SWAP(covar[k][i], covar[j][i]);
@@ -780,7 +786,7 @@ int stretchedexp_array(float xincr, float param[],
 	xaincr = xincr / param[2];
 	a2inv = 1/param[2];
 	a3inv = 1/param[3];
-	
+
 	/* When x=0 */
 	y[0] = param[1];
 	dy_dparam[0][1] = 1;
@@ -1087,7 +1093,7 @@ static FILE *ecf_exportFileStream;
 
 void ecf_ExportParams_OpenFile (void)
 {
-	ecf_exportFileStream = fopen(ecf_exportParams_path, "a"); 
+	ecf_exportFileStream = fopen(ecf_exportParams_path, "a");
 }
 
 void ecf_ExportParams_CloseFile (void)
@@ -1099,7 +1105,7 @@ void ecf_ExportParams_CloseFile (void)
 void ecf_ExportParams (float param[], int nparam, float chisq)
 {
 	int i;
-	
+
 	for (i=0; i<nparam; i++) fprintf(ecf_exportFileStream, "%g, ", param[i]);
 	fprintf(ecf_exportFileStream, "%g\n", chisq);
 }
