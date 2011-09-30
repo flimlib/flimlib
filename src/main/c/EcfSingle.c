@@ -897,7 +897,6 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		return 0;
 	}
 
-//TODO ARG c/b special case if dparam all zeroes; don't have to recalc alpha & beta
 	/* Did the trial succeed? */
 	for (j=0, l=0; l<nparam; l++)
 		if (paramfree[l])
@@ -1390,7 +1389,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 				(*pdy_dparam_conv)[q][0] = 1.0f;
 				yfit[q] += param[0];
 				dy[q] = y[q] - yfit[q];
-				weight = (yfit[q] > 1 ? 1.0f / yfit[i] : 1.0f);
+				weight = (yfit[q] > 1 ? 1.0f / yfit[q] : 1.0f);
 				alpha_weight[q] = weight * y[q] / yfit[q];
 				beta_weight[q] = dy[q] * weight;
 				if (yfit[q] > 0.0) {
