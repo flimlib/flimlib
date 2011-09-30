@@ -428,8 +428,8 @@ int GCI_invert_lu_decomp(float **a, int n)
  */
 int GCI_solve(float **a, int n, float *b)
 {
-    //return GCI_solve_Gaussian(a, n, b);
-    return GCI_solve_lu_decomp(a, n, b);
+    return GCI_solve_Gaussian(a, n, b);
+    //return GCI_solve_lu_decomp(a, n, b);
 }
 
 /* Matrix inversion.
@@ -438,8 +438,8 @@ int GCI_solve(float **a, int n, float *b)
  */
 int GCI_invert(float **a, int n)
 {
-    //return GCI_invert_Gaussian(a, n);
-    return GCI_invert_lu_decomp(a, n);
+    return GCI_invert_Gaussian(a, n);
+    //return GCI_invert_lu_decomp(a, n);
 }
 
 
