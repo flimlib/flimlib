@@ -21,11 +21,6 @@
 
 int ECF_debug = 0;
 
-//TODO ARG
-//#define SPEEDUP1 1
-//#define SPEEDUP2 1
-//#define SPEEDUP3 1
-
 /********************************************************************
 
 			   EQUATION-SOLVING AND COVAR-SORTING ROUTINES
@@ -45,14 +40,6 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
     float temp;
     float *pivotInverse = (float *)malloc(n * sizeof(float));
     int i, j, k, m;
-    /*int q, w;
-    printf("----------\n");
-    for (q = 0; q < n; ++q) {
-        for (w = 0; w < n; ++w) {
-            printf("%f ", a[q][w]);
-        }
-        printf("  %f\n", b[q]);
-    } */
 
     // base row of matrix
     for (k = 0; k < n - 1; ++k)
@@ -81,7 +68,7 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
 
         if (0.0 == a[k][k])
         {
-			free(pivotInverse);
+            free(pivotInverse);
             return -2; // singular matrix
         }
 
@@ -110,15 +97,7 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
         b[k] *= pivotInverse[k];
     }
 
-    /*printf("====>\n");
-    for (q = 0; q < n; ++q) {
-        for (w = 0; w < n; ++w) {
-            printf("%f ", a[q][w]);
-        }
-        printf("  %f\n", b[q]);
-    }*/
-
-	free(pivotInverse);
+    free(pivotInverse);
     return 0;
 }
 
@@ -182,29 +161,6 @@ void pivot(float **a, int n, int *order, int col)
         }
     }
 
-    #ifdef SPEEDUP1
-    //TODO ARG this is actually slower!
-    // swap rows
-    float *ptr1;
-    float *ptr2;
-    if (pivotRow != col) {
-        // swap elements in a matrix
-        ptr1 = &a[col][0];
-        ptr2 = &a[pivotRow][0];
-        for (i = 0; i < n; ++i) {
-            float temp;
-            SWAP(*ptr1, *ptr2);
-            ++ptr1;
-            ++ptr2;
-        }
-
-        // swap elements in order vector
-        {
-            int temp;
-            SWAP(order[col], order[pivotRow]);
-        }
-    }
-    #else
     // swap rows
     if (pivotRow != col) {
         // swap elements in a matrix
@@ -219,7 +175,6 @@ void pivot(float **a, int n, int *order, int col)
             SWAP(order[col], order[pivotRow]);
         }
     }
-    #endif
 }
 
 /*
@@ -242,19 +197,10 @@ int lu_decomp(float **a, int n, int *order)
     float sum;
 
     // initialize ordering vector
-    #ifdef SPEEDUP2
-    //TODO ARG this is *slightly* slower
-    int *order_ptr = order;
-    for (i = 0; i < n; ++i)
-    {
-        *order_ptr++ = i;
-    }
-    #else
     for (i = 0; i < n; ++i)
     {
         order[i] = i;
     }
-    #endif
 
     // pivot first column
     pivot(a, n, order, 0);
@@ -267,18 +213,9 @@ int lu_decomp(float **a, int n, int *order)
 
     // compute first row of upper
     inverse = 1.0 / a[0][0];
-    #ifdef SPEEDUP3
-    //TODO ARG this is *much* slower!!!
-    //  Note compiler probably realizes a[0] is a constant anyway
-    float *a_0_ptr = a[0];
-    for (i = 1; i < n; ++i) {
-        *a_0_ptr++ *= inverse;
-    }
-    #else
     for (i = 1; i < n; ++i) {
         a[0][i] *= inverse;
     }
-    #endif
 
     // continue computing columns of lowers then rows of uppers
     for (jCol = 1; jCol < n - 1; ++jCol) {
@@ -416,7 +353,7 @@ int GCI_invert_lu_decomp(float **a, int n)
         }
     }
 
-	free(order);
+    free(order);
     GCI_ecf_free_matrix(identity);
     return returnValue;
 }
