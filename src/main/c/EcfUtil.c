@@ -1,7 +1,24 @@
+/* 
+This file is part of the SLIM-curve package for exponential curve fitting of spectral lifetime data.
+
+Copyright (c) 2010, 2011, Gray Institute University of Oxford & UW-Madison LOCI.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 //#include <ansi_c.h>
-/* The 2010 version of the ECF library.  This has basically been
-   completely rewritten to avoid license issues.
-   Also, this takes account of the fact that we may be
+/* The 2010 version of the ECF library.  This takes account of the fact that we may be
    handling Poisson noise.
 
    This file contains utility code for various functions needed by the
