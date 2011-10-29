@@ -34,7 +34,7 @@ Copyright (c) 2010, 2011, Gray Institute University of Oxford & UW-Madison LOCI.
 
 #define MAXITERS 80
 #define MAXREFITS 10
-#define MAXBINS 1024 /* Maximum number of lifetime bins; saves dynamic allocation of small arrays */
+#define MAXBINS 2048 /* Maximum number of lifetime bins; saves dynamic allocation of small arrays */
 
 /* Functions from EcfSingle.c */
 
