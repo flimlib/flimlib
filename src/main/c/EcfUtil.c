@@ -142,6 +142,8 @@ int GCI_invert_Gaussian(float **a, int n)
         identity[j][j] = 1.0;
         returnValue = GCI_solve_Gaussian(work, n, identity[j]);
         if (returnValue < 0) {
+			GCI_ecf_free_matrix(identity);
+			GCI_ecf_free_matrix(work);
             return returnValue;
         }
     }

@@ -19,6 +19,7 @@ Copyright (c) 2010, 2011, Gray Institute University of Oxford & UW-Madison LOCI.
 
 #include "GCI_Phasor.h"
 #include <math.h>
+#include <string.h>
 
 #ifndef NULL
 #define NULL 0
@@ -66,7 +67,7 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
         return (PHASOR_ERR_INVALID_WINDOW);
 
 	// rep frequency, lets use the period of the measurement, but we can stay in the units of bins
-	w = 2.0*3.1415926535897932384626433832795028841971/(float)nBins; //2.0*PI/(float)nBins;
+	w = (float)2.0*(float)3.1415926535897932384626433832795028841971/(float)nBins; //2.0*PI/(float)nBins;
 	
 	// integral over data
 	for (i=0, I=0.0; i<nBins; i++) 
@@ -75,18 +76,18 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 	// Phasor coords
     // Take care that values correspond to the centre of the bin, hence i+0.5
 	for (i=0, u=0.0; i<nBins; i++) 
-		u += (data[i]-bg) * cos(w*((float)i+0.5));
+		u += (data[i]-bg) * (float)cos(w*((float)i+0.5));
 	u /= I;
 
 	for (i=0, v=0.0; i<nBins; i++) 
-		v += (data[i]-bg) * sin(w*((float)i+0.5));
+		v += (data[i]-bg) * (float)sin(w*((float)i+0.5));
 	v /= I;
 
 	// taus, convert now to real time with xincr
 	*taup = (xincr/w) * (v/u);
-	*taum = (xincr/w) * sqrt(1.0/(u*u + v*v) - 1.0);
+	*taum = (xincr/w) * (float)sqrt(1.0/(u*u + v*v) - 1.0);
 
-	*tau = ((*taup) + (*taum))/2.0;
+	*tau = ((*taup) + (*taum))/(float)2.0;
 
 	*U = u;
 	*V = v;
@@ -100,14 +101,14 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 	
 	// integral over nominal fit data
 	for (Ifit=0.0, i=fit_start; i<fit_end; i++) 
-		Ifit += exp(-(i-fit_start)*xincr/(*tau));
+		Ifit += (float)exp(-(i-fit_start)*xincr/(*tau));
 
 	// Estimate A
 	A = I / Ifit;
 
 	// Calculate fit
 	for (i=fit_start; i<fit_end; i++)
-		fitted[i] = bg + A * exp(-(i-fit_start)*xincr/(*tau));
+		fitted[i] = bg + A * (float)exp(-(i-fit_start)*xincr/(*tau));
 
 	// OK, so now fitted contains our data for the timeslice of interest.
 	// We can calculate a chisq value and plot the graph, along with
@@ -131,7 +132,7 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 			if (residuals != NULL)
 				residuals[i] = res;
 			/* don't let variance drop below 1 */
-			sigma2 = (fitted[i] > 1 ? 1.0/fitted[i] : 1.0);
+			sigma2 = (fitted[i] > 1 ? (float)1.0/fitted[i] : (float)1.0);
 			chisq_local += res * res * sigma2;
 		}
 

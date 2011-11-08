@@ -299,6 +299,8 @@ int GCI_triple_integral_instr(float xincr, float y[],
 		fitted[i] += *Z;
 	}
 
+	free(fitted_preconv);
+	
 	// OK, so now fitted contains our data for the timeslice of interest.
 	// We can calculate a chisq value and plot the graph, along with
 	// the residuals.
@@ -1581,7 +1583,7 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 				else
 					*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
 			}
-			if (*chisq <= 0.0) *chisq = 1.0e308; // don't let chisq=0 through yfit being all -ve
+			if (*chisq <= 0.0) *chisq = 1.0e38; // don't let chisq=0 through yfit being all -ve
 		break;
 
 	case NOISE_GAUSSIAN_FIT:
@@ -1821,7 +1823,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
 		}
-		if (*chisq <= 0.0) *chisq = 1.0e308; // don't let chisq=0 through yfit being all -ve
+		if (*chisq <= 0.0) *chisq = 1.0e38; // don't let chisq=0 through yfit being all -ve
 		break;
 
 	case NOISE_GAUSSIAN_FIT:

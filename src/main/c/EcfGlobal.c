@@ -466,6 +466,10 @@ int GCI_marquardt_global_exps_instr(float xincr, float **trans,
 
 		default:
 			dbgprintf(1, "global_exps_instr: please update me!\n");
+			GCI_ecf_free_matrix(covar);
+			GCI_ecf_free_matrix(alpha);
+			free(scaled_instr);
+			free(exp_conv[0]);
 			return -1;
 	}
 
@@ -598,7 +602,7 @@ int GCI_marquardt_global_exps_est_globals_instr(
 
 	ret = GCI_triple_integral_fitting_engine(xincr, summed, data_start, fit_end,
 							 				instr, ninstr, noise, sig,
-							  				&Z, &A, &tau, NULL, NULL, NULL, 1.5*(fit_end-fit_start-3));
+							  				&Z, &A, &tau, NULL, NULL, NULL, (float)1.5*(fit_end-fit_start-3));
 
 	dbgprintf(3, "In est_globals_instr, triple integral ret = %d\n", ret);
 
@@ -737,7 +741,7 @@ int GCI_marquardt_global_exps_est_globals_instr(
 							  instr, ninstr, noise, sig,
 							  gparam, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, chisq_global, covar, alpha,
-							  NULL, 1.5*(fit_end-fit_start-nparamfree), chisq_delta, 0);
+							  NULL, (float)1.5*(fit_end-fit_start-nparamfree), chisq_delta, 0);
 
 	dbgprintf(3, "In est_globals_instr, marquardt ret = %d\n", ret);
 
@@ -800,7 +804,7 @@ int GCI_marquardt_global_exps_est_params_instr(
 
 		ret = GCI_triple_integral_fitting_engine(xincr, trans[i], data_start, fit_end,
 							 				instr, ninstr, noise, sig,
-							  				&Z, &A, &tau, NULL, NULL, NULL, 1.5*(fit_end-fit_start-3));
+							  				&Z, &A, &tau, NULL, NULL, NULL, (float)1.5*(fit_end-fit_start-3));
 		if (ret < 0) {
 			Z = 0;
 			ECF_Find_Float_Max(&trans[i][fit_start], fit_end - fit_start, &A);
@@ -1773,7 +1777,7 @@ int GCI_marquardt_global_compute_exps_fn_final(
 						*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
 				}
 			}
-			if (*chisq <= 0.0) *chisq = 1.0e308; // don't let chisq=0 through yfit being all -ve
+			if (*chisq <= 0.0) *chisq = 1.0e38; // don't let chisq=0 through yfit being all -ve
 			break;
 
 
@@ -1887,7 +1891,7 @@ int GCI_marquardt_global_compute_exps_fn_final(
 						*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
 				}
 			}
-			if (*chisq <= 0.0) *chisq = 1.0e308; // don't let chisq=0 through yfit being all -ve
+			if (*chisq <= 0.0) *chisq = 1.0e38; // don't let chisq=0 through yfit being all -ve
 			break;
 
 		case NOISE_GAUSSIAN_FIT:
@@ -2047,6 +2051,7 @@ int GCI_marquardt_global_exps_do_fit_instr(
 
 		k++;
 		if (k > MAXITERS) {
+			free(ochisq_trans);
 			return -2;
 		}
 
@@ -2729,7 +2734,13 @@ int GCI_marquardt_global_generic_instr(float xincr, float **trans,
 	/* Scale the instrument response */
 	for (i=0, instrsum=0; i<ninstr; i++)
 		instrsum += instr[i];
-	if (instrsum == 0) return -6;
+	if (instrsum == 0) {
+		GCI_ecf_free_matrix(covar);
+		GCI_ecf_free_matrix(alpha);
+		free(scaled_instr);
+		return -6;
+	}
+	
 	for (i=0; i<ninstr; i++)
 		scaled_instr[i] = instr[i] / instrsum;
 
@@ -2748,6 +2759,9 @@ int GCI_marquardt_global_generic_instr(float xincr, float **trans,
 
 	if (ret < 0) {
 		dbgprintf(1, "Fit failed, ret = %d\n", ret);
+		GCI_ecf_free_matrix(covar);
+		GCI_ecf_free_matrix(alpha);
+		free(scaled_instr);
 		return -10 + ret;
 	}
 
@@ -2767,6 +2781,10 @@ int GCI_marquardt_global_generic_instr(float xincr, float **trans,
 		}
 
 	*df = ntrans * ((fit_end - fit_start) - mlocal) - mglobal;
+
+	GCI_ecf_free_matrix(covar);
+	GCI_ecf_free_matrix(alpha);
+	free(scaled_instr);
 
 	return ret;
 }
@@ -2862,6 +2880,7 @@ int GCI_marquardt_global_generic_do_fit_instr(
 
 		k++;
 		if (k > MAXITERS) {
+			free(ochisq_trans);
 			return -2;
 		}
 
