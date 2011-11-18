@@ -744,7 +744,7 @@ int GCI_marquardt_step(float x[], float y[], int ndata,
 		for (mfit=0, j=0; j<nparam; j++)
 			if (paramfree[j])
 				mfit++;
-
+		
 		if (GCI_marquardt_compute_fn(x, y, ndata, noise, sig,
 									 param, paramfree, nparam, fitfunc,
 									 yfit, dy,
@@ -890,9 +890,13 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		dparam[j] = beta[j];
 	}
 
-	/* Matrix solution; GCI_gauss_jordan solves Ax=b rather than AX=B */
-	if (GCI_solve(covar, *pmfit, dparam) != 0)
-		return -1;
+	if (*pmfit>0) {
+		/* Matrix solution; GCI_gauss_jordan solves Ax=b rather than AX=B */
+		if (GCI_solve(covar, *pmfit, dparam) != 0)
+			return -1;
+	}
+	else
+		*alambda = 0;
 
 	/* Once converged, evaluate covariance matrix */
 	if (*alambda == 0) {
@@ -1286,7 +1290,8 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 
 			/* We wish to find yfit = (*pfnvals) * instr, so explicitly:
 			     yfit[i] = sum_{j=0}^i (*pfnvals)[i-j].instr[j]
-			   But instr[k]=0 for k >= ninstr, so we only need to sum:
+			   But instr[k]=0 for k >= ninstr, AND (*pfnvals)[i]=0 for i<0
+			   so we only need to sum:
 			     yfit[i] = sum_{j=0}^{min(ninstr-1,i)}
 			   (*pfnvals)[i-j].instr[j]
 			*/
@@ -1295,6 +1300,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 			yfit[i] = 0;
 			for (k=1; k<nparam; k++)
 				(*pdy_dparam_conv)[i][k] = 0;
+
 
 			convpts = (ninstr <= i) ? ninstr-1 : i;
 			for (j=0; j<=convpts; j++) {
@@ -1678,7 +1684,8 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 
 			/* We wish to find yfit = fnvals * instr, so explicitly:
 			     yfit[i] = sum_{j=0}^i fnvals[i-j].instr[j]
-			   But instr[k]=0 for k >= ninstr, so we only need to sum:
+		  	     But instr[k]=0 for k >= ninstr, AND (*pfnvals)[i]=0 for i<0
+			     so we only need to sum:
 			     yfit[i] = sum_{j=0}^{min(ninstr-1,i)}
 			   fnvals[i-j].instr[j]
 			*/
