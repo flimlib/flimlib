@@ -23,12 +23,13 @@ Copyright (c) 2010, 2011, Gray Institute University of Oxford & UW-Madison LOCI.
 /*
  * Class:     loci_curvefitter_SLIMCurveFitter
  * Method:    RLD_fit
- * Signature: (D[DII[DI[D[D[D[D[D[DD)I
+ * Signature: (D[DII[DII[D[D[D[D[D[DD)I
  */
 JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_RLD_1fit
   (JNIEnv *env, jobject obj, jdouble x_inc, jdoubleArray y,
         jint fit_start, jint fit_end, jdoubleArray instr, jint n_instr,
-        jdoubleArray sig, jdoubleArray z, jdoubleArray a, jdoubleArray tau,
+        jint noise, jdoubleArray sig,
+        jdoubleArray z, jdoubleArray a, jdoubleArray tau,
         jdoubleArray fitted, jdoubleArray chi_square, jdouble chi_square_target) {
 
     jdouble *y_array;
@@ -60,7 +61,7 @@ JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_RLD_1fit
     chi_square_ref = (*env)->GetDoubleArrayElements(env, chi_square, 0);
 
     return_value = RLD_fit(x_inc, y_array, fit_start, fit_end,
-            instr_array, n_instr, sig_array, z_ref, a_ref, tau_ref,
+            instr_array, n_instr, noise, sig_array, z_ref, a_ref, tau_ref,
             fitted_array, chi_square_ref, chi_square_target);
 
     // pass back the arrays
@@ -85,13 +86,15 @@ JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_RLD_1fit
 /*
  * Class:     loci_curvefitter_SLIMCurveFitter
  * Method:    LMA_fit
- * Signature: (D[DII[DI[D[D[II[D[DD)I
+ * Signature: (D[DII[DII[D[D[II[D[DDD)I
  */
 JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_LMA_1fit
   (JNIEnv *env, jobject obj, jdouble x_inc, jdoubleArray y,
         jint fit_start, jint fit_end, jdoubleArray instr, jint n_instr,
-        jdoubleArray sig, jdoubleArray param, jintArray param_free, jint n_param,
-        jdoubleArray fitted, jdoubleArray chi_square, jdouble chi_square_target) {
+        jint noise, jdoubleArray sig,
+        jdoubleArray param, jintArray param_free, jint n_param,
+        jdoubleArray fitted, jdoubleArray chi_square,
+        jdouble chi_square_target, jdouble chi_square_delta) {
 
     jdouble *y_array;
     jdouble *instr_array;
@@ -120,8 +123,9 @@ JNIEXPORT jint JNICALL Java_loci_curvefitter_SLIMCurveFitter_LMA_1fit
     chi_square_ref = (*env)->GetDoubleArrayElements(env, chi_square, 0);
 
     return_value = LMA_fit(x_inc, y_array, fit_start, fit_end,
-            instr_array, n_instr, sig_array, param_array, param_free_array, n_param,
-            fitted_array, chi_square_ref, chi_square_target);
+            instr_array, n_instr, noise, sig_array,
+            param_array, param_free_array, n_param,
+            fitted_array, chi_square_ref, chi_square_target, chi_square_delta);
 
     // pass back the arrays
     (*env)->ReleaseDoubleArrayElements(env, y, y_array, 0);

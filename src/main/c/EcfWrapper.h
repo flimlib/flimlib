@@ -38,6 +38,7 @@ int RLD_fit(
         int fit_end,
         double instr[],
         int n_instr,
+        int noise,
         double sig[],
         double *z,
         double *a,
@@ -54,13 +55,15 @@ int LMA_fit(
         int fit_end,
         double instr[],
         int n_instr,
+        int noise,
         double sig[],
         double param[],
         int param_free[],
         int n_param,
         double fitted[],
         double *chi_square,
-        double chi_square_target
+        double chi_square_target,
+        double chi_square_delta
         );
 
 #ifdef	__cplusplus

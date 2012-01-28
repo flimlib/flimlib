@@ -29,6 +29,7 @@ int RLD_fit(
         int fit_end,
         double instr[],
         int n_instr,
+        int noise,
         double sig[],
         double *z,
         double *a,
@@ -38,7 +39,6 @@ int RLD_fit(
         double chi_square_target
         ) {
 
-    int noise = 0;
     int n_data = fit_end + 1;
     float *y_float = (float *)malloc(n_data * sizeof(float));
     float *sig_float = (float *)malloc(n_data * sizeof(float));
@@ -118,19 +118,20 @@ int LMA_fit(
         int fit_end,
         double instr[],
         int n_instr,
+        int noise,
         double sig[],
         double param[],
         int param_free[],
         int n_param,
         double fitted[],
         double *chi_square,
-        double chi_square_target
+        double chi_square_target,
+        double chi_square_delta
         ) {
 
-    int noise = 0;
     int restrain = 0;
-    float chi_square_delta = 0;
     float chi_square_percent = 500;
+
     int n_data = fit_end + 1;
     float *y_float = (float *)malloc(n_data * sizeof(float));
     float *sig_float = (float *)malloc(n_data * sizeof(float));
