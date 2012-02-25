@@ -39,7 +39,7 @@ int RLD_fit(
         double chi_square_target
         ) {
 
-    int n_data = fit_end + 1;
+    int n_data = fit_end;
     float *y_float = (float *)malloc(n_data * sizeof(float));
     float *sig_float = (float *)malloc(n_data * sizeof(float));
     float *instr_float = 0;
@@ -74,7 +74,7 @@ int RLD_fit(
             x_inc_float,
             y_float,
             fit_start,
-            fit_end + 1, // want exclusive, not inclusive end
+            fit_end,
             instr_float,
             n_instr,
             noise,
@@ -130,9 +130,9 @@ int LMA_fit(
         ) {
 
     int restrain = 0;
-    float chi_square_percent = 500;
+    float chi_square_percent = 95;
 
-    int n_data = fit_end + 1;
+    int n_data = fit_end;
     float *y_float = (float *)malloc(n_data * sizeof(float));
     float *sig_float = (float *)malloc(n_data * sizeof(float));
     float *instr_float = 0;
@@ -214,7 +214,7 @@ int LMA_fit(
             y_float,
             n_data,
             fit_start,
-            fit_end + 1, // want exclusive, not inclusive end
+            fit_end,
 	    instr_float,
             n_instr,
             noise,
@@ -292,10 +292,6 @@ int LMA_fit(
     GCI_ecf_free_matrix(covar_float);
     GCI_ecf_free_matrix(alpha_float);
     GCI_ecf_free_matrix(err_axes_float);
-
-    //if (returnValue) {
-    //    printf("returnValue is %d\n", returnValue);
-    //}
 
     return return_value;
 }
