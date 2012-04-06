@@ -12,6 +12,7 @@
   </parent>
 
   <artifactId>slim-curve</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>nar</packaging>
 
   <name>SLIM-Curve</name>
