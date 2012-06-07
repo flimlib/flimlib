@@ -1,0 +1,1565 @@
+TCurveFitting
+v7
+r0
+t295486508.615710
+cCheck dependencies
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/main.o /Users/aivar/Documents/CurveFitting/main.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqmin.o /Users/aivar/Documents/CurveFitting/mrqmin.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/nrutil.o /Users/aivar/Documents/CurveFitting/nrutil.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/fgauss.o /Users/aivar/Documents/CurveFitting/fgauss.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gasdev.o /Users/aivar/Documents/CurveFitting/gasdev.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gaussj.o /Users/aivar/Documents/CurveFitting/gaussj.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqcof.o /Users/aivar/Documents/CurveFitting/mrqcof.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/covsrt.o /Users/aivar/Documents/CurveFitting/covsrt.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/ran1.o /Users/aivar/Documents/CurveFitting/ran1.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmder.o /Users/aivar/Documents/CurveFitting/gsl/lmder.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lm.o /Users/aivar/Documents/CurveFitting/lm.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/Axb.o /Users/aivar/Documents/CurveFitting/Axb.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbc.o /Users/aivar/Documents/CurveFitting/lmbc.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/misc.o /Users/aivar/Documents/CurveFitting/misc.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmblec.o /Users/aivar/Documents/CurveFitting/lmblec.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbleic.o /Users/aivar/Documents/CurveFitting/lmbleic.c normal x86_64 c com.apple.compilers.gcc.4_2
+cCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmlec.o /Users/aivar/Documents/CurveFitting/lmlec.c normal x86_64 c com.apple.compilers.gcc.4_2
+cLd /Users/aivar/Documents/CurveFitting/build/Debug/CurveFitting normal x86_64
+
+N/Developer/SDKs/MacOSX10.6.sdk
+c000000004A769DAB00000000000000EE
+t1249287595
+s238
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/errno.h
+c000000004A5C14A600000000000003EB
+t1247548582
+s1003
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/math.h
+c000000004A5C14A000000000000004F1
+t1247548576
+s1265
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdio.h
+c000000004A5C14A70000000000004174
+t1247548583
+s16756
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/stdlib.h
+c000000004A5C14A70000000000002DF5
+t1247548583
+s11765
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/include/time.h
+c000000004A5C14A7000000000000178E
+t1247548583
+s6030
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/float.h
+c000000004A11EB240000000000001538
+t1242688292
+s5432
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/limits.h
+c000000004A11EB240000000000000C7E
+t1242688292
+s3198
+
+N/Developer/SDKs/MacOSX10.6.sdk/usr/lib/gcc/i686-apple-darwin10/4.2.1/include/stddef.h
+c000000004A11EB240000000000003197
+t1242688292
+s12695
+
+N/Users/aivar/Documents/CurveFitting/Axb.c
+c000000004A9D113900000000000008D4
+t1251807545
+s2260
+i<stdio.h>
+i<stdlib.h>
+i<math.h>
+i"levmar.h"
+i"misc.h"
+i<float.h>
+i"Axb_core.c"
+i"Axb_core.c"
+
+N/Users/aivar/Documents/CurveFitting/Axb_core.c
+c000000004A9CE2B10000000000007EC6
+t1251795633
+s32454
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/Axb.o
+t1270659317
+s10472
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/Axb_core.o
+t2
+s0
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/CurveFitting.LinkFileList
+c000000004BBCB8A700000000000007B5
+t1270659239
+s1973
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/covsrt.o
+t1268868870
+s2904
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/expfit.o
+t2
+s0
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/fgauss.o
+t1268868826
+s3028
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gasdev.o
+t1268868826
+s3304
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gaussj.o
+t1268868826
+s6096
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lm.o
+t1271901673
+s34408
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lm_core.o
+t2
+s0
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbc.o
+t1271900451
+s42304
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmblec.o
+t1271901599
+s1724
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbleic.o
+t1271901599
+s1728
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmder.o
+t1271901673
+s40872
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmiterate.o
+t2
+s0
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmlec.o
+t1271901599
+s1724
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/main.o
+t1273792518
+s44876
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/misc.o
+t1270659317
+s39780
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqcof.o
+t1271980138
+s4848
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqmin.o
+t1272082018
+s7328
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/nrutil.o
+t1268868517
+s18744
+
+N/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/ran1.o
+t1268868870
+s3476
+
+N/Users/aivar/Documents/CurveFitting/build/Debug/CurveFitting
+t1273792518
+s154056
+
+N/Users/aivar/Documents/CurveFitting/compiler.h
+c000000004A9D0D62000000000000069A
+t1251806562
+s1690
+
+N/Users/aivar/Documents/CurveFitting/covsrt.c
+c000000003C090D46000000000000019A
+t1007226182
+s410
+
+N/Users/aivar/Documents/CurveFitting/expfit.c
+c000000004BA0FE7F000000000000064B
+t1268842111
+s1611
+
+N/Users/aivar/Documents/CurveFitting/expfit.h
+c000000004BA0FE67000000000000064B
+t1268842087
+s1611
+
+N/Users/aivar/Documents/CurveFitting/fgauss.c
+c000000003C090D460000000000000144
+t1007226182
+s324
+i<math.h>
+
+N/Users/aivar/Documents/CurveFitting/gasdev.c
+c000000003C090D4600000000000001B2
+t1007226182
+s434
+i<math.h>
+
+N/Users/aivar/Documents/CurveFitting/gaussj.c
+c000000003C090D46000000000000058A
+t1007226182
+s1418
+i<math.h>
+i"nrutil.h"
+
+N/Users/aivar/Documents/CurveFitting/gsl/lmder.c
+c000000004BAD234B00000000000025A6
+t1269637963
+s9638
+i<stddef.h>
+i<stdlib.h>
+i<stdio.h>
+i<math.h>
+i<float.h>
+i<gsl/gsl_math.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_multifit_nlin.h>
+i<gsl/gsl_blas.h>
+i<gsl/gsl_linalg.h>
+i<gsl/gsl_permutation.h>
+i"lmutil.c"
+i"lmpar.c"
+i"lmset.c"
+i"lmiterate.c"
+
+N/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c
+c000000004BCCD35300000000000013CB
+t1271714643
+s5067
+
+N/Users/aivar/Documents/CurveFitting/gsl/lmpar.c
+c0000000042BEACCF0000000000002898
+t1119792335
+s10392
+i<gsl/gsl_permute_vector_double.h>
+i"qrsolv.c"
+
+N/Users/aivar/Documents/CurveFitting/gsl/lmset.c
+c000000003F214A3400000000000003C7
+t1059146292
+s967
+
+N/Users/aivar/Documents/CurveFitting/gsl/lmutil.c
+c000000003F214A340000000000000AC3
+t1059146292
+s2755
+
+N/Users/aivar/Documents/CurveFitting/gsl/qrsolv.c
+c000000003F214A3400000000000016A7
+t1059146292
+s5799
+
+N/Users/aivar/Documents/CurveFitting/levmar.h
+c000000004BBCB8F000000000000045AA
+t1270659312
+s17834
+
+N/Users/aivar/Documents/CurveFitting/lm.c
+c000000004A9D116700000000000009AA
+t1251807591
+s2474
+i<stdio.h>
+i<stdlib.h>
+i<math.h>
+i<float.h>
+i"levmar.h"
+i"compiler.h"
+i"misc.h"
+i"lm_core.c"
+i"lm_core.c"
+
+N/Users/aivar/Documents/CurveFitting/lm_core.c
+c000000004BCFADE800000000000078D7
+t1271901672
+s30935
+
+N/Users/aivar/Documents/CurveFitting/lmbc.c
+c000000004A9D115600000000000009C5
+t1251807574
+s2501
+i<stdio.h>
+i<stdlib.h>
+i<math.h>
+i<float.h>
+i"levmar.h"
+i"compiler.h"
+i"misc.h"
+i"lmbc_core.c"
+i"lmbc_core.c"
+
+N/Users/aivar/Documents/CurveFitting/lmbc_core.c
+c000000004A047A4100000000000088BC
+t1241807425
+s35004
+
+N/Users/aivar/Documents/CurveFitting/lmblec.c
+c000000004A9D115A0000000000000A4C
+t1251807578
+s2636
+i<stdio.h>
+i<stdlib.h>
+i<math.h>
+i<float.h>
+i"levmar.h"
+i"misc.h"
+i"lmblec_core.c"
+i"lmblec_core.c"
+
+N/Users/aivar/Documents/CurveFitting/lmblec_core.c
+c0000000049F83930000000000000450C
+t1241004336
+s17676
+
+N/Users/aivar/Documents/CurveFitting/lmbleic.c
+c000000004A9D11600000000000000A33
+t1251807584
+s2611
+i<stdio.h>
+i<stdlib.h>
+i<math.h>
+i<float.h>
+i"levmar.h"
+i"misc.h"
+i"lmbleic_core.c"
+i"lmbleic_core.c"
+
+N/Users/aivar/Documents/CurveFitting/lmbleic_core.c
+c000000004B1678B10000000000005029
+t1259763889
+s20521
+
+N/Users/aivar/Documents/CurveFitting/lmiterate.c
+c0000000040D3077E000000000000136B
+t1087571838
+s4971
+
+N/Users/aivar/Documents/CurveFitting/lmlec.c
+c000000004A9D11720000000000000940
+t1251807602
+s2368
+i<stdio.h>
+i<stdlib.h>
+i<math.h>
+i"levmar.h"
+i"misc.h"
+i"lmlec_core.c"
+i"lmlec_core.c"
+
+N/Users/aivar/Documents/CurveFitting/lmlec_core.c
+c0000000049F826780000000000005EF9
+t1240999544
+s24313
+
+N/Users/aivar/Documents/CurveFitting/main.c
+c000000004BEC88060000000000008C8A
+t1273792518
+s35978
+i<stdio.h>
+i<gsl/gsl_rng.h>
+i<gsl/gsl_randist.h>
+i<gsl/gsl_vector.h>
+i<gsl/gsl_blas.h>
+i<gsl/gsl_multifit_nlin.h>
+i<stdio.h>
+i<math.h>
+i"nr.h"
+i"nrutil.h"
+i<stdlib.h>
+i<stdio.h>
+i<math.h>
+i<gsl/gsl_rng.h>
+i<gsl/gsl_randist.h>
+i<gsl/gsl_vector.h>
+i<gsl/gsl_blas.h>
+i<gsl/gsl_multifit_nlin.h>
+i"nr.h"
+i"nrutil.h"
+i"time.h"
+i"levmar.h"
+
+N/Users/aivar/Documents/CurveFitting/misc.c
+c000000004A9D117C00000000000008AB
+t1251807612
+s2219
+i<stdio.h>
+i<stdlib.h>
+i<math.h>
+i<float.h>
+i"levmar.h"
+i"misc.h"
+i"misc_core.c"
+i"misc_core.c"
+
+N/Users/aivar/Documents/CurveFitting/misc.h
+c0000000049F82597000000000000114F
+t1240999319
+s4431
+
+N/Users/aivar/Documents/CurveFitting/misc_core.c
+c000000004AE6C8490000000000005F62
+t1256638537
+s24418
+
+N/Users/aivar/Documents/CurveFitting/mrqcof.c
+c000000004BD0E06A00000000000003A3
+t1271980138
+s931
+i"nrutil.h"
+
+N/Users/aivar/Documents/CurveFitting/mrqmin.c
+c000000004BD26E6200000000000007C6
+t1272082018
+s1990
+i"nrutil.h"
+
+N/Users/aivar/Documents/CurveFitting/nr.h
+c000000004B7F1E790000000000007E5E
+t1266622073
+s32350
+i<stdio.h>
+
+N/Users/aivar/Documents/CurveFitting/nrutil.c
+c000000003120D4F000000000000041B3
+t824235248
+s16819
+i<stdio.h>
+i<stddef.h>
+i<stdlib.h>
+i<stdio.h>
+
+N/Users/aivar/Documents/CurveFitting/nrutil.h
+c000000003120D4F00000000000000D67
+t824235248
+s3431
+
+N/Users/aivar/Documents/CurveFitting/ran1.c
+c000000003C090D480000000000000343
+t1007226184
+s835
+
+N/opt/local/include/gsl/gsl_blas.h
+c000000004B7DABF100000000000055AE
+t1266527217
+s21934
+i<gsl/gsl_vector.h>
+i<gsl/gsl_matrix.h>
+i<gsl/gsl_blas_types.h>
+
+N/opt/local/include/gsl/gsl_blas_types.h
+c000000004B7DABF1000000000000062B
+t1266527217
+s1579
+i<gsl/gsl_cblas.h>
+
+N/opt/local/include/gsl/gsl_block_char.h
+c000000004B7DABF000000000000008F2
+t1266527216
+s2290
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_complex_double.h
+c000000004B7DABF00000000000000971
+t1266527216
+s2417
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_complex_float.h
+c000000004B7DABF000000000000009FD
+t1266527216
+s2557
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_complex_long_double.h
+c000000004B7DABF00000000000000ACF
+t1266527216
+s2767
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_double.h
+c000000004B7DABF00000000000000889
+t1266527216
+s2185
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_float.h
+c000000004B7DABF00000000000000915
+t1266527216
+s2325
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_int.h
+c000000004B7DABF000000000000008CF
+t1266527216
+s2255
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_long.h
+c000000004B7DABF000000000000008F2
+t1266527216
+s2290
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_long_double.h
+c000000004B7DABF000000000000009E7
+t1266527216
+s2535
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_short.h
+c000000004B7DABF00000000000000915
+t1266527216
+s2325
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_uchar.h
+c000000004B7DABF00000000000000945
+t1266527216
+s2373
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_uint.h
+c000000004B7DABF00000000000000922
+t1266527216
+s2338
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_ulong.h
+c000000004B7DABF00000000000000945
+t1266527216
+s2373
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_block_ushort.h
+c000000004B7DABF00000000000000968
+t1266527216
+s2408
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+
+N/opt/local/include/gsl/gsl_cblas.h
+c000000004B7DABF1000000000000838D
+t1266527217
+s33677
+i<stddef.h>
+
+N/opt/local/include/gsl/gsl_check_range.h
+c000000004B7DABF0000000000000062B
+t1266527216
+s1579
+i<stdlib.h>
+i<gsl/gsl_types.h>
+
+N/opt/local/include/gsl/gsl_complex.h
+c000000004B7DABF00000000000000D2E
+t1266527216
+s3374
+
+N/opt/local/include/gsl/gsl_errno.h
+c000000004B7DABF0000000000000174D
+t1266527216
+s5965
+i<stdio.h>
+i<errno.h>
+i<gsl/gsl_types.h>
+
+N/opt/local/include/gsl/gsl_inline.h
+c000000004B7DABF2000000000000099F
+t1266527218
+s2463
+
+N/opt/local/include/gsl/gsl_linalg.h
+c000000004B7DABF100000000000051BA
+t1266527217
+s20922
+i<gsl/gsl_mode.h>
+i<gsl/gsl_permutation.h>
+i<gsl/gsl_vector.h>
+i<gsl/gsl_matrix.h>
+
+N/opt/local/include/gsl/gsl_machine.h
+c000000004B7DABF20000000000000EDD
+t1266527218
+s3805
+i<limits.h>
+i<float.h>
+
+N/opt/local/include/gsl/gsl_math.h
+c000000004B7DABF200000000000010F9
+t1266527218
+s4345
+i<math.h>
+i<gsl/gsl_sys.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_machine.h>
+i<gsl/gsl_precision.h>
+i<gsl/gsl_nan.h>
+i<gsl/gsl_pow_int.h>
+i<gsl/gsl_minmax.h>
+
+N/opt/local/include/gsl/gsl_matrix.h
+c000000004B7DABF00000000000000256
+t1266527216
+s598
+i<gsl/gsl_matrix_complex_long_double.h>
+i<gsl/gsl_matrix_complex_double.h>
+i<gsl/gsl_matrix_complex_float.h>
+i<gsl/gsl_matrix_long_double.h>
+i<gsl/gsl_matrix_double.h>
+i<gsl/gsl_matrix_float.h>
+i<gsl/gsl_matrix_ulong.h>
+i<gsl/gsl_matrix_long.h>
+i<gsl/gsl_matrix_uint.h>
+i<gsl/gsl_matrix_int.h>
+i<gsl/gsl_matrix_ushort.h>
+i<gsl/gsl_matrix_short.h>
+i<gsl/gsl_matrix_uchar.h>
+i<gsl/gsl_matrix_char.h>
+
+N/opt/local/include/gsl/gsl_matrix_char.h
+c000000004B7DABF00000000000002ECF
+t1266527216
+s11983
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_char.h>
+
+N/opt/local/include/gsl/gsl_matrix_complex_double.h
+c000000004B7DABF000000000000030BE
+t1266527216
+s12478
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_complex.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_complex_double.h>
+
+N/opt/local/include/gsl/gsl_matrix_complex_float.h
+c000000004B7DABF00000000000003558
+t1266527216
+s13656
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_complex.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_complex_float.h>
+
+N/opt/local/include/gsl/gsl_matrix_complex_long_double.h
+c000000004B7DABF00000000000003A38
+t1266527216
+s14904
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_complex.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_complex_long_double.h>
+
+N/opt/local/include/gsl/gsl_matrix_double.h
+c000000004B7DABF00000000000002B3C
+t1266527216
+s11068
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_double.h>
+
+N/opt/local/include/gsl/gsl_matrix_float.h
+c000000004B7DABF00000000000002FA9
+t1266527216
+s12201
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_float.h>
+
+N/opt/local/include/gsl/gsl_matrix_int.h
+c000000004B7DABF00000000000002DF5
+t1266527216
+s11765
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_int.h>
+
+N/opt/local/include/gsl/gsl_matrix_long.h
+c000000004B7DABF00000000000002ECF
+t1266527216
+s11983
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_long.h>
+
+N/opt/local/include/gsl/gsl_matrix_long_double.h
+c000000004B7DABF000000000000034C5
+t1266527216
+s13509
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_long_double.h>
+
+N/opt/local/include/gsl/gsl_matrix_short.h
+c000000004B7DABF00000000000002FA9
+t1266527216
+s12201
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_short.h>
+
+N/opt/local/include/gsl/gsl_matrix_uchar.h
+c000000004B7DABF00000000000003049
+t1266527216
+s12361
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_uchar.h>
+
+N/opt/local/include/gsl/gsl_matrix_uint.h
+c000000004B7DABF00000000000002F6F
+t1266527216
+s12143
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_uint.h>
+
+N/opt/local/include/gsl/gsl_matrix_ulong.h
+c000000004B7DABF00000000000003049
+t1266527216
+s12361
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_ulong.h>
+
+N/opt/local/include/gsl/gsl_matrix_ushort.h
+c000000004B7DABF00000000000003123
+t1266527216
+s12579
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_ushort.h>
+
+N/opt/local/include/gsl/gsl_minmax.h
+c000000004B7DABF20000000000000A48
+t1266527218
+s2632
+i<gsl/gsl_inline.h>
+
+N/opt/local/include/gsl/gsl_mode.h
+c000000004B7DABF20000000000000965
+t1266527218
+s2405
+i<gsl/gsl_inline.h>
+
+N/opt/local/include/gsl/gsl_multifit_nlin.h
+c000000004B7DABF10000000000001608
+t1266527217
+s5640
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_math.h>
+i<gsl/gsl_vector.h>
+i<gsl/gsl_matrix.h>
+
+N/opt/local/include/gsl/gsl_nan.h
+c000000004B7DABF20000000000000533
+t1266527218
+s1331
+
+N/opt/local/include/gsl/gsl_permutation.h
+c000000004B7DABF00000000000000D12
+t1266527216
+s3346
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+
+N/opt/local/include/gsl/gsl_permute_vector_double.h
+c000000004B7DABF000000000000005AF
+t1266527216
+s1455
+i<stdlib.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_permutation.h>
+i<gsl/gsl_vector_double.h>
+
+N/opt/local/include/gsl/gsl_pow_int.h
+c000000004B7DABF200000000000008CE
+t1266527218
+s2254
+i<gsl/gsl_inline.h>
+
+N/opt/local/include/gsl/gsl_precision.h
+c000000004B7DABF200000000000006F4
+t1266527218
+s1780
+i<gsl/gsl_types.h>
+
+N/opt/local/include/gsl/gsl_randist.h
+c000000004B7DABF1000000000000219F
+t1266527217
+s8607
+i<gsl/gsl_rng.h>
+
+N/opt/local/include/gsl/gsl_rng.h
+c000000004B7DABF10000000000001B2D
+t1266527217
+s6957
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+
+N/opt/local/include/gsl/gsl_sys.h
+c000000004B7DABF000000000000007A2
+t1266527216
+s1954
+
+N/opt/local/include/gsl/gsl_types.h
+c000000004B7DABF2000000000000047D
+t1266527218
+s1149
+
+N/opt/local/include/gsl/gsl_vector.h
+c000000004B7DABF00000000000000256
+t1266527216
+s598
+i<gsl/gsl_vector_complex_long_double.h>
+i<gsl/gsl_vector_complex_double.h>
+i<gsl/gsl_vector_complex_float.h>
+i<gsl/gsl_vector_long_double.h>
+i<gsl/gsl_vector_double.h>
+i<gsl/gsl_vector_float.h>
+i<gsl/gsl_vector_ulong.h>
+i<gsl/gsl_vector_long.h>
+i<gsl/gsl_vector_uint.h>
+i<gsl/gsl_vector_int.h>
+i<gsl/gsl_vector_ushort.h>
+i<gsl/gsl_vector_short.h>
+i<gsl/gsl_vector_uchar.h>
+i<gsl/gsl_vector_char.h>
+
+N/opt/local/include/gsl/gsl_vector_char.h
+c000000004B7DABF00000000000001C42
+t1266527216
+s7234
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_char.h>
+
+N/opt/local/include/gsl/gsl_vector_complex.h
+c000000004B7DABF000000000000002FB
+t1266527216
+s763
+
+N/opt/local/include/gsl/gsl_vector_complex_double.h
+c000000004B7DABF00000000000001FCB
+t1266527216
+s8139
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_complex.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_double.h>
+i<gsl/gsl_vector_complex.h>
+i<gsl/gsl_block_complex_double.h>
+
+N/opt/local/include/gsl/gsl_vector_complex_float.h
+c000000004B7DABF000000000000022E4
+t1266527216
+s8932
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_complex.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_float.h>
+i<gsl/gsl_vector_complex.h>
+i<gsl/gsl_block_complex_float.h>
+
+N/opt/local/include/gsl/gsl_vector_complex_long_double.h
+c000000004B7DABF0000000000000264A
+t1266527216
+s9802
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_complex.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_vector_long_double.h>
+i<gsl/gsl_vector_complex.h>
+i<gsl/gsl_block_complex_long_double.h>
+
+N/opt/local/include/gsl/gsl_vector_double.h
+c000000004B7DABF00000000000001A26
+t1266527216
+s6694
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_double.h>
+
+N/opt/local/include/gsl/gsl_vector_float.h
+c000000004B7DABF00000000000001CD1
+t1266527216
+s7377
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_float.h>
+
+N/opt/local/include/gsl/gsl_vector_int.h
+c000000004B7DABF00000000000001BB3
+t1266527216
+s7091
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_int.h>
+
+N/opt/local/include/gsl/gsl_vector_long.h
+c000000004B7DABF00000000000001C42
+t1266527216
+s7234
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_long.h>
+
+N/opt/local/include/gsl/gsl_vector_long_double.h
+c000000004B7DABF0000000000000202B
+t1266527216
+s8235
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_long_double.h>
+
+N/opt/local/include/gsl/gsl_vector_short.h
+c000000004B7DABF00000000000001CD1
+t1266527216
+s7377
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_short.h>
+
+N/opt/local/include/gsl/gsl_vector_uchar.h
+c000000004B7DABF00000000000001D71
+t1266527216
+s7537
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_uchar.h>
+
+N/opt/local/include/gsl/gsl_vector_uint.h
+c000000004B7DABF00000000000001CE2
+t1266527216
+s7394
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_uint.h>
+
+N/opt/local/include/gsl/gsl_vector_ulong.h
+c000000004B7DABF00000000000001D71
+t1266527216
+s7537
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_ulong.h>
+
+N/opt/local/include/gsl/gsl_vector_ushort.h
+c000000004B7DABF00000000000001E00
+t1266527216
+s7680
+i<stdlib.h>
+i<gsl/gsl_types.h>
+i<gsl/gsl_errno.h>
+i<gsl/gsl_inline.h>
+i<gsl/gsl_check_range.h>
+i<gsl/gsl_block_ushort.h>
+
+N/opt/local/lib/libapr-1.0.3.9.dylib
+c000000004B6C888A000000000002B938
+t1265404042
+s178488
+
+N/opt/local/lib/libaprutil-1.0.3.9.dylib
+c000000004B6C8A4B00000000000216D8
+t1265404491
+s136920
+
+N/opt/local/lib/libgsl.0.dylib
+c000000004B7DABF200000000001E9EE8
+t1266527218
+s2006760
+
+N/opt/local/lib/libgslcblas.0.dylib
+c000000004B7DABF10000000000033A38
+t1266527217
+s211512
+
+CCheck dependencies
+r0
+lSLF07#2@18"Check dependencies295486508#295486508#0(0"0(0#1#0"4300911832#0"0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/Axb.o /Users/aivar/Documents/CurveFitting/Axb.c normal x86_64 c com.apple.compilers.gcc.4_2
+s292352117.175030
+e292352117.266461
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/Axb.o
+x/Users/aivar/Documents/CurveFitting/Axb.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+oIn file included from /Users/aivar/Documents/CurveFitting/Axb.c:67:
+o/Users/aivar/Documents/CurveFitting/Axb_core.c:31:1: warning: "__STATIC__" redefined
+oIn file included from /Users/aivar/Documents/CurveFitting/Axb.c:49:
+o/Users/aivar/Documents/CurveFitting/Axb_core.c:31:1: warning: this is the location of the previous definition
+lSLF07#2@49"Compile /Users/aivar/Documents/CurveFitting/Axb.c292352117#292352117#0(331"In file included from /Users/aivar/Documents/CurveFitting/Axb.c:67:/Users/aivar/Documents/CurveFitting/Axb_core.c:31:1: warning: "__STATIC__" redefinedIn file included from /Users/aivar/Documents/CurveFitting/Axb.c:49:/Users/aivar/Documents/CurveFitting/Axb_core.c:31:1: warning: this is the location of the previous definition2(22@22""__STATIC__" redefined292352117#68#85#2(7@63"In file included from /Users/aivar/Documents/CurveFitting/Axb.c292352117#18446744073709551615#0#0(6@41"/Users/aivar/Documents/CurveFitting/Axb.c273500345#67#0#67#0#0"0(13@72""__STATIC__" redefined in /Users/aivar/Documents/CurveFitting/Axb_core.c292352117#18446744073709551615#0#0(6@46"/Users/aivar/Documents/CurveFitting/Axb_core.c273488433#31#0#31#0#0"0(6@46"/Users/aivar/Documents/CurveFitting/Axb_core.c273488433#31#0#31#0#13""*" redefined0(22@47"This is the location of the previous definition292352117#221#110#2(7@63"In file included from /Users/aivar/Documents/CurveFitting/Axb.c292352117#18446744073709551615#0#0(6@41"/Users/aivar/Documents/CurveFitting/Axb.c273500345#49#0#49#0#0"0(13@97"This is the location of the previous definition in /Users/aivar/Documents/CurveFitting/Axb_core.c292352117#18446744073709551615#0#0(6@46"/Users/aivar/Documents/CurveFitting/Axb_core.c273488433#31#0#31#0#0"0(6@46"/Users/aivar/Documents/CurveFitting/Axb_core.c273488433#31#0#31#0#47"this is the location of the previous definition0(0#0#41"/Users/aivar/Documents/CurveFitting/Axb.c4300885448#1346"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/Axb.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/Axb.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/Axb_core.o /Users/aivar/Documents/CurveFitting/Axb_core.c normal x86_64 c com.apple.compilers.gcc.4_2
+s292351696.572951
+e292351696.595193
+r0
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/Axb_core.o
+x/Users/aivar/Documents/CurveFitting/Axb_core.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/aivar/Documents/CurveFitting/Axb_core.c:26:2: error: #error This file should not be compiled directly!
+o/Users/aivar/Documents/CurveFitting/Axb_core.c:992: error: expected ')' before '*' token
+lSLF07#2@54"Compile /Users/aivar/Documents/CurveFitting/Axb_core.c292351696#292351696#0(199"/Users/aivar/Documents/CurveFitting/Axb_core.c:26:2: error: #error This file should not be compiled directly!/Users/aivar/Documents/CurveFitting/Axb_core.c:992: error: expected ')' before '*' token2(4@49"#error This file should not be compiled directly!292351696#0#110#0(6@46"/Users/aivar/Documents/CurveFitting/Axb_core.c273488433#26#0#26#0#8"#error *0(4@29"Expected ')' before '*' token292351696#110#89#0(6@46"/Users/aivar/Documents/CurveFitting/Axb_core.c273488433#992#0#992#0#19"expected * before *0(0#0#46"/Users/aivar/Documents/CurveFitting/Axb_core.c4300885448#1356"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/Axb_core.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/Axb_core.o1#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/covsrt.o /Users/aivar/Documents/CurveFitting/covsrt.c normal x86_64 c com.apple.compilers.gcc.4_2
+s290561670.038705
+e290561670.094680
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/covsrt.o
+x/Users/aivar/Documents/CurveFitting/covsrt.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@52"Compile /Users/aivar/Documents/CurveFitting/covsrt.c290561670#290561670#0(0"0(0#0#44"/Users/aivar/Documents/CurveFitting/covsrt.c4300885448#1352"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/covsrt.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/covsrt.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/expfit.o /Users/aivar/Documents/CurveFitting/expfit.c normal x86_64 c com.apple.compilers.gcc.4_2
+s290561317.376614
+e290561317.436353
+r0
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/expfit.o
+x/Users/aivar/Documents/CurveFitting/expfit.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/aivar/Documents/CurveFitting/expfit.c:12: error: expected specifier-qualifier-list before 'size_t'
+o/Users/aivar/Documents/CurveFitting/expfit.c:18: warning: type defaults to 'int' in declaration of 'gsl_vector'
+o/Users/aivar/Documents/CurveFitting/expfit.c:18: error: expected ';', ',' or ')' before '*' token
+o/Users/aivar/Documents/CurveFitting/expfit.c:43: warning: type defaults to 'int' in declaration of 'gsl_vector'
+o/Users/aivar/Documents/CurveFitting/expfit.c:43: error: expected ';', ',' or ')' before '*' token
+o/Users/aivar/Documents/CurveFitting/expfit.c:71: warning: type defaults to 'int' in declaration of 'gsl_vector'
+o/Users/aivar/Documents/CurveFitting/expfit.c:71: error: expected ';', ',' or ')' before '*' token
+lSLF07#2@52"Compile /Users/aivar/Documents/CurveFitting/expfit.c290561317#290561317#0(736"/Users/aivar/Documents/CurveFitting/expfit.c:12: error: expected specifier-qualifier-list before 'size_t'/Users/aivar/Documents/CurveFitting/expfit.c:18: warning: type defaults to 'int' in declaration of 'gsl_vector'/Users/aivar/Documents/CurveFitting/expfit.c:18: error: expected ';', ',' or ')' before '*' token/Users/aivar/Documents/CurveFitting/expfit.c:43: warning: type defaults to 'int' in declaration of 'gsl_vector'/Users/aivar/Documents/CurveFitting/expfit.c:43: error: expected ';', ',' or ')' before '*' token/Users/aivar/Documents/CurveFitting/expfit.c:71: warning: type defaults to 'int' in declaration of 'gsl_vector'/Users/aivar/Documents/CurveFitting/expfit.c:71: error: expected ';', ',' or ')' before '*' token7(4@49"Expected specifier-qualifier-list before 'size_t'290561317#0#106#0(6@44"/Users/aivar/Documents/CurveFitting/expfit.c290534911#12#0#12#0#19"expected * before *0(22@53"Type defaults to 'int' in declaration of 'gsl_vector'290561317#106#112#0(6@44"/Users/aivar/Documents/CurveFitting/expfit.c290534911#18#0#18#0#42"type defaults to '*' in declaration of '*'0(4@41"Expected ';', ',' or ')' before '*' token290561317#218#98#0(6@44"/Users/aivar/Documents/CurveFitting/expfit.c290534911#18#0#18#0#19"expected * before *0(22@53"Type defaults to 'int' in declaration of 'gsl_vector'290561317#316#112#0(6@44"/Users/aivar/Documents/CurveFitting/expfit.c290534911#43#0#43#0#42"type defaults to '*' in declaration of '*'0(4@41"Expected ';', ',' or ')' before '*' token290561317#428#98#0(6@44"/Users/aivar/Documents/CurveFitting/expfit.c290534911#43#0#43#0#19"expected * before *0(22@53"Type defaults to 'int' in declaration of 'gsl_vector'290561317#526#112#0(6@44"/Users/aivar/Documents/CurveFitting/expfit.c290534911#71#0#71#0#42"type defaults to '*' in declaration of '*'0(4@41"Expected ';', ',' or ')' before '*' token290561317#638#98#0(6@44"/Users/aivar/Documents/CurveFitting/expfit.c290534911#71#0#71#0#19"expected * before *0(0#0#44"/Users/aivar/Documents/CurveFitting/expfit.c4300885448#1352"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/expfit.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/expfit.o1#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/fgauss.o /Users/aivar/Documents/CurveFitting/fgauss.c normal x86_64 c com.apple.compilers.gcc.4_2
+s290561626.215885
+e290561626.271594
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/fgauss.o
+x/Users/aivar/Documents/CurveFitting/fgauss.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@52"Compile /Users/aivar/Documents/CurveFitting/fgauss.c290561626#290561626#0(0"0(0#0#44"/Users/aivar/Documents/CurveFitting/fgauss.c4300885448#1352"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/fgauss.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/fgauss.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gasdev.o /Users/aivar/Documents/CurveFitting/gasdev.c normal x86_64 c com.apple.compilers.gcc.4_2
+s290561626.222796
+e290561626.270746
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gasdev.o
+x/Users/aivar/Documents/CurveFitting/gasdev.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@52"Compile /Users/aivar/Documents/CurveFitting/gasdev.c290561626#290561626#0(0"0(0#0#44"/Users/aivar/Documents/CurveFitting/gasdev.c4300885448#1352"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/gasdev.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gasdev.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gaussj.o /Users/aivar/Documents/CurveFitting/gaussj.c normal x86_64 c com.apple.compilers.gcc.4_2
+s290561626.270828
+e290561626.309634
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gaussj.o
+x/Users/aivar/Documents/CurveFitting/gaussj.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/aivar/Documents/CurveFitting/nrutil.h:4: warning: 'sqrarg' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:7: warning: 'dsqrarg' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg1' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg2' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg1' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg2' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg1' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg2' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg1' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg2' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg1' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg2' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg1' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg2' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg1' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg2' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg1' defined but not used
+o/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg2' defined but not used
+lSLF07#2@52"Compile /Users/aivar/Documents/CurveFitting/gaussj.c290561626#290561626#0(1611"/Users/aivar/Documents/CurveFitting/nrutil.h:4: warning: 'sqrarg' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:7: warning: 'dsqrarg' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg2' defined but not used18(22@29"'sqrarg' defined but not used290561626#0#87#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#4#0#4#0#24"'*' defined but not used0(22@30"'dsqrarg' defined but not used290561626#87#88#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#7#0#7#0#24"'*' defined but not used0(22@31"'dmaxarg1' defined but not used290561626#175#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#10#0#10#0#24"'*' defined but not used0(22@31"'dmaxarg2' defined but not used290561626#265#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#10#0#10#0#24"'*' defined but not used0(22@31"'dminarg1' defined but not used290561626#355#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#14#0#14#0#24"'*' defined but not used0(22@31"'dminarg2' defined but not used290561626#445#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#14#0#14#0#24"'*' defined but not used0(22@30"'maxarg1' defined but not used290561626#535#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#18#0#18#0#24"'*' defined but not used0(22@30"'maxarg2' defined but not used290561626#624#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#18#0#18#0#24"'*' defined but not used0(22@30"'minarg1' defined but not used290561626#713#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#22#0#22#0#24"'*' defined but not used0(22@30"'minarg2' defined but not used290561626#802#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#22#0#22#0#24"'*' defined but not used0(22@31"'lmaxarg1' defined but not used290561626#891#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#26#0#26#0#24"'*' defined but not used0(22@31"'lmaxarg2' defined but not used290561626#981#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#26#0#26#0#24"'*' defined but not used0(22@31"'lminarg1' defined but not used290561626#1071#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#30#0#30#0#24"'*' defined but not used0(22@31"'lminarg2' defined but not used290561626#1161#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#30#0#30#0#24"'*' defined but not used0(22@31"'imaxarg1' defined but not used290561626#1251#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#34#0#34#0#24"'*' defined but not used0(22@31"'imaxarg2' defined but not used290561626#1341#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#34#0#34#0#24"'*' defined but not used0(22@31"'iminarg1' defined but not used290561626#1431#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#38#0#38#0#24"'*' defined but not used0(22@31"'iminarg2' defined but not used290561626#1521#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#38#0#38#0#24"'*' defined but not used0(0#0#44"/Users/aivar/Documents/CurveFitting/gaussj.c4300885448#1352"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/gaussj.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/gaussj.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lm.o /Users/aivar/Documents/CurveFitting/lm.c normal x86_64 c com.apple.compilers.gcc.4_2
+s293594472.929325
+e293594473.181485
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lm.o
+x/Users/aivar/Documents/CurveFitting/lm.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@48"Compile /Users/aivar/Documents/CurveFitting/lm.c293594472#293594473#0(0"0(0#0#40"/Users/aivar/Documents/CurveFitting/lm.c4300885448#1344"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/lm.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lm.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lm_core.o /Users/aivar/Documents/CurveFitting/lm_core.c normal x86_64 c com.apple.compilers.gcc.4_2
+s292350710.864210
+e292350711.184627
+r0
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lm_core.o
+x/Users/aivar/Documents/CurveFitting/lm_core.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/aivar/Documents/CurveFitting/lm_core.c:21:2: error: #error This file should not be compiled directly!
+o/Users/aivar/Documents/CurveFitting/lm_core.c:61: error: expected ')' before '*' token
+o/Users/aivar/Documents/CurveFitting/lm_core.c:62: error: expected ';', ',' or ')' before 'void'
+o/Users/aivar/Documents/CurveFitting/lm_core.c:430: error: expected ')' before '*' token
+o/Users/aivar/Documents/CurveFitting/lm_core.c:431: error: expected ';', ',' or ')' before 'LM_REAL'
+lSLF07#2@53"Compile /Users/aivar/Documents/CurveFitting/lm_core.c292350710#292350711#0(480"/Users/aivar/Documents/CurveFitting/lm_core.c:21:2: error: #error This file should not be compiled directly!/Users/aivar/Documents/CurveFitting/lm_core.c:61: error: expected ')' before '*' token/Users/aivar/Documents/CurveFitting/lm_core.c:62: error: expected ';', ',' or ')' before 'void'/Users/aivar/Documents/CurveFitting/lm_core.c:430: error: expected ')' before '*' token/Users/aivar/Documents/CurveFitting/lm_core.c:431: error: expected ';', ',' or ')' before 'LM_REAL'5(4@49"#error This file should not be compiled directly!292350711#0#109#0(6@45"/Users/aivar/Documents/CurveFitting/lm_core.c263500201#21#0#21#0#8"#error *0(4@29"Expected ')' before '*' token292350711#109#87#0(6@45"/Users/aivar/Documents/CurveFitting/lm_core.c263500201#61#0#61#0#19"expected * before *0(4@38"Expected ';', ',' or ')' before 'void'292350711#196#96#0(6@45"/Users/aivar/Documents/CurveFitting/lm_core.c263500201#62#0#62#0#19"expected * before *0(4@29"Expected ')' before '*' token292350711#292#88#0(6@45"/Users/aivar/Documents/CurveFitting/lm_core.c263500201#430#0#430#0#19"expected * before *0(4@41"Expected ';', ',' or ')' before 'LM_REAL'292350711#380#100#0(6@45"/Users/aivar/Documents/CurveFitting/lm_core.c263500201#431#0#431#0#19"expected * before *0(0#0#45"/Users/aivar/Documents/CurveFitting/lm_core.c4300885448#1354"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/lm_core.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lm_core.o1#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbc.o /Users/aivar/Documents/CurveFitting/lmbc.c normal x86_64 c com.apple.compilers.gcc.4_2
+s293593251.103859
+e293593251.317373
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbc.o
+x/Users/aivar/Documents/CurveFitting/lmbc.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@50"Compile /Users/aivar/Documents/CurveFitting/lmbc.c293593251#293593251#0(0"0(0#0#42"/Users/aivar/Documents/CurveFitting/lmbc.c4300885448#1348"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/lmbc.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbc.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmblec.o /Users/aivar/Documents/CurveFitting/lmblec.c normal x86_64 c com.apple.compilers.gcc.4_2
+s293594399.272666
+e293594399.315405
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmblec.o
+x/Users/aivar/Documents/CurveFitting/lmblec.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/aivar/Documents/CurveFitting/lmblec.c:39:2: warning: #warning Combined box and linearly constrained optimization requires LAPACK and was not compiled!
+lSLF07#2@52"Compile /Users/aivar/Documents/CurveFitting/lmblec.c293594399#293594399#0(158"/Users/aivar/Documents/CurveFitting/lmblec.c:39:2: warning: #warning Combined box and linearly constrained optimization requires LAPACK and was not compiled!1(22@97"#warning Combined box and linearly constrained optimization requires LAPACK and was not compiled!293594399#0#158#0(6@44"/Users/aivar/Documents/CurveFitting/lmblec.c273500378#39#0#39#0#10"#warning *0(0#0#44"/Users/aivar/Documents/CurveFitting/lmblec.c4300885448#1352"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/lmblec.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmblec.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbleic.o /Users/aivar/Documents/CurveFitting/lmbleic.c normal x86_64 c com.apple.compilers.gcc.4_2
+s293594399.315485
+e293594399.365765
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbleic.o
+x/Users/aivar/Documents/CurveFitting/lmbleic.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/aivar/Documents/CurveFitting/lmbleic.c:40:2: warning: #warning Linear inequalities constrained optimization requires LAPACK and was not compiled!
+lSLF07#2@53"Compile /Users/aivar/Documents/CurveFitting/lmbleic.c293594399#293594399#0(153"/Users/aivar/Documents/CurveFitting/lmbleic.c:40:2: warning: #warning Linear inequalities constrained optimization requires LAPACK and was not compiled!1(22@91"#warning Linear inequalities constrained optimization requires LAPACK and was not compiled!293594399#0#153#0(6@45"/Users/aivar/Documents/CurveFitting/lmbleic.c273500384#40#0#40#0#10"#warning *0(0#0#45"/Users/aivar/Documents/CurveFitting/lmbleic.c4300885448#1354"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/lmbleic.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmbleic.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmder.o /Users/aivar/Documents/CurveFitting/gsl/lmder.c normal x86_64 c com.apple.compilers.gcc.4_2
+s293594472.918673
+e293594473.189384
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmder.o
+x/Users/aivar/Documents/CurveFitting/gsl/lmder.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+oIn file included from /Users/aivar/Documents/CurveFitting/gsl/lmder.c:70:
+o/Users/aivar/Documents/CurveFitting/gsl/lmpar.c: In function 'compute_newton_direction':
+o/Users/aivar/Documents/CurveFitting/gsl/lmpar.c:68: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
+o/Users/aivar/Documents/CurveFitting/gsl/lmpar.c: In function 'lmpar':
+o/Users/aivar/Documents/CurveFitting/gsl/lmpar.c:338: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
+oIn file included from /Users/aivar/Documents/CurveFitting/gsl/lmder.c:72:
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c: In function 'iterate':
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:69: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'
+lSLF07#2@55"Compile /Users/aivar/Documents/CurveFitting/gsl/lmder.c293594472#293594473#0(766"In file included from /Users/aivar/Documents/CurveFitting/gsl/lmder.c:70:/Users/aivar/Documents/CurveFitting/gsl/lmpar.c: In function 'compute_newton_direction':/Users/aivar/Documents/CurveFitting/gsl/lmpar.c:68: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'/Users/aivar/Documents/CurveFitting/gsl/lmpar.c: In function 'lmpar':/Users/aivar/Documents/CurveFitting/gsl/lmpar.c:338: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'In file included from /Users/aivar/Documents/CurveFitting/gsl/lmder.c:72:/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c: In function 'iterate':/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:69: warning: format '%d' expects type 'int', but argument 2 has type 'size_t'3(22@64"Format '%d' expects type 'int', but argument 2 has type 'size_t'293594473#163#126#2(7@69"In file included from /Users/aivar/Documents/CurveFitting/gsl/lmder.c293594473#18446744073709551615#0#0(6@47"/Users/aivar/Documents/CurveFitting/gsl/lmder.c291330763#70#0#70#0#0"0(13@115"Format '%d' expects type 'int', but argument 2 has type 'size_t' in /Users/aivar/Documents/CurveFitting/gsl/lmpar.c293594473#18446744073709551615#0#0(6@47"/Users/aivar/Documents/CurveFitting/gsl/lmpar.c141485135#68#0#68#0#0"0(6@47"/Users/aivar/Documents/CurveFitting/gsl/lmpar.c141485135#68#0#68#0#56"format '*' expects type '*', but argument * has type '*'0(22@64"Format '%d' expects type 'int', but argument 2 has type 'size_t'293594473#359#127#2(7@69"In file included from /Users/aivar/Documents/CurveFitting/gsl/lmder.c293594473#18446744073709551615#0#0(6@47"/Users/aivar/Documents/CurveFitting/gsl/lmder.c291330763#70#0#70#0#0"0(13@115"Format '%d' expects type 'int', but argument 2 has type 'size_t' in /Users/aivar/Documents/CurveFitting/gsl/lmpar.c293594473#18446744073709551615#0#0(6@47"/Users/aivar/Documents/CurveFitting/gsl/lmpar.c141485135#338#0#338#0#0"0(6@47"/Users/aivar/Documents/CurveFitting/gsl/lmpar.c141485135#338#0#338#0#56"format '*' expects type '*', but argument * has type '*'0(22@64"Format '%d' expects type 'int', but argument 2 has type 'size_t'293594473#636#130#2(7@69"In file included from /Users/aivar/Documents/CurveFitting/gsl/lmder.c293594473#18446744073709551615#0#0(6@47"/Users/aivar/Documents/CurveFitting/gsl/lmder.c291330763#72#0#72#0#0"0(13@119"Format '%d' expects type 'int', but argument 2 has type 'size_t' in /Users/aivar/Documents/CurveFitting/gsl/lmiterate.c293594473#18446744073709551615#0#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c293407443#69#0#69#0#0"0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c293407443#69#0#69#0#56"format '*' expects type '*', but argument * has type '*'0(0#0#47"/Users/aivar/Documents/CurveFitting/gsl/lmder.c4300885448#1354"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/gsl/lmder.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmder.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmiterate.o /Users/aivar/Documents/CurveFitting/gsl/lmiterate.c normal x86_64 c com.apple.compilers.gcc.4_2
+s291328339.897425
+e291328339.966259
+r0
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmiterate.o
+x/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_multifit_function_fdf'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_matrix'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c: In function 'iterate':
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: 'lmder_state_t' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: (Each undeclared identifier is reported only once
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: for each function it appears in.)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: 'state' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: expected expression before ')' token
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:6: error: 'gsl_matrix' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:6: error: 'r' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:7: error: 'gsl_vector' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:7: error: 'tau' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:8: error: 'diag' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:9: error: 'qtf' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:10: error: 'x_trial' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:11: error: 'f_trial' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:12: error: 'rptdx' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:13: error: 'newton' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:14: error: 'gradient' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:15: error: 'sdiag' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:16: error: 'w' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:17: error: 'work1' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:18: error: 'gsl_permutation' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:18: error: 'perm' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:31: error: 'GSL_SUCCESS' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:36: warning: implicit declaration of function 'gsl_vector_memcpy'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:36: error: 'f' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:37: warning: implicit declaration of function 'gsl_linalg_QR_QTvec'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:41: warning: implicit declaration of function 'compute_gradient_direction'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:44: error: 'size_t' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:44: error: expected ';' before 'iamax'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:46: warning: implicit declaration of function 'fabs'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:46: warning: incompatible implicit declaration of built-in function 'fabs'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:46: warning: implicit declaration of function 'gsl_vector_get'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:46: error: 'iamax' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:56: warning: implicit declaration of function 'lmpar'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:56: error: 'dx' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:63: warning: implicit declaration of function 'gsl_vector_scale'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:65: warning: implicit declaration of function 'compute_trial_step'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:65: error: 'x' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:67: warning: implicit declaration of function 'scaled_enorm'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:83: warning: implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_F'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:83: error: 'fdf' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:88: warning: implicit declaration of function 'enorm'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:92: warning: implicit declaration of function 'compute_actual_reduction'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:100: warning: implicit declaration of function 'compute_rptdx'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:108: warning: implicit declaration of function 'sqrt'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:108: warning: incompatible implicit declaration of built-in function 'sqrt'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:159: warning: implicit declaration of function 'GSL_MIN_DBL'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:177: warning: implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_DF'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:177: error: 'J' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:191: warning: implicit declaration of function 'update_diag'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:196: warning: implicit declaration of function 'gsl_matrix_memcpy'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:197: warning: implicit declaration of function 'gsl_linalg_QRPT_decomp'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:202: warning: incompatible implicit declaration of built-in function 'fabs'
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:202: error: 'GSL_DBL_EPSILON' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:205: error: 'GSL_ETOLF' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:209: error: 'GSL_ETOLX' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:213: error: 'GSL_ETOLG' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:221: error: 'GSL_CONTINUE' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:222: warning: control reaches end of non-void function
+lSLF07#2@59"Compile /Users/aivar/Documents/CurveFitting/gsl/lmiterate.c291328339#291328339#0(7283"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_multifit_function_fdf'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_matrix'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c: In function 'iterate':/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: 'lmder_state_t' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: (Each undeclared identifier is reported only once/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: for each function it appears in.)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: 'state' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:4: error: expected expression before ')' token/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:6: error: 'gsl_matrix' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:6: error: 'r' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:7: error: 'gsl_vector' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:7: error: 'tau' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:8: error: 'diag' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:9: error: 'qtf' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:10: error: 'x_trial' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:11: error: 'f_trial' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:12: error: 'rptdx' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:13: error: 'newton' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:14: error: 'gradient' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:15: error: 'sdiag' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:16: error: 'w' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:17: error: 'work1' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:18: error: 'gsl_permutation' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:18: error: 'perm' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:31: error: 'GSL_SUCCESS' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:36: warning: implicit declaration of function 'gsl_vector_memcpy'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:36: error: 'f' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:37: warning: implicit declaration of function 'gsl_linalg_QR_QTvec'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:41: warning: implicit declaration of function 'compute_gradient_direction'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:44: error: 'size_t' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:44: error: expected ';' before 'iamax'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:46: warning: implicit declaration of function 'fabs'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:46: warning: incompatible implicit declaration of built-in function 'fabs'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:46: warning: implicit declaration of function 'gsl_vector_get'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:46: error: 'iamax' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:56: warning: implicit declaration of function 'lmpar'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:56: error: 'dx' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:63: warning: implicit declaration of function 'gsl_vector_scale'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:65: warning: implicit declaration of function 'compute_trial_step'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:65: error: 'x' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:67: warning: implicit declaration of function 'scaled_enorm'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:83: warning: implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_F'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:83: error: 'fdf' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:88: warning: implicit declaration of function 'enorm'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:92: warning: implicit declaration of function 'compute_actual_reduction'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:100: warning: implicit declaration of function 'compute_rptdx'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:108: warning: implicit declaration of function 'sqrt'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:108: warning: incompatible implicit declaration of built-in function 'sqrt'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:159: warning: implicit declaration of function 'GSL_MIN_DBL'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:177: warning: implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_DF'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:177: error: 'J' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:191: warning: implicit declaration of function 'update_diag'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:196: warning: implicit declaration of function 'gsl_matrix_memcpy'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:197: warning: implicit declaration of function 'gsl_linalg_QRPT_decomp'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:202: warning: incompatible implicit declaration of built-in function 'fabs'/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:202: error: 'GSL_DBL_EPSILON' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:205: error: 'GSL_ETOLF' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:209: error: 'GSL_ETOLX' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:213: error: 'GSL_ETOLG' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:221: error: 'GSL_CONTINUE' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c:222: warning: control reaches end of non-void function61(4@75"Expected declaration specifiers or '...' before 'gsl_multifit_function_fdf'291328339#0#138#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@60"Expected declaration specifiers or '...' before 'gsl_vector'291328339#138#123#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@60"Expected declaration specifiers or '...' before 'gsl_vector'291328339#261#123#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@60"Expected declaration specifiers or '...' before 'gsl_matrix'291328339#384#123#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@60"Expected declaration specifiers or '...' before 'gsl_vector'291328339#507#123#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@55"'lmder_state_t' undeclared (first use in this function)291328339#706#118#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#4#0#4#0#43"'*' undeclared (first use in this function)0(4@47"'state' undeclared (first use in this function)291328339#1032#110#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#4#0#4#0#43"'*' undeclared (first use in this function)0(4@36"Expected expression before ')' token291328339#1142#99#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#4#0#4#0#19"expected * before *0(4@52"'gsl_matrix' undeclared (first use in this function)291328339#1241#115#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#6#0#6#0#43"'*' undeclared (first use in this function)0(4@43"'r' undeclared (first use in this function)291328339#1356#106#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#6#0#6#0#43"'*' undeclared (first use in this function)0(4@52"'gsl_vector' undeclared (first use in this function)291328339#1462#115#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#7#0#7#0#43"'*' undeclared (first use in this function)0(4@45"'tau' undeclared (first use in this function)291328339#1577#108#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#7#0#7#0#43"'*' undeclared (first use in this function)0(4@46"'diag' undeclared (first use in this function)291328339#1685#109#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#8#0#8#0#43"'*' undeclared (first use in this function)0(4@45"'qtf' undeclared (first use in this function)291328339#1794#108#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#9#0#9#0#43"'*' undeclared (first use in this function)0(4@49"'x_trial' undeclared (first use in this function)291328339#1902#113#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#10#0#10#0#43"'*' undeclared (first use in this function)0(4@49"'f_trial' undeclared (first use in this function)291328339#2015#113#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#11#0#11#0#43"'*' undeclared (first use in this function)0(4@47"'rptdx' undeclared (first use in this function)291328339#2128#111#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#12#0#12#0#43"'*' undeclared (first use in this function)0(4@48"'newton' undeclared (first use in this function)291328339#2239#112#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#13#0#13#0#43"'*' undeclared (first use in this function)0(4@50"'gradient' undeclared (first use in this function)291328339#2351#114#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#14#0#14#0#43"'*' undeclared (first use in this function)0(4@47"'sdiag' undeclared (first use in this function)291328339#2465#111#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#15#0#15#0#43"'*' undeclared (first use in this function)0(4@43"'w' undeclared (first use in this function)291328339#2576#107#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#16#0#16#0#43"'*' undeclared (first use in this function)0(4@47"'work1' undeclared (first use in this function)291328339#2683#111#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#17#0#17#0#43"'*' undeclared (first use in this function)0(4@57"'gsl_permutation' undeclared (first use in this function)291328339#2794#121#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#18#0#18#0#43"'*' undeclared (first use in this function)0(4@46"'perm' undeclared (first use in this function)291328339#2915#110#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#18#0#18#0#43"'*' undeclared (first use in this function)0(4@53"'GSL_SUCCESS' undeclared (first use in this function)291328339#3025#117#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#31#0#31#0#43"'*' undeclared (first use in this function)0(22@52"Implicit declaration of function 'gsl_vector_memcpy'291328339#3142#118#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#36#0#36#0#36"implicit declaration of function '*'0(4@43"'f' undeclared (first use in this function)291328339#3260#107#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#36#0#36#0#43"'*' undeclared (first use in this function)0(22@54"Implicit declaration of function 'gsl_linalg_QR_QTvec'291328339#3367#120#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#37#0#37#0#36"implicit declaration of function '*'0(22@61"Implicit declaration of function 'compute_gradient_direction'291328339#3487#127#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#41#0#41#0#36"implicit declaration of function '*'0(4@48"'size_t' undeclared (first use in this function)291328339#3614#112#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#44#0#44#0#43"'*' undeclared (first use in this function)0(4@27"Expected ';' before 'iamax'291328339#3726#91#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#44#0#44#0#19"expected * before *0(22@39"Implicit declaration of function 'fabs'291328339#3817#105#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#46#0#46#0#36"implicit declaration of function '*'0(22@61"Incompatible implicit declaration of built-in function 'fabs'291328339#3922#127#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#46#0#46#0#0"0(22@49"Implicit declaration of function 'gsl_vector_get'291328339#4049#115#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#46#0#46#0#36"implicit declaration of function '*'0(4@47"'iamax' undeclared (first use in this function)291328339#4164#111#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#46#0#46#0#43"'*' undeclared (first use in this function)0(22@40"Implicit declaration of function 'lmpar'291328339#4275#106#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#56#0#56#0#36"implicit declaration of function '*'0(4@44"'dx' undeclared (first use in this function)291328339#4381#108#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#56#0#56#0#43"'*' undeclared (first use in this function)0(22@51"Implicit declaration of function 'gsl_vector_scale'291328339#4489#117#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#63#0#63#0#36"implicit declaration of function '*'0(22@53"Implicit declaration of function 'compute_trial_step'291328339#4606#119#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#65#0#65#0#36"implicit declaration of function '*'0(4@43"'x' undeclared (first use in this function)291328339#4725#107#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#65#0#65#0#43"'*' undeclared (first use in this function)0(22@47"Implicit declaration of function 'scaled_enorm'291328339#4832#113#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#67#0#67#0#36"implicit declaration of function '*'0(22@57"Implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_F'291328339#4945#123#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#83#0#83#0#36"implicit declaration of function '*'0(4@45"'fdf' undeclared (first use in this function)291328339#5068#109#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#83#0#83#0#43"'*' undeclared (first use in this function)0(22@40"Implicit declaration of function 'enorm'291328339#5177#106#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#88#0#88#0#36"implicit declaration of function '*'0(22@59"Implicit declaration of function 'compute_actual_reduction'291328339#5283#125#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#92#0#92#0#36"implicit declaration of function '*'0(22@48"Implicit declaration of function 'compute_rptdx'291328339#5408#115#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#100#0#100#0#36"implicit declaration of function '*'0(22@39"Implicit declaration of function 'sqrt'291328339#5523#106#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#108#0#108#0#36"implicit declaration of function '*'0(22@61"Incompatible implicit declaration of built-in function 'sqrt'291328339#5629#128#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#108#0#108#0#0"0(22@46"Implicit declaration of function 'GSL_MIN_DBL'291328339#5757#113#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#159#0#159#0#36"implicit declaration of function '*'0(22@58"Implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_DF'291328339#5870#125#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#177#0#177#0#36"implicit declaration of function '*'0(4@43"'J' undeclared (first use in this function)291328339#5995#108#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#177#0#177#0#43"'*' undeclared (first use in this function)0(22@46"Implicit declaration of function 'update_diag'291328339#6103#113#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#191#0#191#0#36"implicit declaration of function '*'0(22@52"Implicit declaration of function 'gsl_matrix_memcpy'291328339#6216#119#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#196#0#196#0#36"implicit declaration of function '*'0(22@57"Implicit declaration of function 'gsl_linalg_QRPT_decomp'291328339#6335#124#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#197#0#197#0#36"implicit declaration of function '*'0(22@61"Incompatible implicit declaration of built-in function 'fabs'291328339#6459#128#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#202#0#202#0#0"0(4@57"'GSL_DBL_EPSILON' undeclared (first use in this function)291328339#6587#122#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#202#0#202#0#43"'*' undeclared (first use in this function)0(4@51"'GSL_ETOLF' undeclared (first use in this function)291328339#6709#116#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#205#0#205#0#43"'*' undeclared (first use in this function)0(4@51"'GSL_ETOLX' undeclared (first use in this function)291328339#6825#116#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#209#0#209#0#43"'*' undeclared (first use in this function)0(4@51"'GSL_ETOLG' undeclared (first use in this function)291328339#6941#116#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#213#0#213#0#43"'*' undeclared (first use in this function)0(4@54"'GSL_CONTINUE' undeclared (first use in this function)291328339#7057#119#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#221#0#221#0#43"'*' undeclared (first use in this function)0(22@40"Control reaches end of non-void function291328339#7176#107#0(6@51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c109264638#222#0#222#0#40"control reaches end of non-void function0(0#0#51"/Users/aivar/Documents/CurveFitting/gsl/lmiterate.c4300885448#1362"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/gsl/lmiterate.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmiterate.o1#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmiterate.o /Users/aivar/Documents/CurveFitting/lmiterate.c normal x86_64 c com.apple.compilers.gcc.4_2
+s291315215.486531
+e291315215.587388
+r0
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmiterate.o
+x/Users/aivar/Documents/CurveFitting/lmiterate.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_multifit_function_fdf'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_matrix'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c: In function 'iterate':
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: 'lmder_state_t' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: (Each undeclared identifier is reported only once
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: for each function it appears in.)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: 'state' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: expected expression before ')' token
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:6: error: 'gsl_matrix' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:6: error: 'r' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:7: error: 'gsl_vector' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:7: error: 'tau' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:8: error: 'diag' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:9: error: 'qtf' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:10: error: 'x_trial' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:11: error: 'f_trial' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:12: error: 'rptdx' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:13: error: 'newton' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:14: error: 'gradient' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:15: error: 'sdiag' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:16: error: 'w' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:17: error: 'work1' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:18: error: 'gsl_permutation' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:18: error: 'perm' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:31: error: 'GSL_SUCCESS' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:36: warning: implicit declaration of function 'gsl_vector_memcpy'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:36: error: 'f' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:37: warning: implicit declaration of function 'gsl_linalg_QR_QTvec'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:41: warning: implicit declaration of function 'compute_gradient_direction'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:44: error: 'size_t' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:44: error: expected ';' before 'iamax'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:46: warning: implicit declaration of function 'fabs'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:46: warning: incompatible implicit declaration of built-in function 'fabs'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:46: warning: implicit declaration of function 'gsl_vector_get'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:46: error: 'iamax' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:56: warning: implicit declaration of function 'lmpar'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:56: error: 'dx' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:63: warning: implicit declaration of function 'gsl_vector_scale'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:65: warning: implicit declaration of function 'compute_trial_step'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:65: error: 'x' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:67: warning: implicit declaration of function 'scaled_enorm'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:83: warning: implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_F'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:83: error: 'fdf' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:88: warning: implicit declaration of function 'enorm'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:92: warning: implicit declaration of function 'compute_actual_reduction'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:100: warning: implicit declaration of function 'compute_rptdx'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:108: warning: implicit declaration of function 'sqrt'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:108: warning: incompatible implicit declaration of built-in function 'sqrt'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:159: warning: implicit declaration of function 'GSL_MIN_DBL'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:177: warning: implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_DF'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:177: error: 'J' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:191: warning: implicit declaration of function 'update_diag'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:196: warning: implicit declaration of function 'gsl_matrix_memcpy'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:197: warning: implicit declaration of function 'gsl_linalg_QRPT_decomp'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:202: warning: incompatible implicit declaration of built-in function 'fabs'
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:202: error: 'GSL_DBL_EPSILON' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:205: error: 'GSL_ETOLF' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:209: error: 'GSL_ETOLX' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:213: error: 'GSL_ETOLG' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:221: error: 'GSL_CONTINUE' undeclared (first use in this function)
+o/Users/aivar/Documents/CurveFitting/lmiterate.c:222: warning: control reaches end of non-void function
+lSLF07#2@55"Compile /Users/aivar/Documents/CurveFitting/lmiterate.c291315215#291315215#0(7027"/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_multifit_function_fdf'/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_matrix'/Users/aivar/Documents/CurveFitting/lmiterate.c:2: error: expected declaration specifiers or '...' before 'gsl_vector'/Users/aivar/Documents/CurveFitting/lmiterate.c: In function 'iterate':/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: 'lmder_state_t' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: (Each undeclared identifier is reported only once/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: for each function it appears in.)/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: 'state' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:4: error: expected expression before ')' token/Users/aivar/Documents/CurveFitting/lmiterate.c:6: error: 'gsl_matrix' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:6: error: 'r' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:7: error: 'gsl_vector' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:7: error: 'tau' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:8: error: 'diag' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:9: error: 'qtf' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:10: error: 'x_trial' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:11: error: 'f_trial' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:12: error: 'rptdx' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:13: error: 'newton' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:14: error: 'gradient' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:15: error: 'sdiag' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:16: error: 'w' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:17: error: 'work1' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:18: error: 'gsl_permutation' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:18: error: 'perm' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:31: error: 'GSL_SUCCESS' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:36: warning: implicit declaration of function 'gsl_vector_memcpy'/Users/aivar/Documents/CurveFitting/lmiterate.c:36: error: 'f' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:37: warning: implicit declaration of function 'gsl_linalg_QR_QTvec'/Users/aivar/Documents/CurveFitting/lmiterate.c:41: warning: implicit declaration of function 'compute_gradient_direction'/Users/aivar/Documents/CurveFitting/lmiterate.c:44: error: 'size_t' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:44: error: expected ';' before 'iamax'/Users/aivar/Documents/CurveFitting/lmiterate.c:46: warning: implicit declaration of function 'fabs'/Users/aivar/Documents/CurveFitting/lmiterate.c:46: warning: incompatible implicit declaration of built-in function 'fabs'/Users/aivar/Documents/CurveFitting/lmiterate.c:46: warning: implicit declaration of function 'gsl_vector_get'/Users/aivar/Documents/CurveFitting/lmiterate.c:46: error: 'iamax' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:56: warning: implicit declaration of function 'lmpar'/Users/aivar/Documents/CurveFitting/lmiterate.c:56: error: 'dx' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:63: warning: implicit declaration of function 'gsl_vector_scale'/Users/aivar/Documents/CurveFitting/lmiterate.c:65: warning: implicit declaration of function 'compute_trial_step'/Users/aivar/Documents/CurveFitting/lmiterate.c:65: error: 'x' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:67: warning: implicit declaration of function 'scaled_enorm'/Users/aivar/Documents/CurveFitting/lmiterate.c:83: warning: implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_F'/Users/aivar/Documents/CurveFitting/lmiterate.c:83: error: 'fdf' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:88: warning: implicit declaration of function 'enorm'/Users/aivar/Documents/CurveFitting/lmiterate.c:92: warning: implicit declaration of function 'compute_actual_reduction'/Users/aivar/Documents/CurveFitting/lmiterate.c:100: warning: implicit declaration of function 'compute_rptdx'/Users/aivar/Documents/CurveFitting/lmiterate.c:108: warning: implicit declaration of function 'sqrt'/Users/aivar/Documents/CurveFitting/lmiterate.c:108: warning: incompatible implicit declaration of built-in function 'sqrt'/Users/aivar/Documents/CurveFitting/lmiterate.c:159: warning: implicit declaration of function 'GSL_MIN_DBL'/Users/aivar/Documents/CurveFitting/lmiterate.c:177: warning: implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_DF'/Users/aivar/Documents/CurveFitting/lmiterate.c:177: error: 'J' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:191: warning: implicit declaration of function 'update_diag'/Users/aivar/Documents/CurveFitting/lmiterate.c:196: warning: implicit declaration of function 'gsl_matrix_memcpy'/Users/aivar/Documents/CurveFitting/lmiterate.c:197: warning: implicit declaration of function 'gsl_linalg_QRPT_decomp'/Users/aivar/Documents/CurveFitting/lmiterate.c:202: warning: incompatible implicit declaration of built-in function 'fabs'/Users/aivar/Documents/CurveFitting/lmiterate.c:202: error: 'GSL_DBL_EPSILON' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:205: error: 'GSL_ETOLF' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:209: error: 'GSL_ETOLX' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:213: error: 'GSL_ETOLG' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:221: error: 'GSL_CONTINUE' undeclared (first use in this function)/Users/aivar/Documents/CurveFitting/lmiterate.c:222: warning: control reaches end of non-void function61(4@75"Expected declaration specifiers or '...' before 'gsl_multifit_function_fdf'291315215#0#134#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@60"Expected declaration specifiers or '...' before 'gsl_vector'291315215#134#119#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@60"Expected declaration specifiers or '...' before 'gsl_vector'291315215#253#119#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@60"Expected declaration specifiers or '...' before 'gsl_matrix'291315215#372#119#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@60"Expected declaration specifiers or '...' before 'gsl_vector'291315215#491#119#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#2#0#2#0#19"expected * before *0(4@55"'lmder_state_t' undeclared (first use in this function)291315215#682#114#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#4#0#4#0#43"'*' undeclared (first use in this function)0(4@47"'state' undeclared (first use in this function)291315215#996#106#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#4#0#4#0#43"'*' undeclared (first use in this function)0(4@36"Expected expression before ')' token291315215#1102#95#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#4#0#4#0#19"expected * before *0(4@52"'gsl_matrix' undeclared (first use in this function)291315215#1197#111#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#6#0#6#0#43"'*' undeclared (first use in this function)0(4@43"'r' undeclared (first use in this function)291315215#1308#102#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#6#0#6#0#43"'*' undeclared (first use in this function)0(4@52"'gsl_vector' undeclared (first use in this function)291315215#1410#111#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#7#0#7#0#43"'*' undeclared (first use in this function)0(4@45"'tau' undeclared (first use in this function)291315215#1521#104#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#7#0#7#0#43"'*' undeclared (first use in this function)0(4@46"'diag' undeclared (first use in this function)291315215#1625#105#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#8#0#8#0#43"'*' undeclared (first use in this function)0(4@45"'qtf' undeclared (first use in this function)291315215#1730#104#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#9#0#9#0#43"'*' undeclared (first use in this function)0(4@49"'x_trial' undeclared (first use in this function)291315215#1834#109#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#10#0#10#0#43"'*' undeclared (first use in this function)0(4@49"'f_trial' undeclared (first use in this function)291315215#1943#109#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#11#0#11#0#43"'*' undeclared (first use in this function)0(4@47"'rptdx' undeclared (first use in this function)291315215#2052#107#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#12#0#12#0#43"'*' undeclared (first use in this function)0(4@48"'newton' undeclared (first use in this function)291315215#2159#108#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#13#0#13#0#43"'*' undeclared (first use in this function)0(4@50"'gradient' undeclared (first use in this function)291315215#2267#110#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#14#0#14#0#43"'*' undeclared (first use in this function)0(4@47"'sdiag' undeclared (first use in this function)291315215#2377#107#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#15#0#15#0#43"'*' undeclared (first use in this function)0(4@43"'w' undeclared (first use in this function)291315215#2484#103#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#16#0#16#0#43"'*' undeclared (first use in this function)0(4@47"'work1' undeclared (first use in this function)291315215#2587#107#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#17#0#17#0#43"'*' undeclared (first use in this function)0(4@57"'gsl_permutation' undeclared (first use in this function)291315215#2694#117#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#18#0#18#0#43"'*' undeclared (first use in this function)0(4@46"'perm' undeclared (first use in this function)291315215#2811#106#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#18#0#18#0#43"'*' undeclared (first use in this function)0(4@53"'GSL_SUCCESS' undeclared (first use in this function)291315215#2917#113#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#31#0#31#0#43"'*' undeclared (first use in this function)0(22@52"Implicit declaration of function 'gsl_vector_memcpy'291315215#3030#114#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#36#0#36#0#36"implicit declaration of function '*'0(4@43"'f' undeclared (first use in this function)291315215#3144#103#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#36#0#36#0#43"'*' undeclared (first use in this function)0(22@54"Implicit declaration of function 'gsl_linalg_QR_QTvec'291315215#3247#116#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#37#0#37#0#36"implicit declaration of function '*'0(22@61"Implicit declaration of function 'compute_gradient_direction'291315215#3363#123#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#41#0#41#0#36"implicit declaration of function '*'0(4@48"'size_t' undeclared (first use in this function)291315215#3486#108#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#44#0#44#0#43"'*' undeclared (first use in this function)0(4@27"Expected ';' before 'iamax'291315215#3594#87#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#44#0#44#0#19"expected * before *0(22@39"Implicit declaration of function 'fabs'291315215#3681#101#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#46#0#46#0#36"implicit declaration of function '*'0(22@61"Incompatible implicit declaration of built-in function 'fabs'291315215#3782#123#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#46#0#46#0#0"0(22@49"Implicit declaration of function 'gsl_vector_get'291315215#3905#111#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#46#0#46#0#36"implicit declaration of function '*'0(4@47"'iamax' undeclared (first use in this function)291315215#4016#107#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#46#0#46#0#43"'*' undeclared (first use in this function)0(22@40"Implicit declaration of function 'lmpar'291315215#4123#102#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#56#0#56#0#36"implicit declaration of function '*'0(4@44"'dx' undeclared (first use in this function)291315215#4225#104#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#56#0#56#0#43"'*' undeclared (first use in this function)0(22@51"Implicit declaration of function 'gsl_vector_scale'291315215#4329#113#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#63#0#63#0#36"implicit declaration of function '*'0(22@53"Implicit declaration of function 'compute_trial_step'291315215#4442#115#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#65#0#65#0#36"implicit declaration of function '*'0(4@43"'x' undeclared (first use in this function)291315215#4557#103#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#65#0#65#0#43"'*' undeclared (first use in this function)0(22@47"Implicit declaration of function 'scaled_enorm'291315215#4660#109#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#67#0#67#0#36"implicit declaration of function '*'0(22@57"Implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_F'291315215#4769#119#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#83#0#83#0#36"implicit declaration of function '*'0(4@45"'fdf' undeclared (first use in this function)291315215#4888#105#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#83#0#83#0#43"'*' undeclared (first use in this function)0(22@40"Implicit declaration of function 'enorm'291315215#4993#102#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#88#0#88#0#36"implicit declaration of function '*'0(22@59"Implicit declaration of function 'compute_actual_reduction'291315215#5095#121#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#92#0#92#0#36"implicit declaration of function '*'0(22@48"Implicit declaration of function 'compute_rptdx'291315215#5216#111#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#100#0#100#0#36"implicit declaration of function '*'0(22@39"Implicit declaration of function 'sqrt'291315215#5327#102#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#108#0#108#0#36"implicit declaration of function '*'0(22@61"Incompatible implicit declaration of built-in function 'sqrt'291315215#5429#124#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#108#0#108#0#0"0(22@46"Implicit declaration of function 'GSL_MIN_DBL'291315215#5553#109#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#159#0#159#0#36"implicit declaration of function '*'0(22@58"Implicit declaration of function 'GSL_MULTIFIT_FN_EVAL_DF'291315215#5662#121#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#177#0#177#0#36"implicit declaration of function '*'0(4@43"'J' undeclared (first use in this function)291315215#5783#104#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#177#0#177#0#43"'*' undeclared (first use in this function)0(22@46"Implicit declaration of function 'update_diag'291315215#5887#109#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#191#0#191#0#36"implicit declaration of function '*'0(22@52"Implicit declaration of function 'gsl_matrix_memcpy'291315215#5996#115#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#196#0#196#0#36"implicit declaration of function '*'0(22@57"Implicit declaration of function 'gsl_linalg_QRPT_decomp'291315215#6111#120#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#197#0#197#0#36"implicit declaration of function '*'0(22@61"Incompatible implicit declaration of built-in function 'fabs'291315215#6231#124#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#202#0#202#0#0"0(4@57"'GSL_DBL_EPSILON' undeclared (first use in this function)291315215#6355#118#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#202#0#202#0#43"'*' undeclared (first use in this function)0(4@51"'GSL_ETOLF' undeclared (first use in this function)291315215#6473#112#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#205#0#205#0#43"'*' undeclared (first use in this function)0(4@51"'GSL_ETOLX' undeclared (first use in this function)291315215#6585#112#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#209#0#209#0#43"'*' undeclared (first use in this function)0(4@51"'GSL_ETOLG' undeclared (first use in this function)291315215#6697#112#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#213#0#213#0#43"'*' undeclared (first use in this function)0(4@54"'GSL_CONTINUE' undeclared (first use in this function)291315215#6809#115#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#221#0#221#0#43"'*' undeclared (first use in this function)0(22@40"Control reaches end of non-void function291315215#6924#103#0(6@47"/Users/aivar/Documents/CurveFitting/lmiterate.c109264638#222#0#222#0#40"control reaches end of non-void function0(0#0#47"/Users/aivar/Documents/CurveFitting/lmiterate.c7307761437599099904#1358"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/lmiterate.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmiterate.o1#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmlec.o /Users/aivar/Documents/CurveFitting/lmlec.c normal x86_64 c com.apple.compilers.gcc.4_2
+s293594399.325643
+e293594399.363880
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmlec.o
+x/Users/aivar/Documents/CurveFitting/lmlec.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+o/Users/aivar/Documents/CurveFitting/lmlec.c:39:2: warning: #warning Linearly constrained optimization requires LAPACK and was not compiled!
+lSLF07#2@51"Compile /Users/aivar/Documents/CurveFitting/lmlec.c293594399#293594399#0(140"/Users/aivar/Documents/CurveFitting/lmlec.c:39:2: warning: #warning Linearly constrained optimization requires LAPACK and was not compiled!1(22@80"#warning Linearly constrained optimization requires LAPACK and was not compiled!293594399#0#140#0(6@43"/Users/aivar/Documents/CurveFitting/lmlec.c273500402#39#0#39#0#10"#warning *0(0#0#43"/Users/aivar/Documents/CurveFitting/lmlec.c4300885448#1350"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/lmlec.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/lmlec.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/main.o /Users/aivar/Documents/CurveFitting/main.c normal x86_64 c com.apple.compilers.gcc.4_2
+s295485318.596168
+e295485318.807882
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/main.o
+x/Users/aivar/Documents/CurveFitting/main.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@50"Compile /Users/aivar/Documents/CurveFitting/main.c295485318#295485318#0(2968"/Users/aivar/Documents/CurveFitting/main.c: In function 'do_gsl_fit':/Users/aivar/Documents/CurveFitting/main.c:217: warning: format '%f' expects type 'double', but argument 2 has type 'unsigned int'/Users/aivar/Documents/CurveFitting/main.c: In function 'print_state':/Users/aivar/Documents/CurveFitting/main.c:280: warning: format '%3u' expects type 'unsigned int', but argument 2 has type 'size_t'/Users/aivar/Documents/CurveFitting/main.c: In function 'fmodel':/Users/aivar/Documents/CurveFitting/main.c:369: warning: unused variable 'sigma'/Users/aivar/Documents/CurveFitting/main.c: At top level:/Users/aivar/Documents/CurveFitting/main.c:378: warning: return type defaults to 'int'/Users/aivar/Documents/CurveFitting/main.c: In function 'do_nr_fit':/Users/aivar/Documents/CurveFitting/main.c:379: warning: unused variable 'idum'/Users/aivar/Documents/CurveFitting/main.c: In function 'altSolution':/Users/aivar/Documents/CurveFitting/main.c:760: warning: unused variable 'lambda'/Users/aivar/Documents/CurveFitting/main.c: In function 'setUpMatrices':/Users/aivar/Documents/CurveFitting/main.c:977: warning: initialization from incompatible pointer type/Users/aivar/Documents/CurveFitting/main.c:1140: warning: passing argument 1 of 'free_vector' from incompatible pointer type/Users/aivar/Documents/CurveFitting/main.c: At top level:/Users/aivar/Documents/CurveFitting/nrutil.h:4: warning: 'sqrarg' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:7: warning: 'dsqrarg' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg2' defined but not used28(22@73"Format '%f' expects type 'double', but argument 2 has type 'unsigned int'295485318#70#131#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#217#0#217#0#56"format '*' expects type '*', but argument * has type '*'0(22@74"Format '%3u' expects type 'unsigned int', but argument 2 has type 'size_t'295485318#272#132#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#280#0#280#0#56"format '*' expects type '*', but argument * has type '*'0(22@23"Unused variable 'sigma'295485318#470#81#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#369#0#369#0#19"unused variable '*'0(23@13"At top level:295485318#551#58#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#0#0#0#0#0"0(22@29"Return type defaults to 'int'295485318#609#87#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#378#0#378#0#0"0(22@22"Unused variable 'idum'295485318#765#80#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#379#0#379#0#19"unused variable '*'0(22@24"Unused variable 'lambda'295485318#916#82#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#760#0#760#0#19"unused variable '*'0(22@45"Initialization from incompatible pointer type295485318#1071#103#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#977#0#977#0#45"initialization from incompatible pointer type0(22@66"Passing argument 1 of 'free_vector' from incompatible pointer type295485318#1174#125#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#1140#0#1140#0#56"passing argument * of '*' from incompatible pointer type0(23@13"At top level:295485318#1299#58#0(6@42"/Users/aivar/Documents/CurveFitting/main.c295485318#0#0#0#0#0"0(22@29"'sqrarg' defined but not used295485318#1357#87#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#4#0#4#0#24"'*' defined but not used0(22@30"'dsqrarg' defined but not used295485318#1444#88#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#7#0#7#0#24"'*' defined but not used0(22@31"'dmaxarg1' defined but not used295485318#1532#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#10#0#10#0#24"'*' defined but not used0(22@31"'dmaxarg2' defined but not used295485318#1622#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#10#0#10#0#24"'*' defined but not used0(22@31"'dminarg1' defined but not used295485318#1712#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#14#0#14#0#24"'*' defined but not used0(22@31"'dminarg2' defined but not used295485318#1802#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#14#0#14#0#24"'*' defined but not used0(22@30"'maxarg1' defined but not used295485318#1892#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#18#0#18#0#24"'*' defined but not used0(22@30"'maxarg2' defined but not used295485318#1981#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#18#0#18#0#24"'*' defined but not used0(22@30"'minarg1' defined but not used295485318#2070#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#22#0#22#0#24"'*' defined but not used0(22@30"'minarg2' defined but not used295485318#2159#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#22#0#22#0#24"'*' defined but not used0(22@31"'lmaxarg1' defined but not used295485318#2248#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#26#0#26#0#24"'*' defined but not used0(22@31"'lmaxarg2' defined but not used295485318#2338#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#26#0#26#0#24"'*' defined but not used0(22@31"'lminarg1' defined but not used295485318#2428#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#30#0#30#0#24"'*' defined but not used0(22@31"'lminarg2' defined but not used295485318#2518#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#30#0#30#0#24"'*' defined but not used0(22@31"'imaxarg1' defined but not used295485318#2608#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#34#0#34#0#24"'*' defined but not used0(22@31"'imaxarg2' defined but not used295485318#2698#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#34#0#34#0#24"'*' defined but not used0(22@31"'iminarg1' defined but not used295485318#2788#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#38#0#38#0#24"'*' defined but not used0(22@31"'iminarg2' defined but not used295485318#2878#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#38#0#38#0#24"'*' defined but not used0(0#0#42"/Users/aivar/Documents/CurveFitting/main.c4300911832#1348"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/main.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/main.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/misc.o /Users/aivar/Documents/CurveFitting/misc.c normal x86_64 c com.apple.compilers.gcc.4_2
+s292352117.266537
+e292352117.589176
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/misc.o
+x/Users/aivar/Documents/CurveFitting/misc.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+oIn file included from /Users/aivar/Documents/CurveFitting/misc.c:47:
+o/Users/aivar/Documents/CurveFitting/misc_core.c:575:2: warning: #warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at times
+oIn file included from /Users/aivar/Documents/CurveFitting/misc.c:64:
+o/Users/aivar/Documents/CurveFitting/misc_core.c:575:2: warning: #warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at times
+lSLF07#2@50"Compile /Users/aivar/Documents/CurveFitting/misc.c292352117#292352117#0(528"In file included from /Users/aivar/Documents/CurveFitting/misc.c:47:/Users/aivar/Documents/CurveFitting/misc_core.c:575:2: warning: #warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at timesIn file included from /Users/aivar/Documents/CurveFitting/misc.c:64:/Users/aivar/Documents/CurveFitting/misc_core.c:575:2: warning: #warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at times2(22@130"#warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at times292352117#69#195#2(7@64"In file included from /Users/aivar/Documents/CurveFitting/misc.c292352117#18446744073709551615#0#0(6@42"/Users/aivar/Documents/CurveFitting/misc.c273500412#47#0#47#0#0"0(13@181"#warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at times in /Users/aivar/Documents/CurveFitting/misc_core.c292352117#18446744073709551615#0#0(6@47"/Users/aivar/Documents/CurveFitting/misc_core.c278331337#575#0#575#0#0"0(6@47"/Users/aivar/Documents/CurveFitting/misc_core.c278331337#575#0#575#0#10"#warning *0(22@130"#warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at times292352117#333#195#2(7@64"In file included from /Users/aivar/Documents/CurveFitting/misc.c292352117#18446744073709551615#0#0(6@42"/Users/aivar/Documents/CurveFitting/misc.c273500412#64#0#64#0#0"0(13@181"#warning LAPACK not available, LU will be used for matrix inversion when computing the covariance; this might be unstable at times in /Users/aivar/Documents/CurveFitting/misc_core.c292352117#18446744073709551615#0#0(6@47"/Users/aivar/Documents/CurveFitting/misc_core.c278331337#575#0#575#0#0"0(6@47"/Users/aivar/Documents/CurveFitting/misc_core.c278331337#575#0#575#0#10"#warning *0(0#0#42"/Users/aivar/Documents/CurveFitting/misc.c4300885448#1348"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/misc.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/misc.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqcof.o /Users/aivar/Documents/CurveFitting/mrqcof.c normal x86_64 c com.apple.compilers.gcc.4_2
+s293672944.826680
+e293672944.827925
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqcof.o
+x/Users/aivar/Documents/CurveFitting/mrqcof.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@52"Compile /Users/aivar/Documents/CurveFitting/mrqcof.c293672944#293672944#0(1611"/Users/aivar/Documents/CurveFitting/nrutil.h:4: warning: 'sqrarg' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:7: warning: 'dsqrarg' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg2' defined but not used18(22@29"'sqrarg' defined but not used293672944#0#87#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#4#0#4#0#24"'*' defined but not used0(22@30"'dsqrarg' defined but not used293672944#87#88#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#7#0#7#0#24"'*' defined but not used0(22@31"'dmaxarg1' defined but not used293672944#175#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#10#0#10#0#24"'*' defined but not used0(22@31"'dmaxarg2' defined but not used293672944#265#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#10#0#10#0#24"'*' defined but not used0(22@31"'dminarg1' defined but not used293672944#355#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#14#0#14#0#24"'*' defined but not used0(22@31"'dminarg2' defined but not used293672944#445#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#14#0#14#0#24"'*' defined but not used0(22@30"'maxarg1' defined but not used293672944#535#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#18#0#18#0#24"'*' defined but not used0(22@30"'maxarg2' defined but not used293672944#624#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#18#0#18#0#24"'*' defined but not used0(22@30"'minarg1' defined but not used293672944#713#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#22#0#22#0#24"'*' defined but not used0(22@30"'minarg2' defined but not used293672944#802#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#22#0#22#0#24"'*' defined but not used0(22@31"'lmaxarg1' defined but not used293672944#891#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#26#0#26#0#24"'*' defined but not used0(22@31"'lmaxarg2' defined but not used293672944#981#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#26#0#26#0#24"'*' defined but not used0(22@31"'lminarg1' defined but not used293672944#1071#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#30#0#30#0#24"'*' defined but not used0(22@31"'lminarg2' defined but not used293672944#1161#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#30#0#30#0#24"'*' defined but not used0(22@31"'imaxarg1' defined but not used293672944#1251#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#34#0#34#0#24"'*' defined but not used0(22@31"'imaxarg2' defined but not used293672944#1341#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#34#0#34#0#24"'*' defined but not used0(22@31"'iminarg1' defined but not used293672944#1431#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#38#0#38#0#24"'*' defined but not used0(22@31"'iminarg2' defined but not used293672944#1521#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#38#0#38#0#24"'*' defined but not used0(0#0#44"/Users/aivar/Documents/CurveFitting/mrqcof.c4300885448#1352"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/mrqcof.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqcof.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqmin.o /Users/aivar/Documents/CurveFitting/mrqmin.c normal x86_64 c com.apple.compilers.gcc.4_2
+s293774818.269673
+e293774818.400311
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqmin.o
+x/Users/aivar/Documents/CurveFitting/mrqmin.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@52"Compile /Users/aivar/Documents/CurveFitting/mrqmin.c293774818#293774818#0(1961"/Users/aivar/Documents/CurveFitting/mrqmin.c: In function 'mrqmin':/Users/aivar/Documents/CurveFitting/mrqmin.c:18: warning: implicit declaration of function 'printf'/Users/aivar/Documents/CurveFitting/mrqmin.c:18: warning: incompatible implicit declaration of built-in function 'printf'/Users/aivar/Documents/CurveFitting/mrqmin.c: At top level:/Users/aivar/Documents/CurveFitting/nrutil.h:4: warning: 'sqrarg' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:7: warning: 'dsqrarg' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:10: warning: 'dmaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:14: warning: 'dminarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:18: warning: 'maxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:22: warning: 'minarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:26: warning: 'lmaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:30: warning: 'lminarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:34: warning: 'imaxarg2' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg1' defined but not used/Users/aivar/Documents/CurveFitting/nrutil.h:38: warning: 'iminarg2' defined but not used21(22@41"Implicit declaration of function 'printf'293774818#68#100#0(6@44"/Users/aivar/Documents/CurveFitting/mrqmin.c293774818#18#0#18#0#36"implicit declaration of function '*'0(22@63"Incompatible implicit declaration of built-in function 'printf'293774818#168#122#0(6@44"/Users/aivar/Documents/CurveFitting/mrqmin.c293774818#18#0#18#0#0"0(23@13"At top level:293774818#290#60#0(6@44"/Users/aivar/Documents/CurveFitting/mrqmin.c293774818#0#0#0#0#0"0(22@29"'sqrarg' defined but not used293774818#350#87#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#4#0#4#0#24"'*' defined but not used0(22@30"'dsqrarg' defined but not used293774818#437#88#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#7#0#7#0#24"'*' defined but not used0(22@31"'dmaxarg1' defined but not used293774818#525#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#10#0#10#0#24"'*' defined but not used0(22@31"'dmaxarg2' defined but not used293774818#615#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#10#0#10#0#24"'*' defined but not used0(22@31"'dminarg1' defined but not used293774818#705#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#14#0#14#0#24"'*' defined but not used0(22@31"'dminarg2' defined but not used293774818#795#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#14#0#14#0#24"'*' defined but not used0(22@30"'maxarg1' defined but not used293774818#885#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#18#0#18#0#24"'*' defined but not used0(22@30"'maxarg2' defined but not used293774818#974#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#18#0#18#0#24"'*' defined but not used0(22@30"'minarg1' defined but not used293774818#1063#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#22#0#22#0#24"'*' defined but not used0(22@30"'minarg2' defined but not used293774818#1152#89#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#22#0#22#0#24"'*' defined but not used0(22@31"'lmaxarg1' defined but not used293774818#1241#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#26#0#26#0#24"'*' defined but not used0(22@31"'lmaxarg2' defined but not used293774818#1331#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#26#0#26#0#24"'*' defined but not used0(22@31"'lminarg1' defined but not used293774818#1421#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#30#0#30#0#24"'*' defined but not used0(22@31"'lminarg2' defined but not used293774818#1511#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#30#0#30#0#24"'*' defined but not used0(22@31"'imaxarg1' defined but not used293774818#1601#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#34#0#34#0#24"'*' defined but not used0(22@31"'imaxarg2' defined but not used293774818#1691#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#34#0#34#0#24"'*' defined but not used0(22@31"'iminarg1' defined but not used293774818#1781#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#38#0#38#0#24"'*' defined but not used0(22@31"'iminarg2' defined but not used293774818#1871#90#0(6@44"/Users/aivar/Documents/CurveFitting/nrutil.h18446744073555479664#38#0#38#0#24"'*' defined but not used0(0#0#44"/Users/aivar/Documents/CurveFitting/mrqmin.c4300885448#1352"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/mrqmin.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/mrqmin.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/nrutil.o /Users/aivar/Documents/CurveFitting/nrutil.c normal x86_64 c com.apple.compilers.gcc.4_2
+s290561317.436433
+e290561317.543799
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/nrutil.o
+x/Users/aivar/Documents/CurveFitting/nrutil.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@52"Compile /Users/aivar/Documents/CurveFitting/nrutil.c290561317#290561317#0(0"0(0#0#44"/Users/aivar/Documents/CurveFitting/nrutil.c4300885448#1352"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/nrutil.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/nrutil.o0#
+
+CCompileC build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/ran1.o /Users/aivar/Documents/CurveFitting/ran1.c normal x86_64 c com.apple.compilers.gcc.4_2
+s290561670.039542
+e290561670.097251
+r1
+xCompileC
+xbuild/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/ran1.o
+x/Users/aivar/Documents/CurveFitting/ran1.c
+xnormal
+xx86_64
+xc
+xcom.apple.compilers.gcc.4_2
+lSLF07#2@50"Compile /Users/aivar/Documents/CurveFitting/ran1.c290561670#290561670#0(0"0(0#0#42"/Users/aivar/Documents/CurveFitting/ran1.c4300885448#1348"    cd /Users/aivar/Documents/CurveFitting    setenv LANG en_US.US-ASCII    /Developer/usr/bin/gcc-4.2 -x c -arch x86_64 -fmessage-length=0 -pipe -std=gnu99 -Wno-trigraphs -fpascal-strings -fasm-blocks -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/SDKs/MacOSX10.6.sdk -mfix-and-continue -mmacosx-version-min=10.6 -gdwarf-2 -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-generated-files.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-own-target-headers.hmap -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-all-target-headers.hmap -iquote /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/CurveFitting-project-headers.hmap -F/Users/aivar/Documents/CurveFitting/build/Debug -I/Users/aivar/Documents/CurveFitting/build/Debug/include -I/opt/local/include -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources/x86_64 -I/Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/DerivedSources -c /Users/aivar/Documents/CurveFitting/ran1.c -o /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/ran1.o0#
+
+CLd /Users/aivar/Documents/CurveFitting/build/Debug/CurveFitting normal x86_64
+s295485318.809413
+e295485318.901887
+r1
+xLd
+x/Users/aivar/Documents/CurveFitting/build/Debug/CurveFitting
+xnormal
+xx86_64
+lSLF07#2@65"Link /Users/aivar/Documents/CurveFitting/build/Debug/CurveFitting295485318#295485318#0(0"0(0#0#0"4300911832#573"    cd /Users/aivar/Documents/CurveFitting    setenv MACOSX_DEPLOYMENT_TARGET 10.6    /Developer/usr/bin/gcc-4.2 -arch x86_64 -isysroot /Developer/SDKs/MacOSX10.6.sdk -L/Users/aivar/Documents/CurveFitting/build/Debug -L/opt/local/lib -F/Users/aivar/Documents/CurveFitting/build/Debug -filelist /Users/aivar/Documents/CurveFitting/build/CurveFitting.build/Debug/CurveFitting.build/Objects-normal/x86_64/CurveFitting.LinkFileList -mmacosx-version-min=10.6 -lgslcblas.0 -lapr-1.0.3.9 -laprutil-1.0.3.9 -lgsl.0 -o /Users/aivar/Documents/CurveFitting/build/Debug/CurveFitting0#
+
