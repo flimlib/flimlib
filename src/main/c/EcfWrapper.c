@@ -19,6 +19,7 @@ Copyright (c) 2010, 2011, Gray Institute University of Oxford & UW-Madison LOCI.
 
 #include "EcfWrapper.h"
 #include "Ecf.h"
+#include "EcfInternal.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -259,6 +260,11 @@ int LMA_fit(
             break;
         case 4:
             // stretched exponential fit
+			
+			// convert tau into <tau>
+			param_float[2]
+				= param_float[2] * param_float[3] * GCI_gamma(param_float[3]);
+			
             param[0] = (double) chi_square_float;
             param[1] = (double) param_float[0]; // z
             param[2] = (double) param_float[1]; // a
