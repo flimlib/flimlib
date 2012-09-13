@@ -280,7 +280,6 @@ int lu_decomp(float **a, int n, int *order)
  specifying any reordering done during pivoting, solves the equation
  Ax = b.  Returns result in b.
  */
-//TODO check for lu[i][i] != 0?
 int solve_lu(float **lu, int n, float *b, int *order)
 {
     int startIndex;
@@ -939,6 +938,495 @@ int check_ecf_user_params (float param[], int nparam,
 
         return 0;
 }
+
+
+/********************************************************************
+
+			   ERROR BOUNDS AND CHI-SQUARED CALCULATION
+
+*********************************************************************/
+
+static float chisq50[MAXFIT+1] = { 0, 0.45, 1.39, 2.37, 3.36,
+                                   4.35, 5.35, 6.35, 7.34, 8.34,
+                                   9.34, 10.34, 11.34, 12.34, 13.34,
+                                   14.34, 15.34, 16.34, 17.34, 18.34,
+                                   19.34 };
+static float chisq68[MAXFIT+1] = { 0, 0.99, 2.28, 3.51, 4.70,
+                                   5.86, 7.01, 8.14, 9.27, 10.39,
+                                   11.50, 12.60, 13.70, 14.80, 15.89,
+                                   16.98, 18.07, 19.15, 20.23, 21.31,
+                                   22.38 };
+static float chisq90[MAXFIT+1] = { 0, 2.71, 4.61, 6.25, 7.78,
+                                   9.24, 10.64, 12.02, 13.36, 14.68,
+                                   15.99, 17.27, 18.55, 19.81, 21.06,
+                                   22.31, 23.54, 24.77, 25.99, 27.20,
+                                   28.41 };
+static float chisq95[MAXFIT+1] = { 0, 3.84, 5.99, 7.81, 9.49,
+                                   11.07, 12.59, 14.07, 15.51, 16.92,
+                                   18.31, 19.68, 21.03, 22.36, 23.68,
+                                   25.00, 26.30, 27.59, 28.87, 30.14,
+                                   31.41 };
+
+/**
+ * Estimate errors for fitted parameters.
+ * 
+ * @param alpha    the inverse of the covariance matrix (with xero rows and
+ *                 columns according to paramfree[])
+ * @param nparam   the number of fitting parameters
+ * @param mfit     the number of free parameters
+ * @param d        output array for the eigenvalues
+ * @param v        output matrix for the eigenvectors (produced with GCI_matrix)
+ * @param interval chisquare percentage
+ * @return         0 on success, < 0 on error
+ *
+ * This is based on "The Jacobi Method for Real Symmetric Matrices" by H.
+ * Rutishauser, _Handbook for Automatic Computation, Volume II, Linear Algebra_,
+ * Wilkinson & Reinsch, Springer-Verlag, 1971.
+ */
+int GCI_marquardt_estimate_errors(float **alpha, int nparam, int mfit,
+								  float d[], float **v, float interval)
+{
+	float sm, c, s, t, h, g, tau, theta, thresh;
+	float b[MAXFIT], z[MAXFIT], mult, chisq;
+	int p, q, i, j, ret;
+	
+	switch ((int) (interval + 0.01)) {
+	case 50:
+		chisq = chisq50[mfit];
+		break;
+
+	case 68:
+		chisq = chisq68[mfit];
+		break;
+
+	case 90:
+		chisq = chisq90[mfit];
+		break;
+
+	case 95:
+		chisq = chisq95[mfit];
+		break;
+
+	default:
+		ret = GCI_chisq(mfit, interval/100, &chisq);
+		if (ret) return -1;
+		break;
+	}
+
+	if (nparam > MAXFIT)
+		return -2;
+
+    // initialization	
+	for (p = 0; p < nparam; ++p) {
+		for (q = 0; q < nparam; ++q) {
+			// identity matrix
+			v[p][q] = (p == q) ? 1.0f : 0.0f;
+		}
+		b[p] = d[p] = alpha[p][p];
+		z[p] = 0.0f;
+	}
+	
+    // loop until convergence	
+	for (i = 1; i <= 50; ++i) {
+		
+		// sum super-diagonal elements
+		sm = 0.0f;
+		for (p = 0; p < nparam; ++p) {
+			for (q = p + 1; q < nparam; ++q) {
+				sm += fabsf(alpha[p][q]);
+			}
+		}
+
+		// check if zeroed
+		if (0.0f == sm) {
+			
+			// Restore the alpha matrix before returning
+			for (p = 0; p < nparam - 1; p++)
+				for (q = p + 1; q < nparam; q++)
+					alpha[p][q] = alpha[q][p];
+			
+			// Use the chisq values to find the semi-major axes
+			for (p=0; p<nparam; p++) {
+				if (d[p] != 0) {
+					mult = sqrt(chisq/d[p]);
+					for (q=0; q<nparam; q++)
+						v[q][p] *= mult;
+				}
+			}
+
+			return 0;
+		}
+		
+        // first three sweeps use non-zero threshold		
+		thresh = (i < 4) ? 0.2f * sm / (nparam * nparam) : 0.0f;
+		
+		for (p = 0; p < nparam - 1; ++p) {
+			for (q = p + 1; q < nparam; ++q) {
+				g = 100.0f * fabsf(alpha[p][q]);
+				if (i > 4
+				    && fabsf(d[p]) + g == fabsf(d[p])
+				    && fabsf(d[q]) + g == fabsf(d[q]))
+				{
+					alpha[p][q] = 0.0f;
+				}
+				else if (fabsf(alpha[p][q]) > thresh)
+				{
+					// rotate to zero diagonals
+					h = d[q] - d[p];
+					if (fabsf(h) + g == fabsf(h)) {
+						t = alpha[p][q] / h;
+					}
+					else {
+						// computing tangent of rotation angle
+						theta = 0.5f * h / alpha[p][q];
+						t = 1.0f / (fabsf(theta) + sqrt(1.0f + theta*theta));
+						if (theta < 0.0f) {
+							t = -t;
+						}
+					}
+					c = 1.0f / sqrt(1.0f + t * t);
+					s = t * c;
+					tau = s / (1.0f + c);
+					h = t * alpha[p][q];
+
+					z[p] -= h;
+					z[q] += h;
+					d[p] -= h;
+					d[q] += h;
+					alpha[p][q] = 0.0f;
+					
+					for (j = 0; j < p; ++j) {
+					    g = alpha[j][p];
+					    h = alpha[j][q];
+					    alpha[j][p] = g - s * (h + g * tau);
+					    alpha[j][q] = h + s * (g - h * tau);
+					}
+					
+					for (j = p + 1; j < q; ++j) {
+						g = alpha[p][j];
+						h = alpha[j][q];
+						alpha[p][j] = g - s * (h + g * tau);
+						alpha[j][q] = h + s * (g - h * tau);
+					}
+
+					for (j = q + 1; j < nparam; ++j) {
+						g = alpha[p][j];
+						h = alpha[q][j];
+						alpha[p][j] = g - s * (h + g * tau);
+						alpha[q][j] = h + s * (g - h * tau);
+					}
+
+					for (j = 0; j < nparam; ++j) {
+						g = v[j][p];
+						h = v[j][q];
+						v[j][p] = g - s * (h + g * tau);
+						v[j][q] = h + s * (g - h * tau);
+					}
+				}
+			}
+		}
+		for (p = 0; p < nparam; ++p) {
+			b[p] += z[p];
+			d[p] = b[p];
+			z[p] = 0.0f;
+		}
+    }
+	// too many iterations
+	return -1;
+}
+
+/**
+ * Calculates lower incomplete gamma function by iterative power series expansion.
+ */
+float GCI_incomplete_gamma(float a, float x) {
+	float returnValue = 0.0;
+	float multiplicand = pow(x, a) * exp(-x);
+	int iter;
+	float sum = 0.0;
+	float factor = 1.0;
+	float powerOfX = 1.0;
+	float value;
+	
+	for (iter = 0; iter < 1000; ++iter) {
+		// this is "a * (a + 1) * (a + 2) * ... * (a + iter)"
+		factor *= (a + iter);
+		
+		// keep a sum
+		sum += powerOfX / factor;
+		
+		// calculate value this iteration
+		value = multiplicand * sum;
+		if (value == returnValue) {
+			// stopped changing, done
+			return returnValue;
+		}
+		returnValue = value;
+		
+		// this will be "x ** iter" next time
+		powerOfX *= x;
+	}
+	return returnValue;
+}
+
+/**
+ * Log of Gamma function.
+ * 
+ * Based on LogGamma at http://www.johndcook.com/stand_alone_code.html:
+ * "All code here is in the public domain. Do whatever you want with it, no
+ * strings attached. Use at your own risk."
+ * 
+ * GCI_log_gamma and GCI_gamma are interdependent.
+ * 
+ * @param x must be positive
+ * @return 
+ */
+float GCI_log_gamma(float x) {
+	int i;
+	
+    if (x < 12.0)
+    {
+        return log(fabs(GCI_gamma(x)));
+    }
+	
+	// Abramowitz and Stegun 6.1.41
+    // Asymptotic series should be good to at least 11 or 12 figures
+    // For error analysis, see Whittiker and Watson
+    // A Course in Modern Analysis (1927), page 252
+	
+    static const double c[8] =
+    {
+		1.0/12.0,
+		-1.0/360.0,
+		1.0/1260.0,
+		-1.0/1680.0,
+		1.0/1188.0,
+		-691.0/360360.0,
+		1.0/156.0,
+		-3617.0/122400.0
+    };
+    double z = 1.0/(x*x);
+    double sum = c[7];
+    for (i=6; i >= 0; i--)
+    {
+        sum *= z;
+        sum += c[i];
+    }
+    double series = sum/x;
+	
+    static const double halfLogTwoPi = 0.91893853320467274178032973640562;
+    double logGamma = (x - 0.5)*log(x) - x + halfLogTwoPi + series;    
+	return (float) logGamma;
+}
+
+/**
+ * Gamma function.
+ * 
+ * Based on Gamma at http://www.johndcook.com/stand_alone_code.html:
+ * "All code here is in the public domain. Do whatever you want with it, no
+ * strings attached. Use at your own risk."
+ * 
+ * GCI_gamma and GCI_log_gamma are interdependent.
+ *
+ * @param x must be positive
+ * @return 
+ */
+float GCI_gamma(float x) {
+	
+    // Split the function domain into three intervals:
+    // (0, 0.001), [0.001, 12), and (12, infinity)
+	
+    ///////////////////////////////////////////////////////////////////////////
+    // First interval: (0, 0.001)
+	//
+	// For small x, 1/Gamma(x) has power series x + gamma x^2  - ...
+	// So in this range, 1/Gamma(x) = x + gamma x^2 with error on the order of x^3.
+	// The relative error over this interval is less than 6e-7.
+	
+	const double gamma = 0.577215664901532860606512090; // Euler's gamma constant
+	
+    if (x < 0.001)
+        return (float)(1.0/(x*(1.0 + gamma*x)));
+	
+    ///////////////////////////////////////////////////////////////////////////
+    // Second interval: [0.001, 12)
+    
+	if (x < 12.0)
+    {
+        // The algorithm directly approximates gamma over (1,2) and uses
+        // reduction identities to reduce other arguments to this interval.
+		
+		double y = x;
+        int n = 0;
+		int arg_was_less_than_one = (y < 1.0);
+		
+        // Add or subtract integers as necessary to bring y into (1,2)
+        // Will correct for this below
+        if (arg_was_less_than_one)
+        {
+            y += 1.0;
+        }
+        else
+        {
+            //n = static_cast<int> (floor(y)) - 1;  // will use n later
+			n = (int) (floor(y)) - 1;
+            y -= n;
+        }
+		
+        // numerator coefficients for approximation over the interval (1,2)
+        static const double p[] =
+        {
+            -1.71618513886549492533811E+0,
+			2.47656508055759199108314E+1,
+            -3.79804256470945635097577E+2,
+			6.29331155312818442661052E+2,
+			8.66966202790413211295064E+2,
+            -3.14512729688483675254357E+4,
+            -3.61444134186911729807069E+4,
+			6.64561438202405440627855E+4
+        };
+		
+        // denominator coefficients for approximation over the interval (1,2)
+        static const double q[] =
+        {
+            -3.08402300119738975254353E+1,
+			3.15350626979604161529144E+2,
+            -1.01515636749021914166146E+3,
+            -3.10777167157231109440444E+3,
+			2.25381184209801510330112E+4,
+			4.75584627752788110767815E+3,
+            -1.34659959864969306392456E+5,
+            -1.15132259675553483497211E+5
+        };
+		
+        double num = 0.0;
+        double den = 1.0;
+        int i;
+		
+        double z = y - 1;
+        for (i = 0; i < 8; i++)
+        {
+            num = (num + p[i])*z;
+            den = den*z + q[i];
+        }
+        double result = num/den + 1.0;
+		
+        // Apply correction if argument was not initially in (1,2)
+        if (arg_was_less_than_one)
+        {
+            // Use identity gamma(z) = gamma(z+1)/z
+            // The variable "result" now holds gamma of the original y + 1
+            // Thus we use y-1 to get back the orginal y.
+            result /= (y-1.0);
+        }
+        else
+        {
+            // Use the identity gamma(z+n) = z*(z+1)* ... *(z+n-1)*gamma(z)
+            for (i = 0; i < n; i++)
+                result *= y++;
+        }
+		
+		return (float) result;
+    }
+	
+    ///////////////////////////////////////////////////////////////////////////
+    // Third interval: [12, infinity)
+	
+    if (x > 171.624)
+    {
+		//printf("correct answer too large to display");
+		return 0.0; //TODO s/b +infinity
+		// Correct answer too large to display. Force +infinity.
+		//double temp = DBL_MAX;
+		//return temp*2.0;
+    }
+	
+    return expf(GCI_log_gamma(x));
+}
+
+float GCI_gammap(float a, float x) {
+	return GCI_incomplete_gamma(a, x) / GCI_gamma(a);
+}
+
+/**
+ * Find chi-square using bisection.
+ * 
+ * @param nu
+ * @param chisq
+ * @param root
+ * @return 
+ */
+#define MAX_ITERS 40
+#define ACC 0.0002f
+int GCI_chisq(int nu, float chisq, float *root)
+{
+	int j;
+	float x1, x2, val1, val2, mid, mid_val;
+	
+	x1 = 0.1f;
+	x2 = 40.0f;
+	if (chisq <= 0.0f || chisq >= 1.0f)
+		return -1;
+
+	if ((val1 = GCI_gammap(0.5f * nu, 0.5f * x1)) < 0)
+		return -3;
+
+	j = 0;
+	while ((val1 > chisq) && (++j <= MAX_ITERS)) {
+		x1 /= 2;
+		if ((val1 = GCI_gammap(0.5f * nu, 0.5f * x1)) < 0)
+			return -3;
+	}
+	if (j > MAX_ITERS)
+		return -1;
+
+	if ((val2 = GCI_gammap(0.5f * nu, 0.5f * x2)) < 0)
+		return -4;
+
+	j = 0;
+	while ((val2 < chisq) && (++j <= MAX_ITERS)) {
+		x2 *= 2;
+		if ((val2 = GCI_gammap(0.5f * nu, 0.5f * x2)) < 0)
+			return -4;
+	}
+	if (j > MAX_ITERS)
+		return -2;
+
+    // find value by bisection	
+	for (j = 0; j < MAX_ITERS; ++j) {
+		// compute bisection and value
+		mid = (x1 + x2) / 2;
+		mid_val = GCI_gammap(0.5f * nu, 0.5f * mid);
+		if (mid_val < 0.0f) {
+			return -4;
+		}
+		
+		// found the root?
+		if (mid_val == chisq) {
+			*root = mid;
+			return 0;
+		}
+		
+		// assign to endpoint of same sign
+		if (mid_val * val1 > 0.0f) {
+			x1 = mid;
+			val1 = mid_val;
+		}
+		else {
+			x2 = mid;
+			val2 = mid_val;
+		}
+		
+		// reached limit on interval size?
+		if (fabsf(x2 - x1) < ACC && fabsf((x2 - x1) / mid) < ACC) {
+			*root = mid;
+			return 0;
+		}
+	}
+	// too many iterations		
+	return -5;
+}
+#undef MAX_ITERS
+#undef ACC
 
 
 /********************************************************************

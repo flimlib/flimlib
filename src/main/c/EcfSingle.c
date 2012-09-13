@@ -55,11 +55,6 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 int GCI_marquardt_estimate_errors(float **alpha, int nparam, int mfit,
 								  float d[], float **v, float interval);
 
-/* Globals */
-//static float *fnvals, **dy_dparam_pure, **dy_dparam_conv;
-//static int fnvals_len=0, dy_dparam_nparam_size=0;
-// was Global, now thread safe
-
 /********************************************************************
 
 					   SINGLE TRANSIENT FITTING
@@ -589,11 +584,10 @@ int GCI_marquardt(float x[], float y[], int ndata,
 		if (erraxes == NULL)
 			return k;
 
-                //TODO ARG
-		//if (GCI_marquardt_estimate_errors(alpha, nparam, mfit, evals,
-		//								  erraxes, chisq_percent) != 0) {
-		//	return -5;
-		//}
+		if (GCI_marquardt_estimate_errors(alpha, nparam, mfit, evals,
+						  erraxes, chisq_percent) != 0) {
+			return -5;
+		}
 
 		break;  /* We're done now */
 	}
@@ -704,12 +698,11 @@ int GCI_marquardt_instr(float xincr, float y[],
 			return k;
 		}
 
-//TODO ARG this estimate errors call was deleted in my latest version
-	//	if (GCI_marquardt_estimate_errors(alpha, nparam, mfit, evals,
-	//									  erraxes, chisq_percent) != 0) {
-	//		do_frees
-	//		return -5;
-	//	}
+		if (GCI_marquardt_estimate_errors(alpha, nparam, mfit, evals,
+						  erraxes, chisq_percent) != 0) {
+			do_frees
+			return -5;
+		}
 
 		break;  /* We're done now */
 	}
@@ -846,9 +839,6 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 					int *pfnvals_len, int *pdy_dparam_nparam_size)
 {
 	int j, k, l, ret;
-//	static int mfit;   // was static but now thread safe
-//	static float ochisq, paramtry[MAXFIT], beta[MAXFIT], dparam[MAXFIT];   // was static but now thread safe
-	//TODO ARG GCI_marquardt_step defines and uses int mfit = *pmfit;
 
 	if (nparam > MAXFIT)
 		return -10;
@@ -1162,11 +1152,7 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 						}
 					} // k loop
 						
-					alpha[j_free][i_free] = alpha[i_free][j_free] = dot_product; //TODO ARG w/n/b [i][j] more common usage?  row/column
-					// if (i_free != j_free) { //TODO ARG this approach seemed slower at one time; c/b worth retesting:
-					//     / is symmetric
-					//     alpha[i_free][j_free] = dot_product; //TODO dotProduct s/b including fixed parameters????!!!
-					// }
+					alpha[j_free][i_free] = alpha[i_free][j_free] = dot_product;
 					++j_free;
 				}
 			} // j loop
@@ -1456,7 +1442,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 						// for all data
 						for (k = fit_start; k < fit_end; ++k) {
 							dy_dparam_k_i = (*pdy_dparam_conv)[k][i];
-							dot_product += dy_dparam_k_i * (*pdy_dparam_conv)[k][j] * alpha_weight[k]; //TODO ARG make it [i][k] and just *dy_dparam++ it.
+							dot_product += dy_dparam_k_i * (*pdy_dparam_conv)[k][j] * alpha_weight[k];
 							beta_sum += dy_dparam_k_i * beta_weight[k];
 						}
 					}
@@ -1468,10 +1454,6 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 					} // k loop
 					
 					alpha[j_free][i_free] = alpha[i_free][j_free] = dot_product;
-					// if (i_free != j_free) {
-					//     // matrix is symmetric
-					//     alpha[i_free][j_free] = dot_product; //TODO dotProduct s/b including fixed parameters????!!!
-					// }
 					++j_free;
 				}
 			} // j loop
@@ -1530,7 +1512,7 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 		*chisq *= sig2i;
 		break;
 
-	case NOISE_GIVEN:  /* This is essentially the NR version */
+	case NOISE_GIVEN:
 		*chisq = 0.0;
 		/* Summation loop over all data */
 		for (i=0; i<ndata; i++) {
@@ -1745,7 +1727,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 		*chisq *= sig2i;
 		break;
 
-	case NOISE_GIVEN:  /* This is essentially the NR version */
+	case NOISE_GIVEN:
 		*chisq = 0.0;
 		/* Summation loop over all data */
 		for (i=0; i<fit_start; i++) {
