@@ -62,11 +62,11 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
     for (k = 0; k < n - 1; ++k)
     {
         // search for line with max element
-        max = fabs(a[k][k]);
+        max = fabsf(a[k][k]);
         m = k;
         for (i = k + 1; i < n; ++i)
         {
-            if (max < fabs(a[i][k])) // row i col k
+            if (max < fabsf(a[i][k])) // row i col k
             {
                 max = a[i][k];
                 m = i;
@@ -90,7 +90,7 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
         }
 
         // triangulation of matrix with coefficients
-        pivotInverse[k] = 1.0 / a[k][k];
+        pivotInverse[k] = 1.0f / a[k][k];
         for (j = k + 1; j < n; ++j) // current row of matrix
         {
             // want "temp = -a[j][k] / a[k][k]"
@@ -103,7 +103,7 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
         }
     }
     // precalculate last pivot inverse
-    pivotInverse[n - 1] = 1.0 / a[n - 1][n - 1];
+    pivotInverse[n - 1] = 1.0f / a[n - 1][n - 1];
 
     for (k = n - 1; k >= 0; --k)
     {
@@ -171,9 +171,9 @@ void pivot(float **a, int n, int *order, int col)
 
     // find row with maximum element value in col, below diagonal
     pivotRow = col;
-    maxValue = fabs(a[col][col]);
+    maxValue = fabsf(a[col][col]);
     for (i = col + 1; i < n; ++i) {
-        rowValue = fabs(a[i][col]);
+        rowValue = fabsf(a[i][col]);
         if (rowValue > maxValue) {
             pivotRow = i;
             maxValue = rowValue;
@@ -225,13 +225,13 @@ int lu_decomp(float **a, int n, int *order)
     pivot(a, n, order, 0);
 
     // check for singularity
-    if (0.0 == a[0][0])
+    if (0.0f == a[0][0])
     {
         return -2;
     }
 
     // compute first row of upper
-    inverse = 1.0 / a[0][0];
+    inverse = 1.0f / a[0][0];
     for (i = 1; i < n; ++i) {
         a[0][i] *= inverse;
     }
@@ -240,7 +240,7 @@ int lu_decomp(float **a, int n, int *order)
     for (jCol = 1; jCol < n - 1; ++jCol) {
         // compute column of lowers
         for (iRow = jCol; iRow < n; ++iRow) {
-            sum = 0.0;
+            sum = 0.0f;
             for (kCol = 0; kCol < jCol; ++kCol) {
                 sum += a[iRow][kCol] * a[kCol][jCol];
             }
@@ -255,9 +255,9 @@ int lu_decomp(float **a, int n, int *order)
         }
 
         // build row of uppers
-        inverse = 1.0 / a[jCol][jCol];
+        inverse = 1.0f / a[jCol][jCol];
         for (kCol = jCol + 1; kCol < n; ++kCol) {
-            sum = 0.0;
+            sum = 0.0f;
             for (iRow = 0; iRow < jCol; ++iRow) {
                 sum += a[jCol][iRow] * a[iRow][kCol];
             }
@@ -267,7 +267,7 @@ int lu_decomp(float **a, int n, int *order)
     }
 
     // get remaining lower
-    sum = 0.0;
+    sum = 0.0f;
     for (kCol = 0; kCol < n - 1; ++kCol) {
         sum += a[n - 1][kCol] * a[kCol][n - 1];
     }
@@ -307,7 +307,7 @@ int solve_lu(float **lu, int n, float *b, int *order)
     // compute the b' vector
     b[0] /= lu[0][0];
     for (iRow = 1; iRow < n; ++iRow) {
-        sum = 0.0;
+        sum = 0.0f;
         for (jCol = 0; jCol < iRow; ++jCol) {
             sum += lu[iRow][jCol] * b[jCol];
         }
@@ -405,7 +405,7 @@ void GCI_covar_sort(float **covar, int nparam, int paramfree[], int mfit)
 
 	for (i=mfit; i<nparam; i++)
 		for (j=0; j<=i; j++)
-			covar[i][j] = covar[j][i] = 0.0;
+			covar[i][j] = covar[j][i] = 0.0f;
 
 	k = mfit-1;
 	for (j=nparam-1; j>=0; j--)
@@ -568,7 +568,7 @@ void GCI_multiexp_lambda(float x, float param[],
 	*y = 0;
 
 	for (i=1; i<nparam-1; i+=2) {
-		dy_dparam[i] = ex = exp(-param[i+1] * x);
+		dy_dparam[i] = ex = expf(-param[i+1] * x);
 		ex *= param[i];
 		*y += ex;
 		dy_dparam[i+1] = -ex * x;
@@ -595,7 +595,7 @@ int multiexp_lambda_array(float xincr, float param[],
 	for (i=0; i<nx; i++) {
 		y[i] = 0;
 		for (j=1; j<nparam-1; j+=2) {
-			dy_dparam[i][j] = ex = excur[j];
+			dy_dparam[i][j] = ex = (float) excur[j];
 			ex *= param[j];
 			y[i] += ex;
 			dy_dparam[i][j+1] = -ex * xincr * i;
@@ -634,7 +634,7 @@ void GCI_multiexp_tau(float x, float param[],
 
 	for (i=1; i<nparam-1; i+=2) {
 		xa = x / param[i+1];
-		dy_dparam[i] = ex = exp(-xa);
+		dy_dparam[i] = ex = expf(-xa);
 		ex *= param[i];
 		*y += ex;
 		dy_dparam[i+1] = ex * xa / param[i+1];
@@ -663,7 +663,7 @@ int multiexp_tau_array(float xincr, float param[],
 	for (i=0; i<nx; i++) {
 		y[i] = 0;
 		for (j=1; j<nparam-1; j+=2) {
-			dy_dparam[i][j] = ex = excur[j];
+			dy_dparam[i][j] = ex = (float) excur[j];
 			ex *= param[j];
 			y[i] += ex;
 			dy_dparam[i][j+1] = ex * xincr * i * a2[j];
@@ -702,10 +702,10 @@ void GCI_stretchedexp(float x, float param[],
 
 	if (x > 0) {
 		xa = x / param[2];         /* xa = x/param[2] */
-		lxa = log(xa);             /* lxa = log(x/param[2]) */
-		xah = exp(lxa / param[3]); /* xah = exp(log(x/param[2])/param[3])
+		lxa = logf(xa);            /* lxa = log(x/param[2]) */
+		xah = expf(lxa / param[3]); /* xah = exp(log(x/param[2])/param[3])
 		                                  = (x/param[2])^(1/param[3]) */
-		dy_dparam[1] = ex = exp(-xah);
+		dy_dparam[1] = ex = expf(-xah);
 		                           /* ex = exp(-(x/param[2])^(1/param[3])) */
 		ex *= param[1];            /* ex = param[1] *
 		                                     exp(-(x/param[2])^(1/param[3])) */
@@ -749,10 +749,10 @@ int stretchedexp_array(float xincr, float param[],
 
 	for (i=1; i<nx; i++) {
 		xa += xaincr;       /* xa = (xincr*i)/param[2] */
-		lxa = log(xa);      /* lxa = log(x/param[2]) */
-		xah = exp(lxa * a3inv);  /* xah = exp(log(x/param[2])/param[3])
+		lxa = logf(xa);     /* lxa = log(x/param[2]) */
+		xah = expf(lxa * a3inv);  /* xah = exp(log(x/param[2])/param[3])
 		                                = (x/param[2])^(1/param[3]) */
-		dy_dparam[i][1] = ex = exp(-xah);
+		dy_dparam[i][1] = ex = expf(-xah);
 		                    /* ex = exp(-(x/param[2])^(1/param[3])) */
 		ex *= param[1];     /* ex = param[1]*exp(-(x/param[2])^(1/param[3])) */
 		y[i] = ex;          /* y is now correct */
@@ -946,26 +946,26 @@ int check_ecf_user_params (float param[], int nparam,
 
 *********************************************************************/
 
-static float chisq50[MAXFIT+1] = { 0, 0.45, 1.39, 2.37, 3.36,
-                                   4.35, 5.35, 6.35, 7.34, 8.34,
-                                   9.34, 10.34, 11.34, 12.34, 13.34,
-                                   14.34, 15.34, 16.34, 17.34, 18.34,
-                                   19.34 };
-static float chisq68[MAXFIT+1] = { 0, 0.99, 2.28, 3.51, 4.70,
-                                   5.86, 7.01, 8.14, 9.27, 10.39,
-                                   11.50, 12.60, 13.70, 14.80, 15.89,
-                                   16.98, 18.07, 19.15, 20.23, 21.31,
-                                   22.38 };
-static float chisq90[MAXFIT+1] = { 0, 2.71, 4.61, 6.25, 7.78,
-                                   9.24, 10.64, 12.02, 13.36, 14.68,
-                                   15.99, 17.27, 18.55, 19.81, 21.06,
-                                   22.31, 23.54, 24.77, 25.99, 27.20,
-                                   28.41 };
-static float chisq95[MAXFIT+1] = { 0, 3.84, 5.99, 7.81, 9.49,
-                                   11.07, 12.59, 14.07, 15.51, 16.92,
-                                   18.31, 19.68, 21.03, 22.36, 23.68,
-                                   25.00, 26.30, 27.59, 28.87, 30.14,
-                                   31.41 };
+static float chisq50[MAXFIT+1] = { 0.0f, 0.45f, 1.39f, 2.37f, 3.36f,
+                                   4.35f, 5.35f, 6.35f, 7.34f, 8.34f,
+                                   9.34f, 10.34f, 11.34f, 12.34f, 13.34f,
+                                   14.34f, 15.34f, 16.34f, 17.34f, 18.34f,
+                                   19.34f };
+static float chisq68[MAXFIT+1] = { 0.0f, 0.99f, 2.28f, 3.51f, 4.70f,
+                                   5.86f, 7.01f, 8.14f, 9.27f, 10.39f,
+                                   11.50f, 12.60f, 13.70f, 14.80f, 15.89f,
+                                   16.98f, 18.07f, 19.15f, 20.23f, 21.31f,
+                                   22.38f };
+static float chisq90[MAXFIT+1] = { 0.0f, 2.71f, 4.61f, 6.25f, 7.78f,
+                                   9.24f, 10.64f, 12.02f, 13.36f, 14.68f,
+                                   15.99f, 17.27f, 18.55f, 19.81f, 21.06f,
+                                   22.31f, 23.54f, 24.77f, 25.99f, 27.20f,
+                                   28.41f };
+static float chisq95[MAXFIT+1] = { 0.0f, 3.84f, 5.99f, 7.81f, 9.49f,
+                                   11.07f, 12.59f, 14.07f, 15.51f, 16.92f,
+                                   18.31f, 19.68f, 21.03f, 22.36f, 23.68f,
+                                   25.00f, 26.30f, 27.59f, 28.87f, 30.14f,
+                                   31.41f };
 
 /**
  * Estimate errors for fitted parameters.
@@ -990,7 +990,7 @@ int GCI_marquardt_estimate_errors(float **alpha, int nparam, int mfit,
 	float b[MAXFIT], z[MAXFIT], mult, chisq;
 	int p, q, i, j, ret;
 	
-	switch ((int) (interval + 0.01)) {
+	switch ((int) (interval + 0.01f)) {
 	case 50:
 		chisq = chisq50[mfit];
 		break;
@@ -1046,10 +1046,10 @@ int GCI_marquardt_estimate_errors(float **alpha, int nparam, int mfit,
 					alpha[p][q] = alpha[q][p];
 			
 			// Use the chisq values to find the semi-major axes
-			for (p=0; p<nparam; p++) {
-				if (d[p] != 0) {
-					mult = sqrt(chisq/d[p]);
-					for (q=0; q<nparam; q++)
+			for (p = 0; p < nparam; p++) {
+				if (d[p] != 0.0f) {
+					mult = sqrtf(chisq/d[p]);
+					for (q = 0; q < nparam; q++)
 						v[q][p] *= mult;
 				}
 			}
@@ -1079,12 +1079,12 @@ int GCI_marquardt_estimate_errors(float **alpha, int nparam, int mfit,
 					else {
 						// computing tangent of rotation angle
 						theta = 0.5f * h / alpha[p][q];
-						t = 1.0f / (fabsf(theta) + sqrt(1.0f + theta*theta));
+						t = 1.0f / (fabsf(theta) + sqrtf(1.0f + theta*theta));
 						if (theta < 0.0f) {
 							t = -t;
 						}
 					}
-					c = 1.0f / sqrt(1.0f + t * t);
+					c = 1.0f / sqrtf(1.0f + t * t);
 					s = t * c;
 					tau = s / (1.0f + c);
 					h = t * alpha[p][q];
@@ -1139,12 +1139,12 @@ int GCI_marquardt_estimate_errors(float **alpha, int nparam, int mfit,
  * Calculates lower incomplete gamma function by iterative power series expansion.
  */
 float GCI_incomplete_gamma(float a, float x) {
-	float returnValue = 0.0;
-	float multiplicand = pow(x, a) * exp(-x);
+	float returnValue = 0.0f;
+	float multiplicand = powf(x, a) * expf(-x);
 	int iter;
-	float sum = 0.0;
-	float factor = 1.0;
-	float powerOfX = 1.0;
+	float sum = 0.0f;
+	float factor = 1.0f;
+	float powerOfX = 1.0f;
 	float value;
 	
 	for (iter = 0; iter < 1000; ++iter) {
@@ -1181,13 +1181,6 @@ float GCI_incomplete_gamma(float a, float x) {
  * @return 
  */
 float GCI_log_gamma(float x) {
-	int i;
-	
-    if (x < 12.0)
-    {
-        return log(fabs(GCI_gamma(x)));
-    }
-	
 	// Abramowitz and Stegun 6.1.41
     // Asymptotic series should be good to at least 11 or 12 figures
     // For error analysis, see Whittiker and Watson
@@ -1204,17 +1197,27 @@ float GCI_log_gamma(float x) {
 		1.0/156.0,
 		-3617.0/122400.0
     };
-    double z = 1.0/(x*x);
-    double sum = c[7];
+    static const double halfLogTwoPi = 0.91893853320467274178032973640562;
+	int i;
+	double z, sum, series, logGamma;
+	
+    if (x < 12.0f)
+    {
+        return logf(fabsf(GCI_gamma(x)));
+    }
+	
+
+    z = 1.0/(x*x);
+    sum = c[7];
     for (i=6; i >= 0; i--)
     {
         sum *= z;
         sum += c[i];
     }
-    double series = sum/x;
+    series = sum/x;
 	
-    static const double halfLogTwoPi = 0.91893853320467274178032973640562;
-    double logGamma = (x - 0.5)*log(x) - x + halfLogTwoPi + series;    
+
+    logGamma = (x - 0.5)*log(x) - x + halfLogTwoPi + series;    
 	return (float) logGamma;
 }
 
@@ -1231,116 +1234,118 @@ float GCI_log_gamma(float x) {
  * @return 
  */
 float GCI_gamma(float x) {
+	const double gamma = 0.577215664901532860606512090; // Euler's gamma constant
 	
-    // Split the function domain into three intervals:
-    // (0, 0.001), [0.001, 12), and (12, infinity)
+	// numerator coefficients for approximation over the interval (1,2)
+	static const double p[] =
+	{
+		-1.71618513886549492533811E+0,
+		2.47656508055759199108314E+1,
+		-3.79804256470945635097577E+2,
+		6.29331155312818442661052E+2,
+		8.66966202790413211295064E+2,
+		-3.14512729688483675254357E+4,
+		-3.61444134186911729807069E+4,
+		6.64561438202405440627855E+4
+	};
+		
+	// denominator coefficients for approximation over the interval (1,2)
+	static const double q[] =
+	{
+		-3.08402300119738975254353E+1,
+		3.15350626979604161529144E+2,
+		-1.01515636749021914166146E+3,
+		-3.10777167157231109440444E+3,
+		2.25381184209801510330112E+4,
+		4.75584627752788110767815E+3,
+		-1.34659959864969306392456E+5,
+		-1.15132259675553483497211E+5
+	};
 	
-    ///////////////////////////////////////////////////////////////////////////
-    // First interval: (0, 0.001)
+	int n, i, arg_was_less_than_one;
+	double y, z, num, den, result;
+		
+		
+	// Split the function domain into three intervals:
+	// (0, 0.001), [0.001, 12), and (12, infinity)
+	
+	///////////////////////////////////////////////////////////////////////////
+	// First interval: (0, 0.001)
 	//
 	// For small x, 1/Gamma(x) has power series x + gamma x^2  - ...
 	// So in this range, 1/Gamma(x) = x + gamma x^2 with error on the order of x^3.
 	// The relative error over this interval is less than 6e-7.
 	
-	const double gamma = 0.577215664901532860606512090; // Euler's gamma constant
+	if (x < 0.001f)
+		return (float)(1.0/(x*(1.0 + gamma*x)));
 	
-    if (x < 0.001)
-        return (float)(1.0/(x*(1.0 + gamma*x)));
-	
-    ///////////////////////////////////////////////////////////////////////////
-    // Second interval: [0.001, 12)
+	///////////////////////////////////////////////////////////////////////////
+	// Second interval: [0.001, 12)
     
-	if (x < 12.0)
-    {
-        // The algorithm directly approximates gamma over (1,2) and uses
-        // reduction identities to reduce other arguments to this interval.
+	if (x < 12.0f)
+	{
+		// The algorithm directly approximates gamma over (1,2) and uses
+		// reduction identities to reduce other arguments to this interval.
 		
-		double y = x;
-        int n = 0;
-		int arg_was_less_than_one = (y < 1.0);
+		y = x;
+		n = 0;
+		arg_was_less_than_one = (y < 1.0);
 		
-        // Add or subtract integers as necessary to bring y into (1,2)
-        // Will correct for this below
-        if (arg_was_less_than_one)
-        {
-            y += 1.0;
-        }
-        else
-        {
-            //n = static_cast<int> (floor(y)) - 1;  // will use n later
+		// Add or subtract integers as necessary to bring y into (1,2)
+		// Will correct for this below
+		if (arg_was_less_than_one)
+		{
+			y += 1.0;
+		}
+		else
+		{
+			//n = static_cast<int> (floor(y)) - 1;  // will use n later
 			n = (int) (floor(y)) - 1;
-            y -= n;
-        }
+			y -= n;
+		}
 		
-        // numerator coefficients for approximation over the interval (1,2)
-        static const double p[] =
-        {
-            -1.71618513886549492533811E+0,
-			2.47656508055759199108314E+1,
-            -3.79804256470945635097577E+2,
-			6.29331155312818442661052E+2,
-			8.66966202790413211295064E+2,
-            -3.14512729688483675254357E+4,
-            -3.61444134186911729807069E+4,
-			6.64561438202405440627855E+4
-        };
+		num = 0.0;
+		den = 1.0;
 		
-        // denominator coefficients for approximation over the interval (1,2)
-        static const double q[] =
-        {
-            -3.08402300119738975254353E+1,
-			3.15350626979604161529144E+2,
-            -1.01515636749021914166146E+3,
-            -3.10777167157231109440444E+3,
-			2.25381184209801510330112E+4,
-			4.75584627752788110767815E+3,
-            -1.34659959864969306392456E+5,
-            -1.15132259675553483497211E+5
-        };
+		z = y - 1;
+		for (i = 0; i < 8; i++)
+		{
+			num = (num + p[i])*z;
+			den = den*z + q[i];
+		}
+		result = num/den + 1.0;
 		
-        double num = 0.0;
-        double den = 1.0;
-        int i;
-		
-        double z = y - 1;
-        for (i = 0; i < 8; i++)
-        {
-            num = (num + p[i])*z;
-            den = den*z + q[i];
-        }
-        double result = num/den + 1.0;
-		
-        // Apply correction if argument was not initially in (1,2)
-        if (arg_was_less_than_one)
-        {
-            // Use identity gamma(z) = gamma(z+1)/z
-            // The variable "result" now holds gamma of the original y + 1
-            // Thus we use y-1 to get back the orginal y.
-            result /= (y-1.0);
-        }
-        else
-        {
-            // Use the identity gamma(z+n) = z*(z+1)* ... *(z+n-1)*gamma(z)
-            for (i = 0; i < n; i++)
-                result *= y++;
-        }
+		// Apply correction if argument was not initially in (1,2)
+		if (arg_was_less_than_one)
+		{
+			// Use identity gamma(z) = gamma(z+1)/z
+			// The variable "result" now holds gamma of the original y + 1
+			// Thus we use y-1 to get back the orginal y.
+			result /= (y-1.0);
+		}
+		else
+		{
+			// Use the identity gamma(z+n) = z*(z+1)* ... *(z+n-1)*gamma(z)
+			for (i = 0; i < n; i++)
+				result *= y++;
+		}
 		
 		return (float) result;
-    }
+	}
 	
-    ///////////////////////////////////////////////////////////////////////////
-    // Third interval: [12, infinity)
+	///////////////////////////////////////////////////////////////////////////
+	// Third interval: [12, infinity)
 	
-    if (x > 171.624)
-    {
+	if (x > 171.624f)
+	{
 		//printf("correct answer too large to display");
-		return 0.0; //TODO s/b +infinity
+		return 0.0f; //TODO s/b +infinity
 		// Correct answer too large to display. Force +infinity.
 		//double temp = DBL_MAX;
 		//return temp*2.0;
-    }
+	}
 	
-    return expf(GCI_log_gamma(x));
+	return expf(GCI_log_gamma(x));
 }
 
 float GCI_gammap(float a, float x) {
