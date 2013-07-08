@@ -86,6 +86,8 @@ int check_ecf_params (float param[], int nparam,
 int check_ecf_user_params (float param[], int nparam,
 					void (*fitfunc)(float, float [], float *, float [], int));
 int GCI_chisq(int nu, float chisq, float *root);
+float GCI_gamma(float x);
+float GCI_log_gamma(float x);
 int multiexp_lambda_array(float xincr, float param[],
 						  float *y, float **dy_dparam, int nx, int nparam);
 int multiexp_tau_array(float xincr, float param[],
