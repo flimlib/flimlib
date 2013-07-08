@@ -47,6 +47,19 @@ Copyright (c) 2010, 2011, Gray Institute University of Oxford & UW-Madison LOCI.
 
 // chisq is calculated for comparison with other methods but is not used as there is no optimisation with this method
 
+static double phasorPeriod;
+
+void setPhasorPeriod(double period)
+{
+	phasorPeriod=period;
+}
+
+double GCI_Phasor_getPeriod()
+{	// calculate and return the used phasor period
+	// value is only valid after GCI_Phasor has been called
+	// returns the period in current time units
+	return phasorPeriod;
+}
 
 int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 							  float *Z, float *U, float *V, float *taup, float *taum, float *tau, float *fitted, float *residuals,
@@ -68,7 +81,8 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 
 	// rep frequency, lets use the period of the measurement, but we can stay in the units of bins
 	w = (float)2.0*(float)3.1415926535897932384626433832795028841971/(float)nBins; //2.0*PI/(float)nBins;
-	
+	setPhasorPeriod(nBins*xincr); // store the real phasor period used for future external use.
+
 	// integral over data
 	for (i=0, I=0.0; i<nBins; i++) 
 		I += (data[i]-bg);

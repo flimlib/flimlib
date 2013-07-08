@@ -24,5 +24,6 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 							  float *Z, float *u, float *v, float *taup, float *taum, float *tau, float *fitted, float *residuals,
 							  float *chisq);
 
+double GCI_Phasor_getPeriod();
 
 #endif /* PHASOR_FITTING_H */
