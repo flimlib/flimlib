@@ -23,6 +23,28 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 #include <stdio.h>
 #include <stdlib.h>
 
+/*
+ * Rapid Lifetime Determination fit method.
+ * 
+ * Quickly estimates single exponential curve parameters fitted to decay curve.
+ * 
+ * See further documentation in EcfSingle.c.
+ * 
+ * x_inc time increment of decay histogram bins
+ * y decay histogram values
+ * fit_start start of data to be fitted on decay
+ * fit_end end of data to be fitted on decay
+ * instr instrument response decay curve (prompt, excitation, IRF, lamp function)
+ * n_instr number of values in instrument response decay curve
+ * noise noise model, see enum in Ecf.h
+ * sig sigma array for decay values
+ * z background fitted parameter
+ * a amplitude fitted parameter
+ * tau lifetime fitted parameter
+ * fitted fitted decay values
+ * chi_square fitted reduced chi square
+ * chi_square_target targeted chi square
+ */
 int RLD_fit(
 		double x_inc,
 		double y[],
@@ -111,6 +133,27 @@ int RLD_fit(
 	return return_value;
 }
 
+/*
+ * Levenberg-Marquardt algorithm fit method.
+ * 
+ * Fits to decay curve.  Iteratively refines from an initial estimate.
+ * 
+ * See further documentation in EcfSingle.c.
+ * 
+ * x_inc time increment of decay histogram bins
+ * y decay histogram values
+ * fit_start start of data to be fitted on decay
+ * fit_end end of data to be fitted on decay
+ * instr instrument response decay curve (prompt, excitation, IRF, lamp function)
+ * n_instr number of values in instrument response decay curve
+ * noise noise model, see enum in Ecf.h
+ * sig sigma array for decay values
+ * param source/destination for fitted parameters
+ * param_free indicates which parameters should be fixed vs. fitted
+ * chi_square fitted reduced chi square
+ * chi_square_target targeted chi square
+ * chi_square_delta defines a trivial improvement in chi square
+ */
 int LMA_fit(
 		double x_inc,
 		double y[],
