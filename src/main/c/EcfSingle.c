@@ -995,8 +995,8 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 					 float **alpha, float beta[], float *chisq, float old_chisq,
 					 float alambda)
 {
-	int i, j, k, l, m, mfit;
-	float wt, sig2i, y_ymod, dy_dparam[MAXBINS][MAXFIT];
+	int i, j, k, mfit;
+	float dy_dparam[MAXBINS][MAXFIT];
 	float alpha_weight[MAXBINS];
 	float beta_weight[MAXBINS];
 	int q;
@@ -1005,7 +1005,6 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 	int j_free;
 	float dot_product;
 	float beta_sum;
-	float dy_dparam_k_i;
 
 	for (j=0, mfit=0; j<nparam; j++)
 		if (paramfree[j])
@@ -1180,8 +1179,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 					float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 					int *pfnvals_len, int *pdy_dparam_nparam_size)
 {
-	int i, j, k, l, m, mfit, ret;
-	float wt, sig2i, y_ymod;
+	int i, j, k, mfit, ret;
 	float alpha_weight[MAXBINS];
 	float beta_weight[MAXBINS];
 	int q;

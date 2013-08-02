@@ -1273,8 +1273,7 @@ int GCI_marquardt_global_compute_exps_fn(
 			float **alpha, float *beta,
 			float *chisq, float old_chisq)
 {
-	int i, j, k, l, m, mfit;
-	float wt, sig2i, y_ymod;
+	int i, j, k, mfit;
 	float dy_dparam[MAXBINS][MAXFIT];
 	float alpha_weight[MAXBINS];
 	float beta_weight[MAXBINS];

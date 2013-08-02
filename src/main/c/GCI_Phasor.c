@@ -17,9 +17,9 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "GCI_Phasor.h"
 #include <math.h>
 #include <string.h>
+#include "GCI_Phasor.h"
 
 #ifndef NULL
 #define NULL 0
@@ -31,6 +31,8 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 #define PHASOR_ERR_INVALID_MODEL                   -3
 #define PHASOR_ERR_FUNCTIONALITY_NOT_SUPPORTED     -4
 
+/* Internal function prototypes */
+void setPhasorPeriod(double period);
 
 // See Clayton 2004 or Leray 2008
 // Classic Phasor or Polar approach to FLIM

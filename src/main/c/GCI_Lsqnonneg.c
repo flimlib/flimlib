@@ -37,6 +37,7 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 #include <stdlib.h>  /* for malloc/free */
 #include <string.h>  /* for memcpy */
 #include <math.h>    /* for fabs and sqrt */
+#include "GCI_Lsqnonneg.h"
 #ifndef max
 #define max(a,b) ((a)<(b) ? (b) : (a))
 #endif
@@ -54,6 +55,11 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 #define EPS 1e-9
 #define TOL (100*EPS)
 
+/* Internal function prototypes */
+void Householder(int mode, double *v, int p, int l, int m, double *u_p,
+				 double *C[], int nC);
+void GivensCalc(double v_1, double v_2, double *c, double *s, double *r);
+void GivensApply(double c, double s, double *z_1, double *z_2);
 
 /**********************************************************************
    Function Householder

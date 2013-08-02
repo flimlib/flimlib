@@ -432,8 +432,8 @@ http://www.nr.com/public-domain.html
  */
 float **GCI_ecf_matrix(long nrows, long ncols)
 {
-    int row_size = nrows * sizeof(float *);
-    int data_size = nrows * ncols * sizeof(float);
+    int row_size = (int) (nrows * sizeof(float *));
+    int data_size = (int) (nrows * ncols * sizeof(float));
     unsigned char *raw = malloc(row_size + data_size);
     float **row = (float **) raw;
     float *data = (float *) (row + nrows);
