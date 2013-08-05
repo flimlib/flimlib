@@ -92,6 +92,7 @@ int parse_and_fit(FILE *file) {
     float prompt_width;
     int fit_type;
     int noise_model;
+	int i;
     
     printf("%s\n", get_string_value(file, "filetype"));
     float version = get_float_value(file, "version");
@@ -113,7 +114,7 @@ int parse_and_fit(FILE *file) {
         }
         else if (debug) {
             printf("prompt:\n");
-            for (int i = 0; i < prompt_size; ++i) {
+            for (i = 0; i < prompt_size; ++i) {
                 printf("prompt %d is %f\n", i, prompt_values[i]);
             }
         }
@@ -135,7 +136,7 @@ int parse_and_fit(FILE *file) {
     }
     else if (debug) {
         printf("transient:\n");
-        for (int i = 0; i < transient_size; ++i) {
+        for (i = 0; i < transient_size; ++i) {
             printf("transient %d is %f\n", i, transient_values[i]);
         }
     }
@@ -155,7 +156,7 @@ int parse_and_fit(FILE *file) {
         }
         else if (debug) {
             printf("sigma:\n");
-            for (int i = 0; i < sigma_size; ++i) {
+            for (i = 0; i < sigma_size; ++i) {
                 printf("sigma %d is %f\n", i, sigma_values[i]);
             }
         }
