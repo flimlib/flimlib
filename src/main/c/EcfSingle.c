@@ -86,7 +86,7 @@ int GCI_triple_integral(float xincr, float y[],
 	t0 = fit_start * xincr;
 	dt = width * xincr;
 
-	d1 = d2 = d3 = 0;
+	d1 = d2 = d3 = 0.0f;
 	for (i=fit_start; i<fit_start+width; i++)           d1 += y[i];
 	for (i=fit_start+width; i<fit_start+2*width; i++)   d2 += y[i];
 	for (i=fit_start+2*width; i<fit_start+3*width; i++) d3 += y[i];
@@ -98,21 +98,21 @@ int GCI_triple_integral(float xincr, float y[],
 
 	d12 = d1 - d2;
 	d23 = d2 - d3;
-	if (d12 <= d23 || d23 <= 0)
+	if (d12 <= d23 || d23 <= 0.0f)
 		return -2;
 
 	exp_dt_tau = d23 / d12;  /* exp(-dt/tau) */
 	*tau = -dt / log(exp_dt_tau);
 	exp_t0_tau = exp(-t0/(*tau));
-	*A = d12 / ((*tau) * exp_t0_tau * (1 - 2*exp_dt_tau + exp_dt_tau*exp_dt_tau));
-	*Z = (d1 - (*A) * (*tau) * exp_t0_tau * (1 - exp_dt_tau)) / dt;
+	*A = d12 / ((*tau) * exp_t0_tau * (1.0f - 2*exp_dt_tau + exp_dt_tau*exp_dt_tau));
+	*Z = (d1 - (*A) * (*tau) * exp_t0_tau * (1.0f - exp_dt_tau)) / dt;
 
 	/* Now calculate the fitted curve and chi-squared if wanted. */
 	if (fitted == NULL)
 		return 0;
 
 	for (i=0; i<fit_end; i++)
-		fitted[i] = (*Z) + (*A) * exp(-i*xincr/(*tau));
+		fitted[i] = (*Z) + (*A) * expf(-i*xincr/(*tau));
 
 	// OK, so now fitted contains our data for the timeslice of interest.
 	// We can calculate a chisq value and plot the graph, along with
@@ -121,7 +121,7 @@ int GCI_triple_integral(float xincr, float y[],
 	if (residuals == NULL && chisq == NULL)
 		return 0;
 
-	chisq_local = 0.0;
+	chisq_local = 0.0f;
 	for (i=0; i<fit_start; i++) {
 		res = y[i]-fitted[i];
 		if (residuals != NULL)
@@ -158,7 +158,7 @@ int GCI_triple_integral(float xincr, float y[],
 			if (residuals != NULL)
 				residuals[i] = res;
 			/* don't let variance drop below 1 */
-			sigma2 = (y[i] > 1 ? 1.0/y[i] : 1.0);
+			sigma2 = (y[i] > 1 ? 1.0f/y[i] : 1.0f);
 			chisq_local += res * res * sigma2;
 		}
 		break;
@@ -172,7 +172,7 @@ int GCI_triple_integral(float xincr, float y[],
 			if (residuals != NULL)
 				residuals[i] = res;
 			/* don't let variance drop below 1 */
-			sigma2 = (fitted[i] > 1 ? 1.0/fitted[i] : 1.0);
+			sigma2 = (fitted[i] > 1 ? 1.0f/fitted[i] : 1.0f);
 			chisq_local += res * res * sigma2;
 		}
 		break;
@@ -210,10 +210,10 @@ int GCI_triple_integral_instr(float xincr, float y[],
 	if (width <= 0)
 		return -1;
 
-	t0 = fit_start * xincr;
-	dt = width * xincr;
+	t0 = ((float) fit_start) * xincr;
+	dt = ((float) width) * xincr;
 
-	d1 = d2 = d3 = 0;
+	d1 = d2 = d3 = 0.0f;
 	for (i=fit_start; i<fit_start+width; i++)
 		d1 += y[i];
 	for (i=fit_start+width; i<fit_start+2*width; i++)
@@ -228,15 +228,15 @@ int GCI_triple_integral_instr(float xincr, float y[],
 
 	d12 = d1 - d2;
 	d23 = d2 - d3;
-	if (d12 <= d23 || d23 <= 0)
+	if (d12 <= d23 || d23 <= 0.0f)
 		return -2;
 
 	exp_dt_tau = d23 / d12;  /* exp(-dt/tau) */
-	*tau = -dt / log(exp_dt_tau);
-	exp_t0_tau = exp(-t0/(*tau));
+	*tau = -dt / logf(exp_dt_tau);
+	exp_t0_tau = expf(-t0/(*tau));
 	*A = d12 /
-		  ((*tau) * exp_t0_tau * (1 - 2*exp_dt_tau + exp_dt_tau*exp_dt_tau));
-	*Z = (d1 - (*A) * (*tau) * exp_t0_tau * (1 - exp_dt_tau)) / dt;
+		  ((*tau) * exp_t0_tau * (1.0f - 2*exp_dt_tau + exp_dt_tau*exp_dt_tau));
+	*Z = (d1 - (*A) * (*tau) * exp_t0_tau * (1.0f - exp_dt_tau)) / dt;
 
 	/* We now convolve with the instrument response to hopefully get a
 	   slightly better fit.  We'll also scale by an appropriate
@@ -248,10 +248,10 @@ int GCI_triple_integral_instr(float xincr, float y[],
 	   instrument response values.
 	*/
 
-	sum = scaling = 0;
+	sum = scaling = 0.0f;
 	for (i=0; i<ninstr; i++) {
 		sum += instr[i];
-		scaling += instr[i] * exp(i*xincr/(*tau));
+		scaling += instr[i] * expf((float)i)*xincr/(*tau));
 	}
 
 	scaling /= sum;  /* Make instrument response sum to 1.0 */
@@ -264,7 +264,7 @@ int GCI_triple_integral_instr(float xincr, float y[],
 //	if (fitted_preconv_size < fit_end) {
 //		if (fitted_preconv_size > 0)
 //			free(fitted_preconv);
-		if ((fitted_preconv = (float *) malloc(fit_end * sizeof(float)))
+		if ((fitted_preconv = (float *) malloc((long unsigned int) fit_end * sizeof(float)))
 			== NULL)
 			return -3;
 		else
@@ -272,7 +272,7 @@ int GCI_triple_integral_instr(float xincr, float y[],
 //	}
 
 	for (i=0; i<fit_end; i++)
-		fitted_preconv[i] = (*A) * exp(-i*xincr/(*tau));
+		fitted_preconv[i] = (*A) * expf(((float)-i)*xincr/(*tau));
 
 	for (i=0; i<fit_end; i++) {
 		int convpts;
@@ -285,7 +285,7 @@ int GCI_triple_integral_instr(float xincr, float y[],
 			                      fitted_preconv[i-j].instr[j]
 		*/
 
-		fitted[i] = 0;
+		fitted[i] = 0.0f;
 		convpts = (ninstr <= i) ? ninstr-1 : i;
 		for (j=0; j<=convpts; j++) {
 			fitted[i] += fitted_preconv[i-j]*instr[j];
@@ -303,7 +303,7 @@ int GCI_triple_integral_instr(float xincr, float y[],
 	if (residuals == NULL && chisq == NULL)
 		return 0;
 
-	chisq_local = 0.0;
+	chisq_local = 0.0f;
 	for (i=0; i<fit_start; i++) {
 		res = y[i]-fitted[i];
 		if (residuals != NULL)
@@ -340,7 +340,7 @@ int GCI_triple_integral_instr(float xincr, float y[],
 			if (residuals != NULL)
 				residuals[i] = res;
 			/* don't let variance drop below 1 */
-			sigma2 = (y[i] > 1 ? 1.0/y[i] : 1.0);
+			sigma2 = (y[i] > 1 ? 1.0f/y[i] : 1.0f);
 			chisq_local += res * res * sigma2;
 		}
 		break;
@@ -354,7 +354,7 @@ int GCI_triple_integral_instr(float xincr, float y[],
 			if (residuals != NULL)
 				residuals[i] = res;
 			/* don't let variance drop below 1 */
-			sigma2 = (fitted[i] > 1 ? 1.0/fitted[i] : 1.0);
+			sigma2 = (fitted[i] > 1 ? 1.0f/fitted[i] : 1.0f);
 			chisq_local += res * res * sigma2;
 		}
 		break;
@@ -376,11 +376,11 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 							  float *chisq, float chisq_target)
 {
 	int tries=1, division=3;		 // the data
-	float local_chisq=3.0e38, oldChisq=3.0e38, oldZ, oldA, oldTau, *validFittedArray; // local_chisq a very high float but below oldChisq
+	float local_chisq=3.0e38f, oldChisq=3.0e38f, oldZ, oldA, oldTau, *validFittedArray; // local_chisq a very high float but below oldChisq
 
 	if (fitted==NULL)   // we require chisq but have not supplied a "fitted" array so must malloc one
 	{
-		if ((validFittedArray = malloc(fit_end * sizeof(float)))== NULL) return (-1);
+		if ((validFittedArray = malloc((long unsigned int)fit_end * sizeof(float)))== NULL) return (-1);
 	}
 	else validFittedArray = fitted;
 
@@ -572,7 +572,7 @@ int GCI_marquardt(float x[], float y[], int ndata,
 		if (itst < itst_max) continue;
 
 		/* Endgame */
-		alambda = 0.0;
+		alambda = 0.0f;
 		if (GCI_marquardt_step(x, y, ndata, noise, sig,
 							   param, paramfree, nparam, restrain,
 							   fitfunc, fitted, residuals,
@@ -680,7 +680,7 @@ int GCI_marquardt_instr(float xincr, float y[],
 		if (itst < itst_max) continue;
 
 		/* Endgame */
-		alambda = 0.0;
+		alambda = 0.0f;
 		if (GCI_marquardt_step_instr(xincr, y, ndata, fit_start, fit_end,
 									 instr, ninstr, noise, sig,
 									 param, paramfree, nparam, restrain,
@@ -744,7 +744,7 @@ int GCI_marquardt_step(float x[], float y[], int ndata,
 									 alpha, beta, chisq, 0.0, *alambda) != 0)
 			return -2;
 
-		*alambda = 0.001;
+		*alambda = 0.001f;
 		ochisq = (*chisq);
 		for (j=0; j<nparam; j++)
 			paramtry[j] = param[j];
@@ -755,7 +755,7 @@ int GCI_marquardt_step(float x[], float y[], int ndata,
 		for (k=0; k<mfit; k++)
 			covar[j][k] = alpha[j][k];
 
-		covar[j][j] = alpha[j][j] * (1.0 + (*alambda));
+		covar[j][j] = alpha[j][j] * (1.0f + (*alambda));
 		dparam[j] = beta[j];
 	}
 
@@ -795,7 +795,7 @@ int GCI_marquardt_step(float x[], float y[], int ndata,
 
 	if (ret != 0) {
 		/* Bad parameters, increase alambda and return */
-		*alambda *= 10.0;
+		*alambda *= 10.0f;
 		return 0;
 	}
 
@@ -807,7 +807,7 @@ int GCI_marquardt_step(float x[], float y[], int ndata,
 
 	/* Success, accept the new solution */
 	if (*chisq < ochisq) {
-		*alambda *= 0.1;
+		*alambda *= 0.1f;
 		ochisq = *chisq;
 		for (j=0; j<mfit; j++) {
 			for (k=0; k<mfit; k++)
@@ -817,7 +817,7 @@ int GCI_marquardt_step(float x[], float y[], int ndata,
 		for (l=0; l<nparam; l++)
 			param[l] = paramtry[l];
 	} else { /* Failure, increase alambda and return */
-		*alambda *= 10.0;
+		*alambda *= 10.0f;
 		*chisq = ochisq;
 	}
 
@@ -864,7 +864,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 											pfnvals_len, pdy_dparam_nparam_size) != 0)
 			return -2;
 
-		*alambda = 0.001;
+		*alambda = 0.001f;
 		*pochisq = *chisq;
 		for (j=0; j<nparam; j++)
 			paramtry[j] = param[j];
@@ -876,7 +876,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		for (k=0; k<(*pmfit); k++)
 			covar[j][k] = alpha[j][k];
 
-		covar[j][j] = alpha[j][j] * (1.0 + (*alambda));
+		covar[j][j] = alpha[j][j] * (1.0f + (*alambda));
 		dparam[j] = beta[j];
 	}
 
@@ -886,10 +886,10 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 			return -1;
 	}
 	else
-		*alambda = 0;
+		*alambda = 0.0f;
 
 	/* Once converged, evaluate covariance matrix */
-	if (*alambda == 0) {
+	if (*alambda == 0.0f) {
 		if (GCI_marquardt_compute_fn_final_instr(
 			xincr, y, ndata, fit_start, fit_end,
 			instr, ninstr, noise, sig,
@@ -924,7 +924,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 
 	if (ret != 0) {
 		/* Bad parameters, increase alambda and return */
-		*alambda *= 10.0;
+		*alambda *= 10.0f;
 		return 0;
 	}
 
@@ -939,7 +939,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 
 	/* Success, accept the new solution */
 	if (*chisq < *pochisq) {
-		*alambda *= 0.1;
+		*alambda *= 0.1f;
 		*pochisq = *chisq;
 		for (j=0; j<(*pmfit); j++) {
 			for (k=0; k<(*pmfit); k++)
@@ -949,7 +949,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 		for (l=0; l<nparam; l++)
 			param[l] = paramtry[l];
 	} else { /* Failure, increase alambda and return */
-		*alambda *= 10.0;
+		*alambda *= 10.0f;
 		*chisq = *pochisq;
 	}
 
@@ -1015,11 +1015,11 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 	switch (noise) {
 		case NOISE_CONST:
 		{
-			float i_sig_0_squared = 1.0 / (sig[0] * sig[0]);
+			float i_sig_0_squared = 1.0f / (sig[0] * sig[0]);
 			for (q = 0; q < ndata; ++q) {
 				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
 				yfit[q] += param[0];
-				dy_dparam[q][0] = 1.0;
+				dy_dparam[q][0] = 1.0f;
 				dy[q] = y[q] - yfit[q];
 				weight = i_sig_0_squared;
 				alpha_weight[q] = weight; // 1 / (sig[0] * sig[0])
@@ -1035,7 +1035,7 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 			for (q = 0; q < ndata; ++q) {
 				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
 				yfit[q] += param[0];
-				dy_dparam[q][0] = 1.0;
+				dy_dparam[q][0] = 1.0f;
 				dy[q] = y[q] - yfit[q];
 				weight = 1.0f / (sig[q] * sig[q]);
 				alpha_weight[q] = weight; // 1 / (sig[q] * sig[q])
@@ -1051,7 +1051,7 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 			for (q = 0; q < ndata; ++q) {
 				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
 				yfit[q] += param[0];
-				dy_dparam[q][0] = 1.0;
+				dy_dparam[q][0] = 1.0f;
 				dy[q] = y[q] - yfit[q];
 				weight = (y[q] > 15 ? 1.0f / y[q] : 1.0f / 15);
 				alpha_weight[q] = weight; // 1 / sig(q)
@@ -1067,7 +1067,7 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 			for (q = 0; q < ndata; ++q) {
 				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
 				yfit[q] += param[0];
-				dy_dparam[q][0] = 1.0;
+				dy_dparam[q][0] = 1.0f;
 				dy[q] = y[q] - yfit[q];
 				weight = (yfit[q] > 15 ? 1.0f / yfit[q] : 1.0f / 15);
 				alpha_weight[q] = weight; // 1 / sig(q)
@@ -1083,7 +1083,7 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 			for (q = 0; q < ndata; ++q) {
 				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
 				yfit[q] += param[0];
-				dy_dparam[q][0] = 1.0;
+				dy_dparam[q][0] = 1.0f;
 				dy[q] = y[q] - yfit[q];
 				weight = (yfit[q] > 1.0f ? 1.0f / yfit[q] : 1.0f);
 				alpha_weight[q] = weight; // 1 / sig(q)
@@ -1099,15 +1099,15 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 			for (q = 0; q < ndata; ++q) {
 				(*fitfunc)(x[q], param, &yfit[q], dy_dparam[q], nparam);
 				yfit[q] += param[0];
-				dy_dparam[q][0] = 1.0;
+				dy_dparam[q][0] = 1.0f;
 				dy[q] = y[q] - yfit[q];
-				weight = (yfit[q] > 1 ? 1.0f / yfit[q] : 1.0f);
+				weight = (yfit[q] > 1.0f ? 1.0f / yfit[q] : 1.0f);
 				alpha_weight[q] = weight * y[q] / yfit[q];
 				beta_weight[q] = dy[q] * weight;
-				if (yfit[q] > 0.0) {
+				if (yfit[q] > 0.0f) {
 					*chisq += (0.0f == y[q])
-							? 2.0 * yfit[q]
-							: 2.0 * (yfit[q] - y[q]) - 2.0 * y[q] * log(yfit[q] / y[q]);
+							? 2.0f * yfit[q]
+							: 2.0f * (yfit[q] - y[q]) - 2.0f * y[q] * log(yfit[q] / y[q]);
 				}
 			}
 			if (*chisq <= 0.0f) {
@@ -1210,7 +1210,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 			(*pdy_dparam_nparam_size) = 0;
 		}
 		if (! (*pfnvals_len)) {
-			if (((*pfnvals) = (float *) malloc(ndata * sizeof(float)))
+			if (((*pfnvals) = (float *) malloc((unsigned long int) ndata * sizeof(float)))
 				== NULL)
 				return -1;
 			(*pfnvals_len) = ndata;
@@ -1257,7 +1257,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 
 		if (ret < 0)
 			for (i=0; i<fit_end; i++)
-				(*fitfunc)(xincr*i, param, &(*pfnvals)[i],
+				(*fitfunc)(xincr*((float)i), param, &(*pfnvals)[i],
 						   (*pdy_dparam_pure)[i], nparam);
 
 		/* OK, we've got to convolve the model fit with the given
@@ -1281,9 +1281,9 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 			*/
 
 			/* Zero our adders */
-			yfit[i] = 0;
+			yfit[i] = 0.0f;
 			for (k=1; k<nparam; k++)
-				(*pdy_dparam_conv)[i][k] = 0;
+				(*pdy_dparam_conv)[i][k] = 0.0f;
 
 
 			convpts = (ninstr <= i) ? ninstr-1 : i;
@@ -1309,7 +1309,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 
 		if (ret < 0)
 			for (i=0; i<fit_end; i++)
-				(*fitfunc)(xincr*i, param, &yfit[i],
+				(*fitfunc)(xincr*((float)i), param, &yfit[i],
 						   (*pdy_dparam_conv)[i], nparam);
 	}
 
@@ -1405,8 +1405,8 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 				beta_weight[q] = dy[q] * weight;
 				if (yfit[q] > 0.0) {
 					*chisq += (0.0f == y[q])
-							? 2.0 * yfit[q]
-							: 2.0 * (yfit[q] - y[q]) - 2.0 * y[q] * log(yfit[q] / y[q]);
+							? 2.0f * yfit[q]
+							: 2.0f * (yfit[q] - y[q]) - 2.0f * y[q] * log(yfit[q] / y[q]);
 				}
 			}
 			if (*chisq <= 0.0f) {
@@ -1495,7 +1495,7 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 
 	switch (noise) {
 	case NOISE_CONST:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		/* Summation loop over all data */
 		for (i=0; i<ndata; i++) {
 			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
@@ -1506,17 +1506,17 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 		}
 
 		/* Now divide everything by sigma^2 */
-		sig2i = 1.0 / (sig[0] * sig[0]);
+		sig2i = 1.0f / (sig[0] * sig[0]);
 		*chisq *= sig2i;
 		break;
 
 	case NOISE_GIVEN:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		/* Summation loop over all data */
 		for (i=0; i<ndata; i++) {
 			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
 			yfit[i] += param[0];
-			sig2i = 1.0 / (sig[i] * sig[i]);
+			sig2i = 1.0f / (sig[i] * sig[i]);
 			dy[i] = y[i] - yfit[i];
 			/* And find chi^2 */
 			*chisq += dy[i] * dy[i] * sig2i;
@@ -1524,13 +1524,13 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 		break;
 
 	case NOISE_POISSON_DATA:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		/* Summation loop over all data */
 		for (i=0; i<ndata; i++) {
 			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
 			yfit[i] += param[0];
 			/* we still don't let the variance drop below 1 */
-			sig2i = (y[i] > 1 ? 1.0/y[i] : 1.0);
+			sig2i = (y[i] > 1 ? 1.0f/y[i] : 1.0f);
 			dy[i] = y[i] - yfit[i];
 			/* And find chi^2 */
 			*chisq += dy[i] * dy[i] * sig2i;
@@ -1538,13 +1538,13 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 		break;
 
 	case NOISE_POISSON_FIT:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		// Summation loop over all data
 		for (i=0; i<ndata; i++) {
 			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
 			yfit[i] += param[0];
 			// we still don't let the variance drop below 1
-			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+			sig2i = (yfit[i] > 1 ? 1.0f/yfit[i] : 1.0f);
 			dy[i] = y[i] - yfit[i];
 			// And find chi^2
 			*chisq += dy[i] * dy[i] * sig2i;
@@ -1552,7 +1552,7 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 		break;
 
 	case NOISE_MLE:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
@@ -1562,23 +1562,23 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 				/* And find chi^2 */
 //				sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
 //				*chisq += dy[i] * dy[i] * sig2i;
-				if (yfit[i]<=0.0)
+				if (yfit[i]<=0.0f)
 					; // do nothing
-				else if (y[i]==0.0)
-					*chisq += 2.0*yfit[i];   // to avoid NaN from log
+				else if (y[i]==0.0f)
+					*chisq += 2.0f*yfit[i];   // to avoid NaN from log
 				else
-					*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
+					*chisq += 2.0f*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
 			}
-			if (*chisq <= 0.0) *chisq = 1.0e38; // don't let chisq=0 through yfit being all -ve
+			if (*chisq <= 0.0f) *chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
 		break;
 
 	case NOISE_GAUSSIAN_FIT:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		// Summation loop over all data
 		for (i=0; i<ndata; i++) {
 			(*fitfunc)(x[i], param, &yfit[i], dy_dparam, nparam);
 			yfit[i] += param[0];
-			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+			sig2i = (yfit[i] > 1 ? 1.0f/yfit[i] : 1.0f);
 			dy[i] = y[i] - yfit[i];
 			// And find chi^2
 			*chisq += dy[i] * dy[i] * sig2i;
@@ -1647,7 +1647,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 
 		if (ret < 0)
 			for (i=0; i<ndata; i++)
-				(*fitfunc)(xincr*i, param, &fnvals[i],
+				(*fitfunc)(xincr*((float)i), param, &fnvals[i],
 						   dy_dparam_pure[i], nparam);
 
 		/* OK, we've got to convolve the model fit with the given
@@ -1672,7 +1672,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 
 			/* Zero our adder; don't need to bother with dy_dparam
 			   stuff here */
-			yfit[i] = 0;
+			yfit[i] = 0.0f;
 
 			convpts = (ninstr <= i) ? ninstr-1 : i;
 			for (j=0; j<=convpts; j++)
@@ -1694,7 +1694,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 
 		if (ret < 0)
 			for (i=0; i<ndata; i++)
-				(*fitfunc)(xincr*i, param, &yfit[i],
+				(*fitfunc)(xincr*((float)i), param, &yfit[i],
 						   dy_dparam_conv[i], nparam);
 	}
 
@@ -1703,7 +1703,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 
 	switch (noise) {
 	case NOISE_CONST:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		/* Summation loop over all data */
 		for (i=0; i<fit_start; i++) {
 			yfit[i] += param[0];
@@ -1721,12 +1721,12 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 		}
 
 		/* Now divide chi-squared by sigma^2 */
-		sig2i = 1.0 / (sig[0] * sig[0]);
+		sig2i = 1.0f / (sig[0] * sig[0]);
 		*chisq *= sig2i;
 		break;
 
 	case NOISE_GIVEN:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		/* Summation loop over all data */
 		for (i=0; i<fit_start; i++) {
 			yfit[i] += param[0];
@@ -1736,7 +1736,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
 			/* And find chi^2 */
-			sig2i = 1.0 / (sig[i] * sig[i]);
+			sig2i = 1.0f / (sig[i] * sig[i]);
 			*chisq += dy[i] * dy[i] * sig2i;
 		}
 		for ( ; i<ndata; i++) {
@@ -1746,7 +1746,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 		break;
 
 	case NOISE_POISSON_DATA:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		/* Summation loop over all data */
 		for (i=0; i<fit_start; i++) {
 			yfit[i] += param[0];
@@ -1757,7 +1757,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			dy[i] = y[i] - yfit[i];
 			/* And find chi^2 */
 			/* we still don't let the variance drop below 1 */
-			sig2i = (y[i] > 1 ? 1.0/y[i] : 1.0);
+			sig2i = (y[i] > 1 ? 1.0f/y[i] : 1.0f);
 			*chisq += dy[i] * dy[i] * sig2i;
 		}
 		for (; i<ndata; i++) {
@@ -1767,7 +1767,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 		break;
 
 	case NOISE_POISSON_FIT:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		// Summation loop over all data
 		for (i=0; i<fit_start; i++) {
 			yfit[i] += param[0];
@@ -1778,7 +1778,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			dy[i] = y[i] - yfit[i];
 			// And find chi^2
 			// we still don't let the variance drop below 1
-			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+			sig2i = (yfit[i] > 1 ? 1.0f/yfit[i] : 1.0f);
 			*chisq += dy[i] * dy[i] * sig2i;
 		}
 		for ( ; i<ndata; i++) {
@@ -1788,7 +1788,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 		break;
 
 	case NOISE_MLE:		  		     // for the final chisq report a normal chisq measure for MLE
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		// Summation loop over all data
 		for (i=0; i<fit_start; i++) {
 			yfit[i] += param[0];
@@ -1802,19 +1802,19 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			if (yfit[i]<=0.0)
 				; // do nothing
 			else if (y[i]==0.0)
-				*chisq += 2.0*yfit[i];   // to avoid NaN from log
+				*chisq += 2.0f*yfit[i];   // to avoid NaN from log
 			else
-				*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
+				*chisq += 2.0f*(yfit[i]-y[i]) - 2.0f*y[i]*logf(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
 		}
 		for ( ; i<ndata; i++) {
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
 		}
-		if (*chisq <= 0.0) *chisq = 1.0e38; // don't let chisq=0 through yfit being all -ve
+		if (*chisq <= 0.0) *chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
 		break;
 
 	case NOISE_GAUSSIAN_FIT:
-		*chisq = 0.0;
+		*chisq = 0.0f;
 		// Summation loop over all data
 		for (i=0; i<fit_start; i++) {
 			yfit[i] += param[0];
@@ -1824,7 +1824,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			yfit[i] += param[0];
 			dy[i] = y[i] - yfit[i];
 			// And find chi^2
-			sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+			sig2i = (yfit[i] > 1 ? 1.0f/yfit[i] : 1.0f);
 			*chisq += dy[i] * dy[i] * sig2i;
 		}
 		for ( ; i<ndata; i++) {
@@ -1872,7 +1872,7 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 
 	// changed this for version 2, did a quick test with 2150ps_200ps_50cts_450cts.ics to see that the results are the same
 	// NB this is also in GCI_SPA_1D_marquardt_instr() and GCI_SPA_2D_marquardt_instr()
-	oldChisq = 3.0e38;
+	oldChisq = 3.0e38f;
 	while (local_chisq>chisq_target && (local_chisq<oldChisq) && tries<MAXREFITS)
 	{
 		oldChisq = local_chisq;
