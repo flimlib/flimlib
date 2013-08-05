@@ -8,7 +8,7 @@
   <parent>
     <groupId>loci</groupId>
     <artifactId>pom-loci</artifactId>
-    <version>1.0</version>
+    <version>1.8</version>
   </parent>
 
   <artifactId>slim-curve</artifactId>
@@ -30,10 +30,15 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-nar-plugin</artifactId>
+        <artifactId>nar-maven-plugin</artifactId>
         <version>${nar.version}</version>
         <extensions>true</extensions>
         <configuration>
+          <c>
+            <includes>
+              <include>**/*.c</include>
+			</includes>
+          </c>
           <libraries>
             <library>
               <type>shared</type>
