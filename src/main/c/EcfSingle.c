@@ -251,7 +251,7 @@ int GCI_triple_integral_instr(float xincr, float y[],
 	sum = scaling = 0.0f;
 	for (i=0; i<ninstr; i++) {
 		sum += instr[i];
-		scaling += instr[i] * expf((float)i)*xincr/(*tau));
+		scaling += instr[i] * expf(((float)i)*xincr/(*tau));
 	}
 
 	scaling /= sum;  /* Make instrument response sum to 1.0 */
