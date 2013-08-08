@@ -34,6 +34,7 @@
         <version>${nar.version}</version>
         <extensions>true</extensions>
         <configuration>
+          <!-- this c includes configuration s/b no longer necessary after my Nar Maven Plugin pull request -->
           <c>
             <includes>
               <include>**/*.c</include>

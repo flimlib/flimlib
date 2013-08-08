@@ -55,7 +55,7 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
 {
     float max;
     float temp;
-    float *pivotInverse = (float *)malloc(n * sizeof(float));
+    float *pivotInverse = (float *)malloc((size_t) n * sizeof(float));
     int i, j, k, m;
 
     // base row of matrix
@@ -133,13 +133,13 @@ int GCI_invert_Gaussian(float **a, int n)
     for (j = 0; j < n; ++j) {
         // find inverse by columns
         for (i = 0; i < n; ++i) {
-            identity[j][i] = 0.0;
+            identity[j][i] = 0.0f;
             // need a fresh copy of matrix a
             for (k = 0; k < n; ++k) {
                 work[k][i] = a[k][i];
             }
         }
-        identity[j][j] = 1.0;
+        identity[j][j] = 1.0f;
         returnValue = GCI_solve_Gaussian(work, n, identity[j]);
         if (returnValue < 0) {
 			GCI_ecf_free_matrix(identity);
@@ -249,7 +249,7 @@ int lu_decomp(float **a, int n, int *order)
 
         // find pivot for row
         pivot(a, n, order, jCol);
-        if (0.0 == a[jCol][jCol])
+        if (0.0f == a[jCol][jCol])
         {
             return -2;
         }
@@ -334,7 +334,7 @@ int solve_lu(float **lu, int n, float *b, int *order)
  */
 int GCI_solve_lu_decomp(float **a, int n, float *b)
 {
-    int *order = (int *) malloc(n * sizeof(int));
+    int *order = (int *) malloc((size_t) n * sizeof(int));
     int return_value = lu_decomp(a, n, order);
     if (return_value >= 0) {
         return_value = solve_lu(a, n, b, order);
@@ -350,7 +350,7 @@ int GCI_solve_lu_decomp(float **a, int n, float *b)
 int GCI_invert_lu_decomp(float **a, int n)
 {
     int returnValue;
-    int *order = (int *) malloc(n * sizeof(int));
+    int *order = (int *) malloc((size_t) n * sizeof(int));
     float **identity = GCI_ecf_matrix(n, n);
     int i, j;
 
@@ -359,9 +359,9 @@ int GCI_invert_lu_decomp(float **a, int n)
         for (j = 0; j < n; ++j) {
             // find inverse by columns
             for (i = 0; i < n; ++i) {
-                identity[j][i] = 0.0;
+                identity[j][i] = 0.0f;
             }
-            identity[j][j] = 1.0;
+            identity[j][j] = 1.0f;
             solve_lu(a, n, identity[j], order);
         }
         for (j = 0; j < n; ++j) {
@@ -432,9 +432,9 @@ http://www.nr.com/public-domain.html
  */
 float **GCI_ecf_matrix(long nrows, long ncols)
 {
-    int row_size = (int) (nrows * sizeof(float *));
-    int data_size = (int) (nrows * ncols * sizeof(float));
-    unsigned char *raw = malloc(row_size + data_size);
+    int row_size = (int) (nrows * (long) sizeof(float *));
+    int data_size = (int) (nrows * ncols * (long) sizeof(float));
+    unsigned char *raw = (unsigned char *) malloc((size_t)((unsigned)(row_size + data_size)));
     float **row = (float **) raw;
     float *data = (float *) (row + nrows);
     int i;
@@ -470,11 +470,11 @@ float ***GCI_ecf_matrix_array(long nblocks, long nrows, long ncols)
 	float ***marr;
 
 	/* allocate pointers to blocks */
-	if ((marr = (float ***) malloc(nblocks * sizeof(float **))) == NULL)
+	if ((marr = (float ***) malloc((unsigned) nblocks * sizeof(float **))) == NULL)
 		return NULL;
 
 	/* allocate blocks (= pointers to rows) and set pointers to them */
-	if ((marr[0] = (float **) malloc(nblocks * nrows * sizeof(float *)))
+	if ((marr[0] = (float **) malloc((unsigned)(nblocks * nrows) * sizeof(float *)))
 		== NULL) {
 		free(marr);
 		return NULL;
@@ -484,7 +484,7 @@ float ***GCI_ecf_matrix_array(long nblocks, long nrows, long ncols)
 		marr[i] = marr[i-1] + nrows;
 
 	/* allocate rows (= pointers to column entries) and set pointers to them */
-	if ((marr[0][0] = (float *)malloc(nblocks * nrows * ncols * sizeof(float)))
+	if ((marr[0][0] = (float *)malloc((unsigned)(nblocks * nrows * ncols) * sizeof(float)))
 		== NULL) {
 		free(marr[0]);
 		free(marr);
@@ -598,7 +598,7 @@ int multiexp_lambda_array(float xincr, float param[],
 			dy_dparam[i][j] = ex = (float) excur[j];
 			ex *= param[j];
 			y[i] += ex;
-			dy_dparam[i][j+1] = -ex * xincr * i;
+			dy_dparam[i][j+1] = -ex * xincr * (float) i;
 			/* And ready for next loop... */
 			excur[j] *= exincr[j];
 		}
@@ -666,7 +666,7 @@ int multiexp_tau_array(float xincr, float param[],
 			dy_dparam[i][j] = ex = (float) excur[j];
 			ex *= param[j];
 			y[i] += ex;
-			dy_dparam[i][j+1] = ex * xincr * i * a2[j];
+			dy_dparam[i][j+1] = ex * xincr * (float) i * a2[j];
 			/* And ready for next loop... */
 			excur[j] *= exincr[j];
 		}
@@ -749,7 +749,7 @@ int stretchedexp_array(float xincr, float param[],
 
 	for (i=1; i<nx; i++) {
 		xa += xaincr;       /* xa = (xincr*i)/param[2] */
-		lxa = logf(xa);     /* lxa = log(x/param[2]) */
+		lxa = logf((float) xa);     /* lxa = log(x/param[2]) */
 		xah = expf(lxa * a3inv);  /* xah = exp(log(x/param[2])/param[3])
 		                                = (x/param[2])^(1/param[3]) */
 		dy_dparam[i][1] = ex = expf(-xah);
@@ -774,12 +774,12 @@ int stretchedexp_array(float xincr, float param[],
 
 
 /* This is the default routine */
-#define MIN_Z -1e5
-#define MIN_Z_FACTOR 0.4
-#define MAX_Z 1e10  /* Silly */
+#define MIN_Z -1e5f
+#define MIN_Z_FACTOR 0.4f
+#define MAX_Z 1e10f  /* Silly */
 #define MIN_A 0
-#define MAX_A 1e10  /* Silly */
-#define MIN_TAU 0.001  /* Works for lambda too */
+#define MAX_A 1e10f  /* Silly */
+#define MIN_TAU 0.001f  /* Works for lambda too */
 #define MAX_TAU 1000
 #define MIN_H 1
 #define MAX_H 10
@@ -1058,7 +1058,7 @@ int GCI_marquardt_estimate_errors(float **alpha, int nparam, int mfit,
 		}
 		
         // first three sweeps use non-zero threshold		
-		thresh = (i < 4) ? 0.2f * sm / (nparam * nparam) : 0.0f;
+		thresh = (i < 4) ? 0.2f * sm / (float)(nparam * nparam) : 0.0f;
 		
 		for (p = 0; p < nparam - 1; ++p) {
 			for (q = p + 1; q < nparam; ++q) {
@@ -1149,7 +1149,7 @@ float GCI_incomplete_gamma(float a, float x) {
 	
 	for (iter = 0; iter < 1000; ++iter) {
 		// this is "a * (a + 1) * (a + 2) * ... * (a + iter)"
-		factor *= (a + iter);
+		factor *= (a + (float) iter);
 		
 		// keep a sum
 		sum += powerOfX / factor;
@@ -1372,25 +1372,25 @@ int GCI_chisq(int nu, float chisq, float *root)
 	if (chisq <= 0.0f || chisq >= 1.0f)
 		return -1;
 
-	if ((val1 = GCI_gammap(0.5f * nu, 0.5f * x1)) < 0)
+	if ((val1 = GCI_gammap(0.5f * (float) nu, 0.5f * x1)) < 0)
 		return -3;
 
 	j = 0;
 	while ((val1 > chisq) && (++j <= MAX_ITERS)) {
 		x1 /= 2;
-		if ((val1 = GCI_gammap(0.5f * nu, 0.5f * x1)) < 0)
+		if ((val1 = GCI_gammap(0.5f * (float) nu, 0.5f * x1)) < 0)
 			return -3;
 	}
 	if (j > MAX_ITERS)
 		return -1;
 
-	if ((val2 = GCI_gammap(0.5f * nu, 0.5f * x2)) < 0)
+	if ((val2 = GCI_gammap(0.5f * (float) nu, 0.5f * x2)) < 0)
 		return -4;
 
 	j = 0;
 	while ((val2 < chisq) && (++j <= MAX_ITERS)) {
 		x2 *= 2;
-		if ((val2 = GCI_gammap(0.5f * nu, 0.5f * x2)) < 0)
+		if ((val2 = GCI_gammap(0.5f * (float) nu, 0.5f * x2)) < 0)
 			return -4;
 	}
 	if (j > MAX_ITERS)
@@ -1400,7 +1400,7 @@ int GCI_chisq(int nu, float chisq, float *root)
 	for (j = 0; j < MAX_ITERS; ++j) {
 		// compute bisection and value
 		mid = (x1 + x2) / 2;
-		mid_val = GCI_gammap(0.5f * nu, 0.5f * mid);
+		mid_val = GCI_gammap(0.5f * (float) nu, 0.5f * mid);
 		if (mid_val < 0.0f) {
 			return -4;
 		}

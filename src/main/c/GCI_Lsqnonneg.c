@@ -400,7 +400,7 @@ int GCI_lsqnonneg(double **A_orig, double *b_orig, double *x, int m, int n,
 	rnorm = (rnorm_orig == NULL) ? &rnorm2 : rnorm_orig;
 	if (preserve) {
 		/* We allocate one long array and split it into pieces */
-		if ((AA[0] = malloc(m*n*sizeof(double))) == NULL)
+		if ((AA[0] = (double *)malloc((unsigned)(m*n)*sizeof(double))) == NULL)
 			return -4;
 		for (i=0; i<n; i++) {
 			AA[i] = AA[0]+m*i;

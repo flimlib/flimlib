@@ -83,8 +83,8 @@ int GCI_triple_integral(float xincr, float y[],
 	if (width <= 0)
 		return -1;
 
-	t0 = fit_start * xincr;
-	dt = width * xincr;
+	t0 = ((float)fit_start) * xincr;
+	dt = ((float)width) * xincr;
 
 	d1 = d2 = d3 = 0.0f;
 	for (i=fit_start; i<fit_start+width; i++)           d1 += y[i];
@@ -102,8 +102,8 @@ int GCI_triple_integral(float xincr, float y[],
 		return -2;
 
 	exp_dt_tau = d23 / d12;  /* exp(-dt/tau) */
-	*tau = -dt / log(exp_dt_tau);
-	exp_t0_tau = exp(-t0/(*tau));
+	*tau = -dt / logf(exp_dt_tau);
+	exp_t0_tau = expf(-t0/(*tau));
 	*A = d12 / ((*tau) * exp_t0_tau * (1.0f - 2*exp_dt_tau + exp_dt_tau*exp_dt_tau));
 	*Z = (d1 - (*A) * (*tau) * exp_t0_tau * (1.0f - exp_dt_tau)) / dt;
 
@@ -112,7 +112,7 @@ int GCI_triple_integral(float xincr, float y[],
 		return 0;
 
 	for (i=0; i<fit_end; i++)
-		fitted[i] = (*Z) + (*A) * expf(-i*xincr/(*tau));
+		fitted[i] = (*Z) + (*A) * expf(((float)-i)*xincr/(*tau));
 
 	// OK, so now fitted contains our data for the timeslice of interest.
 	// We can calculate a chisq value and plot the graph, along with
@@ -203,7 +203,7 @@ int GCI_triple_integral_instr(float xincr, float y[],
 	int i, j;
 	float sigma2, res, chisq_local;
 	float sum, scaling;
-	int fitted_preconv_size=0;   // was static but now thread safe
+//	int fitted_preconv_size=0;   // was static but now thread safe
 	float *fitted_preconv;   // was static but now thread safe
 
 	width = (fit_end - fit_start) / division;
@@ -267,8 +267,8 @@ int GCI_triple_integral_instr(float xincr, float y[],
 		if ((fitted_preconv = (float *) malloc((long unsigned int) fit_end * sizeof(float)))
 			== NULL)
 			return -3;
-		else
-			fitted_preconv_size = fit_end;
+//		else
+//			fitted_preconv_size = fit_end;
 //	}
 
 	for (i=0; i<fit_end; i++)
@@ -1107,7 +1107,7 @@ int GCI_marquardt_compute_fn(float x[], float y[], int ndata,
 				if (yfit[q] > 0.0f) {
 					*chisq += (0.0f == y[q])
 							? 2.0f * yfit[q]
-							: 2.0f * (yfit[q] - y[q]) - 2.0f * y[q] * log(yfit[q] / y[q]);
+							: 2.0f * (yfit[q] - y[q]) - 2.0f * y[q] * logf(yfit[q] / y[q]);
 				}
 			}
 			if (*chisq <= 0.0f) {
@@ -1210,7 +1210,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 			(*pdy_dparam_nparam_size) = 0;
 		}
 		if (! (*pfnvals_len)) {
-			if (((*pfnvals) = (float *) malloc((unsigned long int) ndata * sizeof(float)))
+			if (((*pfnvals) = (float *) malloc((size_t) ndata * sizeof(float)))
 				== NULL)
 				return -1;
 			(*pfnvals_len) = ndata;
@@ -1406,7 +1406,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 				if (yfit[q] > 0.0) {
 					*chisq += (0.0f == y[q])
 							? 2.0f * yfit[q]
-							: 2.0f * (yfit[q] - y[q]) - 2.0f * y[q] * log(yfit[q] / y[q]);
+							: 2.0f * (yfit[q] - y[q]) - 2.0f * y[q] * logf(yfit[q] / y[q]);
 				}
 			}
 			if (*chisq <= 0.0f) {
@@ -1567,7 +1567,7 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 				else if (y[i]==0.0f)
 					*chisq += 2.0f*yfit[i];   // to avoid NaN from log
 				else
-					*chisq += 2.0f*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
+					*chisq += 2.0f*(yfit[i]-y[i]) - 2.0f*y[i]*logf(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
 			}
 			if (*chisq <= 0.0f) *chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
 		break;
@@ -1859,6 +1859,7 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 					   float chisq_target, float chisq_delta, int chisq_percent)
 {
 	float oldChisq, local_chisq;
+	float chisq_percent_float = (float) chisq_percent;
 	int ret, tries=0;
 
 	if (ecf_exportParams) ecf_ExportParams_OpenFile ();
@@ -1868,7 +1869,7 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 							  prompt, nprompt, noise, sig,
 							  param, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, covar, alpha, &local_chisq,
-							  chisq_delta, chisq_percent, erraxes);
+							  chisq_delta, chisq_percent_float, erraxes);
 
 	// changed this for version 2, did a quick test with 2150ps_200ps_50cts_450cts.ics to see that the results are the same
 	// NB this is also in GCI_SPA_1D_marquardt_instr() and GCI_SPA_2D_marquardt_instr()
@@ -1881,7 +1882,7 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 							  prompt, nprompt, noise, sig,
 							  param, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, covar, alpha, &local_chisq,
-							  chisq_delta, chisq_percent, erraxes);
+							  chisq_delta, chisq_percent_float, erraxes);
 	}
 
 	if (chisq!=NULL) *chisq = local_chisq;

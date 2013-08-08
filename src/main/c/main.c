@@ -107,7 +107,7 @@ int parse_and_fit(FILE *file) {
     // look for optional '[prompt]' section
     if (0 == strcmp(stringbuffer, "prompt")) {
         prompt_size = get_int_value(file, "size");
-        prompt_values = (float *) malloc(prompt_size * sizeof(float));
+        prompt_values = (float *) malloc((size_t) prompt_size * sizeof(float));
         if (!get_float_array_value(file, "values", prompt_size, prompt_values)) {
             printf("Problem parsing prompt values\n");
             return BAD_SYNTAX;
@@ -129,7 +129,7 @@ int parse_and_fit(FILE *file) {
         return BAD_SYNTAX;
     }
     transient_size = get_int_value(file, "size");
-    transient_values = (float *) malloc(transient_size * sizeof(float));
+    transient_values = (float *) malloc((size_t) transient_size * sizeof(float));
     if (!get_float_array_value(file, "values", transient_size, transient_values)) {
         printf("Problem parsing transient values\n");
         return BAD_SYNTAX;
@@ -149,7 +149,7 @@ int parse_and_fit(FILE *file) {
     // look for optional '[sigma]' section
     if (0 == strcmp(stringbuffer, "sigma")) {
         sigma_size = get_int_value(file, "size");
-        sigma_values = (float *) malloc(sigma_size * sizeof(float));
+        sigma_values = (float *) malloc((size_t) sigma_size * sizeof(float));
         if (!get_float_array_value(file, "values", sigma_size, sigma_values)) {
             printf("Problem parsing sigma values\n");
             return BAD_SYNTAX;
@@ -391,6 +391,6 @@ char next_char(FILE *file) {
         fclose(file);
         exit(UNEXPECTED_EOF);
     }
-    return c;
+    return (char) c;
 }
 

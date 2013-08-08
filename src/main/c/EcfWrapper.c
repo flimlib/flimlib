@@ -63,15 +63,17 @@ int RLD_fit(
 		) {
 
 	int n_data = fit_end;
-	float *y_float = (float *)malloc(n_data * sizeof(float));
-	float *sig_float = (float *)malloc(n_data * sizeof(float));
+	float x_inc_float = (float) x_inc;
+	float *y_float = (float *)malloc((size_t) n_data * sizeof(float));
+	float *sig_float = (float *)malloc((size_t) n_data * sizeof(float));
 	float *instr_float = 0;
 	float *fitted_float = 0;
-	float *residuals_float = (float *)malloc(n_data * sizeof(float));
+	float *residuals_float = (float *)malloc((size_t) n_data * sizeof(float));
 	float z_float          = (float) *z;
 	float a_float          = (float) *a;
 	float tau_float        = (float) *tau;
 	float chi_square_float = (float) *chi_square;
+	float chi_square_target_float = (float) chi_square_target;
 	int return_value;
 	int i;
 
@@ -82,18 +84,18 @@ int RLD_fit(
 
 	if (instr) {
 		int i;
-		instr_float = (float *)malloc(n_instr * sizeof(float));
+		instr_float = (float *)malloc((size_t) n_instr * sizeof(float));
 		for (i = 0; i < n_instr; ++i) {
 			instr_float[i] = (float) instr[i];
 		}
 	}
 
 	if (fitted) {
-		fitted_float = (float*)malloc(n_data * sizeof(float));
+		fitted_float = (float*)malloc((size_t) n_data * sizeof(float));
 	}
 
 	return_value =  GCI_triple_integral_fitting_engine(
-			(float) x_inc,
+			x_inc_float,
 			y_float,
 			fit_start,
 			fit_end,
@@ -107,7 +109,7 @@ int RLD_fit(
 			fitted_float,
 			residuals_float,
 			&chi_square_float,
-			chi_square_target
+			chi_square_target_float
 			);
 
 	*z          = (double) z_float;
@@ -173,15 +175,15 @@ int LMA_fit(
 		) {
 
 	int restrain = 0;
-	float chi_square_percent = 95.0f;
+	int chi_square_percent = 95;
 
 	int n_data = fit_end;
-	float *y_float = (float *)malloc(n_data * sizeof(float));
-	float *sig_float = (float *)malloc(n_data * sizeof(float));
+	float *y_float = (float *)malloc((size_t) n_data * sizeof(float));
+	float *sig_float = (float *)malloc((size_t) n_data * sizeof(float));
 	float *instr_float = 0;
 	float *fitted_float = 0;
 	float *param_float;
-	float *residuals_float = (float *)malloc(n_data * sizeof(float));
+	float *residuals_float = (float *)malloc((size_t) n_data * sizeof(float));
 	float **covar_float    = GCI_ecf_matrix(n_data, n_data);
 	float **alpha_float    = GCI_ecf_matrix(n_data, n_data);
 	float **err_axes_float = GCI_ecf_matrix(n_data, n_data);
@@ -197,16 +199,16 @@ int LMA_fit(
 
 	if (instr) {
 		int i;
-		instr_float = (float *)malloc(n_instr * sizeof(float));
+		instr_float = (float *)malloc((size_t) n_instr * sizeof(float));
 		for (i = 0; i < n_instr; ++i) {
 			instr_float[i] = (float) instr[i];
 		}
 	}
 
 	if (fitted) {
-		fitted_float = (float*)malloc(n_data * sizeof(float));
+		fitted_float = (float*)malloc((size_t) n_data * sizeof(float));
 	}
-	param_float = (float *)malloc(n_param * sizeof(float));
+	param_float = (float *)malloc((size_t) n_param * sizeof(float));
 	switch (n_param) {
 		case 3:
 			// single exponential fit

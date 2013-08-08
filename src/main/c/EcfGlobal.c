@@ -298,11 +298,11 @@ int GCI_alloc_global_vector(global_vector *v,
 	if (global <= 0 || local < 0 || ntrans <= 0)
 		return -2;
 
-	if ((v->global = (float *) malloc(global * sizeof(float))) == NULL)
+	if ((v->global = (float *) malloc((unsigned) global * sizeof(float))) == NULL)
 		return -1;
 	if (local > 0) {
 		if ((v->local =
-			 (float *) malloc(ntrans * local * sizeof(float))) == NULL) {
+			 (float *) malloc((unsigned)(ntrans * local) * sizeof(float))) == NULL) {
 			free(v->global);
 			return -1;
 		}
@@ -402,14 +402,14 @@ int GCI_marquardt_global_exps_instr(float xincr, float **trans,
 		return -3;
 	}
 
-	if ((scaled_instr = (float *) malloc(ninstr * sizeof(float))) == NULL && ninstr>1) {
+	if ((scaled_instr = (float *) malloc((unsigned) ninstr * sizeof(float))) == NULL && ninstr>1) {
 		GCI_ecf_free_matrix(covar);
 		GCI_ecf_free_matrix(alpha);
 		return -4;
 	}
 
 	/* Also allocate space for the exp_pure and exp_conv arrays */
-	if ((exp_conv[0] = (float *) malloc(nparam * ndata * sizeof(float)))
+	if ((exp_conv[0] = (float *) malloc((unsigned)(nparam * ndata) * sizeof(float)))
 		== NULL) {
 		GCI_ecf_free_matrix(covar);
 		GCI_ecf_free_matrix(alpha);
@@ -584,7 +584,7 @@ int GCI_marquardt_global_exps_est_globals_instr(
 	float Z, A, tau;
 	void (*fitfunc)(float, float [], float *, float [], int);
 
-	if ((summed = (float *) calloc(ndata, sizeof(float))) == NULL)
+	if ((summed = (float *) calloc((unsigned) ndata, sizeof(float))) == NULL)
 		return -1;
 
 	for (i=0; i<ntrans; i++) {
@@ -602,7 +602,7 @@ int GCI_marquardt_global_exps_est_globals_instr(
 
 	ret = GCI_triple_integral_fitting_engine(xincr, summed, data_start, fit_end,
 							 				instr, ninstr, noise, sig,
-							  				&Z, &A, &tau, NULL, NULL, NULL, (float)1.5*(fit_end-fit_start-3));
+							  				&Z, &A, &tau, NULL, NULL, NULL, 1.5f*(float)(fit_end-fit_start-3));
 
 	dbgprintf(3, "In est_globals_instr, triple integral ret = %d\n", ret);
 
@@ -704,8 +704,8 @@ int GCI_marquardt_global_exps_est_globals_instr(
 			if (paramfree[5]) gparam[5] = A*1/6;
 			if (paramfree[6]) gparam[6] = tau/3;
 			for (i=7; i<nparam; i+=2) {
-				if (paramfree[i]) gparam[i] = A/i;
-				if (paramfree[i+1]) gparam[i+1] = tau/i;
+				if (paramfree[i]) gparam[i] = A/(float)i;
+				if (paramfree[i+1]) gparam[i+1] = tau/(float)i;
 			}
 			break;
 		}
@@ -741,7 +741,7 @@ int GCI_marquardt_global_exps_est_globals_instr(
 							  instr, ninstr, noise, sig,
 							  gparam, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, chisq_global, covar, alpha,
-							  NULL, (float)1.5*(fit_end-fit_start-nparamfree), chisq_delta, 0);
+							  NULL, 1.5f*(float)(fit_end-fit_start-nparamfree), chisq_delta, 0);
 
 	dbgprintf(3, "In est_globals_instr, marquardt ret = %d\n", ret);
 
@@ -804,7 +804,7 @@ int GCI_marquardt_global_exps_est_params_instr(
 
 		ret = GCI_triple_integral_fitting_engine(xincr, trans[i], data_start, fit_end,
 							 				instr, ninstr, noise, sig,
-							  				&Z, &A, &tau, NULL, NULL, NULL, (float)1.5*(fit_end-fit_start-3));
+							  				&Z, &A, &tau, NULL, NULL, NULL, 1.5f*(float)(fit_end-fit_start-3));
 		if (ret < 0) {
 			Z = 0;
 			ECF_Find_Float_Max(&trans[i][fit_start], fit_end - fit_start, &A);
@@ -834,7 +834,7 @@ int GCI_marquardt_global_exps_est_params_instr(
 				if (paramfree[sortkey[6]-1]) param[i][sortkey[6]-1] = A*1/6;
 				/* this is all pretty meaningless from here on, anyway */
 				for (j=8; j<nparam; j+=2) {
-					if (paramfree[sortkey[j]-1]) param[i][sortkey[j]-1] = A/j;
+					if (paramfree[sortkey[j]-1]) param[i][sortkey[j]-1] = A/(float)j;
 				}
 				break;
 			}
@@ -981,7 +981,7 @@ int GCI_marquardt_global_exps_calculate_exps_instr(
 			excur = 1.0;
 			exincr = exp(-xincr/(double)param[i]);
 			for (j=0; j<ndata; j++) {
-				exp_pure[j] = excur;
+				exp_pure[j] = (float) excur;
 				excur *= exincr;
 
 				/* And convolve the exponentials with the instrument response if possible */
@@ -999,7 +999,7 @@ int GCI_marquardt_global_exps_calculate_exps_instr(
 			excur = 1.0 / (param[i]*param[i]);  /* 1/tau^2 */
 			exincr = exp(-xincr/(double)param[i]);
 			for (j=0; j<ndata; j++) {
-				exp_pure[j] = (xincr*i) * excur; /* x*exp(-x/tau) / tau^2 */
+				exp_pure[j] = (xincr*(float)i) * (float)excur; /* x*exp(-x/tau) / tau^2 */
 				excur *= exincr;
 
 				/* And convolve the exponentials with the instrument response if possible */
@@ -1025,10 +1025,10 @@ int GCI_marquardt_global_exps_calculate_exps_instr(
 
 		for (i=1; i<ndata; i++) {
 			xa += xaincr;       /* xa = (xincr*i)/param[2] */
-			lxa = log(xa);      /* lxa = log(x/param[2]) */
-			xah = exp(lxa * a3inv);  /* xah = exp(log(x/param[2])/param[3])
+			lxa = (float)log(xa);      /* lxa = log(x/param[2]) */
+			xah = expf(lxa * a3inv);  /* xah = exp(log(x/param[2])/param[3])
 		                                    = (x/param[2])^(1/param[3]) */
-			exp_conv[1][i] = ex = exp(-xah);
+			exp_conv[1][i] = ex = expf(-xah);
 			                    /* ex = exp(-(x/param[2])^(1/param[3])) */
 			ex *= xah * a3inv;  /* ex = exp(...) * (x/param[2])^(1/param[3]) *
 			                              1/param[3] */
@@ -1187,7 +1187,7 @@ int GCI_marquardt_global_exps_single_step(
 					yfit, dy, alpha, beta, chisq, 0.0) != 0)
 			return -2;
 
-		*alambda = 0.001;
+		*alambda = 0.001f;
 		ochisq = *chisq;
 		for (j=0; j<nparam; j++)
 			paramtry[j] = param[j];
@@ -1197,7 +1197,7 @@ int GCI_marquardt_global_exps_single_step(
 	for (j=0; j<mfit; j++) {
 		for (k=0; k<mfit; k++)
 			covar[j][k] = alpha[j][k];
-		covar[j][j] = alpha[j][j] * (1.0 + (*alambda));
+		covar[j][j] = alpha[j][j] * (1.0f + (*alambda));
 		dparam[j] = beta[j];
 	}
 
@@ -1232,7 +1232,7 @@ int GCI_marquardt_global_exps_single_step(
 
 	if (ret != 0) {
 		/* Bad parameters, increase alambda and return */
-		*alambda *= 10.0;
+		*alambda *= 10.0f;
 		return 0;
 	}
 
@@ -1244,7 +1244,7 @@ int GCI_marquardt_global_exps_single_step(
 
 	/* Success, accept the new solution */
 	if (*chisq < ochisq) {
-		*alambda *= 0.1;
+		*alambda *= 0.1f;
 		ochisq = *chisq;
 		for (j=0; j<mfit; j++) {
 			for (k=0; k<mfit; k++)
@@ -1254,7 +1254,7 @@ int GCI_marquardt_global_exps_single_step(
 		for (l=0; l<nparam; l++)
 			param[l] = paramtry[l];
 	} else { /* Failure, increase alambda and return */
-		*alambda *= 10.0;
+		*alambda *= 10.0f;
 		*chisq = ochisq;
 	}
 
@@ -1288,7 +1288,7 @@ int GCI_marquardt_global_compute_exps_fn(
 		if (paramfree[j])
 			mfit++;
 
-	*chisq = 0.0;
+	*chisq = 0.0f;
 
 	switch (ftype) {
 		case FIT_GLOBAL_MULTIEXP:
@@ -1298,7 +1298,7 @@ int GCI_marquardt_global_compute_exps_fn(
 					for (i = fit_start; i < fit_end; ++i) {
 						// multi-exponential fit
 						yfit[i] = param[0];  /* Z */
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 
 						for (j=1; j<nparam; j+=2) {
 							yfit[i] += param[j] * exp_conv[j+1][i];
@@ -1324,7 +1324,7 @@ int GCI_marquardt_global_compute_exps_fn(
 					for (i = fit_start; i < fit_end; ++i) {
 						// multi-exponential fit
 						yfit[i] = param[0];  /* Z */
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 
 						for (j=1; j<nparam; j+=2) {
 							yfit[i] += param[j] * exp_conv[j+1][i];
@@ -1350,7 +1350,7 @@ int GCI_marquardt_global_compute_exps_fn(
 					for (i = fit_start; i < fit_end; ++i) {
 						// multi-exponential fit
 						yfit[i] = param[0];  /* Z */
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 
 						for (j=1; j<nparam; j+=2) {
 							yfit[i] += param[j] * exp_conv[j+1][i];
@@ -1376,7 +1376,7 @@ int GCI_marquardt_global_compute_exps_fn(
 					for (i = fit_start; i < fit_end; ++i) {
 						// multi-exponential fit
 						yfit[i] = param[0];  /* Z */
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 
 						for (j=1; j<nparam; j+=2) {
 							yfit[i] += param[j] * exp_conv[j+1][i];
@@ -1402,7 +1402,7 @@ int GCI_marquardt_global_compute_exps_fn(
 					for (i = fit_start; i < fit_end; ++i) {
 						// multi-exponential fit
 						yfit[i] = param[0];  /* Z */
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 
 						for (j=1; j<nparam; j+=2) {
 							yfit[i] += param[j] * exp_conv[j+1][i];
@@ -1428,7 +1428,7 @@ int GCI_marquardt_global_compute_exps_fn(
 					for (i = fit_start; i < fit_end; ++i) {
 						// multi-exponential fit
 						yfit[i] = param[0];  /* Z */
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 
 						for (j=1; j<nparam; j+=2) {
 							yfit[i] += param[j] * exp_conv[j+1][i];
@@ -1445,10 +1445,10 @@ int GCI_marquardt_global_compute_exps_fn(
 						weight = (yfit[i] > 1 ? 1.0f / yfit[i] : 1.0f);
 						alpha_weight[i] = weight * y[i] / yfit[i];
 						beta_weight[i] = dy[i] * weight;
-						if (yfit[i] > 0.0) {
+						if (yfit[i] > 0.0f) {
 							*chisq += (0.0f == y[i])
-									? 2.0 * yfit[i]
-									: 2.0 * (yfit[i] - y[i]) - 2.0 * y[i] * log(yfit[i] / y[i]);
+									? 2.0f * yfit[i]
+									: 2.0f * (yfit[i] - y[i]) - 2.0f * y[i] * logf(yfit[i] / y[i]);
 						}
 					}
 					if (*chisq <= 0.0f) {
@@ -1468,7 +1468,7 @@ int GCI_marquardt_global_compute_exps_fn(
 						yfit[i] = param[0] + param[1] * exp_conv[1][i];
 						dy[i] = y[i] - yfit[i];
 
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 						dy_dparam[i][1] = exp_conv[1][i];
 						dy_dparam[i][2] = param[1] * exp_conv[2][i];
 						dy_dparam[i][3] = param[1] * exp_conv[3][i];
@@ -1489,7 +1489,7 @@ int GCI_marquardt_global_compute_exps_fn(
 						yfit[i] = param[0] + param[1] * exp_conv[1][i];
 						dy[i] = y[i] - yfit[i];
 
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 						dy_dparam[i][1] = exp_conv[1][i];
 						dy_dparam[i][2] = param[1] * exp_conv[2][i];
 						dy_dparam[i][3] = param[1] * exp_conv[3][i];
@@ -1510,7 +1510,7 @@ int GCI_marquardt_global_compute_exps_fn(
 						yfit[i] = param[0] + param[1] * exp_conv[1][i];
 						dy[i] = y[i] - yfit[i];
 
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 						dy_dparam[i][1] = exp_conv[1][i];
 						dy_dparam[i][2] = param[1] * exp_conv[2][i];
 						dy_dparam[i][3] = param[1] * exp_conv[3][i];
@@ -1531,7 +1531,7 @@ int GCI_marquardt_global_compute_exps_fn(
 						yfit[i] = param[0] + param[1] * exp_conv[1][i];
 						dy[i] = y[i] - yfit[i];
 
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 						dy_dparam[i][1] = exp_conv[1][i];
 						dy_dparam[i][2] = param[1] * exp_conv[2][i];
 						dy_dparam[i][3] = param[1] * exp_conv[3][i];
@@ -1552,7 +1552,7 @@ int GCI_marquardt_global_compute_exps_fn(
 						yfit[i] = param[0] + param[1] * exp_conv[1][i];
 						dy[i] = y[i] - yfit[i];
 
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 						dy_dparam[i][1] = exp_conv[1][i];
 						dy_dparam[i][2] = param[1] * exp_conv[2][i];
 						dy_dparam[i][3] = param[1] * exp_conv[3][i];
@@ -1573,7 +1573,7 @@ int GCI_marquardt_global_compute_exps_fn(
 						yfit[i] = param[0] + param[1] * exp_conv[1][i];
 						dy[i] = y[i] - yfit[i];
 
-						dy_dparam[i][0] = 1.0;
+						dy_dparam[i][0] = 1.0f;
 						dy_dparam[i][1] = exp_conv[1][i];
 						dy_dparam[i][2] = param[1] * exp_conv[2][i];
 						dy_dparam[i][3] = param[1] * exp_conv[3][i];
@@ -1582,10 +1582,10 @@ int GCI_marquardt_global_compute_exps_fn(
 						weight = (yfit[i] > 1 ? 1.0f / yfit[i] : 1.0f);
 						alpha_weight[i] = weight * y[i] / yfit[i];
 						beta_weight[i] = dy[i] * weight;
-						if (yfit[i] > 0.0) {
+						if (yfit[i] > 0.0f) {
 							*chisq += (0.0f == y[i])
-									? 2.0 * yfit[i]
-									: 2.0 * (yfit[i] - y[i]) - 2.0 * y[i] * log(yfit[i] / y[i]);
+									? 2.0f * yfit[i]
+									: 2.0f * (yfit[i] - y[i]) - 2.0f * y[i] * logf(yfit[i] / y[i]);
 						}
 					}
 					if (*chisq <= 0.0f) {
@@ -1674,7 +1674,7 @@ int GCI_marquardt_global_compute_exps_fn_final(
 	case FIT_GLOBAL_MULTIEXP:
 		switch (noise) {
 		case NOISE_CONST:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0];  /* Z */
@@ -1690,12 +1690,12 @@ int GCI_marquardt_global_compute_exps_fn_final(
 			}
 
 			/* Now divide by sigma^2 */
-			sig2i = 1.0 / (sig[0] * sig[0]);
+			sig2i = 1.0f / (sig[0] * sig[0]);
 			*chisq *= sig2i;
 			break;
 
 		case NOISE_GIVEN:  /* This is essentially the NR version */
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0];  /* Z */
@@ -1707,14 +1707,14 @@ int GCI_marquardt_global_compute_exps_fn_final(
 
 				/* And find chi^2 */
 				if (i >= fit_start && i < fit_end) {
-					sig2i = 1.0 / (sig[i] * sig[i]);
+					sig2i = 1.0f / (sig[i] * sig[i]);
 					*chisq += dy[i] * dy[i] * sig2i;
 				}
 			}
 			break;
 
 		case NOISE_POISSON_DATA:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0];  /* Z */
@@ -1727,14 +1727,14 @@ int GCI_marquardt_global_compute_exps_fn_final(
 				/* And find chi^2 */
 				if (i >= fit_start && i < fit_end) {
 					/* we still don't let the variance drop below 1 */
-					sig2i = (y[i] > 1 ? 1.0/y[i] : 1.0);
+					sig2i = (y[i] > 1 ? 1.0f/y[i] : 1.0f);
 					*chisq += dy[i] * dy[i] * sig2i;
 				}
 			}
 			break;
 
 		case NOISE_POISSON_FIT:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0];  /* Z */
@@ -1747,14 +1747,14 @@ int GCI_marquardt_global_compute_exps_fn_final(
 				/* And find chi^2 */
 				if (i >= fit_start && i < fit_end) {
 					/* we still don't let the variance drop below 1 */
-					sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+					sig2i = (yfit[i] > 1 ? 1.0f/yfit[i] : 1.0f);
 					*chisq += dy[i] * dy[i] * sig2i;
 				}
 			}
 			break;
 
 		case NOISE_MLE:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0];  /* Z */
@@ -1771,17 +1771,17 @@ int GCI_marquardt_global_compute_exps_fn_final(
 					if (yfit[i]<=0.0)
 						; // do nothing
 					else if (y[i]==0.0)
-						*chisq += 2.0*yfit[i];   // to avoid NaN from log
+						*chisq += 2.0f*yfit[i];   // to avoid NaN from log
 					else
-						*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
+						*chisq += 2.0f*(yfit[i]-y[i]) - 2.0f*y[i]*logf(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
 				}
 			}
-			if (*chisq <= 0.0) *chisq = 1.0e38; // don't let chisq=0 through yfit being all -ve
+			if (*chisq <= 0.0f) *chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
 			break;
 
 
 		case NOISE_GAUSSIAN_FIT:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0];  /* Z */
@@ -1793,7 +1793,7 @@ int GCI_marquardt_global_compute_exps_fn_final(
 
 				/* And find chi^2 */
 				if (i >= fit_start && i < fit_end) {
-					sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+					sig2i = (yfit[i] > 1 ? 1.0f/yfit[i] : 1.0f);
 					*chisq += dy[i] * dy[i] * sig2i;
 				}
 			}
@@ -1808,7 +1808,7 @@ int GCI_marquardt_global_compute_exps_fn_final(
 	case FIT_GLOBAL_STRETCHEDEXP:
 		switch (noise) {
 		case NOISE_CONST:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0] + param[1] * exp_conv[1][i];
@@ -1820,12 +1820,12 @@ int GCI_marquardt_global_compute_exps_fn_final(
 			}
 
 			/* Now divide by sigma^2 */
-			sig2i = 1.0 / (sig[0] * sig[0]);
+			sig2i = 1.0f / (sig[0] * sig[0]);
 			*chisq *= sig2i;
 			break;
 
 		case NOISE_GIVEN:  /* This is essentially the NR version */
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0] + param[1] * exp_conv[1][i];
@@ -1833,14 +1833,14 @@ int GCI_marquardt_global_compute_exps_fn_final(
 
 				/* And find chi^2 */
 				if (i >= fit_start && i < fit_end) {
-					sig2i = 1.0 / (sig[i] * sig[i]);
+					sig2i = 1.0f / (sig[i] * sig[i]);
 					*chisq += dy[i] * dy[i] * sig2i;
 				}
 			}
 			break;
 
 		case NOISE_POISSON_DATA:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0] + param[1] * exp_conv[1][i];
@@ -1849,14 +1849,14 @@ int GCI_marquardt_global_compute_exps_fn_final(
 				/* And find chi^2 */
 				if (i >= fit_start && i < fit_end) {
 					/* we still don't let the variance drop below 1 */
-					sig2i = (y[i] > 1 ? 1.0/y[i] : 1.0);
+					sig2i = (y[i] > 1 ? 1.0f/y[i] : 1.0f);
 					*chisq += dy[i] * dy[i] * sig2i;
 				}
 			}
 			break;
 
 		case NOISE_POISSON_FIT:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0] + param[1] * exp_conv[1][i];
@@ -1865,14 +1865,14 @@ int GCI_marquardt_global_compute_exps_fn_final(
 				/* And find chi^2 */
 				if (i >= fit_start && i < fit_end) {
 					/* we still don't let the variance drop below 1 */
-					sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+					sig2i = (yfit[i] > 1 ? 1.0f/yfit[i] : 1.0f);
 					*chisq += dy[i] * dy[i] * sig2i;
 				}
 			}
 			break;
 
 		case NOISE_MLE:
-			*chisq = 0.0;
+			*chisq = 0.0f;
 			/* Summation loop over all data */
 			for (i=0; i<ndata; i++) {
 				yfit[i] = param[0] + param[1] * exp_conv[1][i];
@@ -1882,15 +1882,15 @@ int GCI_marquardt_global_compute_exps_fn_final(
 				if (i >= fit_start && i < fit_end) {
 //					sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
 //					*chisq += dy[i] * dy[i] * sig2i;
-					if (yfit[i]<=0.0)
+					if (yfit[i]<=0.0f)
 						; // do nothing
 					else if (y[i]==0.0)
-						*chisq += 2.0*yfit[i];   // to avoid NaN from log
+						*chisq += 2.0f*yfit[i];   // to avoid NaN from log
 					else
-						*chisq += 2.0*(yfit[i]-y[i]) - 2.0*y[i]*log(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
+						*chisq += 2.0f*(yfit[i]-y[i]) - 2.0f*y[i]*logf(yfit[i]/y[i]); // was dy[i] * dy[i] * sig2i;
 				}
 			}
-			if (*chisq <= 0.0) *chisq = 1.0e38; // don't let chisq=0 through yfit being all -ve
+			if (*chisq <= 0.0) *chisq = 1.0e38f; // don't let chisq=0 through yfit being all -ve
 			break;
 
 		case NOISE_GAUSSIAN_FIT:
@@ -1903,7 +1903,7 @@ int GCI_marquardt_global_compute_exps_fn_final(
 				/* And find chi^2 */
 				if (i >= fit_start && i < fit_end) {
 					/* we still don't let the variance drop below 1 */
-					sig2i = (yfit[i] > 1 ? 1.0/yfit[i] : 1.0);
+					sig2i = (yfit[i] > 1 ? 1.0f/yfit[i] : 1.0f);
 					*chisq += dy[i] * dy[i] * sig2i;
 				}
 			}
@@ -2014,7 +2014,7 @@ int GCI_marquardt_global_exps_do_fit_instr(
 
 	/* Now allocate all of the arrays we will need. */
 
-	if ((ochisq_trans = (float *) malloc(ntrans * sizeof(float))) == NULL)
+	if ((ochisq_trans = (float *) malloc((unsigned) ntrans * sizeof(float))) == NULL)
 		return -1;
 
 	/* We now begin our standard Marquardt loop, with several
@@ -2068,7 +2068,7 @@ int GCI_marquardt_global_exps_do_fit_instr(
 			dbgprintf(1, "In do_fit_instr, second global_step returned %d\n",
 					  ret);
 			/* Unallocate arrays */
-			alambda = 0.0;
+			alambda = 0.0f;
 			GCI_marquardt_global_exps_global_step(
 				xincr, trans, ndata, ntrans, fit_start, fit_end,
 				instr, ninstr, noise, sig, ftype,
@@ -2086,7 +2086,7 @@ int GCI_marquardt_global_exps_do_fit_instr(
 			   be best */
 			float maxdiff;
 
-			maxdiff = 0.0;
+			maxdiff = 0.0f;
 			for (i=0; i<ntrans; i++)
 				if (ochisq_trans[i] - chisq_trans[i] > maxdiff)
 					maxdiff = ochisq_trans[i] - chisq_trans[i];
@@ -2099,7 +2099,7 @@ int GCI_marquardt_global_exps_do_fit_instr(
 		if (itst < itst_max) continue;
 
 		/* Endgame */
-		alambda = 0.0;
+		alambda = 0.0f;
 		ret = GCI_marquardt_global_exps_global_step(
 					xincr, trans, ndata, ntrans, fit_start, fit_end,
 					instr, ninstr, noise, sig, ftype,
@@ -2153,7 +2153,7 @@ int GCI_marquardt_global_exps_global_step(
 
 	/* Initialisation */
 	/* We assume we're given sensible starting values for param[] */
-	if (*alambda < 0.0) {
+	if (*alambda < 0.0f) {
 		/* Start by allocating lots of variables we will need */
 		mfit_local = mfit_global = 0;
 
@@ -2233,7 +2233,7 @@ int GCI_marquardt_global_exps_global_step(
 			return -1;
 		}
 
-		if ((ochisq_trans = (float *) malloc(ntrans * sizeof(float)))
+		if ((ochisq_trans = (float *) malloc((unsigned) ntrans * sizeof(float)))
 			== NULL) {
 			GCI_free_global_matrix(&alpha);  GCI_free_global_matrix(&covar);
 			GCI_ecf_free_matrix(paramtry);       GCI_free_global_vector(&beta);
@@ -2252,7 +2252,7 @@ int GCI_marquardt_global_exps_global_step(
 					chisq_trans, chisq_global, drop_bad_transients) != 0)
 			return -2;
 
-		*alambda = 0.001;
+		*alambda = 0.001f;
 		ochisq_global = *chisq_global;
 		for (i=0; i<ntrans; i++)
 			ochisq_trans[i] = chisq_trans[i];
@@ -2293,10 +2293,10 @@ int GCI_marquardt_global_exps_global_step(
 	GCI_copy_global_matrix(covar, alpha, mfit_global, mfit_local, ntrans);
 	GCI_copy_global_vector(dparam, beta, mfit_global, mfit_local, ntrans);
 	for (j=0; j<mfit_global; j++)
-		covar.P[j][j] *= 1.0 + (*alambda);
+		covar.P[j][j] *= 1.0f + (*alambda);
 	for (i=0; i<ntrans; i++)
 		for (j=0; j<mfit_local; j++)
-			covar.S[i][j][j] *= 1.0 + (*alambda);
+			covar.S[i][j][j] *= 1.0f + (*alambda);
 
 	/* Matrix solution; GCI_solve solves Ax=b rather than AX=B */
 	if (GCI_marquardt_global_solve_eqn(covar, dparam,
@@ -2323,7 +2323,7 @@ int GCI_marquardt_global_exps_global_step(
 
 		if (ret != 0) {
 			/* Bad parameters, increase alambda and return */
-			*alambda *= 10.0;
+			*alambda *= 10.0f;
 			return 0;
 		}
 	}
@@ -2339,7 +2339,7 @@ int GCI_marquardt_global_exps_global_step(
 
 	/* Success, accept the new solution */
 	if (*chisq_global < ochisq_global) {
-		*alambda *= 0.1;
+		*alambda *= 0.1f;
 		ochisq_global = *chisq_global;
 		for (i=0; i<ntrans; i++)
 			ochisq_trans[i] = chisq_trans[i];
@@ -2350,7 +2350,7 @@ int GCI_marquardt_global_exps_global_step(
 				param[i][j] = paramtry[i][j];
 		}
 	} else { /* Failure, increase alambda and return */
-		*alambda *= 10.0;
+		*alambda *= 10.0f;
 		*chisq_global = ochisq_global;
 		for (i=0; i<ntrans; i++)
 			chisq_trans[i] = ochisq_trans[i];
@@ -2388,18 +2388,18 @@ int GCI_marquardt_global_compute_global_exps_fn(
 			alpha.P[i][j] = 0;
 		beta.global[i] = 0;
 	}
-	*chisq_global = 0.0;
+	*chisq_global = 0.0f;
 
 	for (i=0; i<ntrans; i++) {
 		if (drop_bad_transients && chisq_trans[i] < 0) {
 			for (j=0; j<mfit_global; j++)
 				for (k=0; k<mfit_local; k++)
-					alpha.Q[j][i*mfit_local + k] = 0.0;
+					alpha.Q[j][i*mfit_local + k] = 0.0f;
 			for (j=0; j<mfit_local; j++) {
 				/* Make this component of S an identity matrix and of
 				   beta zero */
 				for (k=0; k<mfit_local; k++)
-					alpha.S[i][j][k] = (j == k) ? 1.0 : 0.0;
+					alpha.S[i][j][k] = (j == k) ? 1.0f : 0.0f;
 				beta.local[i*mfit_local + j] = 0;
 			}
 			continue;
@@ -2411,7 +2411,7 @@ int GCI_marquardt_global_compute_global_exps_fn(
 					ftype, param[i], paramfree, nparam,
 ////					exp_conv, yfit[i], dy[i],
 					exp_conv, yfit[0], dy[0],
-					alpha_scratch, beta_scratch, &chisq_trans[i], 0.0);
+					alpha_scratch, beta_scratch, &chisq_trans[i], 0.0f);
 
 		if (ret != 0) {
 			if (drop_bad_transients) {
@@ -2471,7 +2471,7 @@ int GCI_marquardt_global_compute_global_exps_fn_final(
 			exp_pure, exp_conv) != 0)
 		return -1;
 
-	*chisq_global = 0.0;
+	*chisq_global = 0.0f;
 
 	for (i=0; i<ntrans; i++) {
 		if (drop_bad_transients && chisq_trans[i] < 0)
@@ -2724,7 +2724,7 @@ int GCI_marquardt_global_generic_instr(float xincr, float **trans,
 		return -3;
 	}
 
-	if ((scaled_instr = (float *) malloc(ninstr * sizeof(float))) == NULL) {
+	if ((scaled_instr = (float *) malloc((unsigned) ninstr * sizeof(float))) == NULL) {
 		GCI_ecf_free_matrix(covar);
 		GCI_ecf_free_matrix(alpha);
 		return -4;
@@ -2843,7 +2843,7 @@ int GCI_marquardt_global_generic_do_fit_instr(
 
 	/* Now allocate all of the arrays we will need. */
 
-	if ((ochisq_trans = (float *) malloc(ntrans * sizeof(float))) == NULL)
+	if ((ochisq_trans = (float *) malloc((unsigned) ntrans * sizeof(float))) == NULL)
 		return -1;
 
 	/* We now begin our standard Marquardt loop, with several
@@ -2859,7 +2859,7 @@ int GCI_marquardt_global_generic_do_fit_instr(
 		dbgprintf(1, "In do_fit_instr, first global_step returned %d\n", ret);
 		if (ret != -1) {
 			/* Wasn't a memory error, so unallocate arrays */
-			alambda = 0.0;
+			alambda = 0.0f;
 			GCI_marquardt_global_generic_global_step(
 				xincr, trans, ndata, ntrans, fit_start, fit_end,
 				instr, ninstr, noise, sig,
@@ -2897,7 +2897,7 @@ int GCI_marquardt_global_generic_do_fit_instr(
 			dbgprintf(1, "In do_fit_instr, second global_step returned %d\n",
 					  ret);
 			/* Unallocate arrays */
-			alambda = 0.0;
+			alambda = 0.0f;
 			GCI_marquardt_global_generic_global_step(
 				xincr, trans, ndata, ntrans, fit_start, fit_end,
 				instr, ninstr, noise, sig,
@@ -2915,7 +2915,7 @@ int GCI_marquardt_global_generic_do_fit_instr(
 			   be best */
 			float maxdiff;
 
-			maxdiff = 0.0;
+			maxdiff = 0.0f;
 			for (i=0; i<ntrans; i++)
 				if (ochisq_trans[i] - chisq_trans[i] > maxdiff)
 					maxdiff = ochisq_trans[i] - chisq_trans[i];
@@ -2928,7 +2928,7 @@ int GCI_marquardt_global_generic_do_fit_instr(
 		if (itst < itst_max) continue;
 
 		/* Endgame */
-		alambda = 0.0;
+		alambda = 0.0f;
 		ret = GCI_marquardt_global_generic_global_step(
 					xincr, trans, ndata, ntrans, fit_start, fit_end,
 					instr, ninstr, noise, sig,
@@ -2993,7 +2993,7 @@ int GCI_marquardt_global_generic_global_step(
 
 	/* Initialisation */
 	/* We assume we're given sensible starting values for param[] */
-	if (*alambda < 0.0) {
+	if (*alambda < 0.0f) {
 		/* Start by allocating lots of variables we will need */
 		mfit_local = mfit_global = 0;
 
@@ -3042,7 +3042,7 @@ int GCI_marquardt_global_generic_global_step(
 			return -1;
 		}
 
-		if ((ochisq_trans = (float *) malloc(ntrans * sizeof(float)))
+		if ((ochisq_trans = (float *) malloc((unsigned) ntrans * sizeof(float)))
 			== NULL) {
 			GCI_free_global_matrix(&alpha);  GCI_free_global_matrix(&covar);
 			GCI_ecf_free_matrix(paramtry);       GCI_free_global_vector(&beta);
@@ -3063,7 +3063,7 @@ int GCI_marquardt_global_generic_global_step(
 					&fnvals_len, &dy_dparam_nparam_size) != 0)
 			return -2;
 
-		*alambda = 0.001;
+		*alambda = 0.001f;
 		ochisq_global = *chisq_global;
 		for (i=0; i<ntrans; i++)
 			ochisq_trans[i] = chisq_trans[i];
@@ -3106,10 +3106,10 @@ int GCI_marquardt_global_generic_global_step(
 	GCI_copy_global_matrix(covar, alpha, mfit_global, mfit_local, ntrans);
 	GCI_copy_global_vector(dparam, beta, mfit_global, mfit_local, ntrans);
 	for (j=0; j<mfit_global; j++)
-		covar.P[j][j] *= 1.0 + (*alambda);
+		covar.P[j][j] *= 1.0f + (*alambda);
 	for (i=0; i<ntrans; i++)
 		for (j=0; j<mfit_local; j++)
-			covar.S[i][j][j] *= 1.0 + (*alambda);
+			covar.S[i][j][j] *= 1.0f + (*alambda);
 
 	/* Matrix solution; GCI_solve solves Ax=b rather than AX=B */
 	if (GCI_marquardt_global_solve_eqn(covar, dparam,
@@ -3133,7 +3133,7 @@ int GCI_marquardt_global_generic_global_step(
 
 		if (ret != 0) {
 			/* Bad parameters, increase alambda and return */
-			*alambda *= 10.0;
+			*alambda *= 10.0f;
 			return 0;
 		}
 	}
@@ -3151,7 +3151,7 @@ int GCI_marquardt_global_generic_global_step(
 
 	/* Success, accept the new solution */
 	if (*chisq_global < ochisq_global) {
-		*alambda *= 0.1;
+		*alambda *= 0.1f;
 		ochisq_global = *chisq_global;
 		for (i=0; i<ntrans; i++)
 			ochisq_trans[i] = chisq_trans[i];
@@ -3162,7 +3162,7 @@ int GCI_marquardt_global_generic_global_step(
 				param[i][j] = paramtry[i][j];
 		}
 	} else { /* Failure, increase alambda and return */
-		*alambda *= 10.0;
+		*alambda *= 10.0f;
 		*chisq_global = ochisq_global;
 		for (i=0; i<ntrans; i++)
 			chisq_trans[i] = ochisq_trans[i];
@@ -3193,10 +3193,10 @@ int GCI_marquardt_global_compute_global_generic_fn(
 	   matter, as they will be totally overwritten */
 	for (i=0; i<mfit_global; i++) {
 		for (j=0; j<mfit_global; j++)
-			alpha.P[i][j] = 0;
-		beta.global[i] = 0;
+			alpha.P[i][j] = 0.0f;
+		beta.global[i] = 0.0f;
 	}
-	*chisq_global = 0.0;
+	*chisq_global = 0.0f;
 
 	for (i=0; i<ntrans; i++) {
 		/* Only pass the true alambda, used for initialisation, for
@@ -3207,7 +3207,7 @@ int GCI_marquardt_global_compute_global_generic_fn(
 					param[i], paramfree, nparam, fitfunc,
 ////					yfit[i], dy[i], alpha_scratch, beta_scratch,
 					yfit[0], dy[0], alpha_scratch, beta_scratch,
-					&chisq_trans[i], 0.0f, (i == 0) ? alambda : 0.0, //TODO ARG added 0.0f here for new old_chisq parameter
+					&chisq_trans[i], 0.0f, (i == 0) ? alambda : 0.0f, //TODO ARG added 0.0f here for new old_chisq parameter
 					pfnvals, pdy_dparam_pure, pdy_dparam_conv,
 					pfnvals_len, pdy_dparam_nparam_size);
 
@@ -3257,7 +3257,7 @@ int GCI_marquardt_global_compute_global_generic_fn_final(
 {
 	int i, ret;
 
-	*chisq_global = 0.0;
+	*chisq_global = 0.0f;
 
 	for (i=0; i<ntrans; i++) {
 		/* Only pass the true alambda, used for initialisation, for

@@ -98,9 +98,9 @@ int GCI_SPA_1D_marquardt(
 	if (spa_nvalues < 2)
 		return -2;
 	
-	if ((fitted = (float *) malloc(ndata * sizeof(float))) == NULL)
+	if ((fitted = (float *) malloc((size_t)ndata * sizeof(float))) == NULL)
 		return -3;
-	if ((residuals = (float *) malloc(ndata * sizeof(float))) == NULL) {
+	if ((residuals = (float *) malloc((size_t)ndata * sizeof(float))) == NULL) {
 		free(fitted);
 		return -3;
 	}
@@ -127,7 +127,7 @@ int GCI_SPA_1D_marquardt(
 			param_copy[j] = param[j];
 		/* Set the parameter we are analysing */
 		param_copy[spa_param] =
-			spa_low + (spa_high - spa_low) * i / (spa_nvalues - 1);
+			spa_low + (spa_high - spa_low) * (float)i / (float)(spa_nvalues - 1);
 
 		ret = GCI_marquardt(x, y, ndata, noise, sig,
 							param_copy, paramfree_copy, nparam, restrain,
@@ -175,9 +175,9 @@ int GCI_SPA_2D_marquardt(
 	if (spa_nvalues1 < 2 || spa_nvalues2 < 2)
 		return -2;
 	
-	if ((fitted = (float *) malloc(ndata * sizeof(float))) == NULL)
+	if ((fitted = (float *) malloc((size_t)ndata * sizeof(float))) == NULL)
 		return -3;
-	if ((residuals = (float *) malloc(ndata * sizeof(float))) == NULL) {
+	if ((residuals = (float *) malloc((size_t)ndata * sizeof(float))) == NULL) {
 		free(fitted);
 		return -3;
 	}
@@ -208,9 +208,9 @@ int GCI_SPA_2D_marquardt(
 				param_copy[j] = param[j];
 			/* Set the parameters we are analysing */
 			param_copy[spa_param1] =
-				spa_low1 + (spa_high1 - spa_low1) * i1 / (spa_nvalues1 - 1);
+				spa_low1 + (spa_high1 - spa_low1) * (float)i1 / (float)(spa_nvalues1 - 1);
 			param_copy[spa_param2] =
-				spa_low2 + (spa_high2 - spa_low2) * i2 / (spa_nvalues2 - 1);
+				spa_low2 + (spa_high2 - spa_low2) * (float)i2 / (float)(spa_nvalues2 - 1);
 
 			ret = GCI_marquardt(x, y, ndata, noise, sig,
 								param_copy, paramfree_copy, nparam, restrain,
@@ -256,9 +256,9 @@ int GCI_SPA_1D_marquardt_instr(
 	if (spa_nvalues < 2)
 		return -2;
 	
-	if ((fitted = (float *) malloc(ndata * sizeof(float))) == NULL)
+	if ((fitted = (float *) malloc((size_t)ndata * sizeof(float))) == NULL)
 		return -3;
-	if ((residuals = (float *) malloc(ndata * sizeof(float))) == NULL) {
+	if ((residuals = (float *) malloc((size_t)ndata * sizeof(float))) == NULL) {
 		free(fitted);
 		return -3;
 	}
@@ -285,7 +285,7 @@ int GCI_SPA_1D_marquardt_instr(
 			param_copy[j] = param[j];
 		/* Set the parameter we are analysing */
 		param_copy[spa_param] =
-			spa_low + (spa_high - spa_low) * i / (spa_nvalues - 1);
+			spa_low + (spa_high - spa_low) * (float)i / (float)(spa_nvalues - 1);
 
 		ret = GCI_marquardt_fitting_engine(xincr, y, ndata, fit_start, fit_end, instr, ninstr,
 											noise, NULL, 
@@ -337,9 +337,9 @@ int GCI_SPA_2D_marquardt_instr(
 	if (spa_nvalues1 < 2 || spa_nvalues2 < 2)
 		return -2;
 	
-	if ((fitted = (float *) malloc(ndata * sizeof(float))) == NULL)
+	if ((fitted = (float *) malloc((size_t)ndata * sizeof(float))) == NULL)
 		return -3;
-	if ((residuals = (float *) malloc(ndata * sizeof(float))) == NULL) {
+	if ((residuals = (float *) malloc((size_t)ndata * sizeof(float))) == NULL) {
 		free(fitted);
 		return -3;
 	}
@@ -369,9 +369,9 @@ int GCI_SPA_2D_marquardt_instr(
 				param_copy[j] = param[j];
 			/* Set the parameters we are analysing */
 			param_copy[spa_param1] =
-				spa_low1 + (spa_high1 - spa_low1) * i1 / (spa_nvalues1 - 1);
+				spa_low1 + (spa_high1 - spa_low1) * (float)i1 / (float)(spa_nvalues1 - 1);
 			param_copy[spa_param2] =
-				spa_low2 + (spa_high2 - spa_low2) * i2 / (spa_nvalues2 - 1);
+				spa_low2 + (spa_high2 - spa_low2) * (float)i2 / (float)(spa_nvalues2 - 1);
 
 			ret = GCI_marquardt_fitting_engine(xincr, y, ndata, fit_start, fit_end, instr, ninstr,
 									noise, NULL,
@@ -433,7 +433,7 @@ int GCI_SPA_1D_marquardt_global_exps_instr(
 		GCI_ecf_free_matrix(fitted);
 		return -4;
 	}
-	if ((chisq_trans = (float *) malloc(ntrans * sizeof(float))) == NULL) {
+	if ((chisq_trans = (float *) malloc((size_t)ntrans * sizeof(float))) == NULL) {
 		GCI_ecf_free_matrix(param_copy);
 		GCI_ecf_free_matrix(fitted);
 		GCI_ecf_free_matrix(residuals);
@@ -458,7 +458,7 @@ int GCI_SPA_1D_marquardt_global_exps_instr(
 		/* Set the parameter we are analysing */
 		for (j=0; j<ntrans; j++) {
 			param_copy[j][spa_param] =
-				spa_low + (spa_high - spa_low) * i / (spa_nvalues - 1);
+				spa_low + (spa_high - spa_low) * (float)i / (float)(spa_nvalues - 1);
 		}
 
 		ret = GCI_marquardt_global_exps_instr(
@@ -524,7 +524,7 @@ int GCI_SPA_2D_marquardt_global_exps_instr(
 		GCI_ecf_free_matrix(fitted);
 		return -4;
 	}
-	if ((chisq_trans = (float *) malloc(ntrans * sizeof(float))) == NULL) {
+	if ((chisq_trans = (float *) malloc((size_t)ntrans * sizeof(float))) == NULL) {
 		GCI_ecf_free_matrix(param_copy);
 		GCI_ecf_free_matrix(fitted);
 		GCI_ecf_free_matrix(residuals);
@@ -554,9 +554,9 @@ int GCI_SPA_2D_marquardt_global_exps_instr(
 			/* Set the parameters we are analysing */
 			for (j=0; j<ntrans; j++) {
 				param_copy[j][spa_param1] = spa_low1 +
-					(spa_high1 - spa_low1) * i1 / (spa_nvalues1 - 1);
+					(spa_high1 - spa_low1) * (float)i1 / (float)(spa_nvalues1 - 1);
 				param_copy[j][spa_param2] = spa_low2 +
-					(spa_high2 - spa_low2) * i2 / (spa_nvalues2 - 1);
+					(spa_high2 - spa_low2) * (float)i2 / (float)(spa_nvalues2 - 1);
 			}
 
 			ret = GCI_marquardt_global_exps_instr(
@@ -620,7 +620,7 @@ int GCI_SPA_1D_marquardt_global_generic_instr(
 		GCI_ecf_free_matrix(fitted);
 		return -4;
 	}
-	if ((chisq_trans = (float *) malloc(ntrans * sizeof(float))) == NULL) {
+	if ((chisq_trans = (float *) malloc((size_t)ntrans * sizeof(float))) == NULL) {
 		GCI_ecf_free_matrix(param_copy);
 		GCI_ecf_free_matrix(fitted);
 		GCI_ecf_free_matrix(residuals);
@@ -641,7 +641,7 @@ int GCI_SPA_1D_marquardt_global_generic_instr(
 				param_copy[j][k] = param[j][k];
 			/* Set the parameter we are analysing */
 			param_copy[j][spa_param] =
-				spa_low + (spa_high - spa_low) * i / (spa_nvalues - 1);
+				spa_low + (spa_high - spa_low) * (float)i / (float)(spa_nvalues - 1);
 		}
 
 		ret = GCI_marquardt_global_generic_instr(
@@ -708,7 +708,7 @@ int GCI_SPA_2D_marquardt_global_generic_instr(
 		GCI_ecf_free_matrix(fitted);
 		return -4;
 	}
-	if ((chisq_trans = (float *) malloc(ntrans * sizeof(float))) == NULL) {
+	if ((chisq_trans = (float *) malloc((size_t)ntrans * sizeof(float))) == NULL) {
 		GCI_ecf_free_matrix(param_copy);
 		GCI_ecf_free_matrix(fitted);
 		GCI_ecf_free_matrix(residuals);
@@ -733,9 +733,9 @@ int GCI_SPA_2D_marquardt_global_generic_instr(
 					param_copy[j][k] = param[j][k];
 				/* Set the parameters we are analysing */
 				param_copy[j][spa_param1] = spa_low1 +
-					(spa_high1 - spa_low1) * i1 / (spa_nvalues1 - 1);
+					(spa_high1 - spa_low1) * (float)i1 / (float)(spa_nvalues1 - 1);
 				param_copy[j][spa_param2] = spa_low2 +
-					(spa_high2 - spa_low2) * i2 / (spa_nvalues2 - 1);
+					(spa_high2 - spa_low2) * (float)i2 / (float)(spa_nvalues2 - 1);
 			}
 
 			ret = GCI_marquardt_global_generic_instr(
