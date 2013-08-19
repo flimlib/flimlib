@@ -17,6 +17,7 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Ecf.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +31,7 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 #define BAD_SYNTAX -3
 #define UNEXPECTED_EOF -4
 
-int fit(int transient_size, float *transient_values, int prompt_size, float *prompt_values);
+int fit(float x_inc, int fit_start, int fit_end, int noise, int transient_size, float *transient_values, int sigma_size, float *sigma_values, int prompt_size, float *prompt_values);
 int parse_and_fit(FILE *file);
 int get_section_name(FILE *file, char *section);
 int validate_section(FILE *file, char *section);
@@ -68,7 +69,39 @@ int main(int argc, const char * argv[])
     return return_value;
 }
 
-int fit(int transient_size, float *transient_values, int prompt_size, float *prompt_values) {
+int fit(
+        float x_inc, int fit_start, int fit_end, int noise,
+        int transient_size, float *transient_values,
+		int sigma_size, float *sigma_values,
+		int prompt_size, float *prompt_values
+       ) {
+	int return_value;
+	float a, tau, z;
+	float *fitted = (float *)malloc((unsigned)transient_size * sizeof(float));
+	float *residuals = (float *)malloc((unsigned)transient_size * sizeof(float));
+	float chi_square;
+	float chi_square_target = 1.25f;
+	
+	return_value =  GCI_triple_integral_fitting_engine(
+			x_inc,
+			transient_values,
+			fit_start,
+			fit_end,
+			prompt_values,
+			prompt_size,
+			noise,
+			sigma_values,
+			&z,
+			&a,
+			&tau,
+			fitted,
+			residuals,
+			&chi_square,
+			chi_square_target
+			);
+	
+	printf("return_value %d\n", return_value);
+	printf("a %f tau %f z %f\n", a, tau, z);
     return SUCCESS;
 }
 
@@ -208,7 +241,14 @@ int parse_and_fit(FILE *file) {
     }
     
     // do the fit
-    
+	//TESTING
+    fit(
+			0.1f, 10, 60, noise_model,
+			transient_size, transient_values,
+			sigma_size, sigma_values,
+			prompt_size, prompt_values
+		);
+
     // finished
     return SUCCESS;
 }
