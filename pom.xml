@@ -30,10 +30,11 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>${nar.groupId}</groupId>
         <artifactId>nar-maven-plugin</artifactId>
         <version>${nar.version}</version>
         <extensions>true</extensions>
-	    <configuration>
+        <configuration>
           <c>
             <name>gcc</name>
             <includes>
@@ -89,8 +90,8 @@
                 </pluginExecution>
                 <pluginExecution>
                   <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-nar-plugin</artifactId>
+                    <groupId>${nar.groupId}</groupId>
+                    <artifactId>nar-maven-plugin</artifactId>
                     <versionRange>${nar.version}</versionRange>
                     <goals>
                       <goal>nar-compile</goal>
@@ -100,6 +101,7 @@
                       <goal>nar-gnu-process</goal>
                       <goal>nar-gnu-resources</goal>
                       <goal>nar-javah</goal>
+                      <goal>nar-process-libraries</goal>
                       <goal>nar-resources</goal>
                       <goal>nar-system-generate</goal>
                       <goal>nar-testCompile</goal>
