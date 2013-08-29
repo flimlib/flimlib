@@ -18,6 +18,7 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
  */
 
 #include "Ecf.h"
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,7 +32,13 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 #define BAD_SYNTAX -3
 #define UNEXPECTED_EOF -4
 
-int fit(float x_inc, int fit_start, int fit_end, int noise, int transient_size, float *transient_values, int sigma_size, float *sigma_values, int prompt_size, float *prompt_values);
+int fit(int fit_type, int noise_model,
+    float chi_sq_target, float chi_sq_delta,
+    int transient_size, float *transient_values,
+    int sigma_size, float *sigma_values,
+    int prompt_size, float *prompt_values,
+    float x_inc, int fit_start, int fit_end
+    );
 int parse_and_fit(FILE *file);
 int get_section_name(FILE *file, char *section);
 int validate_section(FILE *file, char *section);
@@ -70,11 +77,14 @@ int main(int argc, const char * argv[])
 }
 
 int fit(
-        float x_inc, int fit_start, int fit_end, int noise,
-        int transient_size, float *transient_values,
-		int sigma_size, float *sigma_values,
-		int prompt_size, float *prompt_values
-       ) {
+    int fit_type, int noise_model,
+    float chi_sq_target, float chi_sq_delta,
+    int transient_size, float *transient_values,
+    int sigma_size, float *sigma_values,
+    int prompt_size, float *prompt_values,
+    float x_inc, int fit_start, int fit_end
+    )
+{
 	int return_value;
 	float a, tau, z;
 	float *fitted = (float *)malloc((unsigned)transient_size * sizeof(float));
@@ -82,14 +92,14 @@ int fit(
 	float chi_square;
 	float chi_square_target = 1.25f;
 	
-	return_value =  GCI_triple_integral_fitting_engine(
+	return_value = GCI_triple_integral_fitting_engine(
 			x_inc,
 			transient_values,
 			fit_start,
 			fit_end,
 			prompt_values,
 			prompt_size,
-			noise,
+			noise_model,
 			sigma_values,
 			&z,
 			&a,
@@ -100,9 +110,24 @@ int fit(
 			chi_square_target
 			);
 	
-	printf("return_value %d\n", return_value);
-	printf("a %f tau %f z %f\n", a, tau, z);
+	printf("RLD return_value %d\n", return_value);
+	printf("RLD estimate a %f tau %f z %f X2 %f\n", a, tau, z, chi_square);
     return SUCCESS;
+}
+
+/* Adjusts transient array to skip time bins outside interval of interest.
+ */
+float *adjust_transient(float *transient_values, int transient_start_index, int transient_end_index) {
+    int new_size = transient_end_index - transient_start_index + 1;
+    printf("new size %d\n", new_size);
+	float *new_transient = (float *)malloc((unsigned)new_size * sizeof(float));
+    int i;
+    
+    for (i = 0; i < new_size; ++i) {
+        new_transient[i] = transient_values[i + transient_start_index];
+    }
+    free(transient_values);
+    return new_transient;
 }
 
 /* Parses ".ini" file and calls SLIM Curve fitting code.
@@ -113,6 +138,7 @@ int parse_and_fit(FILE *file) {
     float *prompt_values = NULL;
     int transient_size = 0;
     float *transient_values = NULL;
+	float x_inc;
     int sigma_size = 0;
     float *sigma_values = NULL;
     float chi_sq_target;
@@ -123,6 +149,11 @@ int parse_and_fit(FILE *file) {
     float transient_end;
     float prompt_delta;
     float prompt_width;
+    int transient_start_index;
+    int data_start_index;
+    int transient_end_index;
+	int fit_start;
+	int fit_end;
     int fit_type;
     int noise_model;
 	int i;
@@ -161,7 +192,12 @@ int parse_and_fit(FILE *file) {
         printf("Missing '[transient]' section\n");
         return BAD_SYNTAX;
     }
+	x_inc = get_float_value(file, "inc");
     transient_size = get_int_value(file, "size");
+    if (debug) {
+        printf("inc is %f\n", x_inc);
+        printf("size is %d\n", transient_size);
+    }
     transient_values = (float *) malloc((size_t) transient_size * sizeof(float));
     if (!get_float_array_value(file, "values", transient_size, transient_values)) {
         printf("Problem parsing transient values\n");
@@ -175,7 +211,7 @@ int parse_and_fit(FILE *file) {
     }
         
     if (!get_section_name(file, stringbuffer)) {
-        printf("Missing '[transient]' section.\n");
+        printf("Missing '[main]' section.\n");
         return BAD_SYNTAX;
     }
     
@@ -236,18 +272,34 @@ int parse_and_fit(FILE *file) {
     fit_type = get_int_value(file, "type");
     noise_model = get_int_value(file, "noisemodel");
     if (debug) {
-        printf("prompt_baseline %d\n", fit_type);
-        printf("transient_start %d\n", noise_model);
+        printf("type %d\n", fit_type);
+        printf("noisemodel %d\n", noise_model);
+    }
+    
+    // massage values
+    transient_start_index = roundf(transient_start / x_inc);
+    data_start_index = roundf(data_start / x_inc);
+    transient_end_index = roundf(transient_end / x_inc);
+    transient_values = adjust_transient(transient_values, transient_start_index, transient_end_index);
+    transient_size = transient_end_index - transient_start_index + 1;
+	fit_start = data_start_index - transient_start_index;
+	fit_end = transient_end_index - transient_start_index;
+    if (debug) {
+        printf("transient_start_index %d\n", transient_start_index);
+        printf("data_start_index %d\n", data_start_index);
+        printf("transient_end_index %d\n", transient_end_index);
+        printf("fit_start %d\n", fit_start);
+        printf("fit_end %d\n", fit_end);
     }
     
     // do the fit
-	//TESTING
     fit(
-			0.1f, 10, 60, noise_model,
-			transient_size, transient_values,
-			sigma_size, sigma_values,
-			prompt_size, prompt_values
-		);
+        fit_type, noise_model, chi_sq_target, chi_sq_delta,
+        transient_size, transient_values,
+        sigma_size, sigma_values,
+        prompt_size, prompt_values,
+        x_inc, fit_start, fit_end
+    );
 
     // finished
     return SUCCESS;
