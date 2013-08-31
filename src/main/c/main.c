@@ -90,8 +90,33 @@ int fit(
 	float *fitted = (float *)malloc((unsigned)transient_size * sizeof(float));
 	float *residuals = (float *)malloc((unsigned)transient_size * sizeof(float));
 	float chi_square;
-	float chi_square_target = 1.25f;
-	
+	int chi_sq_adjust;
+    int n_param;
+    float *params;
+    int *param_free;
+    int n_param_free;
+    int i;
+	void (*fitfunc)(float, float [], float *, float[], int) = NULL;
+	int restrain = 0;
+	int chi_sq_percent = 95;
+    int n_data = fit_end;
+	float **covar    = GCI_ecf_matrix(n_data, n_data);
+	float **alpha    = GCI_ecf_matrix(n_data, n_data);
+	float **err_axes = GCI_ecf_matrix(n_data, n_data);
+    
+    // blind initial estimates as in TRI2/SP
+    a = 1000.0f;
+    tau = 2.0f;
+    z = 0.0f;
+    
+	// want non-reduced chi square target
+    chi_sq_adjust = fit_end - fit_start - 3;
+    
+    // for RLD+LMA fits TRI2/SP adjusts as follows for initial RLD fit:
+    //  fit_start becomes index of peak of transient
+    //  estimated A becomes value at peak
+    //  noise becomes NOISE_POISSON_FIT
+    
 	return_value = GCI_triple_integral_fitting_engine(
 			x_inc,
 			transient_values,
@@ -107,11 +132,140 @@ int fit(
 			fitted,
 			residuals,
 			&chi_square,
-			chi_square_target
+			chi_sq_target * chi_sq_adjust
 			);
 	
 	printf("RLD return_value %d\n", return_value);
-	printf("RLD estimate a %f tau %f z %f X2 %f\n", a, tau, z, chi_square);
+	printf("RLD estimate A %f T %f Z %f X2 %f\n", a, tau, z, chi_square / chi_sq_adjust);
+
+    // adjust single exponential estimates for multiple exponential fits
+    fitfunc = GCI_multiexp_tau;
+    switch (fit_type) {
+        // single exponential
+        case 1:
+            // params are X2, Z, A, T
+            n_param = 4;
+            params = (float *)malloc((size_t) n_param * sizeof(float));
+            params[0] = chi_square;
+            params[1] = z;
+            params[2] = a;
+            params[3] = tau;
+            break;
+        // double exponential
+        case 2:
+            // params are X2, Z, A1, T1, A2, T2
+            n_param = 6;
+            params = (float *)malloc((size_t) n_param * sizeof(float));
+            params[0] = chi_square;
+            params[1] = z;
+            params[2] = 0.75f * a; // values from TRI2/SP
+            params[3] = tau;
+            params[4] = 0.25f * a;
+            params[5] = 0.6666667f * tau;
+            break;
+        // triple exponential
+        case 3:
+            // params are X2, Z, A1, T1, A2, T2, A3, T3
+            n_param = 8;
+            params = (float *)malloc((size_t) n_param * sizeof(float));
+            params[0] = chi_square;
+            params[1] = z;
+            params[2] = 0.75f * a;
+            params[3] = tau;
+            params[4] = 0.1666667f * a;
+            params[5] = 0.6666667f * tau;
+            params[6] = 0.1666667f * a;
+            params[7] = 0.3333333f * tau;
+            break;
+        // stretched exponential
+        case 4:
+            fitfunc = GCI_stretchedexp;
+            
+            // params are X2, Z, A, T, H
+            n_param = 5;
+            params = (float *)malloc((size_t) n_param * sizeof(float));
+            params[0] = chi_square;
+            params[1] = z;
+            params[2] = a;
+            params[3] = tau;
+            params[4] = 1.5f;
+            break;
+    }
+    
+    // param_free array describes which params are free vs fixed (omits X2)
+    param_free = (int *)malloc((size_t) (n_param - 1) * sizeof(int));
+    n_param_free = 0;
+    for (i = 0; i < n_param - 1; ++i) {
+        param_free[i] = 1;
+        ++n_param_free;
+    }
+
+    chi_sq_adjust = fit_end - fit_start - n_param_free;
+	return_value = GCI_marquardt_fitting_engine(
+                                                x_inc,
+                                                transient_values,
+                                                transient_size,
+                                                fit_start,
+                                                fit_end,
+                                                prompt_values,
+                                                prompt_size,
+                                                noise_model,
+                                                sigma_values,
+                                                params,
+                                                param_free,
+                                                n_param,
+                                                restrain,
+                                                fitfunc,
+                                                fitted,
+                                                residuals,
+                                                &chi_square,
+                                                covar,
+                                                alpha,
+                                                err_axes,
+                                                chi_sq_target * chi_sq_adjust,
+                                                chi_sq_delta,
+                                                chi_sq_percent);
+    
+ 
+    printf("LMA return value %d\n", return_value);
+    switch (fit_type) {
+        // single exponential
+        case 1:
+            // params are X2, Z, A, T
+	        printf("LMA fitted A %f T %f Z %f X2 %f\n",
+                   params[2], params[3], params[1], params[0] / chi_sq_adjust);
+            break;
+        // double exponential
+        case 2:
+            // params are X2, Z, A1, T1, A2, T2
+	        printf("LMA fitted A1 %f T1 %f A2 %f T2 %f Z %f X2 %f\n",
+                   params[2], params[3], params[4],
+                   params[5], params[1], params[0] / chi_sq_adjust);
+            break;
+        // triple exponential
+        case 3:
+            // params are X2, Z, A1, T1, A2, T2, A3, T3
+	        printf("LMA fitted A1 %f T1 %f A2 %f T2 %f A3 %f T3 %f Z %f X2 %f\n",
+                   params[2], params[3], params[4],
+                   params[5], params[6], params[7],
+                   params[1], params[0] / chi_sq_adjust);
+            break;
+        // stretched exponential
+        case 4:
+            // params are X2, Z, A, T, H
+	        printf("LMA fitted A %f T %f H %f Z %f X2 %f\n",
+                   params[2], params[3], params[4],
+                   params[1], params[0] / chi_sq_adjust);
+            break;
+    }
+    
+    free(params);
+    free(fitted);
+    free(residuals);
+	GCI_ecf_free_matrix(covar);
+	GCI_ecf_free_matrix(alpha);
+	GCI_ecf_free_matrix(err_axes);
+    
     return SUCCESS;
 }
 
@@ -119,7 +273,6 @@ int fit(
  */
 float *adjust_transient(float *transient_values, int transient_start_index, int transient_end_index) {
     int new_size = transient_end_index - transient_start_index + 1;
-    printf("new size %d\n", new_size);
 	float *new_transient = (float *)malloc((unsigned)new_size * sizeof(float));
     int i;
     
