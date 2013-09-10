@@ -143,59 +143,56 @@ int fit(
     switch (fit_type) {
         // single exponential
         case 1:
-            // params are X2, Z, A, T
-            n_param = 4;
+            // params are Z, A, T
+            n_param = 3;
             params = (float *)malloc((size_t) n_param * sizeof(float));
-            params[0] = chi_square;
-            params[1] = z;
-            params[2] = a;
-            params[3] = tau;
+            params[0] = z;
+            params[1] = a;
+            params[2] = tau;
             break;
         // double exponential
         case 2:
-            // params are X2, Z, A1, T1, A2, T2
-            n_param = 6;
+            // params are Z, A1, T1, A2, T2
+            n_param = 5;
             params = (float *)malloc((size_t) n_param * sizeof(float));
-            params[0] = chi_square;
-            params[1] = z;
-            params[2] = 0.75f * a; // values from TRI2/SP
-            params[3] = tau;
-            params[4] = 0.25f * a;
-            params[5] = 0.6666667f * tau;
+            params[0] = z;
+            params[1] = 0.75f * a; // values from TRI2/SP
+            params[2] = tau;
+            params[3] = 0.25f * a;
+            params[4] = 0.6666667f * tau;
             break;
         // triple exponential
         case 3:
-            // params are X2, Z, A1, T1, A2, T2, A3, T3
-            n_param = 8;
+            // params are Z, A1, T1, A2, T2, A3, T3
+            n_param = 7;
             params = (float *)malloc((size_t) n_param * sizeof(float));
-            params[0] = chi_square;
-            params[1] = z;
-            params[2] = 0.75f * a;
-            params[3] = tau;
-            params[4] = 0.1666667f * a;
-            params[5] = 0.6666667f * tau;
-            params[6] = 0.1666667f * a;
-            params[7] = 0.3333333f * tau;
+            params[0] = z;
+            params[1] = 0.75f * a;
+            params[2] = tau;
+            params[3] = 0.1666667f * a;
+            params[4] = 0.6666667f * tau;
+            params[5] = 0.1666667f * a;
+            params[6] = 0.3333333f * tau;
             break;
         // stretched exponential
         case 4:
+            // has it's own fitfunc
             fitfunc = GCI_stretchedexp;
             
-            // params are X2, Z, A, T, H
-            n_param = 5;
+            // params are Z, A, T, H
+            n_param = 4;
             params = (float *)malloc((size_t) n_param * sizeof(float));
-            params[0] = chi_square;
-            params[1] = z;
-            params[2] = a;
-            params[3] = tau;
-            params[4] = 1.5f;
+            params[0] = z;
+            params[1] = a;
+            params[2] = tau;
+            params[3] = 1.5f;
             break;
     }
     
     // param_free array describes which params are free vs fixed (omits X2)
-    param_free = (int *)malloc((size_t) (n_param - 1) * sizeof(int));
+    param_free = (int *)malloc((size_t) n_param  * sizeof(int));
     n_param_free = 0;
-    for (i = 0; i < n_param - 1; ++i) {
+    for (i = 0; i < n_param; ++i) {
         param_free[i] = 1;
         ++n_param_free;
     }
@@ -231,31 +228,31 @@ int fit(
     switch (fit_type) {
         // single exponential
         case 1:
-            // params are X2, Z, A, T
+            // params are Z, A, T
 	        printf("LMA fitted A %f T %f Z %f X2 %f\n",
-                   params[2], params[3], params[1], params[0] / chi_sq_adjust);
+                   params[1], params[2], params[0], chi_square / chi_sq_adjust);
             break;
         // double exponential
         case 2:
-            // params are X2, Z, A1, T1, A2, T2
+            // params are Z, A1, T1, A2, T2
 	        printf("LMA fitted A1 %f T1 %f A2 %f T2 %f Z %f X2 %f\n",
-                   params[2], params[3], params[4],
-                   params[5], params[1], params[0] / chi_sq_adjust);
+                   params[1], params[2], params[3],
+                   params[4], params[0], chi_square / chi_sq_adjust);
             break;
         // triple exponential
         case 3:
-            // params are X2, Z, A1, T1, A2, T2, A3, T3
+            // params are Z, A1, T1, A2, T2, A3, T3
 	        printf("LMA fitted A1 %f T1 %f A2 %f T2 %f A3 %f T3 %f Z %f X2 %f\n",
-                   params[2], params[3], params[4],
-                   params[5], params[6], params[7],
-                   params[1], params[0] / chi_sq_adjust);
+                   params[1], params[2], params[3],
+                   params[4], params[5], params[6],
+                   params[0], chi_square / chi_sq_adjust);
             break;
         // stretched exponential
         case 4:
-            // params are X2, Z, A, T, H
+            // params are Z, A, T, H
 	        printf("LMA fitted A %f T %f H %f Z %f X2 %f\n",
-                   params[2], params[3], params[4],
-                   params[1], params[0] / chi_sq_adjust);
+                   params[1], params[2], params[3],
+                   params[0], chi_square / chi_sq_adjust);
             break;
     }
     
