@@ -54,6 +54,16 @@ char next_char(FILE *file);
 
 char stringbuffer[MAX_STRING_LENGTH];
 
+// Check for C99 support, C89 or C90 compilers will need roundf implemented
+#if __STDC_VERSION__ >= 199901L
+// roundf will be available
+#else
+static float roundf(float val)
+{    
+    return (float)floor((double)val + 0.5);
+}
+#endif
+
 int main(int argc, const char * argv[])
 {
     int return_value = SUCCESS;
@@ -77,7 +87,7 @@ int main(int argc, const char * argv[])
 }
 
 int fit(
-    int fit_type, int noise_model,
+    int fit_type, noise_type noise_model,
     float chi_sq_target, float chi_sq_delta,
     int transient_size, float *transient_values,
     int sigma_size, float *sigma_values,
@@ -97,7 +107,7 @@ int fit(
     int n_param_free;
     int i;
 	void (*fitfunc)(float, float [], float *, float[], int) = NULL;
-	int restrain = 0;
+	restrain_type restrain = ECF_RESTRAIN_DEFAULT;
 	int chi_sq_percent = 95;
     int n_data = fit_end;
 	float **covar    = GCI_ecf_matrix(n_data, n_data);
@@ -307,10 +317,12 @@ int parse_and_fit(FILE *file) {
     int fit_type;
     int noise_model;
 	int i;
-    
-    printf("%s\n", get_string_value(file, "filetype"));
-    float version = get_float_value(file, "version");
-    if (1.0f != version) {
+    float version;
+
+	printf("%s\n", get_string_value(file, "filetype"));
+    version = get_float_value(file, "version");
+
+	if (1.0f != version) {
         printf("Warning, unknown version %f, expecting 1.0\n", version);
     }
     if (!get_section_name(file, stringbuffer)) {

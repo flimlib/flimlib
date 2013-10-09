@@ -380,7 +380,7 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 
 	if (fitted==NULL)   // we require chisq but have not supplied a "fitted" array so must malloc one
 	{
-		if ((validFittedArray = malloc((long unsigned int)fit_end * sizeof(float)))== NULL) return (-1);
+		if ((validFittedArray = (float *)malloc((long unsigned int)fit_end * sizeof(float)))== NULL) return (-1);
 	}
 	else validFittedArray = fitted;
 

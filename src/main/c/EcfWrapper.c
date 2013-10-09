@@ -52,7 +52,7 @@ int RLD_fit(
 		int fit_end,
 		double instr[],
 		int n_instr,
-		int noise,
+		noise_type noise,
 		double sig[],
 		double *z,
 		double *a,
@@ -163,7 +163,7 @@ int LMA_fit(
 		int fit_end,
 		double instr[],
 		int n_instr,
-		int noise,
+		noise_type noise,
 		double sig[],
 		double param[],
 		int param_free[],
@@ -174,7 +174,7 @@ int LMA_fit(
 		double chi_square_delta
 		) {
 
-	int restrain = 0;
+	restrain_type restrain = ECF_RESTRAIN_DEFAULT;
 	int chi_square_percent = 95;
 
 	int n_data = fit_end;
