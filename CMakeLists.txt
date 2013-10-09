@@ -32,4 +32,7 @@ set(SLIM_CURVE_LIB      src/main/c/loci_curvefitter_SLIMCurveFitter.c
 
 # Build a stand alone program
 add_executable(slim-curve-cmd ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN})
+
+if(UNIX)
 target_link_libraries(slim-curve-cmd m) #link the math library
+endif(UNIX)
