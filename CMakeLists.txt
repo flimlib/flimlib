@@ -28,7 +28,8 @@ set(SLIM_CURVE_LIB      src/main/c/loci_curvefitter_SLIMCurveFitter.c
 )
 
 # Build a dll
-add_library(slim-curve SHARED ${SLIM_CURVE_COMMON} ${SLIM_CURVE_LIB})
+#add_library(slim-curve SHARED ${SLIM_CURVE_COMMON} ${SLIM_CURVE_LIB})
 
 # Build a stand alone program
 add_executable(slim-curve-cmd ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN})
+target_link_libraries(slim-curve-cmd m) #link the math library

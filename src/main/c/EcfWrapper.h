@@ -31,6 +31,8 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 extern "C" {
 #endif
 
+#include "Ecf.h"
+
 int RLD_fit(
         double x_inc,
         double y[],
@@ -38,7 +40,7 @@ int RLD_fit(
         int fit_end,
         double instr[],
         int n_instr,
-        int noise,
+        noise_type noise,
         double sig[],
         double *z,
         double *a,
@@ -55,7 +57,7 @@ int LMA_fit(
         int fit_end,
         double instr[],
         int n_instr,
-        int noise,
+        noise_type noise,
         double sig[],
         double param[],
         int param_free[],

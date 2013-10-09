@@ -32,7 +32,7 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 #define BAD_SYNTAX -3
 #define UNEXPECTED_EOF -4
 
-int fit(int fit_type, int noise_model,
+int fit(int fit_type, noise_type noise_model,
     float chi_sq_target, float chi_sq_delta,
     int transient_size, float *transient_values,
     int sigma_size, float *sigma_values,
@@ -54,15 +54,10 @@ char next_char(FILE *file);
 
 char stringbuffer[MAX_STRING_LENGTH];
 
-// Check for C99 support, C89 or C90 compilers will need roundf implemented
-#if __STDC_VERSION__ >= 199901L
-// roundf will be available
-#else
-static float roundf(float val)
+static float my_roundf(float val)
 {    
     return (float)floor((double)val + 0.5);
 }
-#endif
 
 int main(int argc, const char * argv[])
 {
@@ -439,9 +434,9 @@ int parse_and_fit(FILE *file) {
     }
     
     // massage values
-    transient_start_index = roundf(transient_start / x_inc);
-    data_start_index = roundf(data_start / x_inc);
-    transient_end_index = roundf(transient_end / x_inc);
+    transient_start_index = my_roundf(transient_start / x_inc);
+    data_start_index = my_roundf(data_start / x_inc);
+    transient_end_index = my_roundf(transient_end / x_inc);
     transient_values = adjust_transient(transient_values, transient_start_index, transient_end_index);
     transient_size = transient_end_index - transient_start_index + 1;
 	fit_start = data_start_index - transient_start_index;
