@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project(slim-curve)
 
-include_directories("src/main/c")
+include_directories("src/main/c" "src/slim-curve-cmd/c/iniparser/src")
 
 # Common files we always need
 set(SLIM_CURVE_COMMON   src/main/c/EcfGlobal.c
@@ -19,7 +19,9 @@ set(SLIM_CURVE_COMMON   src/main/c/EcfGlobal.c
 )
 
 # Additional files for the stand alone program
-set(SLIM_CURVE_MAIN     src/main/c/main.c
+set(SLIM_CURVE_MAIN     src/slim-curve-cmd/c/main.c
+                        src/slim-curve-cmd/c/iniparser/src/iniparser.c
+                        src/slim-curve-cmd/c/iniparser/src/dictionary.c
 )
 
 # Aditional files for a library
