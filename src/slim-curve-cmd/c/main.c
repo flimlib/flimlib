@@ -37,6 +37,8 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 #define BAD_SYNTAX -3
 #define UNEXPECTED_EOF -4
 
+#define MAX_DATFILE_LENGTH 4096
+
 int fit(int fit_type, noise_type noise_model,
     float chi_sq_target, float chi_sq_delta,
     int transient_size, float *transient_values,
@@ -44,7 +46,7 @@ int fit(int fit_type, noise_type noise_model,
     int prompt_size, float *prompt_values,
     float x_inc, int fit_start, int fit_end
     );
-int parse_and_fit(dictionary *ini, FILE *dat_file);
+int parse_and_fit(dictionary *ini, const char *dat_filename);
 int get_section_name(FILE *file, char *section);
 int validate_section(FILE *file, char *section);
 char *get_string_value(FILE *file, char *tag);
@@ -86,11 +88,11 @@ int main(int argc, const char * argv[])
 		        printf("Could not open file '%s'\n", argv[2]);
 		        return_value = BAD_FILE;
 			}
-			else {        	
+			else {
+				fclose(dat_file); // close it now we have checked we can open it
 		        printf("Settings: %s\nTransient Data: %s\n", argv[1], argv[2]);
-		        return_value = parse_and_fit(ini, dat_file);
+		        return_value = parse_and_fit(ini, argv[2]);
 				iniparser_freedict(ini);
-				fclose(dat_file);
 			}
         }
     }
@@ -301,9 +303,47 @@ float *adjust_transient(float *transient_values, int transient_start_index, int 
     return new_transient;
 }
 
+int load_datfile (const char *filename, int *nVals, float **arrayPtr)
+{
+	int n, readVals, i;
+	float *array;
+	FILE *file=fopen(filename, "r");
+	
+	if (NULL == file)
+		return -1;  // error opening file
+		
+	// Read the first value in the file which should be the number of floats to read
+	readVals = fscanf(file, "%d", &n);
+	
+	if (readVals < 1) {
+		fclose(file);
+		return -2;  // error reading from file
+	}
+
+	if (n<1 || n>MAX_DATFILE_LENGTH) {
+		fclose(file);
+		return -3;  // max datfile length exceeded, or bad first entry
+	}
+	
+	array = (float *)malloc(n*sizeof(float));
+	for (i=0; i<n; i++) {
+		readVals = fscanf(file, "%f", &(array[i]));
+		if (readVals < 1)
+			break;  // somehow no more values to read, should not happen
+	}
+		
+	if (nVals!=NULL)
+		*nVals=i;
+		
+	if (arrayPtr!=NULL)
+		*arrayPtr=array;
+
+	return 0;
+}
+
 /* Parses ".ini" file and calls SLIM Curve fitting code.
  */
-int parse_and_fit(dictionary *ini, FILE *dat_file) {
+int parse_and_fit(dictionary *ini, const char *dat_filename) {
     int debug = TRUE;
     int prompt_size = 0;
     float *prompt_values = NULL;
@@ -342,108 +382,50 @@ int parse_and_fit(dictionary *ini, FILE *dat_file) {
     // look for optional '[prompt]: file'
     s = iniparser_getstring(ini, "prompt:file", NULL);
     if (s) {
-    	if (load_prompt(s, &prompt_size, prompt_values)<0) {
+    	if (load_datfile(s, &prompt_size, &prompt_values)<0) {
             printf("Problem parsing prompt file.\n");
             return BAD_SYNTAX;
 		}
         else if (debug) {
-            printf("prompt:\n");
+            printf("prompt: %d vals\n", prompt_size);
             for (i = 0; i < prompt_size; ++i) {
                 printf("prompt %d is %f\n", i, prompt_values[i]);
             }
         }
     }
-    
-    
-    if (0 == strcmp(stringbuffer, "prompt")) {
-        prompt_size = get_int_value(file, "size");
-        prompt_values = (float *) malloc((size_t) prompt_size * sizeof(float));
-        if (!get_float_array_value(file, "values", prompt_size, prompt_values)) {
-            printf("Problem parsing prompt values\n");
-            return BAD_SYNTAX;
-        }
-        else if (debug) {
-            printf("prompt:\n");
-            for (i = 0; i < prompt_size; ++i) {
-                printf("prompt %d is %f\n", i, prompt_values[i]);
-            }
-        }
-                
-        // load next section name
-        get_section_name(file, stringbuffer);
-    }
-return SUCCESS;
-/*    
-
-    // look for required '[transient]' section
-    if (0 != strcmp(stringbuffer, "transient")) {
-        printf("Missing '[transient]' section\n");
+	
+	// Load the transient
+	if (load_datfile(dat_filename, &transient_size, &transient_values)<0) {
+        printf("Problem parsing prompt file.\n");
         return BAD_SYNTAX;
-    }
-	x_inc = get_float_value(file, "inc");
-    transient_size = get_int_value(file, "size");
-    if (debug) {
-        printf("inc is %f\n", x_inc);
-        printf("size is %d\n", transient_size);
-    }
-    transient_values = (float *) malloc((size_t) transient_size * sizeof(float));
-    if (!get_float_array_value(file, "values", transient_size, transient_values)) {
-        printf("Problem parsing transient values\n");
-        return BAD_SYNTAX;
-    }
+	}
     else if (debug) {
-        printf("transient:\n");
+        printf("transient: %d vals\n", transient_size);
         for (i = 0; i < transient_size; ++i) {
-            printf("transient %d is %f\n", i, transient_values[i]);
+            printf("prompt %d is %f\n", i, transient_values[i]);
         }
     }
-        
-    if (!get_section_name(file, stringbuffer)) {
-        printf("Missing '[main]' section.\n");
-        return BAD_SYNTAX;
-    }
-    
-    // look for optional '[sigma]' section
-    if (0 == strcmp(stringbuffer, "sigma")) {
-        sigma_size = get_int_value(file, "size");
-        sigma_values = (float *) malloc((size_t) sigma_size * sizeof(float));
-        if (!get_float_array_value(file, "values", sigma_size, sigma_values)) {
-            printf("Problem parsing sigma values\n");
-            return BAD_SYNTAX;
-        }
-        else if (debug) {
-            printf("sigma:\n");
-            for (i = 0; i < sigma_size; ++i) {
-                printf("sigma %d is %f\n", i, sigma_values[i]);
-            }
-        }
-        
-        // load next section name
-        get_section_name(file, stringbuffer);
-    }
+           
+    // look for optional '[sigma]' section ?????
 
     // look for required '[main]' section
-    if (0 != strcmp(stringbuffer, "main")) {
-        printf("Missing '[main]' section\n");
-        return BAD_SYNTAX;
-    }
-    chi_sq_target = get_float_value(file, "chisqtarget");
-    chi_sq_delta = get_float_value(file, "chisqdelta");
+    chi_sq_target = (float)iniparser_getdouble(ini, "main:chisqtarget", 1.0);
+    chi_sq_delta = (float)iniparser_getdouble(ini, "main:chisqdelta", 0.000001);
+	x_inc = (float)iniparser_getdouble(ini, "main:x_inc", 1.0);
+	// Estrimate type ?????
     if (debug) {
+        printf("inc is %f\n", x_inc);
         printf("chi_sq_target %f\n", chi_sq_target);
         printf("chi_sq_delta %f\n", chi_sq_delta);
     }
 
     // look for required '[cursors]' section
-    if (!validate_section(file, "cursors")) {
-        return BAD_SYNTAX;
-    }
-    prompt_baseline = get_float_value(file, "pbaseline");
-    transient_start = get_float_value(file, "tstart");
-    data_start = get_float_value(file, "dstart");
-    transient_end = get_float_value(file, "tend");
-    prompt_delta = get_float_value(file, "pdelta");
-    prompt_width = get_float_value(file, "pwidth");
+    prompt_baseline = (float)iniparser_getdouble(ini, "cursors:pbaseline", 0.0);
+    transient_start = (float)iniparser_getdouble(ini, "cursors:tstart", 1.0);
+    data_start = (float)iniparser_getdouble(ini, "cursors:dstart", 1.0);
+    transient_end = (float)iniparser_getdouble(ini, "cursors:tend", 10.0);
+    prompt_delta = (float)iniparser_getdouble(ini, "cursors:pdelta", 0.0);
+    prompt_width = (float)iniparser_getdouble(ini, "cursors:pwidth", 0.1);
     if (debug) {
         printf("prompt_baseline %f\n", prompt_baseline);
         printf("transient_start %f\n", transient_start);
@@ -454,16 +436,13 @@ return SUCCESS;
     }
     
     // look for required '[fit]' section
-    if (!validate_section(file, "fit")) {
-        return BAD_SYNTAX;
-    }
-    fit_type = get_int_value(file, "type");
-    noise_model = get_int_value(file, "noisemodel");
+    fit_type = iniparser_getint(ini, "fit:type", 1);
+    noise_model = iniparser_getint(ini, "fit:noisemodel", 5);
     if (debug) {
         printf("type %d\n", fit_type);
         printf("noisemodel %d\n", noise_model);
     }
-    
+
     // massage values
     transient_start_index = my_roundf(transient_start / x_inc);
     data_start_index = my_roundf(data_start / x_inc);
@@ -491,7 +470,6 @@ return SUCCESS;
 
     // finished
     return SUCCESS;
-*/
 }
 
 /* Parses for next section heading name.  Useful for
