@@ -402,7 +402,7 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
     else if (debug) {
         printf("transient: %d vals\n", transient_size);
         for (i = 0; i < transient_size; ++i) {
-            printf("prompt %d is %f\n", i, transient_values[i]);
+            printf("transient %d is %f\n", i, transient_values[i]);
         }
     }
            
