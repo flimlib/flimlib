@@ -21,3 +21,25 @@ loci_curvefitter_SLIMCurveFitter.c and .h.
 
 For further details, see:
     http://loci.wisc.edu/software/slim-curve
+
+Directory Contents:
+src						source files
+src/main/c				The source files for the SLIM Curve library
+src/slim-curve-cmd/c	The source files for the stand alone executable wrapper for the library
+test_files				dat and ini settings file for testing
+
+To build the stand alone program using CMake and gcc under Linux:
+Create a build folder, and cd to it
+	mkdir build
+	cd build
+Run CMake
+	cmake ../CMakeLists.txt
+Run make
+	make
+	
+To Run the stand alone executable
+Copy the executable to the test_files folder for convenience
+	cp slim-curve-cmd ../test_files
+Run the program with the test files
+	./slim-curve-cmd test.ini transient.dat
+

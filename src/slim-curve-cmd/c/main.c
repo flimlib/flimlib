@@ -30,15 +30,16 @@ Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
 
 #define FALSE 0
 #define TRUE !FALSE
-#define MAX_STRING_LENGTH 80
+
 #define SUCCESS 0
 #define BAD_USAGE -1
 #define BAD_FILE -2
 #define BAD_SYNTAX -3
-#define UNEXPECTED_EOF -4
 
 #define MAX_DATFILE_LENGTH 4096
 
+/* Predeclarations
+*/
 int fit(int fit_type, noise_type noise_model,
     float chi_sq_target, float chi_sq_delta,
     int transient_size, float *transient_values,
@@ -47,25 +48,16 @@ int fit(int fit_type, noise_type noise_model,
     float x_inc, int fit_start, int fit_end
     );
 int parse_and_fit(dictionary *ini, const char *dat_filename);
-int get_section_name(FILE *file, char *section);
-int validate_section(FILE *file, char *section);
-char *get_string_value(FILE *file, char *tag);
-int get_int_value(FILE *file, char *tag);
-float get_float_value(FILE *file, char *tag);
-int get_int_array_value(FILE *file, char *tag, int size, int *int_array);
-int get_float_array_value(FILE *file, char *tag, int size, float *float_array);
-int validate_tag(FILE *file, char *tag);
-int get_next_value_as_string(FILE *file, char *buffer);
-char next_non_whitespace(FILE *file);
-char next_char(FILE *file);
 
-char stringbuffer[MAX_STRING_LENGTH];
-
+/* A roundf() function as it does not exist in all math lib implementations, esp. Visual Studio
+*/
 static float my_roundf(float val)
 {    
     return (float)floor((double)val + 0.5);
 }
 
+/* Entry point
+*/
 int main(int argc, const char * argv[])
 {
     int return_value = SUCCESS;
@@ -99,6 +91,8 @@ int main(int argc, const char * argv[])
     return return_value;
 }
 
+/* Performs the actual fit
+*/
 int fit(
     int fit_type, noise_type noise_model,
     float chi_sq_target, float chi_sq_delta,
@@ -303,6 +297,8 @@ float *adjust_transient(float *transient_values, int transient_start_index, int 
     return new_transient;
 }
 
+/* Load a *.dat file into an array of floats, where the first value is the number of values.
+*/
 int load_datfile (const char *filename, int *nVals, float **arrayPtr)
 {
 	int n, readVals, i;
@@ -344,7 +340,7 @@ int load_datfile (const char *filename, int *nVals, float **arrayPtr)
 /* Parses ".ini" file and calls SLIM Curve fitting code.
  */
 int parse_and_fit(dictionary *ini, const char *dat_filename) {
-    int debug = TRUE;
+    int debug = FALSE; //TRUE;
     int prompt_size = 0;
     float *prompt_values = NULL;
     int transient_size = 0;
@@ -470,186 +466,5 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
 
     // finished
     return SUCCESS;
-}
-
-/* Parses for next section heading name.  Useful for
- * optional sections.
- *
- * Returns TRUE if one is present, FALSE otherwise.
- */
-int get_section_name(FILE *file, char *buffer) {
-    int return_value = FALSE;
-    int index = 0;
-    char c = next_non_whitespace(file);
-    if ('[' == c) {
-        while (TRUE) {
-            c = next_char(file);
-            if (']' == c) {
-                break;
-            }
-            buffer[index++] = c;
-        }
-        return_value = TRUE;
-    }
-    buffer[index] = 0;
-    return return_value;
-}
-
-/* Parses for required section heading.
- *
- * Returns TRUE if present, FALSE otherwise.
- */
-int validate_section(FILE *file, char *section) {
-    int return_value = FALSE;
-    char c = next_non_whitespace(file);
-    if ('[' == c) {
-        while (0 != *section) {
-            c = next_char(file);
-            if (c != *section) {
-                printf("Missing '[%s]' section\n", section);
-                break;
-            }
-            ++section;
-        }
-        if (0 == *section) {
-            c = next_char(file);
-            if (']' == c) {
-                return_value = TRUE;
-            }
-        }
-    }
-    return return_value;
-}
-
-/* Returns string value of tag or null.
- */
-char *get_string_value(FILE *file, char *tag) {
-    if (!validate_tag(file, tag)) {
-        return NULL;
-    }
-    get_next_value_as_string(file, stringbuffer);
-    return &stringbuffer[0];
-}
-
-/* Returns integer value of tag.
- */
-int get_int_value(FILE *file, char *tag) {
-    int return_value = 0;
-    if (validate_tag(file, tag)) {
-        get_next_value_as_string(file, stringbuffer);
-        sscanf(stringbuffer, "%d", &return_value);
-    }
-    return return_value;
-}
-
-/* Returns float value of tag.
- */
-float get_float_value(FILE *file, char *tag) {
-    float return_value = 0.0f;
-    if (validate_tag(file, tag)) {
-        get_next_value_as_string(file, stringbuffer);
-        sscanf(stringbuffer, "%f", &return_value);
-        
-    }
-    return return_value;
-}
-
-/* Builds integer array value of tag.
- */
-int get_int_array_value(FILE *file, char *tag, int size, int *int_array) {
-    int return_value = FALSE;
-    if (validate_tag(file, tag)) {
-        int index = 0;
-        while (index < size) {
-            get_next_value_as_string(file, stringbuffer);
-            sscanf(stringbuffer, "%d", &int_array[index++]);
-        }
-        return_value = TRUE;
-    }
-    return return_value;
-}
-
-/* Builds float array value of tag.
- */
-int get_float_array_value(FILE *file, char *tag, int size, float *float_array) {
-    int return_value = FALSE;
-    if (validate_tag(file, tag)) {
-        int index = 0;
-        while (index < size) {
-            get_next_value_as_string(file, stringbuffer);
-            sscanf(stringbuffer, "%f", &float_array[index++]);
-        }
-        return_value = TRUE;
-    }
-    return return_value;
-}
-
-/* Parses for required tag, followed by '='.
- *
- * Returns TRUE if present, FALSE otherwise.
- */
-int validate_tag(FILE *file, char *tag) {
-    int first = 1;
-    int c;
-    while (0 != *tag) {
-        if (first) {
-            first = 0;
-            c = next_non_whitespace(file);
-        }
-        else {
-            c = next_char(file);
-        }
-        if (c != *tag) {
-            printf("Missing tag %s\n", tag);
-            return FALSE;
-        }
-        ++tag;
-    }
-    c = next_non_whitespace(file);
-    if ('=' != c) {
-        printf("Missing '=' after tag %s\n", tag);
-        return FALSE;
-    }
-    return TRUE;
-}
-
-/* Builds string with value in buffer.
- */
-int get_next_value_as_string(FILE *file, char *buffer) {
-    int index = 0;
-    char c = next_non_whitespace(file);
-    if ('"' == c) {
-        c = next_char(file);
-    }
-    while ('"' != c && ',' != c) {
-        buffer[index++] = c;
-        c = next_char(file);
-    }
-    buffer[index] = 0;
-    return TRUE;
-}
-
-/* Returns next non-whitespace character in file.
- */
-char next_non_whitespace(FILE *file) {
-    char c;
-    while (TRUE) {
-        c = next_char(file);
-        if (' ' != c && '\t' != c &&  '\n' != c && '\r' != c) {
-            return c;
-        }
-    }
-}
-
-/* Returns next character in file, checking for EOF.
- */
-char next_char(FILE *file) {
-    int c = fgetc(file);
-    if (EOF == c) {
-        printf("Unexpected EOF\n");
-        fclose(file);
-        exit(UNEXPECTED_EOF);
-    }
-    return (char) c;
 }
 
