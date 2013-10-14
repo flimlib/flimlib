@@ -1,3 +1,7 @@
+#ifdef _MSC_VER
+#pragma warning(disable:4996)
+#pragma warning(disable:4005)
+#endif
 
 /*-------------------------------------------------------------------------*/
 /**
@@ -21,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+//#include <unistd.h>
 
 /*---------------------------------------------------------------------------
                                 New types

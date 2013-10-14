@@ -15,11 +15,6 @@
  ---------------------------------------------------------------------------*/
 #include "dictionary.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 /** Maximum value size for integers and doubles. */
 #define MAXVALSZ    1024
 
