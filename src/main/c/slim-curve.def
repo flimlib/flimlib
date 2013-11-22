@@ -1,0 +1,26 @@
+LIBRARY "slim-curve"
+EXPORTS
+    GCI_triple_integral_fitting_engine
+    GCI_marquardt_fitting_engine
+    GCI_triple_integral
+    GCI_triple_integral_instr
+    GCI_marquardt
+    GCI_marquardt_instr
+    GCI_marquardt_cleanup
+    GCI_marquardt_global_exps_instr
+    GCI_marquardt_global_generic_instr
+    GCI_SPA_1D_marquardt
+    GCI_SPA_2D_marquardt
+    GCI_SPA_2D_marquardt_instr
+    GCI_SPA_1D_marquardt_global_exps_instr
+    GCI_SPA_2D_marquardt_global_exps_instr
+    GCI_SPA_1D_marquardt_global_generic_instr
+    GCI_SPA_2D_marquardt_global_generic_instr
+    GCI_set_restrain_limits
+    GCI_multiexp_lambda
+    GCI_multiexp_tau
+    GCI_stretchedexp
+    GCI_ecf_matrix
+    GCI_ecf_free_matrix
+    ECF_ExportParams_start
+    ECF_ExportParams_stop

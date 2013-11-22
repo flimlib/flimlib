@@ -25,12 +25,17 @@ set(SLIM_CURVE_MAIN     src/slim-curve-cmd/c/main.c
 )
 
 # Aditional files for a library
-set(SLIM_CURVE_LIB      src/main/c/loci_curvefitter_SLIMCurveFitter.c
-                        src/main/c/loci_slim_SLIMCurve.c
+set(SLIM_CURVE_LIB      #src/main/c/loci_curvefitter_SLIMCurveFitter.c
+                        #src/main/c/loci_slim_SLIMCurve.c
+                        src/main/c/slim-curve.def
 )
 
 # Build a dll
-#add_library(slim-curve SHARED ${SLIM_CURVE_COMMON} ${SLIM_CURVE_LIB})
+add_library(slim-curve SHARED ${SLIM_CURVE_COMMON} ${SLIM_CURVE_LIB})
+
+# Build a dll test program
+add_executable(slim-curve-dll-test  ${SLIM_CURVE_MAIN})
+target_link_libraries(slim-curve-dll-test slim-curve)
 
 # Build a stand alone program
 add_executable(slim-curve-cmd ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN})
