@@ -1,7 +1,7 @@
 /* 
 This file is part of the SLIM-curve package for exponential curve fitting of spectral lifetime data.
 
-Copyright (c) 2010-2013, Gray Institute University of Oxford & UW-Madison LOCI.
+Copyright (c) 2010-2014, Gray Institute University of Oxford & UW-Madison LOCI.
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
