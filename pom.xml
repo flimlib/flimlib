@@ -173,6 +173,13 @@
 		</developer>
 	</developers>
 
+	<scm>
+		<connection>scm:git:git://github.com/uw-loci/slim-curve</connection>
+		<developerConnection>scm:git:git@github.com:uw-loci/slim-curve</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/uw-loci/slim-curve</url>
+	</scm>
+
 	<repositories>
 		<!-- NB: for project parent -->
 		<repository>
