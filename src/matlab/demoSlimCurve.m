@@ -97,7 +97,7 @@ fprintf('Lifetime Distribution vs. Photon Count...\n');
 axes('Position', [0.08, 1.05 - 4 * 0.25, 0.5, 0.15]);
 hbins = 1.5 : 0.025 : 3;
 hists = zeros(4, numel(hbins));
-nrPhots = [500]; %, 2000, 10000];
+nrPhots = [500, 2000, 10000];
 nrDecays = 10000;
 nrNoise = nrPhots / 20;
 tau = 2.25;
