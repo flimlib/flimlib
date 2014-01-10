@@ -92,4 +92,10 @@ switch computer
         fprintf(['architecture: ' computer '. Attempting...\n']);
         mex mxSlimCurve.c EcfUtil.c EcfSingle.c
 end
+
+% Delete the temporary slimcurve source files
+for file = files
+    delete(file{1});
+end
+
 fprintf('Finished compiling mxSlimCurve.\n');
