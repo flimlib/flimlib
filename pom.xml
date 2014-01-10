@@ -137,9 +137,6 @@
 				<role>developer</role>
 			</roles>
 			<timezone>+0</timezone>
-			<properties>
-				<picUrl>http://www.loci.wisc.edu/files/loci/images/people/barber.png</picUrl>
-			</properties>
 		</developer>
 		<developer>
 			<id>grislis</id>
@@ -152,9 +149,6 @@
 				<role>developer</role>
 			</roles>
 			<timezone>-6</timezone>
-			<properties>
-				<picUrl>http://loci.wisc.edu/files/loci/images/people/Aivar.jpg</picUrl>
-			</properties>
 		</developer>
 		<developer>
 			<id>ctrueden</id>
@@ -167,9 +161,6 @@
 				<role>architect</role>
 			</roles>
 			<timezone>-6</timezone>
-			<properties>
-				<picUrl>http://loci.wisc.edu/files/loci/images/people/curtis-2010.jpg</picUrl>
-			</properties>
 		</developer>
 	</developers>
 
