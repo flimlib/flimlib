@@ -173,15 +173,11 @@
 		</developer>
 	</developers>
 
-	<!-- NB: for project parent, in case of partial checkout -->
 	<repositories>
+		<!-- NB: for project parent -->
 		<repository>
-			<id>loci.releases</id>
-			<url>http://dev.loci.wisc.edu/maven2/releases</url>
-		</repository>
-		<repository>
-			<id>loci.snapshots</id>
-			<url>http://dev.loci.wisc.edu/maven2/snapshots</url>
+			<id>imagej.releases</id>
+			<url>http://maven.imagej.net/content/repositories/releases</url>
 		</repository>
 	</repositories>
 
