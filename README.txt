@@ -41,5 +41,6 @@ To Run the stand alone executable
 Copy the executable to the test_files folder for convenience
 	cp slim-curve-cmd ../test_files
 Run the program with the test files
+	cd ../test_files
 	./slim-curve-cmd test.ini transient.dat
 
