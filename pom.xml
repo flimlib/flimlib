@@ -126,7 +126,7 @@
 
 	<developers>
 		<developer>
-			<id>barber</id>
+			<id>paulbarber</id>
 			<name>Paul Barber</name>
 			<email>Paul.Barber@rob.ox.ac.uk</email>
 			<url>http://users.ox.ac.uk/~raob0009/</url>
@@ -142,7 +142,7 @@
 			</properties>
 		</developer>
 		<developer>
-			<id>aivar</id>
+			<id>grislis</id>
 			<name>Aivar Grislis</name>
 			<email>grislis@wisc.edu</email>
 			<url>http://loci.wisc.edu/people/aivar-grislis</url>
@@ -157,7 +157,7 @@
 			</properties>
 		</developer>
 		<developer>
-			<id>curtis</id>
+			<id>ctrueden</id>
 			<name>Curtis Rueden</name>
 			<email>ctrueden@wisc.edu</email>
 			<url>http://loci.wisc.edu/people/curtis-rueden</url>
