@@ -8,7 +8,8 @@
 	<parent>
 		<groupId>loci</groupId>
 		<artifactId>pom-loci</artifactId>
-		<version>1.13</version>
+		<version>1.15</version>
+		<relativePath />
 	</parent>
 
 	<artifactId>slim-curve</artifactId>
