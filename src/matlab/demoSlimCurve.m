@@ -44,7 +44,7 @@ fit_end = numel(transient) - start - 1;
 createPlot(1, time, start, fit_start, fit_end, transient, paramsLMA, ...
            fittedLMA, 'Basic mono-exponential fit');
 % annotate it
-text(0.40, 0.8, '#ph:', 'FontSize', 12);
+text(0.40, 0.8, '# ph:', 'FontSize', 12);
 text(0.40, 0.6, '\tau:', 'FontSize', 12);
 text(0.65, 0.8, '10 000', 'FontSize', 12);
 text(0.65, 0.6, '2.00 ns', 'FontSize', 12);
@@ -63,9 +63,9 @@ fit_end = numel(transient) - start - 1;
 createPlot(2, time, start, fit_start, fit_end, transient, paramsLMA, ...
            fittedLMA, '2-exponential decay, 1-exponential fit');
 % annotate it
-text(0.40, 0.8, '#ph_1:', 'FontSize', 12);
+text(0.40, 0.8, '# ph_1:', 'FontSize', 12);
 text(0.40, 0.6, '\tau_1:', 'FontSize', 12);
-text(0.40, 0.4, '#ph_2:', 'FontSize', 12);
+text(0.40, 0.4, '# ph_2:', 'FontSize', 12);
 text(0.40, 0.2, '\tau_2:', 'FontSize', 12);
 text(0.65, 0.8, '200 000', 'FontSize', 12);
 text(0.65, 0.6, '3.00 ns', 'FontSize', 12);
@@ -82,9 +82,9 @@ fprintf('2-exponential decay, 2-exponential fit...\n');
 createPlot(3, time, start, fit_start, fit_end, transient, paramsLMA, ...
            fittedLMA, '2-exponential decay, 2-exponential fit');
 % annotate it
-text(0.40, 0.8, '#ph_1:', 'FontSize', 12);
+text(0.40, 0.8, '# ph_1:', 'FontSize', 12);
 text(0.40, 0.6, '\tau_1:', 'FontSize', 12);
-text(0.40, 0.4, '#ph_2:', 'FontSize', 12);
+text(0.40, 0.4, '# ph_2:', 'FontSize', 12);
 text(0.40, 0.2, '\tau_2:', 'FontSize', 12);
 text(0.65, 0.8, '200 000', 'FontSize', 12);
 text(0.65, 0.6, '3.00 ns', 'FontSize', 12);
@@ -93,7 +93,7 @@ text(0.65, 0.2, '1.50 ns', 'FontSize', 12);
 
 %% Run single exponential fit 10000x with three different photon counts in
 %  each fit.
-fprintf('Lifetime Distribution vs. Photon Count...\n');
+fprintf('Lifetime distribution vs. photon count...\n');
 axes('Position', [0.08, 1.05 - 4 * 0.25, 0.5, 0.15]);
 hbins = 1.5 : 0.025 : 3;
 hists = zeros(4, numel(hbins));

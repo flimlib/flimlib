@@ -65,8 +65,19 @@ end
 if any(strcmpi(computer, {'GLNXA64', 'GLNX86'}))
     copyfile([matlabroot filesep 'bin' filesep 'mexopts.sh'], ...
              'mexopts.sh', 'f');
-    perl('replaceANSI.pl', 'mexopts.sh');
+    perl('replace.pl', 'mexopts.sh', '-ansi', '');
 end
+
+% On MAC OS X machines:
+% Copy mexopts.sh file from matlabroot and change instances of 10.7 to 10.8
+% if the MAC OS X version is higher than 10.7. Otherwise mxSlimCurve would
+% not compile.
+if strcmpi(computer, 'MACI64')
+    copyfile([matlabroot filesep 'bin' filesep 'mexopts.sh'], ...
+             'mexopts.sh', 'f');
+    perl('replace.pl', 'mexopts.sh', '10.7', '10.8');
+end
+
 
 % Copy all necessary slimcurve source files into the current directory
 files = {'EcfSingle.c', 'EcfUtil.c', 'Ecf.h', 'EcfInternal.h'};
@@ -80,16 +91,17 @@ if exist(['mxSlimCurve.' mexext], 'file')
 end
 
 % Compile mxSlimCurve
-switch computer
-    case {'GLNXA64', 'GLNX86'}
-        fprintf('Compiling mxSlimCurve...\n');
+com = computer;
+switch com
+    case {'GLNXA64', 'GLNX86', 'MACI64'}
+        fprintf('Compiling mxSlimCurve for %s architecture...\n', com);
         mex -f ./mexopts.sh mxSlimCurve.c EcfUtil.c EcfSingle.c
     case {'PCWIN', 'PCWIN64'}
-        fprintf('Compiling mxSlimCurve...\n');
+        fprintf('Compiling mxSlimCurve for %s architecture...\n', com);
         mex mxSlimCurve.c EcfUtil.c EcfSingle.c
     otherwise
         fprintf('Not sure how to compile mxSlimCurve on your computer ');
-        fprintf(['architecture: ' computer '. Attempting...\n']);
+        fprintf('architecture: %s. Attempting...\n', com);
         mex mxSlimCurve.c EcfUtil.c EcfSingle.c
 end
 
