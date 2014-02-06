@@ -3,7 +3,7 @@ function compileSlimCurve(Cpath)
 %   your installation of Matlab.
 %
 %       Cpath   Directory containing the SlimCurve source code.
-%               [Default = '../main/c/']
+%               [Default = '../c/']
 %
 %   The copileSlimCurve function EcfSingle.c, EcfUtil.c, Ecf.h, and 
 %   EcfInternal.h from Cpath into its folder and deletes old compiled
@@ -37,7 +37,7 @@ function compileSlimCurve(Cpath)
 
 % Assume that C-files are in '../c/' if no folder has been provided
 if ~exist('Cpath', 'var')
-    Cpath = ['..' filesep 'main' filesep 'c' filesep];
+    Cpath = ['..' filesep 'c' filesep];
 end
 
 % Check if source directory exists
