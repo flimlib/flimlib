@@ -20,6 +20,7 @@ EXPORTS
     GCI_multiexp_lambda
     GCI_multiexp_tau
     GCI_stretchedexp
+    GCI_Phasor
     GCI_ecf_matrix
     GCI_ecf_free_matrix
     ECF_ExportParams_start

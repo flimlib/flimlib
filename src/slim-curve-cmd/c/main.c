@@ -25,9 +25,24 @@
 Main.c for the stand alone executable version of SLIM Curve.
 Reads ini settings file that is compatible with TRI2.
 Provide transient.dat and optional prompt.dat.
+
+The settings file requires a text based prompt file, not like TRI2.
+So the path/name to this must be provided as an entry in the [prompt] section, e.g.
+[prompt]
+file = "prompt.dat"
+Also the time difference between the points must be provided in the [main] section, e.g.
+[main]
+x_inc = "0.048828125"
+
+KNOWN ISSUES
+Parameter fixing and restraining is not yet supported here.
+This code does not read the parameter values (tau etc.) from the ini file, it always does an RLD fit for starting values. This is different to TRI2 with the phasor plot as the pre-pulse is used in that case.
+With stretched exp TRI2 converts the raw tau returned by the fitting engine into an average <tau> using the Gamma function.
+
 */
 
 #include "Ecf.h"
+#include "GCI_Phasor.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,6 +69,8 @@ int fit(int fit_type, noise_type noise_model,
     float x_inc, int fit_start, int fit_end
     );
 int parse_and_fit(dictionary *ini, const char *dat_filename);
+noise_type getNoiseModel (int val);
+
 
 /* A roundf() function as it does not exist in all math lib implementations, esp. Visual Studio
 */
@@ -132,7 +149,7 @@ int fit(
     tau = 2.0f;
     z = 0.0f;
     
-	// want non-reduced chi square target
+	// want non-reduced chi square target for RLD
     chi_sq_adjust = fit_end - fit_start - 3;
     
     // for RLD+LMA fits TRI2/SP adjusts as follows for initial RLD fit:
@@ -147,7 +164,7 @@ int fit(
 			fit_end,
 			prompt_values,
 			prompt_size,
-			noise_model,
+			NOISE_POISSON_FIT,
 			sigma_values,
 			&z,
 			&a,
@@ -161,11 +178,15 @@ int fit(
 	printf("RLD return_value %d\n", return_value);
 	printf("RLD estimate A %f T %f Z %f X2 %f\n", a, tau, z, chi_square / chi_sq_adjust);
 
+	if (fit_type==0)
+		goto END;
+	
     // adjust single exponential estimates for multiple exponential fits
     fitfunc = GCI_multiexp_tau;
-    switch (fit_type) {
+    switch (fit_type) {   // This choice of fit types is not a good thing to have! TRI2 should save something more obvious
         // single exponential
         case 1:
+        case 2:
             // params are Z, A, T
             n_param = 3;
             params = (float *)malloc((size_t) n_param * sizeof(float));
@@ -173,8 +194,18 @@ int fit(
             params[1] = a;
             params[2] = tau;
             break;
-        // double exponential
-        case 2:
+		case 3:            
+            // params are Z, A, T
+            n_param = 3;
+            params = (float *)malloc((size_t) n_param * sizeof(float));
+            params[0] = z;
+            params[1] = a;
+            params[2] = tau;
+            break;
+
+		// double exponential
+        case 4:
+        case 5:
             // params are Z, A1, T1, A2, T2
             n_param = 5;
             params = (float *)malloc((size_t) n_param * sizeof(float));
@@ -185,7 +216,7 @@ int fit(
             params[4] = 0.6666667f * tau;
             break;
         // triple exponential
-        case 3:
+        case 6:
             // params are Z, A1, T1, A2, T2, A3, T3
             n_param = 7;
             params = (float *)malloc((size_t) n_param * sizeof(float));
@@ -198,7 +229,7 @@ int fit(
             params[6] = 0.3333333f * tau;
             break;
         // stretched exponential
-        case 4:
+        case 11:
             // has it's own fitfunc
             fitfunc = GCI_stretchedexp;
             
@@ -210,6 +241,8 @@ int fit(
             params[2] = tau;
             params[3] = 1.5f;
             break;
+		default:
+			goto END;
     }
     
     // param_free array describes which params are free vs fixed (omits X2)
@@ -221,7 +254,20 @@ int fit(
     }
 
     chi_sq_adjust = fit_end - fit_start - n_param_free;
-	return_value = GCI_marquardt_fitting_engine(
+
+	if (fit_type == 3) //Phasor
+	{
+		float u, v, taup, taum;
+
+		return_value = GCI_Phasor(x_inc, transient_values,
+                                   fit_start,
+                                   fit_end, 
+                                   &(params[0]), &u, &v, &taup, &taum, &(params[2]), fitted, residuals, &chi_square);
+		printf("Phasor return value %d\n", return_value);
+	}
+	else
+	{
+		return_value = GCI_marquardt_fitting_engine(
                                                 x_inc,
                                                 transient_values,
                                                 transient_size,
@@ -247,23 +293,31 @@ int fit(
                                                 chi_sq_percent);
     
  
-    printf("LMA return value %d\n", return_value);
+		printf("LMA return value %d\n", return_value);
+	}
     switch (fit_type) {
         // single exponential
         case 1:
+        case 2:
             // params are Z, A, T
 	        printf("LMA fitted A %f T %f Z %f X2 %f\n",
                    params[1], params[2], params[0], chi_square / chi_sq_adjust);
             break;
+        case 3:
+            // params are Z, T
+	        printf("Phasor fitted T %f Z %f X2 %f\n",
+                   params[2], params[0], chi_square / chi_sq_adjust);
+            break;
+        case 4:
+        case 5:
         // double exponential
-        case 2:
             // params are Z, A1, T1, A2, T2
 	        printf("LMA fitted A1 %f T1 %f A2 %f T2 %f Z %f X2 %f\n",
                    params[1], params[2], params[3],
                    params[4], params[0], chi_square / chi_sq_adjust);
             break;
         // triple exponential
-        case 3:
+        case 6:
             // params are Z, A1, T1, A2, T2, A3, T3
 	        printf("LMA fitted A1 %f T1 %f A2 %f T2 %f A3 %f T3 %f Z %f X2 %f\n",
                    params[1], params[2], params[3],
@@ -271,14 +325,16 @@ int fit(
                    params[0], chi_square / chi_sq_adjust);
             break;
         // stretched exponential
-        case 4:
+        case 11:
             // params are Z, A, T, H
 	        printf("LMA fitted A %f T %f H %f Z %f X2 %f\n",
                    params[1], params[2], params[3],
                    params[0], chi_square / chi_sq_adjust);
             break;
+		default:;
     }
-    
+ 
+END: 
     free(params);
     free(fitted);
     free(residuals);
@@ -369,6 +425,7 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
 	int fit_end;
     int fit_type;
     int noise_model;
+	noise_type noise;
 	int i;
     float version;
     char *s;
@@ -408,13 +465,10 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
         }
     }
            
-    // look for optional '[sigma]' section ?????
-
     // look for required '[main]' section
     chi_sq_target = (float)iniparser_getdouble(ini, "main:chisqtarget", 1.0);
     chi_sq_delta = (float)iniparser_getdouble(ini, "main:chisqdelta", 0.000001);
 	x_inc = (float)iniparser_getdouble(ini, "main:x_inc", 1.0);
-	// Estrimate type ?????
     if (debug) {
         printf("inc is %f\n", x_inc);
         printf("chi_sq_target %f\n", chi_sq_target);
@@ -440,6 +494,7 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
     // look for required '[fit]' section
     fit_type = iniparser_getint(ini, "fit:type", 1);
     noise_model = iniparser_getint(ini, "fit:noisemodel", 5);
+	noise = getNoiseModel(noise_model);
     if (debug) {
         printf("type %d\n", fit_type);
         printf("noisemodel %d\n", noise_model);
@@ -463,7 +518,7 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
     
     // do the fit
     fit(
-        fit_type, noise_model, chi_sq_target, chi_sq_delta,
+        fit_type, noise, chi_sq_target, chi_sq_delta,
         transient_size, transient_values,
         sigma_size, sigma_values,
         prompt_size, prompt_values,
@@ -474,3 +529,25 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
     return SUCCESS;
 }
 
+noise_type getNoiseModel (int val)
+{  // This is from TRI2 and must match the noise models, between TRI2 ui and SLIM Curve - This is not a good thing to have! TRI2 should save the SLIM Curve type
+
+	switch (val)
+	{
+		case 1:
+			return NOISE_GAUSSIAN_FIT;
+			break;
+		case 2:
+			return NOISE_POISSON_DATA;				
+			break;
+		case 3:
+			return NOISE_POISSON_FIT;				
+			break;
+		case 4:
+			return NOISE_MLE;				
+			break;
+		default:
+			return NOISE_POISSON_FIT;				
+			break;
+	}
+}
