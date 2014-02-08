@@ -1,4 +1,5 @@
 @echo off
+if not exist slim-curve-cmd.exe goto :file_error
 echo Test 1 - Mono
 call slim-curve-cmd settings1.ini data.dat > console_output.txt
 findstr /C:"RLD estimate A 11515.900391 T 2.392674 Z 208.732056 X2 8.997932" console_output.txt || goto :fail
@@ -19,7 +20,14 @@ echo ****** All tests passed ******
 pause
 goto :eof
 
+:file_error
+echo Could not find slim-curve-cmd-exe, place it in this folder.
+pause
+goto :eof
+
 :fail
-echo Failed!
+echo Output was:
+type console_output.txt
+echo That FAILED!
 pause
 goto :eof
