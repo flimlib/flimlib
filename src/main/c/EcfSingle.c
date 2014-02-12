@@ -1868,6 +1868,14 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 
 	if (ecf_exportParams) ecf_ExportParams_OpenFile ();
 
+	// If there is no prompt the data before fit_start is redundant and can adversly effect the fit, remove it
+	if (nprompt <= 0) {
+		trans = &(trans[fit_start]);  // we can change the pointer since it has been passed 'by value'
+		fit_end -= fit_start;
+		ndata -= fit_start;
+		fit_start = 0;
+	}
+
 	// All of the work is done by the ECF module
 	ret = GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
 							  prompt, nprompt, noise, sig,

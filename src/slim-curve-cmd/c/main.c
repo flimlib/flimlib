@@ -469,7 +469,12 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
     chi_sq_target = (float)iniparser_getdouble(ini, "main:chisqtarget", 1.0);
     chi_sq_delta = (float)iniparser_getdouble(ini, "main:chisqdelta", 0.000001);
 	x_inc = (float)iniparser_getdouble(ini, "main:x_inc", 1.0);
-    if (debug) {
+    
+	if (x_inc==1.0f) {
+        printf("WARNING! x_inc is %f, there may not be an \'x_inc\' entry in the [main] section of the settings file.\n", x_inc);
+	}
+	
+	if (debug) {
         printf("inc is %f\n", x_inc);
         printf("chi_sq_target %f\n", chi_sq_target);
         printf("chi_sq_delta %f\n", chi_sq_delta);
