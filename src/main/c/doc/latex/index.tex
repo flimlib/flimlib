@@ -1,0 +1,32 @@
+S\-L\-I\-M Curve is an exponential curve fitting library used for Fluorescent Lifetime Imaging or F\-L\-I\-M and Spectral Lifetime Imaging or S\-L\-I\-M. It is based on code developed by Paul Barber and his group at the Gray Institute for Radiation Oncology \& Biology and used for F\-L\-I\-M functionality in his T\-R\-I2 (Time Resolved Imaging) software. It is also used in the L\-O\-C\-I S\-L\-I\-M Plugin project.
+
+There are two algorithms used for curve fitting within S\-L\-I\-M Curve\-: The first is a triple integral method that does a very fast estimate of a single exponential lifetime component. The second is a Levenberg-\/\-Marquardt algorithm or L\-M\-A that uses an iterative, least-\/squares-\/minimization approach to generate a fit. This works with single, double and triple exponential models, as well as stretched exponential.
+
+The code is written in C89 compatible C and is thread safe for fitting multiple pixels concurrently. Several files are provided as wrappers to call this library from Java code\-: Ecf\-Wrapper.\-c and .h provide a subset of function calls used by S\-L\-I\-M Plugin, these may be invoked directly from Java using J\-N\-A. In addition there is a Java Curve\-Fitter project that provides a wrapper to the S\-L\-I\-M Curve code. This invokes the C code using J\-N\-I, with loci\-\_\-curvefitter\-\_\-\-S\-L\-I\-M\-Curve\-Fitter.\-c and .h.
+
+For further details, see\-: \href{http://loci.wisc.edu/software/slim-curve}{\tt http\-://loci.\-wisc.\-edu/software/slim-\/curve}
+
+Directory Contents\-:\par
+ src source files\par
+ src/main/c The source files for the S\-L\-I\-M Curve library\par
+ src/slim-\/curve-\/cmd/c The source files for the stand alone executable wrapper for the library\par
+ test\-\_\-files dat and ini settings file for testing\par
+
+
+To build the stand alone program using C\-Make and gcc under Linux\-:\par
+ Create a build folder, and cd to it\par
+ ~~~~mkdir build\par
+ ~~~~cd build\par
+ Run C\-Make\par
+ ~~~~cmake ../\-C\-Make\-Lists.txt\par
+ Run make\par
+ ~~~~make\par
+
+
+To Run the stand alone executable\par
+ Copy the executable to the test\-\_\-files folder for convenience\par
+ ~~~~cp slim-\/curve-\/cmd ../test\-\_\-files\par
+ Run the program with the test files\par
+ ~~~~cd ../test\-\_\-files\par
+ ~~~~./slim-\/curve-\/cmd test.\-ini transient.\-dat\par
+ 

@@ -23,10 +23,14 @@
 
 /* Header file for functions defined in lsqnonneg.c */
 
-/**********************************************************************
-   Function GCI_lsqnonneg
+/** 
+ * SLIM Curve - Non-negative Least Squares.
+ *
+ * \file GCI_Lsqnonneg.h
+ */
 
-   This function solves the non-negative least squares problem:
+/**
+   This function solves the non-negative least squares problem.
    minimise |Ax-b| subject to x >= 0 (where |v| is the 2-norm of the
    vector v).
 
@@ -57,7 +61,7 @@
                     performed
                 -4: memory allocation problems
 
-**********************************************************************/
+*/
 
 int GCI_lsqnonneg(double **A, double *b, double *x, int m, int n,
 		  int preserve, double *rnorm, double *lambda);

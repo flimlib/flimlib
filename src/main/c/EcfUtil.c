@@ -21,6 +21,10 @@
  * #L%
  */
 
+/** Utility functions.
+ * \file EcfUtil.c
+ */
+
 //#include <ansi_c.h>
 /* The 2010 version of the ECF library.  This takes account of the fact that we may be
    handling Poisson noise.
