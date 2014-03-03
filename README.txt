@@ -11,7 +11,7 @@ uses an iterative, least-squares-minimization approach to generate a fit. This
 works with single, double and triple exponential models, as well as stretched
 exponential.
 
-The code is written in C89 compatible C and is threadsafe for fitting multiple
+The code is written in C89 compatible C and is thread safe for fitting multiple
 pixels concurrently.  Several files are provided as wrappers to call this
 library from Java code:  EcfWrapper.c and .h provide a subset of function calls
 used by SLIM Plugin, these may be invoked directly from Java using JNA.  In
