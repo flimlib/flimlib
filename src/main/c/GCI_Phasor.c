@@ -20,6 +20,14 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+ 
+/** 
+ * SLIM Curve - Phasor analysis.
+ * Classic Phasor or Polar approach to FLIM.
+ * See Clayton 2004 or Leray 2008.
+ *
+ * \file GCI_Phasor.c
+ */
 
 #include <math.h>
 #include <string.h>
@@ -38,20 +46,6 @@
 /* Internal function prototypes */
 void setPhasorPeriod(double period);
 
-// See Clayton 2004 or Leray 2008
-// Classic Phasor or Polar approach to FLIM
-
-// u = integral(data(t) * cos(wt)) dt / integral(data(t)) dt
-// v = integral(data(t) * sin(wt)) dt / integral(data(t)) dt
-// 
-// tau phi = taup = 1/w * (v/u)
-// tau mod = taum = 1/w * sqrt(1/(u^2 + v^2) - 1)
-// tau average = tau = (taup + taum) / 2
-
-// Z must have been estimated previously so that it can be subtracted from the data here
-// A is estimated by making the photon count in the fit the same as the data
-
-// chisq is calculated for comparison with other methods but is not used as there is no optimisation with this method
 
 static double phasorPeriod;
 
@@ -66,6 +60,24 @@ double GCI_Phasor_getPeriod()
 	// returns the period in current time units
 	return phasorPeriod;
 }
+
+/** GCI_Phasor.
+
+ See Clayton 2004 or Leray 2008
+ Classic Phasor or Polar approach to FLIM
+
+ u = integral(data(t) * cos(wt)) dt / integral(data(t)) dt
+ v = integral(data(t) * sin(wt)) dt / integral(data(t)) dt
+ 
+ tau phi = taup = 1/w * (v/u)
+ tau mod = taum = 1/w * sqrt(1/(u^2 + v^2) - 1)
+ tau average = tau = (taup + taum) / 2
+
+ Z must have been estimated previously so that it can be subtracted from the data here
+ A is estimated by making the photon count in the fit the same as the data
+
+ chisq is calculated for comparison with other methods but is not used as there is no optimisation with this method
+*/
 
 int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 							  float *Z, float *U, float *V, float *taup, float *taum, float *tau, float *fitted, float *residuals,

@@ -24,7 +24,7 @@
 /* Header file for functions defined in lsqnonneg.c */
 
 /** 
- * SLIM Curve - Non-negative Least Squares.
+ * SLIM Curve - Non-negative Least Squares Header.
  *
  * \file GCI_Lsqnonneg.h
  */

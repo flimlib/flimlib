@@ -1,0 +1,79 @@
+\hypertarget{_g_c_i___lsqnonneg_8h}{\section{G\-C\-I\-\_\-\-Lsqnonneg.\-h File Reference}
+\label{_g_c_i___lsqnonneg_8h}\index{G\-C\-I\-\_\-\-Lsqnonneg.\-h@{G\-C\-I\-\_\-\-Lsqnonneg.\-h}}
+}
+
+
+S\-L\-I\-M Curve -\/ Non-\/negative Least Squares Header.  
+
+
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{_g_c_i___lsqnonneg_8h_a22eea7bf01a7e9cc5c446c203b497d36}{G\-C\-I\-\_\-lsqnonneg} (double $\ast$$\ast$A, double $\ast$b, double $\ast$x, int m, int n, int preserve, double $\ast$rnorm, double $\ast$lambda)
+\begin{DoxyCompactList}\small\item\em This function solves the non-\/negative least squares problem. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+S\-L\-I\-M Curve -\/ Non-\/negative Least Squares Header. 
+
+Definition in file \hyperlink{_g_c_i___lsqnonneg_8h_source}{G\-C\-I\-\_\-\-Lsqnonneg.\-h}.
+
+
+
+\subsection{Function Documentation}
+\hypertarget{_g_c_i___lsqnonneg_8h_a22eea7bf01a7e9cc5c446c203b497d36}{\index{G\-C\-I\-\_\-\-Lsqnonneg.\-h@{G\-C\-I\-\_\-\-Lsqnonneg.\-h}!G\-C\-I\-\_\-lsqnonneg@{G\-C\-I\-\_\-lsqnonneg}}
+\index{G\-C\-I\-\_\-lsqnonneg@{G\-C\-I\-\_\-lsqnonneg}!GCI_Lsqnonneg.h@{G\-C\-I\-\_\-\-Lsqnonneg.\-h}}
+\subsubsection[{G\-C\-I\-\_\-lsqnonneg}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-lsqnonneg (
+\begin{DoxyParamCaption}
+\item[{double $\ast$$\ast$}]{A\-\_\-orig, }
+\item[{double $\ast$}]{b\-\_\-orig, }
+\item[{double $\ast$}]{x, }
+\item[{int}]{m, }
+\item[{int}]{n, }
+\item[{int}]{preserve, }
+\item[{double $\ast$}]{rnorm\-\_\-orig, }
+\item[{double $\ast$}]{lambda}
+\end{DoxyParamCaption}
+)}}\label{_g_c_i___lsqnonneg_8h_a22eea7bf01a7e9cc5c446c203b497d36}
+
+
+This function solves the non-\/negative least squares problem. 
+
+minimise $\vert$\-Ax-\/b$\vert$ subject to x $>$= 0 (where $\vert$v$\vert$ is the 2-\/norm of the vector v).
+
+Arguments\-: A, an m x n matrix, in the form double A\mbox{[}n\mbox{]}\mbox{[}m\mbox{]}, so the columns of A are A\mbox{[}0\mbox{]}, A\mbox{[}1\mbox{]}, ..., A\mbox{[}n-\/1\mbox{]} b, the m-\/vector
+
+!!! N\-B\-: A and B will both be modified unless preserve is !!! non-\/zero (see below).
+
+x, the solution will be placed here m ) the dimensions of A n ) preserve, copy A and b before solving the problem rnorm, (double $\ast$) the value of $\vert$\-Ax-\/b$\vert$ with the determined x if the function was successful or if the iteration count was exceeded. This can be N\-U\-L\-L. lambda, an n-\/vector which will contain the dual vector on completion (that is, the Lagrange multipliers). This can be N\-U\-L\-L.
+
+On exit\-: The return value will be 0 on success, and negative if a problem occurred\-: -\/1\-: m $>$ M\-A\-X\-\_\-\-E\-Q\-N\-S or m $<$= 0 -\/2\-: n $>$ M\-A\-X\-\_\-\-V\-A\-R\-S or n $<$= 0 -\/3\-: iteration count exceeded\-: more than 3$\ast$n iterations performed -\/4\-: memory allocation problems
+
+This function solves the non-\/negative least squares problem.
+
+This function solves the non-\/negative least squares problem\-: minimise $\vert$\-Ax-\/b$\vert$ subject to x $>$= 0 (where $\vert$v$\vert$ is the 2-\/norm of the vector v).
+
+Arguments\-: A, an m x n matrix, in the form double A\mbox{[}n\mbox{]}\mbox{[}m\mbox{]}, so the columns of A are A\mbox{[}0\mbox{]}, A\mbox{[}1\mbox{]}, ..., A\mbox{[}n-\/1\mbox{]} b, the m-\/vector
+
+!!! N\-B\-: A and B will both be modified unless preserve is !!! non-\/zero (see below).
+
+x, the solution will be placed here m ) the dimensions of A n ) preserve, copy A and b before solving the problem rnorm, (double $\ast$) the value of $\vert$\-Ax-\/b$\vert$ with the determined x if the function was successful or if the iteration count was exceeded. This can be N\-U\-L\-L. lambda, an n-\/vector which will contain the dual vector on completion (that is, the Lagrange multipliers). This can be N\-U\-L\-L.
+
+On exit\-: The return value will be 0 on success, and negative if a problem occurred\-: -\/1\-: m $>$ M\-A\-X\-\_\-\-E\-Q\-N\-S or m $<$= 0 -\/2\-: n $>$ M\-A\-X\-\_\-\-V\-A\-R\-S or n $<$= 0 -\/3\-: iteration count exceeded\-: more than 3$\ast$n iterations performed -\/4\-: memory allocation problems
+
+The algorithm is similar to the simplex algorithm, and uses Lagrange multipliers.
+
+1 Set P\-:=\{\}, Z\-:=\{1,2,...,n\}, x\-:=0 2 Compute w \-:= A$^\wedge$\-T (b-\/\-Ax) 3 If Z=\{\} or if w\-\_\-j $<$= 0 for all j in Z, stop 4 Find t in Z such that w\-\_\-t = max \{ w\-\_\-j \-: j in Z \} 5 Move index t from Z to P 6 Let A\-\_\-\-P denote the m x n matrix defined by \begin{DoxyVerb}                   ( column j of A   if j in P
+ column j of A_P := (
+                   ( 0               if j in Z
+\end{DoxyVerb}
+
+
+Compute the n-\/vector z as a solution of the regular least squares problem minimise $\vert$ A\-\_\-\-P z -\/ b $\vert$. Note that only the components z\-\_\-j, j in P, are determined by this problem. Define z\-\_\-j\-:=0 for j in Z. 7 If z\-\_\-j$>$0 for all j in P, then set x\-:=z and goto step 2 8 Find an index q in P such that x\-\_\-q/(x\-\_\-q-\/z\-\_\-q) = min \{ x\-\_\-j/(x\-\_\-j-\/z\-\_\-j) \-: z\-\_\-j $<$= 0, j in P \} 9 Set alpha \-:= x\-\_\-q/(x\-\_\-q-\/z\-\_\-q) 10 Set x \-:= x + alpha(z-\/x) 11 Move from set P to set Z all j in P for which x\-\_\-j=0. Go to step 6.
+
+On termination, x satisfies x\-\_\-j$>$0 for j in P and x\-\_\-j=0 for j in Z, and x is a solution to the least squares problem minimise $\vert$\-A\-\_\-\-P z -\/ b$\vert$.
+
+Step 6 (finding the solution to the least squares problem $\vert$\-A\-\_\-\-P z -\/ b$\vert$) is performed using a Q\-R factorisation of A\-\_\-\-P, which in turn is calculated using Householder matrices and Givens rotations, and clever tricks for keeping track of the Q\-R factorisation of A\-\_\-\-P as P changes, as we describe below. 
+
+Definition at line 388 of file G\-C\-I\-\_\-\-Lsqnonneg.\-c.
+

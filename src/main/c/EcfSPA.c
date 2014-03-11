@@ -32,12 +32,16 @@
 #include "EcfInternal.h"
 
 
-/* The support plane analysis code calls the appropriate Marquardt
+/** The support plane analysis code. 
+
+   Calls the appropriate Marquardt
    function to perform a fit for each parameter value set we are
    interested in.
+   
+   * \file EcfSPA.h
+ */
 
-   The variants of these functions are as follows:
-
+/**
    GCI_SPA_1D_*  performs a 1-dimensional support plane analysis.  It
                  takes the same fitting paramters as the corresponding
                  standard Marquardt function, without a few of the
@@ -61,27 +65,7 @@
 				 chisq[] array runs from chisq[0], corresponding to
 				 spa_low to chisq[spa_nvalues-1], corresponding to
 				 spa_high.
-
-   GCI_SPA_2D_*  performs a 2-dimensional support plane analysis.  It
-                 is the same as the 1-dimensional variant, except that
-                 now the extra parameters are:
-
-                 int spa_param1, int spa_nvalues1,
-				 float spa_low1, float spa_high1,
-                 int spa_param1, int spa_nvalues1,
-				 float spa_low1, float spa_high1,
-				 float chisq[][], (int df[][])
-
-				 Here chisq[i][j] will correspond to the i-th value of
-				 param1 and the j-th value of param2; chisq[][] itself
-				 will have been allocated by the GCI_ecf_matrix function.
-
-   In all cases where the original function must be provided with
-   reasonable initial estimates for the parameters, so must these
-   functions.
 */
-
-
 int GCI_SPA_1D_marquardt(
 				float x[], float y[], int ndata,
 				noise_type noise, float sig[],
@@ -152,6 +136,25 @@ int GCI_SPA_1D_marquardt(
 	return 0;
 }
 
+/**
+   GCI_SPA_2D_*  performs a 2-dimensional support plane analysis.  It
+                 is the same as the 1-dimensional variant, except that
+                 now the extra parameters are:
+
+                 int spa_param1, int spa_nvalues1,
+				 float spa_low1, float spa_high1,
+                 int spa_param1, int spa_nvalues1,
+				 float spa_low1, float spa_high1,
+				 float chisq[][], (int df[][])
+
+				 Here chisq[i][j] will correspond to the i-th value of
+				 param1 and the j-th value of param2; chisq[][] itself
+				 will have been allocated by the GCI_ecf_matrix function.
+
+   In all cases where the original function must be provided with
+   reasonable initial estimates for the parameters, so must these
+   functions.
+*/
 
 int GCI_SPA_2D_marquardt(
 				float x[], float y[], int ndata,

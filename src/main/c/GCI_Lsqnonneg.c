@@ -23,7 +23,10 @@
 
 // Updated file from JG, 2.11.02
 
-/* Non-neg least squares library function
+/** 
+ * SLIM Curve - Non-negative Least Squares.
+
+Non-neg least squares library function
 
    This code is based on code and descriptions in the book
      Lawson, C.L. and Hanson, R.J., Solving Least Squares Problems,
@@ -34,7 +37,10 @@
    above-mentioned book or a similar reference.
 
    Julian Gilbey, Gray Cancer Institute, September 2002
-*/
+ *
+ * \file GCI_Lsqnonneg.c
+ */
+
 
 /* Include files we need */
 #include <stdio.h>   /* for NULL */
@@ -46,17 +52,17 @@
 #define max(a,b) ((a)<(b) ? (b) : (a))
 #endif
 
-/* The greatest number of variables to be determined.  This is to
+/** The greatest number of variables to be determined.  This is to
    allocate an array in advance to save having to use malloc/free */
 #define MAX_VARS 50
 
-/* The greatest number of equations to be used.  Again, this is
+/** The greatest number of equations to be used.  Again, this is
    to allocate an array in advance */
 #define MAX_EQNS 10000
 
-/* Some tolerence calculations */
-/* Approximate machine epsilon */
+/** Approximate machine epsilon */
 #define EPS 1e-9
+/** Tolerance */
 #define TOL (100*EPS)
 
 /* Internal function prototypes */
@@ -65,8 +71,8 @@ void Householder(int mode, double *v, int p, int l, int m, double *u_p,
 void GivensCalc(double v_1, double v_2, double *c, double *s, double *r);
 void GivensApply(double c, double s, double *z_1, double *z_2);
 
-/**********************************************************************
-   Function Householder
+/**
+   Function Householder.
 
    This function takes as input a vector, a pivot element and a zero
    point, and applies a Householder transformation to the vector to
@@ -205,9 +211,8 @@ void Householder(int mode, double *v, int p, int l, int m, double *u_p,
 	}
 }
 
-
-/**********************************************************************
-   Functions GivensCalc, GivensApply
+/**
+   GivensCalc.
 
    The GivensCalc function takes as input a 2-vector, and computes
    the Givens rotation for this vector.
@@ -230,6 +235,36 @@ void Householder(int mode, double *v, int p, int l, int m, double *u_p,
             u := min {|x|, |y|}
             r := ( t.sqrt(1+(u/t)^2)  if t != 0
                  ( 0                  if t = 0
+
+*/
+
+void GivensCalc(double v_1, double v_2, double *c, double *s, double *r)
+{
+	double w, q;
+
+	if (fabs(v_1) > fabs(v_2)) {
+		w = v_2/v_1;
+		q = sqrt(1+w*w);
+		*c = 1/q;
+		if (v_1 < 0) *c = - (*c);
+		*s = w*(*c);
+		*r = fabs(v_1)*q;
+	} else {
+		if (v_2 == 0) {
+			*c = 1; *s = 0; *r = 0;
+		} else {
+			w = v_1/v_2;
+			q = sqrt(1+w*w);
+			*s = 1/q;
+			if (v_2 < 0) *s = - (*s);
+			*c = w*(*s);
+			*r = fabs(v_2)*q;
+		}
+	}
+}
+
+/**
+   GivensApply.
 
    The function GivensApply applies a Givens rotation to a
    2-vector.  No rocket science there.
@@ -271,32 +306,6 @@ void Householder(int mode, double *v, int p, int l, int m, double *u_p,
 
 */
 
-void GivensCalc(double v_1, double v_2, double *c, double *s, double *r)
-{
-	double w, q;
-
-	if (fabs(v_1) > fabs(v_2)) {
-		w = v_2/v_1;
-		q = sqrt(1+w*w);
-		*c = 1/q;
-		if (v_1 < 0) *c = - (*c);
-		*s = w*(*c);
-		*r = fabs(v_1)*q;
-	} else {
-		if (v_2 == 0) {
-			*c = 1; *s = 0; *r = 0;
-		} else {
-			w = v_1/v_2;
-			q = sqrt(1+w*w);
-			*s = 1/q;
-			if (v_2 < 0) *s = - (*s);
-			*c = w*(*s);
-			*r = fabs(v_2)*q;
-		}
-	}
-}
-
-
 void GivensApply(double c, double s, double *z_1, double *z_2)
 {
 	double w;
@@ -306,9 +315,10 @@ void GivensApply(double c, double s, double *z_1, double *z_2)
 	*z_1 = w;
 }
 
+#define Amatrix(row,col) A[col][row]
 
-/**********************************************************************
-   Function GCI_lsqnonneg
+/**
+   Function GCI_lsqnonneg.
 
    This function solves the non-negative least squares problem:
    minimise |Ax-b| subject to x >= 0 (where |v| is the 2-norm of the
@@ -374,8 +384,6 @@ void GivensApply(double c, double s, double *z_1, double *z_2)
    and clever tricks for keeping track of the QR factorisation of A_P
    as P changes, as we describe below.
 */
-
-#define Amatrix(row,col) A[col][row]
 
 int GCI_lsqnonneg(double **A_orig, double *b_orig, double *x, int m, int n,
 				  int preserve, double *rnorm_orig, double *lambda)

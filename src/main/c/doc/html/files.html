@@ -39,6 +39,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -70,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -86,15 +87,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="textblock">Here is a list of all documented files with brief descriptions:</div><div class="directory">
 <table class="directory">
-<tr id="row_0_" class="even"><td class="entry"><img src="ftv2node.png" alt="o" width="16" height="22" /><a href="_ecf_8h_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><a class="el" href="_ecf_8h.html" target="_self">Ecf.h</a></td><td class="desc">SLIM Curve - Exponential Curve Fitting </td></tr>
-<tr id="row_1_"><td class="entry"><img src="ftv2node.png" alt="o" width="16" height="22" /><a href="_g_c_i___lsqnonneg_8h_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><a class="el" href="_g_c_i___lsqnonneg_8h.html" target="_self">GCI_Lsqnonneg.h</a></td><td class="desc">SLIM Curve - Non-negative Least Squares </td></tr>
-<tr id="row_2_" class="even"><td class="entry"><img src="ftv2lastnode.png" alt="\" width="16" height="22" /><a href="_g_c_i___phasor_8h_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><a class="el" href="_g_c_i___phasor_8h.html" target="_self">GCI_Phasor.h</a></td><td class="desc">SLIM Curve - Phasor analysis </td></tr>
+<tr id="row_0_" class="even"><td class="entry"><img src="ftv2node.png" alt="o" width="16" height="22" /><a href="_ecf_8h_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><a class="el" href="_ecf_8h.html" target="_self">Ecf.h</a></td><td class="desc">SLIM Curve - Exponential Curve Fitting Header </td></tr>
+<tr id="row_1_"><td class="entry"><img src="ftv2node.png" alt="o" width="16" height="22" /><a href="_ecf_global_8c_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><b>EcfGlobal.c</b></td><td class="desc"></td></tr>
+<tr id="row_2_" class="even"><td class="entry"><img src="ftv2node.png" alt="o" width="16" height="22" /><a href="_ecf_single_8c_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><a class="el" href="_ecf_single_8c.html" target="_self">EcfSingle.c</a></td><td class="desc">SLIM Curve - Exponential Curve Fitting </td></tr>
+<tr id="row_3_"><td class="entry"><img src="ftv2node.png" alt="o" width="16" height="22" /><a href="_ecf_s_p_a_8c_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><b>EcfSPA.c</b></td><td class="desc"></td></tr>
+<tr id="row_4_" class="even"><td class="entry"><img src="ftv2node.png" alt="o" width="16" height="22" /><a href="_g_c_i___lsqnonneg_8c_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><a class="el" href="_g_c_i___lsqnonneg_8c.html" target="_self">GCI_Lsqnonneg.c</a></td><td class="desc">SLIM Curve - Non-negative Least Squares </td></tr>
+<tr id="row_5_"><td class="entry"><img src="ftv2node.png" alt="o" width="16" height="22" /><a href="_g_c_i___lsqnonneg_8h_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><a class="el" href="_g_c_i___lsqnonneg_8h.html" target="_self">GCI_Lsqnonneg.h</a></td><td class="desc">SLIM Curve - Non-negative Least Squares Header </td></tr>
+<tr id="row_6_" class="even"><td class="entry"><img src="ftv2node.png" alt="o" width="16" height="22" /><a href="_g_c_i___phasor_8c_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><a class="el" href="_g_c_i___phasor_8c.html" target="_self">GCI_Phasor.c</a></td><td class="desc">SLIM Curve - Phasor analysis </td></tr>
+<tr id="row_7_"><td class="entry"><img src="ftv2lastnode.png" alt="\" width="16" height="22" /><a href="_g_c_i___phasor_8h_source.html"><img src="ftv2doc.png" alt="*" width="24" height="22" /></a><a class="el" href="_g_c_i___phasor_8h.html" target="_self">GCI_Phasor.h</a></td><td class="desc">SLIM Curve - Phasor analysis Header </td></tr>
 </table>
 </div><!-- directory -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Feb 28 2014 16:59:03 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 11 2014 15:45:15 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

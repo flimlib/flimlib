@@ -39,6 +39,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -69,6 +70,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li class="current"><a href="globals.html"><span>All</span></a></li>
       <li><a href="globals_func.html"><span>Functions</span></a></li>
       <li><a href="globals_enum.html"><span>Enumerations</span></a></li>
+      <li><a href="globals_defs.html"><span>Macros</span></a></li>
+    </ul>
+  </div>
+  <div id="navrow4" class="tabs3">
+    <ul class="tablist">
+      <li><a href="#index_e"><span>e</span></a></li>
+      <li><a href="#index_f"><span>f</span></a></li>
+      <li><a href="#index_g"><span>g</span></a></li>
+      <li><a href="#index_h"><span>h</span></a></li>
+      <li><a href="#index_m"><span>m</span></a></li>
+      <li><a href="#index_n"><span>n</span></a></li>
+      <li><a href="#index_r"><span>r</span></a></li>
+      <li class="current"><a href="#index_t"><span>t</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -77,7 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -87,36 +101,124 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 
 <div class="contents">
-<div class="textblock">Here is a list of all documented file members with links to the documentation:</div><ul>
+<div class="textblock">Here is a list of all documented file members with links to the documentation:</div>
+
+<h3><a class="anchor" id="index_e"></a>- e -</h3><ul>
+<li>EPS
+: <a class="el" href="_g_c_i___lsqnonneg_8c.html#a6ebf6899d6c1c8b7b9d09be872c05aae">GCI_Lsqnonneg.c</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_f"></a>- f -</h3><ul>
 <li>fit_type
 : <a class="el" href="_ecf_8h.html#a02b14794ec966816ffe397474b985361">Ecf.h</a>
 </li>
+</ul>
+
+
+<h3><a class="anchor" id="index_g"></a>- g -</h3><ul>
+<li>GCI_ecf_matrix()
+: <a class="el" href="_ecf_8h.html#a2ad195c79ea0a1f4f1065d0ca2e9023e">Ecf.h</a>
+</li>
 <li>GCI_lsqnonneg()
 : <a class="el" href="_g_c_i___lsqnonneg_8h.html#a22eea7bf01a7e9cc5c446c203b497d36">GCI_Lsqnonneg.h</a>
+, <a class="el" href="_g_c_i___lsqnonneg_8c.html#aa4b6201eeb7a64bbb4070606e087503a">GCI_Lsqnonneg.c</a>
+</li>
+<li>GCI_marquardt()
+: <a class="el" href="_ecf_8h.html#a5bbaf55df7653f2f443e38b6f6b1e1a9">Ecf.h</a>
+, <a class="el" href="_ecf_single_8c.html#a5bbaf55df7653f2f443e38b6f6b1e1a9">EcfSingle.c</a>
+</li>
+<li>GCI_marquardt_compute_fn()
+: <a class="el" href="_ecf_single_8c.html#a2f0e656f93772e14f4a879297e17556f">EcfSingle.c</a>
+</li>
+<li>GCI_marquardt_compute_fn_final()
+: <a class="el" href="_ecf_single_8c.html#aa71017f42eaaac4f5246ba5c931e0838">EcfSingle.c</a>
+</li>
+<li>GCI_marquardt_compute_fn_final_instr()
+: <a class="el" href="_ecf_single_8c.html#ae3621766e57085ea7fa13b6533cd0bb8">EcfSingle.c</a>
 </li>
 <li>GCI_marquardt_fitting_engine()
 : <a class="el" href="_ecf_8h.html#a94bbfd4c5b3d3a79fd840731954f3976">Ecf.h</a>
+, <a class="el" href="_ecf_single_8c.html#a94bbfd4c5b3d3a79fd840731954f3976">EcfSingle.c</a>
+</li>
+<li>GCI_marquardt_global_exps_instr()
+: <a class="el" href="_ecf_8h.html#adaf97138127a9b5b4db9de0c15a95742">Ecf.h</a>
+</li>
+<li>GCI_marquardt_global_generic_instr()
+: <a class="el" href="_ecf_8h.html#ac92d80a24a54ae6853e5c49de4e965ab">Ecf.h</a>
 </li>
 <li>GCI_Phasor()
 : <a class="el" href="_g_c_i___phasor_8h.html#af51fe3139a92320f582ac7abb56d6495">GCI_Phasor.h</a>
+, <a class="el" href="_g_c_i___phasor_8c.html#a7fa5e3b745f0480377e81575e941fb7a">GCI_Phasor.c</a>
 </li>
 <li>GCI_Phasor_getPeriod()
 : <a class="el" href="_g_c_i___phasor_8h.html#a23c618928152a85a0e2974de68ede0f5">GCI_Phasor.h</a>
+, <a class="el" href="_g_c_i___phasor_8c.html#a23c618928152a85a0e2974de68ede0f5">GCI_Phasor.c</a>
+</li>
+<li>GCI_SPA_1D_marquardt()
+: <a class="el" href="_ecf_8h.html#ae1168eba7dd501dd4427c436d6351d1d">Ecf.h</a>
+</li>
+<li>GCI_SPA_2D_marquardt()
+: <a class="el" href="_ecf_8h.html#a1b39dab2b8a463ca924475c8633696e2">Ecf.h</a>
+</li>
+<li>GCI_triple_integral()
+: <a class="el" href="_ecf_8h.html#ad62c421e86238246287fc9cadf4bf171">Ecf.h</a>
+, <a class="el" href="_ecf_single_8c.html#ad62c421e86238246287fc9cadf4bf171">EcfSingle.c</a>
 </li>
 <li>GCI_triple_integral_fitting_engine()
 : <a class="el" href="_ecf_8h.html#a7790a7e8ebdca31efd349e44add17cd9">Ecf.h</a>
+, <a class="el" href="_ecf_single_8c.html#a7790a7e8ebdca31efd349e44add17cd9">EcfSingle.c</a>
 </li>
+<li>GivensApply()
+: <a class="el" href="_g_c_i___lsqnonneg_8c.html#a26f057044890214807647841dfeddc11">GCI_Lsqnonneg.c</a>
+</li>
+<li>GivensCalc()
+: <a class="el" href="_g_c_i___lsqnonneg_8c.html#ae80324df1fc131ce0f8b87965b68af30">GCI_Lsqnonneg.c</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_h"></a>- h -</h3><ul>
+<li>Householder()
+: <a class="el" href="_g_c_i___lsqnonneg_8c.html#a9dc0b48ff8ccb3ab5bfcd48e73fd1aa9">GCI_Lsqnonneg.c</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_m"></a>- m -</h3><ul>
+<li>MAX_EQNS
+: <a class="el" href="_g_c_i___lsqnonneg_8c.html#a8be9be2628a7cde262d0ad7c4ebf9339">GCI_Lsqnonneg.c</a>
+</li>
+<li>MAX_VARS
+: <a class="el" href="_g_c_i___lsqnonneg_8c.html#a5c707deff4e68c7283f2ed73665e0c77">GCI_Lsqnonneg.c</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_n"></a>- n -</h3><ul>
 <li>noise_type
 : <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">Ecf.h</a>
 </li>
+</ul>
+
+
+<h3><a class="anchor" id="index_r"></a>- r -</h3><ul>
 <li>restrain_type
 : <a class="el" href="_ecf_8h.html#ab577c048e57126ea37f6656e97e547e7">Ecf.h</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
+<li>TOL
+: <a class="el" href="_g_c_i___lsqnonneg_8c.html#a156b862ebf6d213f5da19b9e3ccb779e">GCI_Lsqnonneg.c</a>
 </li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Feb 28 2014 16:59:03 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Mar 11 2014 15:45:16 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

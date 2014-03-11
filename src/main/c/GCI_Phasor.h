@@ -25,7 +25,7 @@
 #define PHASOR_FITTING_H
 
 /** 
- * SLIM Curve - Phasor analysis.
+ * SLIM Curve - Phasor analysis Header.
  * Classic Phasor or Polar approach to FLIM.
  * See Clayton 2004 or Leray 2008.
  *
@@ -63,7 +63,7 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 /**
  * Get the phasor period that was calculated and used in the last call to GCI_Phasor.
  *
- * \return The peroid in the time units of xinc.
+ * \return The period in the time units of xinc.
  *
  */
 double GCI_Phasor_getPeriod();

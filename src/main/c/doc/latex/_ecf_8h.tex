@@ -3,7 +3,7 @@
 }
 
 
-S\-L\-I\-M Curve -\/ Exponential Curve Fitting.  
+S\-L\-I\-M Curve -\/ Exponential Curve Fitting Header.  
 
 
 \subsection*{Enumerations}
@@ -34,33 +34,27 @@ int \hyperlink{_ecf_8h_a7790a7e8ebdca31efd349e44add17cd9}{G\-C\-I\-\_\-triple\-\
 \begin{DoxyCompactList}\small\item\em The main entry point for Triple Integral or Rapid Lifetime Determination (R\-L\-D). \end{DoxyCompactList}\item 
 int \hyperlink{_ecf_8h_a94bbfd4c5b3d3a79fd840731954f3976}{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine} (float xincr, float $\ast$trans, int ndata, int fit\-\_\-start, int fit\-\_\-end, float prompt\mbox{[}$\,$\mbox{]}, int nprompt, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$$\ast$erraxes, float chisq\-\_\-target, float chisq\-\_\-delta, int chisq\-\_\-percent)
 \begin{DoxyCompactList}\small\item\em The main entry point for L\-M and M\-L\-E fitting. \end{DoxyCompactList}\item 
-\hypertarget{_ecf_8h_ad62c421e86238246287fc9cadf4bf171}{int {\bfseries G\-C\-I\-\_\-triple\-\_\-integral} (float xincr, float y\mbox{[}$\,$\mbox{]}, int fit\-\_\-start, int fit\-\_\-end, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$Z, float $\ast$A, float $\ast$tau, float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, int division)}\label{_ecf_8h_ad62c421e86238246287fc9cadf4bf171}
-
-\item 
+int \hyperlink{_ecf_8h_ad62c421e86238246287fc9cadf4bf171}{G\-C\-I\-\_\-triple\-\_\-integral} (float xincr, float y\mbox{[}$\,$\mbox{]}, int fit\-\_\-start, int fit\-\_\-end, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$Z, float $\ast$A, float $\ast$tau, float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, int division)
+\begin{DoxyCompactList}\small\item\em Start with an easy one\-: the three integral method. \end{DoxyCompactList}\item 
 \hypertarget{_ecf_8h_a3c72ce45f467e73bdbfdeecba86a2d3a}{int {\bfseries G\-C\-I\-\_\-triple\-\_\-integral\-\_\-instr} (float xincr, float y\mbox{[}$\,$\mbox{]}, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$Z, float $\ast$A, float $\ast$tau, float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, int division)}\label{_ecf_8h_a3c72ce45f467e73bdbfdeecba86a2d3a}
 
 \item 
-\hypertarget{_ecf_8h_a5bbaf55df7653f2f443e38b6f6b1e1a9}{int {\bfseries G\-C\-I\-\_\-marquardt} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$fitted, float $\ast$residuals, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$chisq, float chisq\-\_\-delta, float chisq\-\_\-percent, float $\ast$$\ast$erraxes)}\label{_ecf_8h_a5bbaf55df7653f2f443e38b6f6b1e1a9}
-
-\item 
+int \hyperlink{_ecf_8h_a5bbaf55df7653f2f443e38b6f6b1e1a9}{G\-C\-I\-\_\-marquardt} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$fitted, float $\ast$residuals, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$chisq, float chisq\-\_\-delta, float chisq\-\_\-percent, float $\ast$$\ast$erraxes)
+\begin{DoxyCompactList}\small\item\em Now for the non-\/linear least squares fitting algorithms. \end{DoxyCompactList}\item 
 \hypertarget{_ecf_8h_a527b18f8e48919e46f32af4889662f48}{int {\bfseries G\-C\-I\-\_\-marquardt\-\_\-instr} (float xincr, float y\mbox{[}$\,$\mbox{]}, int ndata, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$fitted, float $\ast$residuals, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$chisq, float chisq\-\_\-delta, float chisq\-\_\-percent, float $\ast$$\ast$erraxes)}\label{_ecf_8h_a527b18f8e48919e46f32af4889662f48}
 
 \item 
 \hypertarget{_ecf_8h_a26e45e21bc6592ea929a9b103fe9c4d2}{void {\bfseries G\-C\-I\-\_\-marquardt\-\_\-cleanup} (void)}\label{_ecf_8h_a26e45e21bc6592ea929a9b103fe9c4d2}
 
 \item 
-\hypertarget{_ecf_8h_adaf97138127a9b5b4db9de0c15a95742}{int {\bfseries G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-instr} (float xincr, float $\ast$$\ast$trans, int ndata, int ntrans, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, int ftype, float $\ast$$\ast$param, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, float chisq\-\_\-delta, float $\ast$$\ast$fitted, float $\ast$$\ast$residuals, float chisq\-\_\-trans\mbox{[}$\,$\mbox{]}, float $\ast$chisq\-\_\-global, int $\ast$df, int drop\-\_\-bad\-\_\-transients)}\label{_ecf_8h_adaf97138127a9b5b4db9de0c15a95742}
-
-\item 
-\hypertarget{_ecf_8h_ac92d80a24a54ae6853e5c49de4e965ab}{int {\bfseries G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-generic\-\_\-instr} (float xincr, float $\ast$$\ast$trans, int ndata, int ntrans, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$$\ast$param, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, int gparam\mbox{[}$\,$\mbox{]}, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, float chisq\-\_\-delta, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$$\ast$fitted, float $\ast$$\ast$residuals, float chisq\-\_\-trans\mbox{[}$\,$\mbox{]}, float $\ast$chisq\-\_\-global, int $\ast$df)}\label{_ecf_8h_ac92d80a24a54ae6853e5c49de4e965ab}
-
-\item 
-\hypertarget{_ecf_8h_ae1168eba7dd501dd4427c436d6351d1d}{int {\bfseries G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-marquardt} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, float chisq\-\_\-delta, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), int spa\-\_\-param, int spa\-\_\-nvalues, float spa\-\_\-low, float spa\-\_\-high, float chisq\mbox{[}$\,$\mbox{]}, void($\ast$progressfunc)(float))}\label{_ecf_8h_ae1168eba7dd501dd4427c436d6351d1d}
-
-\item 
-\hypertarget{_ecf_8h_a1b39dab2b8a463ca924475c8633696e2}{int {\bfseries G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-marquardt} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, float chisq\-\_\-delta, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), int spa\-\_\-param1, int spa\-\_\-nvalues1, float spa\-\_\-low1, float spa\-\_\-high1, int spa\-\_\-param2, int spa\-\_\-nvalues2, float spa\-\_\-low2, float spa\-\_\-high2, float $\ast$$\ast$chisq, void($\ast$progressfunc)(float))}\label{_ecf_8h_a1b39dab2b8a463ca924475c8633696e2}
-
-\item 
+int \hyperlink{_ecf_8h_adaf97138127a9b5b4db9de0c15a95742}{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-instr} (float xincr, float $\ast$$\ast$trans, int ndata, int ntrans, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, int ftype, float $\ast$$\ast$param, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, float chisq\-\_\-delta, float $\ast$$\ast$fitted, float $\ast$$\ast$residuals, float chisq\-\_\-trans\mbox{[}$\,$\mbox{]}, float $\ast$chisq\-\_\-global, int $\ast$df, int drop\-\_\-bad\-\_\-transients)
+\begin{DoxyCompactList}\small\item\em Global analysis analysis function for exponential functions. \end{DoxyCompactList}\item 
+int \hyperlink{_ecf_8h_ac92d80a24a54ae6853e5c49de4e965ab}{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-generic\-\_\-instr} (float xincr, float $\ast$$\ast$trans, int ndata, int ntrans, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$$\ast$param, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, int gparam\mbox{[}$\,$\mbox{]}, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, float chisq\-\_\-delta, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$$\ast$fitted, float $\ast$$\ast$residuals, float chisq\-\_\-trans\mbox{[}$\,$\mbox{]}, float $\ast$chisq\-\_\-global, int $\ast$df)
+\begin{DoxyCompactList}\small\item\em Global analysis analysis function for generic functions. \end{DoxyCompactList}\item 
+int \hyperlink{_ecf_8h_ae1168eba7dd501dd4427c436d6351d1d}{G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-marquardt} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, float chisq\-\_\-delta, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), int spa\-\_\-param, int spa\-\_\-nvalues, float spa\-\_\-low, float spa\-\_\-high, float chisq\mbox{[}$\,$\mbox{]}, void($\ast$progressfunc)(float))
+\begin{DoxyCompactList}\small\item\em G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-$\ast$ performs a 1-\/dimensional support plane analysis. \end{DoxyCompactList}\item 
+int \hyperlink{_ecf_8h_a1b39dab2b8a463ca924475c8633696e2}{G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-marquardt} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, float chisq\-\_\-delta, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), int spa\-\_\-param1, int spa\-\_\-nvalues1, float spa\-\_\-low1, float spa\-\_\-high1, int spa\-\_\-param2, int spa\-\_\-nvalues2, float spa\-\_\-low2, float spa\-\_\-high2, float $\ast$$\ast$chisq, void($\ast$progressfunc)(float))
+\begin{DoxyCompactList}\small\item\em G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-$\ast$ performs a 2-\/dimensional support plane analysis. \end{DoxyCompactList}\item 
 \hypertarget{_ecf_8h_a9e3f8e4749667b5b5f1720d73ce50763}{int {\bfseries G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-marquardt\-\_\-instr} (float xincr, float y\mbox{[}$\,$\mbox{]}, int ndata, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, float chisq\-\_\-delta, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), int spa\-\_\-param, int spa\-\_\-nvalues, float spa\-\_\-low, float spa\-\_\-high, float chisq\mbox{[}$\,$\mbox{]}, float chisq\-\_\-target, void($\ast$progressfunc)(float))}\label{_ecf_8h_a9e3f8e4749667b5b5f1720d73ce50763}
 
 \item 
@@ -91,9 +85,8 @@ int \hyperlink{_ecf_8h_a94bbfd4c5b3d3a79fd840731954f3976}{G\-C\-I\-\_\-marquardt
 \hypertarget{_ecf_8h_abd5e64cbb4216ace85ecb0f4529fd3aa}{void {\bfseries G\-C\-I\-\_\-stretchedexp} (float x, float param\mbox{[}$\,$\mbox{]}, float $\ast$y, float dy\-\_\-dparam\mbox{[}$\,$\mbox{]}, int nparam)}\label{_ecf_8h_abd5e64cbb4216ace85ecb0f4529fd3aa}
 
 \item 
-\hypertarget{_ecf_8h_a2ad195c79ea0a1f4f1065d0ca2e9023e}{float $\ast$$\ast$ {\bfseries G\-C\-I\-\_\-ecf\-\_\-matrix} (long nrows, long ncols)}\label{_ecf_8h_a2ad195c79ea0a1f4f1065d0ca2e9023e}
-
-\item 
+float $\ast$$\ast$ \hyperlink{_ecf_8h_a2ad195c79ea0a1f4f1065d0ca2e9023e}{G\-C\-I\-\_\-ecf\-\_\-matrix} (long nrows, long ncols)
+\begin{DoxyCompactList}\small\item\em Allocate a 2d matrix for ecf fitting. \end{DoxyCompactList}\item 
 \hypertarget{_ecf_8h_afd88f267cae9ae28b315c683b4b82732}{void {\bfseries G\-C\-I\-\_\-ecf\-\_\-free\-\_\-matrix} (float $\ast$$\ast$m)}\label{_ecf_8h_afd88f267cae9ae28b315c683b4b82732}
 
 \item 
@@ -106,7 +99,7 @@ int \hyperlink{_ecf_8h_a94bbfd4c5b3d3a79fd840731954f3976}{G\-C\-I\-\_\-marquardt
 
 
 \subsection{Detailed Description}
-S\-L\-I\-M Curve -\/ Exponential Curve Fitting. 
+S\-L\-I\-M Curve -\/ Exponential Curve Fitting Header. 
 
 Definition in file \hyperlink{_ecf_8h_source}{Ecf.\-h}.
 
@@ -154,6 +147,60 @@ Definition at line 56 of file Ecf.\-h.
 
 
 \subsection{Function Documentation}
+\hypertarget{_ecf_8h_a2ad195c79ea0a1f4f1065d0ca2e9023e}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-ecf\-\_\-matrix@{G\-C\-I\-\_\-ecf\-\_\-matrix}}
+\index{G\-C\-I\-\_\-ecf\-\_\-matrix@{G\-C\-I\-\_\-ecf\-\_\-matrix}!Ecf.h@{Ecf.\-h}}
+\subsubsection[{G\-C\-I\-\_\-ecf\-\_\-matrix}]{\setlength{\rightskip}{0pt plus 5cm}float$\ast$$\ast$ G\-C\-I\-\_\-ecf\-\_\-matrix (
+\begin{DoxyParamCaption}
+\item[{long}]{nrows, }
+\item[{long}]{ncols}
+\end{DoxyParamCaption}
+)}}\label{_ecf_8h_a2ad195c79ea0a1f4f1065d0ca2e9023e}
+
+
+Allocate a 2d matrix for ecf fitting. 
+
+\hypertarget{_ecf_8h_a5bbaf55df7653f2f443e38b6f6b1e1a9}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-marquardt@{G\-C\-I\-\_\-marquardt}}
+\index{G\-C\-I\-\_\-marquardt@{G\-C\-I\-\_\-marquardt}!Ecf.h@{Ecf.\-h}}
+\subsubsection[{G\-C\-I\-\_\-marquardt}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-marquardt (
+\begin{DoxyParamCaption}
+\item[{float}]{x\mbox{[}$\,$\mbox{]}, }
+\item[{float}]{y\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{ndata, }
+\item[{{\bf noise\-\_\-type}}]{noise, }
+\item[{float}]{sig\mbox{[}$\,$\mbox{]}, }
+\item[{float}]{param\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{paramfree\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{nparam, }
+\item[{{\bf restrain\-\_\-type}}]{restrain, }
+\item[{void($\ast$)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int)}]{fitfunc, }
+\item[{float $\ast$}]{fitted, }
+\item[{float $\ast$}]{residuals, }
+\item[{float $\ast$$\ast$}]{covar, }
+\item[{float $\ast$$\ast$}]{alpha, }
+\item[{float $\ast$}]{chisq, }
+\item[{float}]{chisq\-\_\-delta, }
+\item[{float}]{chisq\-\_\-percent, }
+\item[{float $\ast$$\ast$}]{erraxes}
+\end{DoxyParamCaption}
+)}}\label{_ecf_8h_a5bbaf55df7653f2f443e38b6f6b1e1a9}
+
+
+Now for the non-\/linear least squares fitting algorithms. 
+
+The process is\-:
+\begin{DoxyItemize}
+\item for Gaussian noise, use Levenberg-\/\-Marquardt directly
+\item for Poisson noise, use Levenberg-\/\-Marquardt to get an initial estimate of the parameters assuming constant error variance, then use amoeba to improve the estimate, assuming that the error variance is proportional to the function value (with a minimum variance of 15 to handle the case when the Poisson distribution is not approximately Gaussian, so that the very noisy tails do not inappropriately weight the solution).
+\end{DoxyItemize}
+
+This code contains two variants of the Levenberg-\/\-Marquardt method for slightly different situations. This attempts to reduce the value chi$^\wedge$2 of a fit between a set of data points x\mbox{[}0..ndata-\/1\mbox{]}, y\mbox{[}0..ndata-\/1\mbox{]} and a nonlinear function dependent on nparam coefficients param\mbox{[}0..nparam-\/1\mbox{]}. In the case that the x values are equally spaced and start at zero, we can also handle convolution with an instrument response instr\mbox{[}0..ninstr-\/1\mbox{]} and only look at the data points from fit\-\_\-start..fit\-\_\-end-\/1. The first variant does not handle an instrument response and takes any values of x\mbox{[}0..ndata-\/1\mbox{]}. The second variant takes an xincr and will handle an instrument response if ninstr $>$ 0. The individual standard deviations of the errors are determined by the value of noise\-: if noise=N\-O\-I\-S\-E\-\_\-\-C\-O\-N\-S\-T, the standard deviations are constant, given by sig\mbox{[}0\mbox{]}=$\ast$sig, if noise=N\-O\-I\-S\-E\-\_\-\-G\-I\-V\-E\-N, the standard deviations are given by sig\mbox{[}0..ndata-\/1\mbox{]}, if noise=N\-O\-I\-S\-E\-\_\-\-P\-O\-I\-S\-S\-O\-N\-\_\-\-D\-A\-T\-A, the standard deviations are taken to be given by Poisson noise, and the variances are taken to be max(y\mbox{[}i\mbox{]},15), and if noise=N\-O\-I\-S\-E\-\_\-\-P\-O\-I\-S\-S\-O\-N\-\_\-\-F\-I\-T, the variances are taken to be max(yfit\mbox{[}i\mbox{]},15). If noise=N\-O\-I\-S\-E\-\_\-\-G\-A\-U\-S\-S\-I\-A\-N\-\_\-\-F\-I\-T, the variances are taken to be yfit\mbox{[}i\mbox{]} and if noise=N\-O\-I\-S\-E\-\_\-\-M\-L\-E then a optimisation is for the maximum likelihood approximation (Laurence and Chromy in press 2010 and G. Nishimura, and M. Tamura Phys Med Biol 2005).
+
+The input array paramfree\mbox{[}0..nparam-\/1\mbox{]} indicates by nonzero entries those components that should be held fixed at their input values. The program returns current best-\/fit values for the parameters param\mbox{[}0..nparam-\/1\mbox{]} and chi$^\wedge$2 = chisq. The arrays covar\mbox{[}0..nparam-\/1\mbox{]}\mbox{[}0..nparam-\/1\mbox{]} and alpha\mbox{[}0..nparam-\/1\mbox{]}\mbox{[}0..nparam-\/1\mbox{]} are used as working space during most isterations. Supply a routine fitfunc(x,param,yfit,dy\-\_\-dparam,nparam) that evaluates the fitting function fitfunc and its derivatives dydy\mbox{[}1..nparam-\/1\mbox{]} with respect to the fitting parameters param at x. (See below for information about zero offsets, though.) The values of fitfunc, modified by the instrument response, are returned in the array yfit and the differences y -\/ yfit in dy. The first call {\itshape must} provide an initial guess for the parameters param and set alambda $<$ 0 for initialisation (which then sets alambda = 0.\-001). If a step succeeds, chisq becomes smaller and alambda decreases by a factor of 10. You must call this routine repeatedly until convergence is achieved. Then make one final call with alambda=0 to perform cleanups and so that covar\mbox{[}0..nparam-\/1\mbox{]}\mbox{[}0..nparam-\/1\mbox{]} returns the covariance matrix and alpha the curvature matrix. (Parameters held fixed will return zero covariances.)
+
+One key extra piece which is particularly important in the instrument response case. The parameter param\mbox{[}0\mbox{]} is assumed to be the zero offset of the signal, which applies before and after time zero. It thus simply contributes param\mbox{[}0\mbox{]}$\ast$sum(instr) to the signal value rather than being convolved with the instrument response only from time zero. For this reason, the fitfunc should ignore param\mbox{[}0\mbox{]}, as the fitting routines will handle this offset. 
+
+Definition at line 526 of file Ecf\-Single.\-c.
+
 \hypertarget{_ecf_8h_a94bbfd4c5b3d3a79fd840731954f3976}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine@{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine}}
 \index{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine@{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine}!Ecf.h@{Ecf.\-h}}
 \subsubsection[{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine (
@@ -187,11 +234,11 @@ Definition at line 56 of file Ecf.\-h.
 
 The main entry point for L\-M and M\-L\-E fitting. 
 
-Uses G\-C\-I\-\_\-marquardt\-\_\-instr() to fit repeatedly until chisq\-\_\-target is met or a maximum number of iterations are used. This can be used to fit any function through the 'fitfunc', but is primarily used for single, multi and stretched exponential fits. Predefined fitting models G\-C\-I\-\_\-multiexp\-\_\-tau and G\-C\-I\-\_\-stretchedexp are provided.
+Uses G\-C\-I\-\_\-marquardt\-\_\-instr() to fit repeatedly until chisq\-\_\-target is met or a maximum number of iterations are used. This can be used to fit any function through the 'fitfunc', but is primarily used for single, multi and stretched exponential fits. Predefined fitting models G\-C\-I\-\_\-multiexp\-\_\-tau and G\-C\-I\-\_\-stretchedexp are provided elsewhere in the library.
 
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\tt in}  & {\em xincr} & The time increment inbetween the values in the y array. \\
+\mbox{\tt in}  & {\em xincr} & The time increment in between the values in the y array. \\
 \hline
 \mbox{\tt in}  & {\em trans} & The transient (time resolved) signal to be analysed, the 'data'. \\
 \hline
@@ -201,7 +248,7 @@ Uses G\-C\-I\-\_\-marquardt\-\_\-instr() to fit repeatedly until chisq\-\_\-targ
 \hline
 \mbox{\tt in}  & {\em fit\-\_\-end} & The index into the y array marking the end of the data to be used in the fit. \\
 \hline
-\mbox{\tt in}  & {\em prompt} & The instrument reponse (I\-R\-F) or prompt signal to be used (optional, can pass N\-U\-L\-L). \\
+\mbox{\tt in}  & {\em prompt} & The instrument response (I\-R\-F) or prompt signal to be used (optional, can pass N\-U\-L\-L). \\
 \hline
 \mbox{\tt in}  & {\em nprompt} & The number of data points in the prompt (ignored if prompt = N\-U\-L\-L). \\
 \hline
@@ -209,7 +256,7 @@ Uses G\-C\-I\-\_\-marquardt\-\_\-instr() to fit repeatedly until chisq\-\_\-targ
 \hline
 \mbox{\tt in}  & {\em sig} & The standard deviation at each data point in y if noise\-\_\-type N\-O\-I\-S\-E\-\_\-\-G\-I\-V\-E\-N is used (optional, can pass N\-U\-L\-L). \\
 \hline
-\mbox{\tt out}  & {\em param} & An array of parameters, the order of which must match fitfunc. \\
+\mbox{\tt in,out}  & {\em param} & An array of parameters, the order of which must match fitfunc. Provide parameter estimates, these are overridden with the fitted values. \\
 \hline
 \mbox{\tt in}  & {\em paramfree} & An array indicating which parameters are free (1), fixed (0) \\
 \hline
@@ -223,14 +270,313 @@ Uses G\-C\-I\-\_\-marquardt\-\_\-instr() to fit repeatedly until chisq\-\_\-targ
 \hline
 \mbox{\tt out}  & {\em residuals} & An array containing the difference between the data and the fit. \\
 \hline
-\mbox{\tt out}  & {\em chisq} & The resulting reduced chi squared value of the fit. \\
+\mbox{\tt out}  & {\em chisq} & The resulting raw chi squared value of the fit. To get the reduced chisq, divide by the degrees of freedom (fit\-\_\-start -\/ fit\-\_\-end -\/ nparam) \\
 \hline
-\mbox{\tt in}  & {\em chisq\-\_\-target} & A target chi squared value to aim for. If this value is reached fitting will stop. \\
+\mbox{\tt out}  & {\em covar} & The covariance matrix. Allocate with a square matrix with G\-C\-I\-\_\-ecf\-\_\-matrix(nparam, nparam). \\
+\hline
+\mbox{\tt out}  & {\em alpha} & The alpha matrix. Allocate with a square matrix with G\-C\-I\-\_\-ecf\-\_\-matrix(nparam, nparam). \\
+\hline
+\mbox{\tt out}  & {\em erraxes} & The dimensions of the confidence ellipsoid of the chisq. See chisq\-\_\-percent below. Allocate with a square matrix with G\-C\-I\-\_\-ecf\-\_\-matrix(nparam, nparam). \\
+\hline
+\mbox{\tt in}  & {\em chisq\-\_\-target} & A raw chi squared value to aim for. If this value is reached fitting will stop. If you want to aim for a reduced chisq (say 1.\-1 or 1.\-0) you must multiply by the degree of freedom. (T\-R\-I2\-: \char`\"{}\-Try refits\char`\"{}) \\
+\hline
+\mbox{\tt in}  & {\em chisq\-\_\-delta} & An individual fit will continue if the chisq value changes by more then this amount. Try 1\-E-\/5. (T\-R\-I2\-: \char`\"{}\-Stopping Criterion\char`\"{}) \\
+\hline
+\mbox{\tt in}  & {\em chisq\-\_\-percent} & Defines the confidence interval when calculating the error axes, e.\-g. 95 \%. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-An error code, 0 = success. 
+An error code, 0 = success.
 \end{DoxyReturn}
+The main entry point for L\-M and M\-L\-E fitting.
+
+This returns the number of iterations or negative if an error occurred. passes all the data to the ecf routine, checks the returned chisq and re-\/fits if it is of benefit was Do\-Ecf\-Fitting\-Engine() included in \hyperlink{_ecf_single_8c}{Ecf\-Single.\-c} by P\-R\-B, 3.\-9.\-03 
+
+Definition at line 1860 of file Ecf\-Single.\-c.
+
+\hypertarget{_ecf_8h_adaf97138127a9b5b4db9de0c15a95742}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-instr@{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-instr}}
+\index{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-instr@{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-instr}!Ecf.h@{Ecf.\-h}}
+\subsubsection[{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-instr}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-instr (
+\begin{DoxyParamCaption}
+\item[{float}]{xincr, }
+\item[{float $\ast$$\ast$}]{trans, }
+\item[{int}]{ndata, }
+\item[{int}]{ntrans, }
+\item[{int}]{fit\-\_\-start, }
+\item[{int}]{fit\-\_\-end, }
+\item[{float}]{instr\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{ninstr, }
+\item[{{\bf noise\-\_\-type}}]{noise, }
+\item[{float}]{sig\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{ftype, }
+\item[{float $\ast$$\ast$}]{param, }
+\item[{int}]{paramfree\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{nparam, }
+\item[{{\bf restrain\-\_\-type}}]{restrain, }
+\item[{float}]{chisq\-\_\-delta, }
+\item[{float $\ast$$\ast$}]{fitted, }
+\item[{float $\ast$$\ast$}]{residuals, }
+\item[{float}]{chisq\-\_\-trans\mbox{[}$\,$\mbox{]}, }
+\item[{float $\ast$}]{chisq\-\_\-global, }
+\item[{int $\ast$}]{df, }
+\item[{int}]{drop\-\_\-bad\-\_\-transients}
+\end{DoxyParamCaption}
+)}}\label{_ecf_8h_adaf97138127a9b5b4db9de0c15a95742}
+
+
+Global analysis analysis function for exponential functions. 
+
+The main entry point for Global analysis with exponential functions. This assumes global exponential params (lifetimes) and local amplitudes.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em xincr} & The time increment inbetween the values in the y array. \\
+\hline
+\mbox{\tt in}  & {\em trans} & A pointer to a matrix of transient (time resolved) signals to be analysed, the 'data'. Allocate with G\-C\-I\-\_\-ecf\-\_\-matrix. \\
+\hline
+\mbox{\tt in}  & {\em ndata} & The number of data points in each transient. \\
+\hline
+\mbox{\tt in}  & {\em ntrans} & The number of transient signals (pixels in a time resolved image). \\
+\hline
+\mbox{\tt in}  & {\em fit\-\_\-start} & The index into the y array marking the start to the data to be used in the fit. Some data before this start index is required for convolution with the prompt. \\
+\hline
+\mbox{\tt in}  & {\em fit\-\_\-end} & The index into the y array marking the end of the data to be used in the fit. \\
+\hline
+\mbox{\tt in}  & {\em instr} & The instrument reponse (I\-R\-F) or prompt signal to be used (optional, can pass N\-U\-L\-L). \\
+\hline
+\mbox{\tt in}  & {\em ninstr} & The number of data points in the prompt (ignored if prompt = N\-U\-L\-L). \\
+\hline
+\mbox{\tt in}  & {\em noise} & The noise\-\_\-type to be used. \\
+\hline
+\mbox{\tt in}  & {\em sig} & The standard deviation at each data point in y if noise\-\_\-type N\-O\-I\-S\-E\-\_\-\-G\-I\-V\-E\-N is used (optional, can pass N\-U\-L\-L). \\
+\hline
+\mbox{\tt in}  & {\em ftype} & The type of function to fit can be multi-\/exponential (F\-I\-T\-\_\-\-G\-L\-O\-B\-A\-L\-\_\-\-M\-U\-L\-T\-I\-E\-X\-P) or stretched exponential (F\-I\-T\-\_\-\-G\-L\-O\-B\-A\-L\-\_\-\-S\-T\-R\-E\-T\-C\-H\-E\-D\-E\-X\-P). For other fitting functions use the global generic function. \\
+\hline
+\mbox{\tt in,out}  & {\em param} & A pointer to an array of parameter arrays, the order of which must match fitfunc. \\
+\hline
+\mbox{\tt in}  & {\em paramfree} & An array indicating which parameters are free (1), fixed (0). \\
+\hline
+\mbox{\tt in}  & {\em nparam} & The number of parameters per fit. \\
+\hline
+\mbox{\tt in}  & {\em restrain} & Parameter restraining type. Normally use E\-C\-F\-\_\-\-R\-E\-S\-T\-R\-A\-I\-N\-\_\-\-D\-E\-F\-A\-U\-L\-T. Use E\-C\-F\-\_\-\-R\-E\-S\-T\-R\-A\-I\-N\-\_\-\-U\-S\-E\-R if restraining parameters has been setup via G\-C\-I\-\_\-set\-\_\-restrain\-\_\-limits. \\
+\hline
+\mbox{\tt in}  & {\em chisq\-\_\-delta} & An individual fit will continue if the chisq value changes by more then this amount. Try 1\-E-\/5. (T\-R\-I2\-: \char`\"{}\-Stopping Criterion\char`\"{}) \\
+\hline
+\mbox{\tt out}  & {\em fitted} & A pointer to a matrix containing values fitted to the data, the 'fit'. Fit points are coincident in time with the data points. Only the first row is used. Allocate with G\-C\-I\-\_\-ecf\-\_\-matrix with nrows=1. \\
+\hline
+\mbox{\tt out}  & {\em residuals} & A matrix containing the difference between the data and the fit. Only the first row is used. Allocate with G\-C\-I\-\_\-ecf\-\_\-matrix with nrows=1. \\
+\hline
+\mbox{\tt out}  & {\em chisq\-\_\-trans} & An array of the resulting raw chi squared values of the fits. To get the reduced chisq, divide by the degrees of freedom (fit\-\_\-start -\/ fit\-\_\-end -\/ nparam). \\
+\hline
+\mbox{\tt out}  & {\em chisq\-\_\-global} & The resulting raw chi squared value of the total global fit. To get the reduced chisq, divide by the degrees of freedom df. \\
+\hline
+\mbox{\tt out}  & {\em df} & The degrees of freedom. \\
+\hline
+\mbox{\tt in}  & {\em drop\-\_\-bad\-\_\-transients} & Remove individual transients from the fit that have a -\/ve return value from G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-do\-\_\-fit\-\_\-single (default = 1) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An error code, 0 = success.
+\end{DoxyReturn}
+Global analysis analysis function for exponential functions.
+
+Now the code for performing a global fit for multi-\/exponential taus and stretched exponentials. This is the function which is called from external programs. 
+
+Definition at line 356 of file Ecf\-Global.\-c.
+
+\hypertarget{_ecf_8h_ac92d80a24a54ae6853e5c49de4e965ab}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-generic\-\_\-instr@{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-generic\-\_\-instr}}
+\index{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-generic\-\_\-instr@{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-generic\-\_\-instr}!Ecf.h@{Ecf.\-h}}
+\subsubsection[{G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-generic\-\_\-instr}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-generic\-\_\-instr (
+\begin{DoxyParamCaption}
+\item[{float}]{xincr, }
+\item[{float $\ast$$\ast$}]{trans, }
+\item[{int}]{ndata, }
+\item[{int}]{ntrans, }
+\item[{int}]{fit\-\_\-start, }
+\item[{int}]{fit\-\_\-end, }
+\item[{float}]{instr\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{ninstr, }
+\item[{{\bf noise\-\_\-type}}]{noise, }
+\item[{float}]{sig\mbox{[}$\,$\mbox{]}, }
+\item[{float $\ast$$\ast$}]{param, }
+\item[{int}]{paramfree\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{nparam, }
+\item[{int}]{gparam\mbox{[}$\,$\mbox{]}, }
+\item[{{\bf restrain\-\_\-type}}]{restrain, }
+\item[{float}]{chisq\-\_\-delta, }
+\item[{void($\ast$)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int)}]{fitfunc, }
+\item[{float $\ast$$\ast$}]{fitted, }
+\item[{float $\ast$$\ast$}]{residuals, }
+\item[{float}]{chisq\-\_\-trans\mbox{[}$\,$\mbox{]}, }
+\item[{float $\ast$}]{chisq\-\_\-global, }
+\item[{int $\ast$}]{df}
+\end{DoxyParamCaption}
+)}}\label{_ecf_8h_ac92d80a24a54ae6853e5c49de4e965ab}
+
+
+Global analysis analysis function for generic functions. 
+
+The main entry point for Global analysis with generic functions.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em xincr} & The time increment inbetween the values in the y array. \\
+\hline
+\mbox{\tt in}  & {\em trans} & A pointer to a matrix of transient (time resolved) signals to be analysed, the 'data'. Allocate with G\-C\-I\-\_\-ecf\-\_\-matrix. \\
+\hline
+\mbox{\tt in}  & {\em ndata} & The number of data points in each transient. \\
+\hline
+\mbox{\tt in}  & {\em ntrans} & The number of transient signals (pixels in a time resolved image). \\
+\hline
+\mbox{\tt in}  & {\em fit\-\_\-start} & The index into the y array marking the start to the data to be used in the fit. Some data before this start index is required for convolution with the prompt. \\
+\hline
+\mbox{\tt in}  & {\em fit\-\_\-end} & The index into the y array marking the end of the data to be used in the fit. \\
+\hline
+\mbox{\tt in}  & {\em instr} & The instrument reponse (I\-R\-F) or prompt signal to be used (optional, can pass N\-U\-L\-L). \\
+\hline
+\mbox{\tt in}  & {\em ninstr} & The number of data points in the prompt (ignored if prompt = N\-U\-L\-L). \\
+\hline
+\mbox{\tt in}  & {\em noise} & The noise\-\_\-type to be used. \\
+\hline
+\mbox{\tt in}  & {\em sig} & The standard deviation at each data point in y if noise\-\_\-type N\-O\-I\-S\-E\-\_\-\-G\-I\-V\-E\-N is used (optional, can pass N\-U\-L\-L). \\
+\hline
+\mbox{\tt in,out}  & {\em param} & A pointer to an array of parameter arrays, the order of which must match fitfunc. Allocate with G\-C\-I\-\_\-ecf\-\_\-matrix(ntrans, nparam). The global params will be the same for every transient. \\
+\hline
+\mbox{\tt in}  & {\em paramfree} & An array indicating which parameters are free (1), fixed (0). \\
+\hline
+\mbox{\tt in}  & {\em nparam} & The number of parameters per fit. \\
+\hline
+\mbox{\tt in}  & {\em gparam} & An array marking which parameters are to be globally determined. \\
+\hline
+\mbox{\tt in}  & {\em restrain} & Parameter restraining type. Normally use E\-C\-F\-\_\-\-R\-E\-S\-T\-R\-A\-I\-N\-\_\-\-D\-E\-F\-A\-U\-L\-T. Use E\-C\-F\-\_\-\-R\-E\-S\-T\-R\-A\-I\-N\-\_\-\-U\-S\-E\-R if restraining parameters has been setup via G\-C\-I\-\_\-set\-\_\-restrain\-\_\-limits. \\
+\hline
+\mbox{\tt in}  & {\em chisq\-\_\-delta} & An individual fit will continue if the chisq value changes by more then this amount. Try 1\-E-\/5. (T\-R\-I2\-: \char`\"{}\-Stopping Criterion\char`\"{}) \\
+\hline
+\mbox{\tt in}  & {\em fitfunc} & Encodes the function to fit to the data, e.\-g. G\-C\-I\-\_\-multiexp\-\_\-tau. \\
+\hline
+\mbox{\tt out}  & {\em fitted} & A pointer to a matrix containing values fitted to the data, the 'fit'. Fit points are coincident in time with the data points. Only the first row is used. Allocate with G\-C\-I\-\_\-ecf\-\_\-matrix with nrows=1. \\
+\hline
+\mbox{\tt out}  & {\em residuals} & A matrix containing the difference between the data and the fit. Only the first row is used. Allocate with G\-C\-I\-\_\-ecf\-\_\-matrix with nrows=1. \\
+\hline
+\mbox{\tt out}  & {\em chisq\-\_\-trans} & An array of the resulting raw chi squared values of the fits. To get the reduced chisq, divide by the degrees of freedom (fit\-\_\-start -\/ fit\-\_\-end -\/ nparam). \\
+\hline
+\mbox{\tt out}  & {\em chisq\-\_\-global} & The resulting raw chi squared value of the total global fit. To get the reduced chisq, divide by the degrees of freedom df. \\
+\hline
+\mbox{\tt out}  & {\em df} & The degrees of freedom. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An error code, 0 = success.
+\end{DoxyReturn}
+Global analysis analysis function for generic functions.
+
+These functions are essentially the same as the above functions G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-instr and G\-C\-I\-\_\-marquardt\-\_\-global\-\_\-exps\-\_\-do\-\_\-fit\-\_\-instr and the latter's dependents, except that this version takes an arbitrary function and a list of global parameters. This function is designed to be called from external code. It is nowhere near as efficient as the streamlined code above for globally fitting taus for multi-\/exponential models. Also, this function must be provided with meaningful starting estimates for all parameters. 
+
+Definition at line 2707 of file Ecf\-Global.\-c.
+
+\hypertarget{_ecf_8h_ae1168eba7dd501dd4427c436d6351d1d}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-marquardt@{G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-marquardt}}
+\index{G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-marquardt@{G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-marquardt}!Ecf.h@{Ecf.\-h}}
+\subsubsection[{G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-marquardt}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-marquardt (
+\begin{DoxyParamCaption}
+\item[{float}]{x\mbox{[}$\,$\mbox{]}, }
+\item[{float}]{y\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{ndata, }
+\item[{{\bf noise\-\_\-type}}]{noise, }
+\item[{float}]{sig\mbox{[}$\,$\mbox{]}, }
+\item[{float}]{param\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{paramfree\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{nparam, }
+\item[{{\bf restrain\-\_\-type}}]{restrain, }
+\item[{float}]{chisq\-\_\-delta, }
+\item[{void($\ast$)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int)}]{fitfunc, }
+\item[{int}]{spa\-\_\-param, }
+\item[{int}]{spa\-\_\-nvalues, }
+\item[{float}]{spa\-\_\-low, }
+\item[{float}]{spa\-\_\-high, }
+\item[{float}]{chisq\mbox{[}$\,$\mbox{]}, }
+\item[{void($\ast$)(float)}]{progressfunc}
+\end{DoxyParamCaption}
+)}}\label{_ecf_8h_ae1168eba7dd501dd4427c436d6351d1d}
+
+
+G\-C\-I\-\_\-\-S\-P\-A\-\_\-1\-D\-\_\-$\ast$ performs a 1-\/dimensional support plane analysis. 
+
+It takes the same fitting paramters as the corresponding standard Marquardt function, without a few of the transient-\/specific parameters, and with the following extra parameters\-:
+
+int spa\-\_\-param which parameter are we analysing? int spa\-\_\-nvalues how many different parameter values will we calculate chi-\/squared values for? float spa\-\_\-low the lowest parameter value float spa\-\_\-high the highest parameter value float chisq\mbox{[}\mbox{]} the resulting chisq values
+
+In the case of the global analysis for exponentials function, there is an extra parameter, int df\mbox{[}\mbox{]}, which gives the number of degrees of freedom for each value; this is relevant if the drop\-\_\-bad\-\_\-transients parameter is set. If an individual fit fails, the corresponding chisq\mbox{[}\mbox{]} value is set to -\/1. Also, the chisq\mbox{[}\mbox{]} array runs from chisq\mbox{[}0\mbox{]}, corresponding to spa\-\_\-low to chisq\mbox{[}spa\-\_\-nvalues-\/1\mbox{]}, corresponding to spa\-\_\-high. 
+
+Definition at line 69 of file Ecf\-S\-P\-A.\-c.
+
+\hypertarget{_ecf_8h_a1b39dab2b8a463ca924475c8633696e2}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-marquardt@{G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-marquardt}}
+\index{G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-marquardt@{G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-marquardt}!Ecf.h@{Ecf.\-h}}
+\subsubsection[{G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-marquardt}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-marquardt (
+\begin{DoxyParamCaption}
+\item[{float}]{x\mbox{[}$\,$\mbox{]}, }
+\item[{float}]{y\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{ndata, }
+\item[{{\bf noise\-\_\-type}}]{noise, }
+\item[{float}]{sig\mbox{[}$\,$\mbox{]}, }
+\item[{float}]{param\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{paramfree\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{nparam, }
+\item[{{\bf restrain\-\_\-type}}]{restrain, }
+\item[{float}]{chisq\-\_\-delta, }
+\item[{void($\ast$)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int)}]{fitfunc, }
+\item[{int}]{spa\-\_\-param1, }
+\item[{int}]{spa\-\_\-nvalues1, }
+\item[{float}]{spa\-\_\-low1, }
+\item[{float}]{spa\-\_\-high1, }
+\item[{int}]{spa\-\_\-param2, }
+\item[{int}]{spa\-\_\-nvalues2, }
+\item[{float}]{spa\-\_\-low2, }
+\item[{float}]{spa\-\_\-high2, }
+\item[{float $\ast$$\ast$}]{chisq, }
+\item[{void($\ast$)(float)}]{progressfunc}
+\end{DoxyParamCaption}
+)}}\label{_ecf_8h_a1b39dab2b8a463ca924475c8633696e2}
+
+
+G\-C\-I\-\_\-\-S\-P\-A\-\_\-2\-D\-\_\-$\ast$ performs a 2-\/dimensional support plane analysis. 
+
+It is the same as the 1-\/dimensional variant, except that now the extra parameters are\-:
+
+int spa\-\_\-param1, int spa\-\_\-nvalues1, float spa\-\_\-low1, float spa\-\_\-high1, int spa\-\_\-param1, int spa\-\_\-nvalues1, float spa\-\_\-low1, float spa\-\_\-high1, float chisq\mbox{[}\mbox{]}\mbox{[}\mbox{]}, (int df\mbox{[}\mbox{]}\mbox{[}\mbox{]})
+
+Here chisq\mbox{[}i\mbox{]}\mbox{[}j\mbox{]} will correspond to the i-\/th value of param1 and the j-\/th value of param2; chisq\mbox{[}\mbox{]}\mbox{[}\mbox{]} itself will have been allocated by the G\-C\-I\-\_\-ecf\-\_\-matrix function.
+
+In all cases where the original function must be provided with reasonable initial estimates for the parameters, so must these functions. 
+
+Definition at line 159 of file Ecf\-S\-P\-A.\-c.
+
+\hypertarget{_ecf_8h_ad62c421e86238246287fc9cadf4bf171}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-triple\-\_\-integral@{G\-C\-I\-\_\-triple\-\_\-integral}}
+\index{G\-C\-I\-\_\-triple\-\_\-integral@{G\-C\-I\-\_\-triple\-\_\-integral}!Ecf.h@{Ecf.\-h}}
+\subsubsection[{G\-C\-I\-\_\-triple\-\_\-integral}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-triple\-\_\-integral (
+\begin{DoxyParamCaption}
+\item[{float}]{xincr, }
+\item[{float}]{y\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{fit\-\_\-start, }
+\item[{int}]{fit\-\_\-end, }
+\item[{{\bf noise\-\_\-type}}]{noise, }
+\item[{float}]{sig\mbox{[}$\,$\mbox{]}, }
+\item[{float $\ast$}]{Z, }
+\item[{float $\ast$}]{A, }
+\item[{float $\ast$}]{tau, }
+\item[{float $\ast$}]{fitted, }
+\item[{float $\ast$}]{residuals, }
+\item[{float $\ast$}]{chisq, }
+\item[{int}]{division}
+\end{DoxyParamCaption}
+)}}\label{_ecf_8h_ad62c421e86238246287fc9cadf4bf171}
+
+
+Start with an easy one\-: the three integral method. 
+
+This returns 0 on success, negative on error. 
+
+Definition at line 77 of file Ecf\-Single.\-c.
+
 \hypertarget{_ecf_8h_a7790a7e8ebdca31efd349e44add17cd9}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-triple\-\_\-integral\-\_\-fitting\-\_\-engine@{G\-C\-I\-\_\-triple\-\_\-integral\-\_\-fitting\-\_\-engine}}
 \index{G\-C\-I\-\_\-triple\-\_\-integral\-\_\-fitting\-\_\-engine@{G\-C\-I\-\_\-triple\-\_\-integral\-\_\-fitting\-\_\-engine}!Ecf.h@{Ecf.\-h}}
 \subsubsection[{G\-C\-I\-\_\-triple\-\_\-integral\-\_\-fitting\-\_\-engine}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-triple\-\_\-integral\-\_\-fitting\-\_\-engine (
@@ -256,7 +602,7 @@ An error code, 0 = success.
 
 The main entry point for Triple Integral or Rapid Lifetime Determination (R\-L\-D). 
 
-Uses G\-C\-I\-\_\-triple\-\_\-integral\-\_\-$\ast$() to fit repeatedly until chisq\-\_\-target is met or a maximum number of iterations are used.
+Uses G\-C\-I\-\_\-triple\-\_\-integral\-\_\-$\ast$() to fit repeatedly with different integration periods until chisq\-\_\-target is met or a maximum number of iterations are used.
 
 
 \begin{DoxyParams}[1]{Parameters}
@@ -284,11 +630,15 @@ Uses G\-C\-I\-\_\-triple\-\_\-integral\-\_\-$\ast$() to fit repeatedly until chi
 \hline
 \mbox{\tt out}  & {\em residuals} & An array containing the difference between the data and the fit. \\
 \hline
-\mbox{\tt out}  & {\em chisq} & The resulting reduced chi squared value of the fit. \\
+\mbox{\tt out}  & {\em chisq} & The resulting raw chi squared value of the fit. To get the reduced chisq, divide by the degrees of freedom (fit\-\_\-start -\/ fit\-\_\-end -\/ nparam) \\
 \hline
-\mbox{\tt in}  & {\em chisq\-\_\-target} & A target chi squared value to aim for. If this value is reached fitting will stop. \\
+\mbox{\tt in}  & {\em chisq\-\_\-target} & A raw chi squared value to aim for. If this value is reached fitting will stop. If you want to aim for a reduced chisq (say 1.\-1 or 1.\-0) you must multiply by the degree of freedom. (T\-R\-I2\-: \char`\"{}\-Try refits\char`\"{}) \\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 An error code, 0 = success. 
 \end{DoxyReturn}
+
+
+Definition at line 381 of file Ecf\-Single.\-c.
+

@@ -30,6 +30,7 @@ src						source files<br>
 src/main/c				The source files for the SLIM Curve library<br>
 src/slim-curve-cmd/c	The source files for the stand alone executable wrapper for the library<br>
 test_files				dat and ini settings file for testing<br>
+src/main/c/doc			API documentation (Doxygen output)<br>
 
 To build the stand alone program using CMake and gcc under Linux:<br>
 Create a build folder, and cd to it<br>

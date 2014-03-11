@@ -30,6 +30,44 @@
    EcfSingle.c.
 */
 
+
+/**
+
+						   GLOBAL ANALYSIS
+
+
+   We only work with the case of multiple transients, all with the
+   same instrument/prompt response, the same xincr, the same number of
+   points, and so on.  The recommended fitting algorithm is a
+   three-step process:
+
+   (1) Sum the transients and use this to get initial estimates for
+       the global parameters we are estimating.
+
+   (2) Fixing these parameters, perform a Marquardt fit on each of the
+       transients.  In our cases, this will be fairly efficient, as we
+       will not need to repeatedly calculate the exponential decay.
+
+   (3) Finally, perform the global fit.  There's lots of interesting
+       maths here which we'll discuss when we get to it.  Note that
+       again we will not need to repeatedly calculate the exponential
+       decays for each transient, which will hopefully make the
+       process significantly faster.
+
+   We provide special code to perform these steps in the case of
+   multiexponential and stretched exponential fits where we are aiming
+   to globally fit all of the taus and the h parameter (in the
+   stretched exponential case); these can be performed far more
+   efficiently than the general case.  We also provide code to perform
+   step (3) in the general case; steps (1) and (2) will have to be
+   handled on a case-by-case basis by the calling code.  We also
+   provide a version of step (3) to handle the case of arbitrary
+   x data with no instrument response.
+
+ \file EcfGlobal.h
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -198,40 +236,6 @@ int GCI_marquardt_global_compute_global_generic_fn_final(
 		int *pfnvals_len, int *pdy_dparam_nparam_size);
 
 
-/********************************************************************
-
-						   GLOBAL ANALYSIS
-
- ********************************************************************/
-
-/* We only work with the case of multiple transients, all with the
-   same instrument/prompt response, the same xincr, the same number of
-   points, and so on.  The recommended fitting algorithm is a
-   three-step process:
-
-   (1) Sum the transients and use this to get initial estimates for
-       the global parameters we are estimating.
-
-   (2) Fixing these parameters, perform a Marquardt fit on each of the
-       transients.  In our cases, this will be fairly efficient, as we
-       will not need to repeatedly calculate the exponential decay.
-
-   (3) Finally, perform the global fit.  There's lots of interesting
-       maths here which we'll discuss when we get to it.  Note that
-       again we will not need to repeatedly calculate the exponential
-       decays for each transient, which will hopefully make the
-       process significantly faster.
-
-   We provide special code to perform these steps in the case of
-   multiexponential and stretched exponential fits where we are aiming
-   to globally fit all of the taus and the h parameter (in the
-   stretched exponential case); these can be performed far more
-   efficiently than the general case.  We also provide code to perform
-   step (3) in the general case; steps (1) and (2) will have to be
-   handled on a case-by-case basis by the calling code.  We also
-   provide a version of step (3) to handle the case of arbitrary
-   x data with no instrument response.
-*/
 
 /*         *****             UTILITY CODE             *****        */
 
@@ -339,9 +343,9 @@ void GCI_copy_global_vector(global_vector dest, global_vector src,
 }
 
 
-/*         *****          EXPONENTIALS CODE           *****        */
+/** EXPONENTIALS CODE 
 
-/* Now the code for performing a global fit for multiexponential taus
+   Now the code for performing a global fit for multi-exponential taus
    and stretched exponentials.  This is the function which is called
    from external programs. */
 
@@ -957,7 +961,7 @@ int GCI_marquardt_global_exps_est_params_instr(
 }
 
 
-/* This finds values of exp(-x/tau) and x*exp(-x/tau)/tau^2, which are
+/** This finds values of exp(-x/tau) and x*exp(-x/tau)/tau^2, which are
    needed later for the multiexponential case, and finds the
    equivalents in the stretched exponential case. */
 // should also now handle no instrument response, i.e. instr=NULL
@@ -1070,7 +1074,7 @@ int GCI_marquardt_global_exps_calculate_exps_instr(
 }
 
 
-/* This is just like the normal GCI_marquardt_instr, except that it
+/** This is just like the normal GCI_marquardt_instr, except that it
    is designed for the multiexp case where we provide the exponential
    decays in advance, and where we don't care about error axes */
 int GCI_marquardt_global_exps_do_fit_single(
@@ -1140,7 +1144,7 @@ int GCI_marquardt_global_exps_do_fit_single(
 }
 
 
-/* And this one is basically a specialised GCI_marquardt_instr_step */
+/** And this one is basically a specialised GCI_marquardt_instr_step */
 int GCI_marquardt_global_exps_single_step(
 				float xincr, float y[],
 				int ndata, int fit_start, int fit_end,
@@ -1266,7 +1270,7 @@ int GCI_marquardt_global_exps_single_step(
 }
 
 
-/* This is a streamlined GCI_marquardt_compute_fn_instr */
+/** This is a streamlined GCI_marquardt_compute_fn_instr */
 int GCI_marquardt_global_compute_exps_fn(
 			float xincr, float y[],
 			int ndata, int fit_start, int fit_end,
@@ -1653,7 +1657,7 @@ int GCI_marquardt_global_compute_exps_fn(
 }
 
 
-/* And this is a final variant which computes the true chi-squared
+/** And this is a final variant which computes the true chi-squared
    values and the full fit, as in EcfSingle.c */
 int GCI_marquardt_global_compute_exps_fn_final(
 			float xincr, float y[],
@@ -1928,7 +1932,7 @@ int GCI_marquardt_global_compute_exps_fn_final(
 }
 
 
-/* This one does the actual global fitting for multiexponential taus.
+/** This one does the actual global fitting for multiexponential taus.
    It is basically similar to the above do_fit_single function, except
    that now we handle the extra intricacies involved in global
    fitting, in particular, the much larger alpha matrix is handled in
@@ -2123,7 +2127,7 @@ int GCI_marquardt_global_exps_do_fit_instr(
 }
 
 
-/* And this one is basically a specialised GCI_marquardt_instr_step
+/** And this one is basically a specialised GCI_marquardt_instr_step
    for the global fitting setup. */
 int GCI_marquardt_global_exps_global_step(
 				float xincr, float **trans,
@@ -2456,7 +2460,7 @@ int GCI_marquardt_global_compute_global_exps_fn(
 }
 
 
-/* The final variant */
+/** The final variant */
 int GCI_marquardt_global_compute_global_exps_fn_final(
 		float xincr, float **trans, int ndata, int ntrans,
 		int fit_start, int fit_end, float instr[], int ninstr,
@@ -2512,7 +2516,9 @@ int GCI_marquardt_global_compute_global_exps_fn_final(
 }
 
 
-/* This function solves the equation Ax=b, where A is the alpha
+/** GCI_marquardt_global_solve_eqn.
+
+   This function solves the equation Ax=b, where A is the alpha
    matrix, which has the form:
 
      A = (P Q)
@@ -2685,9 +2691,9 @@ int GCI_marquardt_global_solve_eqn(global_matrix A, global_vector b,
 }
 
 
-/*         *****        GENERIC FUNCTION CODE        *****        */
+/** GENERIC FUNCTION CODE
 
-/* These functions are essentially the same as the above functions
+   These functions are essentially the same as the above functions
    GCI_marquardt_global_exps_instr and
    GCI_marquardt_global_exps_do_fit_instr and the latter's dependents,
    except that this version takes an arbitrary function and a list of

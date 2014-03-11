@@ -21,14 +21,18 @@
  * #L%
  */
 
-/* Based on the 2003 version of the ECF library.  This has been
+/** SLIM Curve - Exponential Curve Fitting
+ 
+   Based on the 2003 version of the ECF library.  This has been
    modified to remove modified Numeric Recipes code. Also, this
    takes account of the fact that we may be handling Poisson noise.
 
    This file contains functions for single transient analysis.
    Utility code is found in EcfUtil.c and global analysis code in
    EcfGlobal.c.
-*/
+   
+ * \file EcfSingle.c
+ */
 
 #include <math.h>
 #include <stdio.h>
@@ -67,7 +71,7 @@ int GCI_marquardt_estimate_errors(float **alpha, int nparam, int mfit,
 
  ********************************************************************/
 
-/* Start with an easy one: the three integral method.  This returns 0
+/** Start with an easy one: the three integral method.  This returns 0
    on success, negative on error. */
 
 int GCI_triple_integral(float xincr, float y[],
@@ -452,7 +456,7 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 
  ********************************************************************/
 
-/* Now for the non-linear least squares fitting algorithms.
+/** Now for the non-linear least squares fitting algorithms.
 
    The process is:
    - for Gaussian noise, use Levenberg-Marquardt directly
@@ -961,7 +965,7 @@ int GCI_marquardt_step_instr(float xincr, float y[],
 }
 
 
-/* Used by GCI_marquardt to evaluate the linearised fitting matrix alpha
+/** Used by GCI_marquardt to evaluate the linearised fitting matrix alpha
    and vector beta and to calculate chi^2.	The equations involved are
    given in section 15.5 of Numerical Recipes; basically:
 
@@ -1467,7 +1471,7 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 	return 0;
 }
 
-/* These two variants, used just before the Marquardt fitting
+/** These two variants, used just before the Marquardt fitting
    functions terminate, compute the function values at all points,
    whether or not they are being fitted.  (All points are fitted in
    the non-instrument response variant.)  They also compute the
@@ -1598,8 +1602,8 @@ int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata,
 }
 
 
-/* And this is the variant which handles an instrument response. */
-/* We assume that the function values are sensible.  Note also that we
+/** And this is the variant which handles an instrument response. 
+ We assume that the function values are sensible.  Note also that we
    have to be careful about which points which include in the
    chi-squared calculation.  Also, we are guaranteed that the
    initialisation of the convolution arrays has been performed. */
@@ -1846,12 +1850,13 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 }
 
 
-//********************************* GCI_marquardt_fitting_engine **********************************************************************
+/** GCI_marquardt_fitting_engine
 
-// This returns the number of iterations or negative if an error occurred.
-// passes all the data to the ecf routine, checks the returned chisq and re-fits if it is of benefit
-// was DoEcfFittingEngine() included in EcfSingle.c by PRB, 3.9.03
-
+ This returns the number of iterations or negative if an error occurred.
+ passes all the data to the ecf routine, checks the returned chisq and re-fits if it is of benefit
+ was DoEcfFittingEngine() included in EcfSingle.c by PRB, 3.9.03
+ */
+ 
 int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_start, int fit_end,
 						float prompt[], int nprompt,
 						noise_type noise, float sig[],
