@@ -122,7 +122,8 @@ int GCI_SPA_1D_marquardt(
 							fitfunc, fitted, residuals, covar, alpha,
 							&chisq[i], chisq_delta, 0, NULL);
 			
-		progressfunc ((float)i/(float)(spa_nvalues-1));
+		if (progressfunc)
+            progressfunc ((float)i/(float)(spa_nvalues-1));
 
 		if (ret < 0)
 			chisq[i] = -1;
@@ -225,7 +226,8 @@ int GCI_SPA_2D_marquardt(
 								&chisq[i1][i2], chisq_delta, 0, NULL);
 			
 			progress++;
-			progressfunc ((float)progress/((float)(total-1)));
+            if (progressfunc)
+                progressfunc ((float)progress/((float)(total-1)));
 		
 			if (ret < 0)
 				chisq[i1][i2] = -1;
@@ -240,7 +242,10 @@ int GCI_SPA_2D_marquardt(
 	return 0;
 }
 
+/**
+    1D Support plane analysis with instrument response. See GCI_SPA_1D_marquardt.
 
+ */
 int GCI_SPA_1D_marquardt_instr(
 				float xincr, float y[],
 				int ndata, int fit_start, int fit_end,
@@ -300,7 +305,8 @@ int GCI_SPA_1D_marquardt_instr(
 							   				fitfunc, fitted, residuals, &chisq[i],
 							   				covar, alpha, NULL, chisq_target, chisq_delta, 0);
 			
-		progressfunc ((float)i/(float)(spa_nvalues-1));
+		if (progressfunc)
+            progressfunc ((float)i/(float)(spa_nvalues-1));
 		
 		if (ret < 0)
 			chisq[i] = -1;
@@ -316,6 +322,10 @@ int GCI_SPA_1D_marquardt_instr(
 }
 
 
+/**
+    2D Support plane analysis with instrument response. See GCI_SPA_2D_marquardt.
+
+ */
 int GCI_SPA_2D_marquardt_instr(
 				float xincr, float y[],
 				int ndata, int fit_start, int fit_end,
@@ -387,7 +397,8 @@ int GCI_SPA_2D_marquardt_instr(
 					   				covar, alpha, NULL, chisq_target, chisq_delta, 0);
 			
 			progress++;
-			progressfunc ((float)progress/((float)(total-1)));
+            if (progressfunc)
+                progressfunc ((float)progress/((float)(total-1)));
 		
 			if (ret < 0)
 				chisq[i1][i2] = -1;
@@ -406,6 +417,10 @@ int GCI_SPA_2D_marquardt_instr(
 }
 
 
+/**
+    1D Global Support plane analysis with instrument response. See GCI_SPA_1D_marquardt.
+
+ */
 int GCI_SPA_1D_marquardt_global_exps_instr(
 					float xincr, float **trans,
 					int ndata, int ntrans, int fit_start, int fit_end,
@@ -475,7 +490,8 @@ int GCI_SPA_1D_marquardt_global_exps_instr(
 							fitted, residuals, chisq_trans,
 							&chisq_global[i], &df[i], drop_bad_transients);
 			
-		progressfunc ((float)i/(float)(spa_nvalues-1));
+		if (progressfunc)
+            progressfunc ((float)i/(float)(spa_nvalues-1));
 
 		if (ret < 0)
 			chisq_global[i] = -1;
@@ -491,6 +507,10 @@ int GCI_SPA_1D_marquardt_global_exps_instr(
 }
 
 
+/**
+    2D Global Support plane analysis with instrument response. See GCI_SPA_2D_marquardt.
+
+ */
 int GCI_SPA_2D_marquardt_global_exps_instr(
 					float xincr, float **trans,
 					int ndata, int ntrans, int fit_start, int fit_end,
@@ -575,7 +595,8 @@ int GCI_SPA_2D_marquardt_global_exps_instr(
 							drop_bad_transients);
 			
 			progress++;
-			progressfunc ((float)progress/((float)(total-1)));
+            if (progressfunc)
+                progressfunc ((float)progress/((float)(total-1)));
 		
 			if (ret < 0)
 				chisq_global[i1][i2] = -1;
@@ -592,6 +613,10 @@ int GCI_SPA_2D_marquardt_global_exps_instr(
 }
 
 
+/**
+    1D Generic Global Support plane analysis with instrument response. See GCI_SPA_1D_marquardt.
+
+ */
 int GCI_SPA_1D_marquardt_global_generic_instr(
 					float xincr, float **trans,
 					int ndata, int ntrans, int fit_start, int fit_end,
@@ -658,7 +683,8 @@ int GCI_SPA_1D_marquardt_global_generic_instr(
 						fitfunc, fitted, residuals, chisq_trans,
 						&chisq_global[i], &df[i]);
 			
-		progressfunc ((float)i/(float)(spa_nvalues-1));
+		if (progressfunc)
+            progressfunc ((float)i/(float)(spa_nvalues-1));
 
 		if (ret < 0)
 			chisq_global[i] = -1;
@@ -674,6 +700,10 @@ int GCI_SPA_1D_marquardt_global_generic_instr(
 }
 
 
+/**
+    2D Support plane analysis with instrument response. See GCI_SPA_2D_marquardt.
+
+ */
 int GCI_SPA_2D_marquardt_global_generic_instr(
 					float xincr, float **trans,
 					int ndata, int ntrans, int fit_start, int fit_end,
@@ -753,7 +783,8 @@ int GCI_SPA_2D_marquardt_global_generic_instr(
 						&chisq_global[i1][i2], &df[i1][i2]);
 			
 			progress++;
-			progressfunc ((float)progress/((float)(total-1)));
+            if (progressfunc)
+                progressfunc ((float)progress/((float)(total-1)));
 		
 			if (ret < 0)
 				chisq_global[i1][i2] = -1;
