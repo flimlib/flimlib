@@ -6,28 +6,57 @@ The code is written in C89 compatible C and is thread safe for fitting multiple 
 
 For further details, see\-: \href{http://loci.wisc.edu/software/slim-curve}{\tt http\-://loci.\-wisc.\-edu/software/slim-\/curve}
 
-Directory Contents\-:\par
- src source files\par
- src/main/c The source files for the S\-L\-I\-M Curve library\par
- src/slim-\/curve-\/cmd/c The source files for the stand alone executable wrapper for the library\par
- test\-\_\-files dat and ini settings file for testing\par
- src/main/c/doc A\-P\-I documentation (Doxygen output)\par
+If you are familiar with the program T\-R\-I2, that uses S\-L\-I\-M Curve, this screenshot may help you to understand the meaning of the parameters.
 
-
-To build the stand alone program using C\-Make and gcc under Linux\-:\par
- Create a build folder, and cd to it\par
- ~~~~mkdir build\par
- ~~~~cd build\par
- Run C\-Make\par
- ~~~~cmake ../\-C\-Make\-Lists.txt\par
- Run make\par
- ~~~~make\par
-
-
-To Run the stand alone executable\par
- Copy the executable to the test\-\_\-files folder for convenience\par
- ~~~~cp slim-\/curve-\/cmd ../test\-\_\-files\par
- Run the program with the test files\par
- ~~~~cd ../test\-\_\-files\par
- ~~~~./slim-\/curve-\/cmd test.\-ini transient.\-dat\par
  
+\begin{DoxyImage}
+\includegraphics[width=15cm]{params_in_tri2.jpg}
+\caption{How some S\-L\-I\-M-\/\-Curve paramters are used in T\-R\-I2.}
+\end{DoxyImage}
+
+
+\section*{Library Contents\-:}
+
+\begin{TabularC}{2}
+\hline
+\rowcolor{lightgray}{\bf Directory }&{\bf Contents  }\\\cline{1-2}
+src &source files \\\cline{1-2}
+src/main/c &The source files for the S\-L\-I\-M Curve library \\\cline{1-2}
+src/slim-\/curve-\/cmd/c &The source files for the stand alone executable wrapper for the library \\\cline{1-2}
+test\-\_\-files &dat and ini settings file for testing \\\cline{1-2}
+src/main/c/doc &A\-P\-I documentation (Doxygen output) \\\cline{1-2}
+\end{TabularC}
+
+
+\section*{To Build the Stand Alone Program using C\-Make and gcc under Linux\-:}
+
+Create a build folder, and cd to it \begin{DoxyVerb}mkdir build
+cd build
+\end{DoxyVerb}
+
+
+Run C\-Make \begin{DoxyVerb}cmake ../CMakeLists.txt
+\end{DoxyVerb}
+
+
+Run make \begin{DoxyVerb}make
+\end{DoxyVerb}
+
+
+\section*{To Run the Stand Alone Executable}
+
+Copy the executable to the test\-\_\-files folder for convenience \begin{DoxyVerb}cp slim-curve-cmd ../test_files
+\end{DoxyVerb}
+
+
+Run the program with the test files \begin{DoxyVerb}cd ../test_files
+./slim-curve-cmd test.ini transient.dat
+\end{DoxyVerb}
+
+
+\begin{DoxyAuthor}{Author}
+Paul Barber 
+\end{DoxyAuthor}
+\begin{DoxyCopyright}{Copyright}
+Creative Commons B\-Y-\/\-S\-A 2014 
+\end{DoxyCopyright}

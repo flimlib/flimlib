@@ -10,73 +10,31 @@ S\-L\-I\-M Curve -\/ Exponential Curve Fitting.
 {\ttfamily \#include $<$stdio.\-h$>$}\\*
 {\ttfamily \#include $<$stdlib.\-h$>$}\\*
 {\ttfamily \#include \char`\"{}Ecf\-Internal.\-h\char`\"{}}\\*
-\subsection*{Macros}
-\begin{DoxyCompactItemize}
-\item 
-\#define {\bfseries do\-\_\-frees}
-\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{_ecf_single_8c_a12f94f60ba55450a3c96ff5354f4e196}{int {\bfseries G\-C\-I\-\_\-marquardt\-\_\-step} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float yfit\mbox{[}$\,$\mbox{]}, float dy\mbox{[}$\,$\mbox{]}, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$chisq, float $\ast$alambda, int $\ast$pmfit, float $\ast$pochisq, float $\ast$paramtry, float $\ast$beta, float $\ast$dparam)}\label{_ecf_single_8c_a12f94f60ba55450a3c96ff5354f4e196}
-
-\item 
-\hypertarget{_ecf_single_8c_afb8daa724709f15dfe9b3b95d7e2c5ca}{int {\bfseries G\-C\-I\-\_\-marquardt\-\_\-step\-\_\-instr} (float xincr, float y\mbox{[}$\,$\mbox{]}, int ndata, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float yfit\mbox{[}$\,$\mbox{]}, float dy\mbox{[}$\,$\mbox{]}, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$chisq, float $\ast$alambda, int $\ast$pmfit, float $\ast$pochisq, float $\ast$paramtry, float $\ast$beta, float $\ast$dparam, float $\ast$$\ast$pfnvals, float $\ast$$\ast$$\ast$pdy\-\_\-dparam\-\_\-pure, float $\ast$$\ast$$\ast$pdy\-\_\-dparam\-\_\-conv, int $\ast$pfnvals\-\_\-len, int $\ast$pdy\-\_\-dparam\-\_\-nparam\-\_\-size)}\label{_ecf_single_8c_afb8daa724709f15dfe9b3b95d7e2c5ca}
-
-\item 
-\hypertarget{_ecf_single_8c_a5be7339bce1cb57d8723988385b82b5e}{int {\bfseries G\-C\-I\-\_\-marquardt\-\_\-estimate\-\_\-errors} (float $\ast$$\ast$alpha, int nparam, int mfit, float d\mbox{[}$\,$\mbox{]}, float $\ast$$\ast$v, float interval)}\label{_ecf_single_8c_a5be7339bce1cb57d8723988385b82b5e}
-
-\item 
 int \hyperlink{_ecf_single_8c_ad62c421e86238246287fc9cadf4bf171}{G\-C\-I\-\_\-triple\-\_\-integral} (float xincr, float y\mbox{[}$\,$\mbox{]}, int fit\-\_\-start, int fit\-\_\-end, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$Z, float $\ast$A, float $\ast$tau, float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, int division)
 \begin{DoxyCompactList}\small\item\em Start with an easy one\-: the three integral method. \end{DoxyCompactList}\item 
-\hypertarget{_ecf_single_8c_a3c72ce45f467e73bdbfdeecba86a2d3a}{int {\bfseries G\-C\-I\-\_\-triple\-\_\-integral\-\_\-instr} (float xincr, float y\mbox{[}$\,$\mbox{]}, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$Z, float $\ast$A, float $\ast$tau, float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, int division)}\label{_ecf_single_8c_a3c72ce45f467e73bdbfdeecba86a2d3a}
-
-\item 
 int \hyperlink{_ecf_single_8c_a7790a7e8ebdca31efd349e44add17cd9}{G\-C\-I\-\_\-triple\-\_\-integral\-\_\-fitting\-\_\-engine} (float xincr, float y\mbox{[}$\,$\mbox{]}, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$Z, float $\ast$A, float $\ast$tau, float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, float chisq\-\_\-target)
 \begin{DoxyCompactList}\small\item\em The main entry point for Triple Integral or Rapid Lifetime Determination (R\-L\-D). \end{DoxyCompactList}\item 
 int \hyperlink{_ecf_single_8c_a5bbaf55df7653f2f443e38b6f6b1e1a9}{G\-C\-I\-\_\-marquardt} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$fitted, float $\ast$residuals, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$chisq, float chisq\-\_\-delta, float chisq\-\_\-percent, float $\ast$$\ast$erraxes)
 \begin{DoxyCompactList}\small\item\em Now for the non-\/linear least squares fitting algorithms. \end{DoxyCompactList}\item 
-\hypertarget{_ecf_single_8c_a527b18f8e48919e46f32af4889662f48}{int {\bfseries G\-C\-I\-\_\-marquardt\-\_\-instr} (float xincr, float y\mbox{[}$\,$\mbox{]}, int ndata, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$fitted, float $\ast$residuals, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$chisq, float chisq\-\_\-delta, float chisq\-\_\-percent, float $\ast$$\ast$erraxes)}\label{_ecf_single_8c_a527b18f8e48919e46f32af4889662f48}
-
-\item 
 int \hyperlink{_ecf_single_8c_a2f0e656f93772e14f4a879297e17556f}{G\-C\-I\-\_\-marquardt\-\_\-compute\-\_\-fn} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float yfit\mbox{[}$\,$\mbox{]}, float dy\mbox{[}$\,$\mbox{]}, float $\ast$$\ast$alpha, float beta\mbox{[}$\,$\mbox{]}, float $\ast$chisq, float old\-\_\-chisq, float alambda)
 \begin{DoxyCompactList}\small\item\em Used by G\-C\-I\-\_\-marquardt to evaluate the linearised fitting matrix alpha and vector beta and to calculate chi$^\wedge$2. \end{DoxyCompactList}\item 
-\hypertarget{_ecf_single_8c_ad97ce4de715a51cf1fba23af5309e32e}{int {\bfseries G\-C\-I\-\_\-marquardt\-\_\-compute\-\_\-fn\-\_\-instr} (float xincr, float y\mbox{[}$\,$\mbox{]}, int ndata, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float yfit\mbox{[}$\,$\mbox{]}, float dy\mbox{[}$\,$\mbox{]}, float $\ast$$\ast$alpha, float beta\mbox{[}$\,$\mbox{]}, float $\ast$chisq, float old\-\_\-chisq, float alambda, float $\ast$$\ast$pfnvals, float $\ast$$\ast$$\ast$pdy\-\_\-dparam\-\_\-pure, float $\ast$$\ast$$\ast$pdy\-\_\-dparam\-\_\-conv, int $\ast$pfnvals\-\_\-len, int $\ast$pdy\-\_\-dparam\-\_\-nparam\-\_\-size)}\label{_ecf_single_8c_ad97ce4de715a51cf1fba23af5309e32e}
-
-\item 
 int \hyperlink{_ecf_single_8c_aa71017f42eaaac4f5246ba5c931e0838}{G\-C\-I\-\_\-marquardt\-\_\-compute\-\_\-fn\-\_\-final} (float x\mbox{[}$\,$\mbox{]}, float y\mbox{[}$\,$\mbox{]}, int ndata, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float yfit\mbox{[}$\,$\mbox{]}, float dy\mbox{[}$\,$\mbox{]}, float $\ast$chisq)
 \begin{DoxyCompactList}\small\item\em These two variants, used just before the Marquardt fitting functions terminate, compute the function values at all points, whether or not they are being fitted. \end{DoxyCompactList}\item 
 int \hyperlink{_ecf_single_8c_ae3621766e57085ea7fa13b6533cd0bb8}{G\-C\-I\-\_\-marquardt\-\_\-compute\-\_\-fn\-\_\-final\-\_\-instr} (float xincr, float y\mbox{[}$\,$\mbox{]}, int ndata, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float yfit\mbox{[}$\,$\mbox{]}, float dy\mbox{[}$\,$\mbox{]}, float $\ast$chisq, float $\ast$$\ast$pfnvals, float $\ast$$\ast$$\ast$pdy\-\_\-dparam\-\_\-pure, float $\ast$$\ast$$\ast$pdy\-\_\-dparam\-\_\-conv, int $\ast$pfnvals\-\_\-len, int $\ast$pdy\-\_\-dparam\-\_\-nparam\-\_\-size)
 \begin{DoxyCompactList}\small\item\em And this is the variant which handles an instrument response. \end{DoxyCompactList}\item 
 int \hyperlink{_ecf_single_8c_a94bbfd4c5b3d3a79fd840731954f3976}{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine} (float xincr, float $\ast$trans, int ndata, int fit\-\_\-start, int fit\-\_\-end, float prompt\mbox{[}$\,$\mbox{]}, int nprompt, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$$\ast$erraxes, float chisq\-\_\-target, float chisq\-\_\-delta, int chisq\-\_\-percent)
-\begin{DoxyCompactList}\small\item\em G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine. \end{DoxyCompactList}\item 
-\hypertarget{_ecf_single_8c_a26e45e21bc6592ea929a9b103fe9c4d2}{void {\bfseries G\-C\-I\-\_\-marquardt\-\_\-cleanup} (void)}\label{_ecf_single_8c_a26e45e21bc6592ea929a9b103fe9c4d2}
-
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 S\-L\-I\-M Curve -\/ Exponential Curve Fitting. Based on the 2003 version of the E\-C\-F library. This has been modified to remove modified Numeric Recipes code. Also, this takes account of the fact that we may be handling Poisson noise.
 
-This file contains functions for single transient analysis. Utility code is found in Ecf\-Util.\-c and global analysis code in \hyperlink{_ecf_global_8c_source}{Ecf\-Global.\-c}. 
+This file contains functions for single transient analysis. Utility code is found in Ecf\-Util.\-c and global analysis code in \hyperlink{_ecf_global_8c}{Ecf\-Global.\-c}. 
 
 Definition in file \hyperlink{_ecf_single_8c_source}{Ecf\-Single.\-c}.
-
-
-
-\subsection{Macro Definition Documentation}
-\hypertarget{_ecf_single_8c_af5f941a121d48cfb608cdd4a63a1f430}{\index{Ecf\-Single.\-c@{Ecf\-Single.\-c}!do\-\_\-frees@{do\-\_\-frees}}
-\index{do\-\_\-frees@{do\-\_\-frees}!EcfSingle.c@{Ecf\-Single.\-c}}
-\subsubsection[{do\-\_\-frees}]{\setlength{\rightskip}{0pt plus 5cm}\#define do\-\_\-frees}}\label{_ecf_single_8c_af5f941a121d48cfb608cdd4a63a1f430}
-{\bfseries Value\-:}
-\begin{DoxyCode}
-\textcolor{keywordflow}{if} (fnvals) free(fnvals);\(\backslash\)
-    if (dy\_dparam\_pure) GCI\_ecf\_free\_matrix(dy\_dparam\_pure);\(\backslash\)
-    if (dy\_dparam\_conv) GCI\_ecf\_free\_matrix(dy\_dparam\_conv);
-\end{DoxyCode}
-
-
-Definition at line 606 of file Ecf\-Single.\-c.
 
 
 
@@ -339,9 +297,9 @@ Uses G\-C\-I\-\_\-triple\-\_\-integral\-\_\-$\ast$() to fit repeatedly with diff
 \hline
 \mbox{\tt in}  & {\em instr} & The instrument reponse (I\-R\-F) or prompt signal to be used (optional, can pass N\-U\-L\-L). \\
 \hline
-\mbox{\tt in}  & {\em noise} & The noise\-\_\-type to be used. \\
+\mbox{\tt in}  & {\em noise} & The \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} to be used. \\
 \hline
-\mbox{\tt in}  & {\em sig} & The standard deviation at each data point in y if noise\-\_\-type N\-O\-I\-S\-E\-\_\-\-G\-I\-V\-E\-N is used (optional, can pass N\-U\-L\-L). \\
+\mbox{\tt in}  & {\em sig} & The standard deviation at each data point in y if \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} N\-O\-I\-S\-E\-\_\-\-G\-I\-V\-E\-N is used (optional, can pass N\-U\-L\-L). \\
 \hline
 \mbox{\tt out}  & {\em Z} & The returned background value from the fit. \\
 \hline

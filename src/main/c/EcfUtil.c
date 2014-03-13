@@ -54,7 +54,7 @@ int ECF_debug = 0;
 
 #define SWAP(a,b) { temp=(a); (a)=(b); (b)=temp; }
 
-/* Linear equation solution of Ax = b by Gaussian elimination.
+/** Linear equation solution of Ax = b by Gaussian elimination.
    A is the n x n input matrix, b is the right-hand side vector, length n.
    On output, b is replaced by the corresponding set of solution vectors
    and A is trashed.
@@ -126,7 +126,7 @@ int GCI_solve_Gaussian(float **a, int n, float *b)
     return 0;
 }
 
-/* Matrix inversion by Gaussian elimination.
+/** Matrix inversion by Gaussian elimination.
    A is the n x n input matrix.
    On output, A is replaced by its matrix inverse.
    Returns 0 upon success, -2 if matrix is singular.
@@ -168,7 +168,7 @@ int GCI_invert_Gaussian(float **a, int n)
     return returnValue;
 }
 
-/* Pivots matrix on given column.  Also keeps track of order.
+/** Pivots matrix on given column.  Also keeps track of order.
  */
 void pivot(float **a, int n, int *order, int col)
 {
@@ -204,7 +204,7 @@ void pivot(float **a, int n, int *order, int col)
     }
 }
 
-/*
+/**
   Performs an in-place Crout lower/upper decomposition of n x n matrix A.
   Values on or below diagonals are lowers, values about the
   diagonal are uppers, with an implicit 1.0 value for the
@@ -283,7 +283,7 @@ int lu_decomp(float **a, int n, int *order)
     return 0;
 }
 
-/*
+/**
  Given a LU decomposition of an n x n matrix A, and an order vector
  specifying any reordering done during pivoting, solves the equation
  Ax = b.  Returns result in b.
@@ -335,7 +335,7 @@ int solve_lu(float **lu, int n, float *b, int *order)
     return 0;
 }
 
-/* Linear equation solution of Ax = b by lower/upper decomposition.
+/** Linear equation solution of Ax = b by lower/upper decomposition.
    A is the n x n input max, b is the right-hand side vector, length n.
    On output, b is replaced by the corresponding set of solution vectors
    and A is trashed.
@@ -351,7 +351,7 @@ int GCI_solve_lu_decomp(float **a, int n, float *b)
     return return_value;
 }
 
-/* Matrix inversion by lower/upper decomposition.
+/** Matrix inversion by lower/upper decomposition.
    A is the n x n input matrix.
    On output, a is replaced by its matrix inverse..
  */
@@ -384,7 +384,7 @@ int GCI_invert_lu_decomp(float **a, int n)
     return returnValue;
 }
 
-/* Linear equation solution of Ax = b..
+/** Linear equation solution of Ax = b..
    A is the n x n input max, b is the right-hand side vector, length n.
    On output, b is replaced by the corresponding set of solution vectors
    and A is trashed.
@@ -395,7 +395,7 @@ int GCI_solve(float **a, int n, float *b)
     //return GCI_solve_lu_decomp(a, n, b);
 }
 
-/* Matrix inversion.
+/** Matrix inversion.
    A is the n x n input matrix.
    On output, a is replaced by its matrix inverse..
  */
@@ -435,7 +435,7 @@ void GCI_covar_sort(float **covar, int nparam, int paramfree[], int mfit)
 http://www.nr.com/public-domain.html
 *********************************************************************/
 
-/* This function allocates a float matrix with subscript range
+/** This function allocates a float matrix with subscript range
  * m[0..nrows-1][0..ncols-1]
  */
 float **GCI_ecf_matrix(long nrows, long ncols)
@@ -460,7 +460,7 @@ float **GCI_ecf_matrix(long nrows, long ncols)
     return row;
 }
 
-/* Frees allocated float matrix.
+/** Frees allocated float matrix.
  */
 void GCI_ecf_free_matrix(float **m)
 {
@@ -470,9 +470,10 @@ void GCI_ecf_free_matrix(float **m)
     }
 }
 
-float ***GCI_ecf_matrix_array(long nblocks, long nrows, long ncols)
-/* allocate a float matrix array with range
+/** allocate a float matrix array with range
    marr[0..nblocks][0..nrows][0..ncols] */
+float ***GCI_ecf_matrix_array(long nblocks, long nrows, long ncols)
+
 {
 	long i;
 	float ***marr;
@@ -507,7 +508,8 @@ float ***GCI_ecf_matrix_array(long nblocks, long nrows, long ncols)
 	return marr;
 }
 
-
+/** Frees allocated float matrix array.
+ */
 void GCI_ecf_free_matrix_array(float ***marr)
 {
 	if (marr != NULL) {
@@ -524,7 +526,7 @@ void GCI_ecf_free_matrix_array(float ***marr)
 *********************************************************************/
 
 
-/* Some match functions for use in the above routines
+/** Some match functions for use in the above routines
 
    Prototypes: func(float x, float param[], float *y,
                     float dy_dparam[], int nparam)
@@ -549,9 +551,9 @@ void GCI_ecf_free_matrix_array(float ***marr)
    ..., nx-1.  The results will be placed in the y[] array and the
    dy_dparam[nx][nparam] array (which is assumed to have been allocated by
    GCI_matrix).
-*/
 
-/* This one produces multiexponentials using lambdas:
+   
+   This one produces multiexponentials using lambdas:
 
       y(x) = param[0] + param[1]*exp(-param[2]*x) +
                param[3]*exp(-param[4]*x) + ...
@@ -616,7 +618,7 @@ int multiexp_lambda_array(float xincr, float param[],
 }
 
 
-/* This one produces multiexponentials using taus:
+/** This one produces multiexponentials using taus:
 
       y(x) = param[0] + param[1]*exp(-x/param[2]) +
                param[3]*exp(-x/param[4]) + ...
@@ -684,7 +686,7 @@ int multiexp_tau_array(float xincr, float param[],
 }
 
 
-/* And this one produces stretched exponentials:
+/** And this one produces stretched exponentials:
 
       y(x) = Z + A exp(-(x/tau)^(1/h))
 
@@ -733,7 +735,7 @@ void GCI_stretchedexp(float x, float param[],
 	}
 }
 
-/* This is actually essentially the same as the other version; because
+/** This is actually essentially the same as the other version; because
    of the power (x/tau)^(1/h), we cannot use the same tricks as for
    the multiexponential case, unfortunately. */
 

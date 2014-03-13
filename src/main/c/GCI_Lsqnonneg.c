@@ -321,65 +321,37 @@ void GivensApply(double c, double s, double *z_1, double *z_2)
    Function GCI_lsqnonneg.
 
    This function solves the non-negative least squares problem:
-   minimise |Ax-b| subject to x >= 0 (where |v| is the 2-norm of the
+   minimise `|Ax-b|` subject to `x >= 0` (where |v| is the 2-norm of the
    vector v).
-
-   Arguments: A, an m x n matrix, in the form double A[n][m], so
-                 the columns of A are A[0], A[1], ..., A[n-1]
-              b, the m-vector
-
-              !!! NB: A and B will both be modified unless preserve is
-              !!!     non-zero (see below).
-
-              x, the solution will be placed here
-              m ) the dimensions of A
-              n )
-              preserve, copy A and b before solving the problem
-              rnorm, (double *) the value of |Ax-b| with the
-                determined x if the function was successful or if the
-                iteration count was exceeded.  This can be NULL.
-              lambda, an n-vector which will contain the dual vector
-                 on completion (that is, the Lagrange multipliers).
-                 This can be NULL.
-
-   On exit:   
-              The return value will be 0 on success, and negative if
-                a problem occurred:
-                -1: m > MAX_EQNS or m <= 0
-                -2: n > MAX_VARS or n <= 0
-                -3: iteration count exceeded: more than 3*n iterations
-                    performed
-                -4: memory allocation problems
 
    The algorithm is similar to the simplex algorithm, and uses
    Lagrange multipliers.
 
-   1  Set P:={}, Z:={1,2,...,n}, x:=0
-   2  Compute w := A^T (b-Ax)
-   3  If Z={} or if w_j <= 0 for all j in Z, stop
-   4  Find t in Z such that w_t = max { w_j : j in Z }
-   5  Move index t from Z to P
-   6  Let A_P denote the m x n matrix defined by
+   1.  Set `P:={}, Z:={1,2,...,n}, x:=0`
+   2.  Compute `w := A^T (b-Ax)`
+   3.  If `Z={}` or `if w_j <= 0` for all j in Z, stop
+   4.  Find t in Z such that `w_t = max { w_j : j in Z }`
+   5.  Move index t from Z to P
+   6.  Let A_P denote the m x n matrix defined by
 
-                          ( column j of A   if j in P
-        column j of A_P := (
-                          ( 0               if j in Z
+                  column j of A_P := ( column j of A   if j in P
+                                     ( 0               if j in Z
 
       Compute the n-vector z as a solution of the regular least squares
-      problem minimise | A_P z - b |.  Note that only the components
+      problem minimise `| A_P z - b |`.  Note that only the components
       z_j, j in P, are determined by this problem.  Define z_j:=0 for j in Z.
-   7  If z_j>0 for all j in P, then set x:=z and goto step 2
-   8  Find an index q in P such that
-        x_q/(x_q-z_q) = min { x_j/(x_j-z_j) : z_j <= 0, j in P }
-   9  Set alpha := x_q/(x_q-z_q)
-   10 Set x := x + alpha(z-x)
-   11 Move from set P to set Z all j in P for which x_j=0.  Go to step 6.
+   7.  If `z_j>0` for all j in P, then set `x:=z` and goto step 2
+   8.  Find an index q in P such that
+        `x_q/(x_q-z_q) = min { x_j/(x_j-z_j) : z_j <= 0, j in P }`
+   9.  Set `alpha := x_q/(x_q-z_q)`
+   10. Set `x := x + alpha(z-x)`
+   11. Move from set P to set Z all j in P for which `x_j=0`.  Go to step 6.
 
    On termination, x satisfies x_j>0 for j in P and x_j=0 for j in Z, and
    x is a solution to the least squares problem minimise |A_P z - b|.
 
    Step 6 (finding the solution to the least squares problem
-   |A_P z - b|) is performed using a QR factorisation of A_P, which in
+   `|A_P z - b|`) is performed using a QR factorisation of A_P, which in
    turn is calculated using Householder matrices and Givens rotations,
    and clever tricks for keeping track of the QR factorisation of A_P
    as P changes, as we describe below.

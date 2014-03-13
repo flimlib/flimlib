@@ -1182,14 +1182,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l01207"></a><span class="lineno"> 1207</span>&#160;<span class="comment">                                        the final full computation */</span></div>
 <div class="line"><a name="l01208"></a><span class="lineno"> 1208</span>&#160;            <span class="keywordflow">if</span> ((*pfnvals_len)) {</div>
 <div class="line"><a name="l01209"></a><span class="lineno"> 1209</span>&#160;                free((*pfnvals));</div>
-<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;                GCI_ecf_free_matrix((*pdy_dparam_pure));</div>
-<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160;                GCI_ecf_free_matrix((*pdy_dparam_conv));</div>
+<div class="line"><a name="l01210"></a><span class="lineno"> 1210</span>&#160;                <a class="code" href="_ecf_8h.html#afd88f267cae9ae28b315c683b4b82732">GCI_ecf_free_matrix</a>((*pdy_dparam_pure));</div>
+<div class="line"><a name="l01211"></a><span class="lineno"> 1211</span>&#160;                <a class="code" href="_ecf_8h.html#afd88f267cae9ae28b315c683b4b82732">GCI_ecf_free_matrix</a>((*pdy_dparam_conv));</div>
 <div class="line"><a name="l01212"></a><span class="lineno"> 1212</span>&#160;                (*pfnvals_len) = 0;</div>
 <div class="line"><a name="l01213"></a><span class="lineno"> 1213</span>&#160;                (*pdy_dparam_nparam_size) = 0;</div>
 <div class="line"><a name="l01214"></a><span class="lineno"> 1214</span>&#160;            }</div>
 <div class="line"><a name="l01215"></a><span class="lineno"> 1215</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> ((*pdy_dparam_nparam_size) &lt; nparam) {</div>
-<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;            GCI_ecf_free_matrix((*pdy_dparam_pure));</div>
-<div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160;            GCI_ecf_free_matrix((*pdy_dparam_conv));</div>
+<div class="line"><a name="l01216"></a><span class="lineno"> 1216</span>&#160;            <a class="code" href="_ecf_8h.html#afd88f267cae9ae28b315c683b4b82732">GCI_ecf_free_matrix</a>((*pdy_dparam_pure));</div>
+<div class="line"><a name="l01217"></a><span class="lineno"> 1217</span>&#160;            <a class="code" href="_ecf_8h.html#afd88f267cae9ae28b315c683b4b82732">GCI_ecf_free_matrix</a>((*pdy_dparam_conv));</div>
 <div class="line"><a name="l01218"></a><span class="lineno"> 1218</span>&#160;            (*pdy_dparam_nparam_size) = 0;</div>
 <div class="line"><a name="l01219"></a><span class="lineno"> 1219</span>&#160;        }</div>
 <div class="line"><a name="l01220"></a><span class="lineno"> 1220</span>&#160;        <span class="keywordflow">if</span> (! (*pfnvals_len)) {</div>
@@ -1226,13 +1226,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l01251"></a><span class="lineno"> 1251</span>&#160;    <span class="comment">/* Need to calculate unconvolved values all the way down to 0 for</span></div>
 <div class="line"><a name="l01252"></a><span class="lineno"> 1252</span>&#160;<span class="comment">       the instrument response case */</span></div>
 <div class="line"><a name="l01253"></a><span class="lineno"> 1253</span>&#160;    <span class="keywordflow">if</span> (ninstr &gt; 0) {</div>
-<div class="line"><a name="l01254"></a><span class="lineno"> 1254</span>&#160;        <span class="keywordflow">if</span> (fitfunc == GCI_multiexp_lambda)</div>
+<div class="line"><a name="l01254"></a><span class="lineno"> 1254</span>&#160;        <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#a2344b98c118e8e514a67a6331235525a">GCI_multiexp_lambda</a>)</div>
 <div class="line"><a name="l01255"></a><span class="lineno"> 1255</span>&#160;            ret = multiexp_lambda_array(xincr, param, (*pfnvals),</div>
 <div class="line"><a name="l01256"></a><span class="lineno"> 1256</span>&#160;                                        (*pdy_dparam_pure), fit_end, nparam);</div>
-<div class="line"><a name="l01257"></a><span class="lineno"> 1257</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == GCI_multiexp_tau)</div>
+<div class="line"><a name="l01257"></a><span class="lineno"> 1257</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#ac180a3ee448f5962b0f0af64fe809e3d">GCI_multiexp_tau</a>)</div>
 <div class="line"><a name="l01258"></a><span class="lineno"> 1258</span>&#160;            ret = multiexp_tau_array(xincr, param, (*pfnvals),</div>
 <div class="line"><a name="l01259"></a><span class="lineno"> 1259</span>&#160;                                     (*pdy_dparam_pure), fit_end, nparam);</div>
-<div class="line"><a name="l01260"></a><span class="lineno"> 1260</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == GCI_stretchedexp)</div>
+<div class="line"><a name="l01260"></a><span class="lineno"> 1260</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#abd5e64cbb4216ace85ecb0f4529fd3aa">GCI_stretchedexp</a>)</div>
 <div class="line"><a name="l01261"></a><span class="lineno"> 1261</span>&#160;            ret = stretchedexp_array(xincr, param, (*pfnvals),</div>
 <div class="line"><a name="l01262"></a><span class="lineno"> 1262</span>&#160;                                     (*pdy_dparam_pure), fit_end, nparam);</div>
 <div class="line"><a name="l01263"></a><span class="lineno"> 1263</span>&#160;        <span class="keywordflow">else</span></div>
@@ -1278,13 +1278,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l01303"></a><span class="lineno"> 1303</span>&#160;        }</div>
 <div class="line"><a name="l01304"></a><span class="lineno"> 1304</span>&#160;    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l01305"></a><span class="lineno"> 1305</span>&#160;        <span class="comment">/* Can go straight into the final arrays in this case */</span></div>
-<div class="line"><a name="l01306"></a><span class="lineno"> 1306</span>&#160;        <span class="keywordflow">if</span> (fitfunc == GCI_multiexp_lambda)</div>
+<div class="line"><a name="l01306"></a><span class="lineno"> 1306</span>&#160;        <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#a2344b98c118e8e514a67a6331235525a">GCI_multiexp_lambda</a>)</div>
 <div class="line"><a name="l01307"></a><span class="lineno"> 1307</span>&#160;            ret = multiexp_lambda_array(xincr, param, yfit,</div>
 <div class="line"><a name="l01308"></a><span class="lineno"> 1308</span>&#160;                                        (*pdy_dparam_conv), fit_end, nparam);</div>
-<div class="line"><a name="l01309"></a><span class="lineno"> 1309</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == GCI_multiexp_tau)</div>
+<div class="line"><a name="l01309"></a><span class="lineno"> 1309</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#ac180a3ee448f5962b0f0af64fe809e3d">GCI_multiexp_tau</a>)</div>
 <div class="line"><a name="l01310"></a><span class="lineno"> 1310</span>&#160;            ret = multiexp_tau_array(xincr, param, yfit,</div>
 <div class="line"><a name="l01311"></a><span class="lineno"> 1311</span>&#160;                                     (*pdy_dparam_conv), fit_end, nparam);</div>
-<div class="line"><a name="l01312"></a><span class="lineno"> 1312</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == GCI_stretchedexp)</div>
+<div class="line"><a name="l01312"></a><span class="lineno"> 1312</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#abd5e64cbb4216ace85ecb0f4529fd3aa">GCI_stretchedexp</a>)</div>
 <div class="line"><a name="l01313"></a><span class="lineno"> 1313</span>&#160;            ret = stretchedexp_array(xincr, param, yfit,</div>
 <div class="line"><a name="l01314"></a><span class="lineno"> 1314</span>&#160;                                     (*pdy_dparam_conv), fit_end, nparam);</div>
 <div class="line"><a name="l01315"></a><span class="lineno"> 1315</span>&#160;        <span class="keywordflow">else</span></div>
@@ -1602,13 +1602,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l01641"></a><span class="lineno"> 1641</span>&#160;    <span class="comment">/* Need to calculate unconvolved values all the way down to 0 for</span></div>
 <div class="line"><a name="l01642"></a><span class="lineno"> 1642</span>&#160;<span class="comment">       the instrument response case */</span></div>
 <div class="line"><a name="l01643"></a><span class="lineno"> 1643</span>&#160;    <span class="keywordflow">if</span> (ninstr &gt; 0) {</div>
-<div class="line"><a name="l01644"></a><span class="lineno"> 1644</span>&#160;        <span class="keywordflow">if</span> (fitfunc == GCI_multiexp_lambda)</div>
+<div class="line"><a name="l01644"></a><span class="lineno"> 1644</span>&#160;        <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#a2344b98c118e8e514a67a6331235525a">GCI_multiexp_lambda</a>)</div>
 <div class="line"><a name="l01645"></a><span class="lineno"> 1645</span>&#160;            ret = multiexp_lambda_array(xincr, param, fnvals,</div>
 <div class="line"><a name="l01646"></a><span class="lineno"> 1646</span>&#160;                                        dy_dparam_pure, ndata, nparam);</div>
-<div class="line"><a name="l01647"></a><span class="lineno"> 1647</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == GCI_multiexp_tau)</div>
+<div class="line"><a name="l01647"></a><span class="lineno"> 1647</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#ac180a3ee448f5962b0f0af64fe809e3d">GCI_multiexp_tau</a>)</div>
 <div class="line"><a name="l01648"></a><span class="lineno"> 1648</span>&#160;            ret = multiexp_tau_array(xincr, param, fnvals,</div>
 <div class="line"><a name="l01649"></a><span class="lineno"> 1649</span>&#160;                                     dy_dparam_pure, ndata, nparam);</div>
-<div class="line"><a name="l01650"></a><span class="lineno"> 1650</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == GCI_stretchedexp)</div>
+<div class="line"><a name="l01650"></a><span class="lineno"> 1650</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#abd5e64cbb4216ace85ecb0f4529fd3aa">GCI_stretchedexp</a>)</div>
 <div class="line"><a name="l01651"></a><span class="lineno"> 1651</span>&#160;            ret = stretchedexp_array(xincr, param, fnvals,</div>
 <div class="line"><a name="l01652"></a><span class="lineno"> 1652</span>&#160;                                     dy_dparam_pure, ndata, nparam);</div>
 <div class="line"><a name="l01653"></a><span class="lineno"> 1653</span>&#160;        <span class="keywordflow">else</span></div>
@@ -1649,13 +1649,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l01688"></a><span class="lineno"> 1688</span>&#160;        }</div>
 <div class="line"><a name="l01689"></a><span class="lineno"> 1689</span>&#160;    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l01690"></a><span class="lineno"> 1690</span>&#160;        <span class="comment">/* Can go straight into the final arrays in this case */</span></div>
-<div class="line"><a name="l01691"></a><span class="lineno"> 1691</span>&#160;        <span class="keywordflow">if</span> (fitfunc == GCI_multiexp_lambda)</div>
+<div class="line"><a name="l01691"></a><span class="lineno"> 1691</span>&#160;        <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#a2344b98c118e8e514a67a6331235525a">GCI_multiexp_lambda</a>)</div>
 <div class="line"><a name="l01692"></a><span class="lineno"> 1692</span>&#160;            ret = multiexp_lambda_array(xincr, param, yfit,</div>
 <div class="line"><a name="l01693"></a><span class="lineno"> 1693</span>&#160;                                        dy_dparam_conv, ndata, nparam);</div>
-<div class="line"><a name="l01694"></a><span class="lineno"> 1694</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == GCI_multiexp_tau)</div>
+<div class="line"><a name="l01694"></a><span class="lineno"> 1694</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#ac180a3ee448f5962b0f0af64fe809e3d">GCI_multiexp_tau</a>)</div>
 <div class="line"><a name="l01695"></a><span class="lineno"> 1695</span>&#160;            ret = multiexp_tau_array(xincr, param, yfit,</div>
 <div class="line"><a name="l01696"></a><span class="lineno"> 1696</span>&#160;                                     dy_dparam_conv, ndata, nparam);</div>
-<div class="line"><a name="l01697"></a><span class="lineno"> 1697</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == GCI_stretchedexp)</div>
+<div class="line"><a name="l01697"></a><span class="lineno"> 1697</span>&#160;        <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fitfunc == <a class="code" href="_ecf_8h.html#abd5e64cbb4216ace85ecb0f4529fd3aa">GCI_stretchedexp</a>)</div>
 <div class="line"><a name="l01698"></a><span class="lineno"> 1698</span>&#160;            ret = stretchedexp_array(xincr, param, yfit,</div>
 <div class="line"><a name="l01699"></a><span class="lineno"> 1699</span>&#160;                                     dy_dparam_conv, ndata, nparam);</div>
 <div class="line"><a name="l01700"></a><span class="lineno"> 1700</span>&#160;        <span class="keywordflow">else</span></div>
@@ -1889,14 +1889,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="_ecf_single_8c_html_a5bbaf55df7653f2f443e38b6f6b1e1a9"><div class="ttname"><a href="_ecf_single_8c.html#a5bbaf55df7653f2f443e38b6f6b1e1a9">GCI_marquardt</a></div><div class="ttdeci">int GCI_marquardt(float x[], float y[], int ndata, noise_type noise, float sig[], float param[], int paramfree[], int nparam, restrain_type restrain, void(*fitfunc)(float, float[], float *, float[], int), float *fitted, float *residuals, float **covar, float **alpha, float *chisq, float chisq_delta, float chisq_percent, float **erraxes)</div><div class="ttdoc">Now for the non-linear least squares fitting algorithms. </div><div class="ttdef"><b>Definition:</b> <a href="_ecf_single_8c_source.html#l00526">EcfSingle.c:526</a></div></div>
 <div class="ttc" id="_ecf_single_8c_html_ae3621766e57085ea7fa13b6533cd0bb8"><div class="ttname"><a href="_ecf_single_8c.html#ae3621766e57085ea7fa13b6533cd0bb8">GCI_marquardt_compute_fn_final_instr</a></div><div class="ttdeci">int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata, int fit_start, int fit_end, float instr[], int ninstr, noise_type noise, float sig[], float param[], int paramfree[], int nparam, void(*fitfunc)(float, float[], float *, float[], int), float yfit[], float dy[], float *chisq, float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv, int *pfnvals_len, int *pdy_dparam_nparam_size)</div><div class="ttdoc">And this is the variant which handles an instrument response. </div><div class="ttdef"><b>Definition:</b> <a href="_ecf_single_8c_source.html#l01611">EcfSingle.c:1611</a></div></div>
 <div class="ttc" id="_ecf_8h_html_ab577c048e57126ea37f6656e97e547e7"><div class="ttname"><a href="_ecf_8h.html#ab577c048e57126ea37f6656e97e547e7">restrain_type</a></div><div class="ttdeci">restrain_type</div><div class="ttdoc">Restrain Type. </div><div class="ttdef"><b>Definition:</b> <a href="_ecf_8h_source.html#l00056">Ecf.h:56</a></div></div>
+<div class="ttc" id="_ecf_8h_html_abd5e64cbb4216ace85ecb0f4529fd3aa"><div class="ttname"><a href="_ecf_8h.html#abd5e64cbb4216ace85ecb0f4529fd3aa">GCI_stretchedexp</a></div><div class="ttdeci">void GCI_stretchedexp(float x, float param[], float *y, float dy_dparam[], int nparam)</div><div class="ttdoc">stretched-exp predefined fitting model. </div></div>
 <div class="ttc" id="_ecf_8h_html_a2ad195c79ea0a1f4f1065d0ca2e9023e"><div class="ttname"><a href="_ecf_8h.html#a2ad195c79ea0a1f4f1065d0ca2e9023e">GCI_ecf_matrix</a></div><div class="ttdeci">float ** GCI_ecf_matrix(long nrows, long ncols)</div><div class="ttdoc">Allocate a 2d matrix for ecf fitting. </div></div>
+<div class="ttc" id="_ecf_8h_html_a2344b98c118e8e514a67a6331235525a"><div class="ttname"><a href="_ecf_8h.html#a2344b98c118e8e514a67a6331235525a">GCI_multiexp_lambda</a></div><div class="ttdeci">void GCI_multiexp_lambda(float x, float param[], float *y, float dy_dparam[], int nparam)</div><div class="ttdoc">multi-exp predefined fitting model based on decay rates (lambdas). </div></div>
 <div class="ttc" id="_ecf_8h_html_a603ad628eaeb162f9f6326cbec927b89"><div class="ttname"><a href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a></div><div class="ttdeci">noise_type</div><div class="ttdoc">Noise Type. </div><div class="ttdef"><b>Definition:</b> <a href="_ecf_8h_source.html#l00045">Ecf.h:45</a></div></div>
 <div class="ttc" id="_ecf_single_8c_html_a2f0e656f93772e14f4a879297e17556f"><div class="ttname"><a href="_ecf_single_8c.html#a2f0e656f93772e14f4a879297e17556f">GCI_marquardt_compute_fn</a></div><div class="ttdeci">int GCI_marquardt_compute_fn(float x[], float y[], int ndata, noise_type noise, float sig[], float param[], int paramfree[], int nparam, void(*fitfunc)(float, float[], float *, float[], int), float yfit[], float dy[], float **alpha, float beta[], float *chisq, float old_chisq, float alambda)</div><div class="ttdoc">Used by GCI_marquardt to evaluate the linearised fitting matrix alpha and vector beta and to calculat...</div><div class="ttdef"><b>Definition:</b> <a href="_ecf_single_8c_source.html#l00998">EcfSingle.c:998</a></div></div>
+<div class="ttc" id="_ecf_8h_html_afd88f267cae9ae28b315c683b4b82732"><div class="ttname"><a href="_ecf_8h.html#afd88f267cae9ae28b315c683b4b82732">GCI_ecf_free_matrix</a></div><div class="ttdeci">void GCI_ecf_free_matrix(float **m)</div><div class="ttdoc">Free a 2d matrix. </div></div>
 <div class="ttc" id="_ecf_single_8c_html_aa71017f42eaaac4f5246ba5c931e0838"><div class="ttname"><a href="_ecf_single_8c.html#aa71017f42eaaac4f5246ba5c931e0838">GCI_marquardt_compute_fn_final</a></div><div class="ttdeci">int GCI_marquardt_compute_fn_final(float x[], float y[], int ndata, noise_type noise, float sig[], float param[], int paramfree[], int nparam, void(*fitfunc)(float, float[], float *, float[], int), float yfit[], float dy[], float *chisq)</div><div class="ttdoc">These two variants, used just before the Marquardt fitting functions terminate, compute the function ...</div><div class="ttdef"><b>Definition:</b> <a href="_ecf_single_8c_source.html#l01482">EcfSingle.c:1482</a></div></div>
+<div class="ttc" id="_ecf_8h_html_ac180a3ee448f5962b0f0af64fe809e3d"><div class="ttname"><a href="_ecf_8h.html#ac180a3ee448f5962b0f0af64fe809e3d">GCI_multiexp_tau</a></div><div class="ttdeci">void GCI_multiexp_tau(float x, float param[], float *y, float dy_dparam[], int nparam)</div><div class="ttdoc">multi-exp predefined fitting model based on lifetimes (taus). </div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 11 2014 15:45:15 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 13 2014 15:22:04 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

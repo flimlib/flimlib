@@ -55,6 +55,7 @@
  * \param[out] fitted An array containing values fitted to the data, the 'fit'. Fit points are coincident in time with the data points.
  * \param[out] residuals An array containing the difference between the data and the fit.
  * \param[out] chisq The resulting reduced chi squared value of the fit.
+ * \return An error code, 0 = success.
  */
 int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 							  float *Z, float *u, float *v, float *taup, float *taum, float *tau, float *fitted, float *residuals,

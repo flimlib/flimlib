@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">SLIM Curve
-   &#160;<span id="projectnumber">1</span>
+   &#160;<span id="projectnumber">1.0</span>
    </div>
    <div id="projectbrief">SLIM-curve package for exponential curve fitting of spectral lifetime data.</div>
   </td>
@@ -39,7 +39,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -65,7 +64,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -83,33 +82,45 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>There are two algorithms used for curve fitting within SLIM Curve: The first is a triple integral method that does a very fast estimate of a single exponential lifetime component. The second is a Levenberg-Marquardt algorithm or LMA that uses an iterative, least-squares-minimization approach to generate a fit. This works with single, double and triple exponential models, as well as stretched exponential.</p>
 <p>The code is written in C89 compatible C and is thread safe for fitting multiple pixels concurrently. Several files are provided as wrappers to call this library from Java code: EcfWrapper.c and .h provide a subset of function calls used by SLIM Plugin, these may be invoked directly from Java using JNA. In addition there is a Java CurveFitter project that provides a wrapper to the SLIM Curve code. This invokes the C code using JNI, with loci_curvefitter_SLIMCurveFitter.c and .h.</p>
 <p>For further details, see: <a href="http://loci.wisc.edu/software/slim-curve">http://loci.wisc.edu/software/slim-curve</a></p>
-<p>Directory Contents:<br/>
- src source files<br/>
- src/main/c The source files for the SLIM Curve library<br/>
- src/slim-curve-cmd/c The source files for the stand alone executable wrapper for the library<br/>
- test_files dat and ini settings file for testing<br/>
- src/main/c/doc API documentation (Doxygen output)<br/>
-</p>
-<p>To build the stand alone program using CMake and gcc under Linux:<br/>
- Create a build folder, and cd to it<br/>
- &#160;&#160;&#160;&#160;mkdir build<br/>
- &#160;&#160;&#160;&#160;cd build<br/>
- Run CMake<br/>
- &#160;&#160;&#160;&#160;cmake ../CMakeLists.txt<br/>
- Run make<br/>
- &#160;&#160;&#160;&#160;make<br/>
-</p>
-<p>To Run the stand alone executable<br/>
- Copy the executable to the test_files folder for convenience<br/>
- &#160;&#160;&#160;&#160;cp slim-curve-cmd ../test_files<br/>
- Run the program with the test files<br/>
- &#160;&#160;&#160;&#160;cd ../test_files<br/>
- &#160;&#160;&#160;&#160;./slim-curve-cmd test.ini transient.dat<br/>
- </p>
+<p>If you are familiar with the program TRI2, that uses SLIM Curve, this screenshot may help you to understand the meaning of the parameters.</p>
+<div class="image">
+<img src="params_in_tri2.png" alt="params_in_tri2.png"/>
+</div>
+ <h1>Library Contents:</h1>
+<table class="doxtable">
+<tr>
+<th>Directory </th><th>Contents  </th></tr>
+<tr>
+<td>src </td><td>source files </td></tr>
+<tr>
+<td>src/main/c </td><td>The source files for the SLIM Curve library </td></tr>
+<tr>
+<td>src/slim-curve-cmd/c </td><td>The source files for the stand alone executable wrapper for the library </td></tr>
+<tr>
+<td>test_files </td><td>dat and ini settings file for testing </td></tr>
+<tr>
+<td>src/main/c/doc </td><td>API documentation (Doxygen output) </td></tr>
+</table>
+<h1>To Build the Stand Alone Program using CMake and gcc under Linux:</h1>
+<p>Create a build folder, and cd to it </p>
+<pre class="fragment">mkdir build
+cd build
+</pre><p>Run CMake </p>
+<pre class="fragment">cmake ../CMakeLists.txt
+</pre><p>Run make </p>
+<pre class="fragment">make
+</pre><h1>To Run the Stand Alone Executable</h1>
+<p>Copy the executable to the test_files folder for convenience </p>
+<pre class="fragment">cp slim-curve-cmd ../test_files
+</pre><p>Run the program with the test files </p>
+<pre class="fragment">cd ../test_files
+./slim-curve-cmd test.ini transient.dat
+</pre><dl class="section author"><dt>Author</dt><dd>Paul Barber </dd></dl>
+<dl class="section copyright"><dt>Copyright</dt><dd>Creative Commons BY-SA 2014 </dd></dl>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 11 2014 15:45:15 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 13 2014 16:50:07 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

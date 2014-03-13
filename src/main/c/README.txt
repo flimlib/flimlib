@@ -24,27 +24,52 @@ loci_curvefitter_SLIMCurveFitter.c and .h.
 
 For further details, see:
     http://loci.wisc.edu/software/slim-curve
+    
+If you are familiar with the program TRI2, that uses SLIM Curve, this screenshot may help you to understand the meaning of the parameters.
 
-Directory Contents:<br>
-src						source files<br>
-src/main/c				The source files for the SLIM Curve library<br>
-src/slim-curve-cmd/c	The source files for the stand alone executable wrapper for the library<br>
-test_files				dat and ini settings file for testing<br>
-src/main/c/doc			API documentation (Doxygen output)<br>
+@image html params_in_tri2.png
+@image latex params_in_tri2.jpg "How some SLIM-Curve paramters are used in TRI2." width=15cm
+    
+    
+# Library Contents:
 
-To build the stand alone program using CMake and gcc under Linux:<br>
-Create a build folder, and cd to it<br>
-&nbsp;&nbsp;&nbsp;&nbsp;mkdir build<br>
-&nbsp;&nbsp;&nbsp;&nbsp;cd build<br>
-Run CMake<br>
-&nbsp;&nbsp;&nbsp;&nbsp;cmake ../CMakeLists.txt<br>
-Run make<br>
-&nbsp;&nbsp;&nbsp;&nbsp;make<br>
+Directory            | Contents
+---------            | --------
+src	                 | source files
+src/main/c           | The source files for the SLIM Curve library
+src/slim-curve-cmd/c | The source files for the stand alone executable wrapper for the library
+test_files           | dat and ini settings file for testing
+src/main/c/doc       | API documentation (Doxygen output)
+
+
+
+# To Build the Stand Alone Program using CMake and gcc under Linux:
+
+Create a build folder, and cd to it
+
+    mkdir build
+    cd build
+
+Run CMake
+
+    cmake ../CMakeLists.txt
+    
+Run make
+
+    make
 	
-To Run the stand alone executable<br>
-Copy the executable to the test_files folder for convenience<br>
-&nbsp;&nbsp;&nbsp;&nbsp;cp slim-curve-cmd ../test_files<br>
-Run the program with the test files<br>
-&nbsp;&nbsp;&nbsp;&nbsp;cd ../test_files<br>
-&nbsp;&nbsp;&nbsp;&nbsp;./slim-curve-cmd test.ini transient.dat<br>
+# To Run the Stand Alone Executable
+Copy the executable to the test_files folder for convenience
+
+    cp slim-curve-cmd ../test_files
+    
+Run the program with the test files
+
+    cd ../test_files
+    ./slim-curve-cmd test.ini transient.dat
+    
+    
+\author Paul Barber
+\copyright Creative Commons BY-SA 2014
+    
 */

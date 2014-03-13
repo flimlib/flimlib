@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">SLIM Curve
-   &#160;<span id="projectnumber">1</span>
+   &#160;<span id="projectnumber">1.0</span>
    </div>
    <div id="projectbrief">SLIM-curve package for exponential curve fitting of spectral lifetime data.</div>
   </td>
@@ -39,7 +39,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -62,7 +61,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
+      <li><a href="globals.html"><span>Globals</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -70,7 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -146,13 +145,13 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float *&#160;</td>
-          <td class="paramname"><em>U</em>, </td>
+          <td class="paramname"><em>u</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float *&#160;</td>
-          <td class="paramname"><em>V</em>, </td>
+          <td class="paramname"><em>v</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -215,18 +214,11 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">tau</td><td>The average of the other taus. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">fitted</td><td>An array containing values fitted to the data, the 'fit'. Fit points are coincident in time with the data points. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">residuals</td><td>An array containing the difference between the data and the fit. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">chisq</td><td>The resulting reduced chi squared value of the fit.</td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">chisq</td><td>The resulting reduced chi squared value of the fit. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Take transient data and perform phasor analysis, returning u, v, and estimated lifetime.</p>
-<p>See Clayton 2004 or Leray 2008 Classic Phasor or Polar approach to FLIM</p>
-<p>u = integral(data(t) * cos(wt)) dt / integral(data(t)) dt v = integral(data(t) * sin(wt)) dt / integral(data(t)) dt</p>
-<p>tau phi = taup = 1/w * (v/u) tau mod = taum = 1/w * sqrt(1/(u^2 + v^2) - 1) tau average = tau = (taup + taum) / 2</p>
-<p>Z must have been estimated previously so that it can be subtracted from the data here A is estimated by making the photon count in the fit the same as the data</p>
-<p>chisq is calculated for comparison with other methods but is not used as there is no optimisation with this method </p>
-
-<p>Definition at line <a class="el" href="_g_c_i___phasor_8c_source.html#l00082">82</a> of file <a class="el" href="_g_c_i___phasor_8c_source.html">GCI_Phasor.c</a>.</p>
+<dl class="section return"><dt>Returns</dt><dd>An error code, 0 = success. </dd></dl>
 
 </div>
 </div>
@@ -246,14 +238,12 @@ Functions</h2></td></tr>
 <p>Get the phasor period that was calculated and used in the last call to GCI_Phasor. </p>
 <dl class="section return"><dt>Returns</dt><dd>The period in the time units of xinc. </dd></dl>
 
-<p>Definition at line <a class="el" href="_g_c_i___phasor_8c_source.html#l00057">57</a> of file <a class="el" href="_g_c_i___phasor_8c_source.html">GCI_Phasor.c</a>.</p>
-
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 11 2014 15:45:15 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 13 2014 16:50:07 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">SLIM Curve
-   &#160;<span id="projectnumber">1</span>
+   &#160;<span id="projectnumber">1.0</span>
    </div>
    <div id="projectbrief">SLIM-curve package for exponential curve fitting of spectral lifetime data.</div>
   </td>
@@ -39,7 +39,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -62,7 +61,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
       <li><a href="files.html"><span>File&#160;List</span></a></li>
-      <li><a href="globals.html"><span>File&#160;Members</span></a></li>
+      <li><a href="globals.html"><span>Globals</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -70,7 +69,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Macros</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -112,13 +111,13 @@ Functions</h2></td></tr>
           <td class="memname">int GCI_lsqnonneg </td>
           <td>(</td>
           <td class="paramtype">double **&#160;</td>
-          <td class="paramname"><em>A_orig</em>, </td>
+          <td class="paramname"><em>A</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>b_orig</em>, </td>
+          <td class="paramname"><em>b</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -148,7 +147,7 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double *&#160;</td>
-          <td class="paramname"><em>rnorm_orig</em>, </td>
+          <td class="paramname"><em>rnorm</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -165,34 +164,34 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>This function solves the non-negative least squares problem. </p>
-<p>minimise |Ax-b| subject to x &gt;= 0 (where |v| is the 2-norm of the vector v).</p>
-<p>Arguments: A, an m x n matrix, in the form double A[n][m], so the columns of A are A[0], A[1], ..., A[n-1] b, the m-vector</p>
-<p>!!! NB: A and B will both be modified unless preserve is !!! non-zero (see below).</p>
-<p>x, the solution will be placed here m ) the dimensions of A n ) preserve, copy A and b before solving the problem rnorm, (double *) the value of |Ax-b| with the determined x if the function was successful or if the iteration count was exceeded. This can be NULL. lambda, an n-vector which will contain the dual vector on completion (that is, the Lagrange multipliers). This can be NULL.</p>
-<p>On exit: The return value will be 0 on success, and negative if a problem occurred: -1: m &gt; MAX_EQNS or m &lt;= 0 -2: n &gt; MAX_VARS or n &lt;= 0 -3: iteration count exceeded: more than 3*n iterations performed -4: memory allocation problems</p>
-<p>This function solves the non-negative least squares problem.</p>
-<p>This function solves the non-negative least squares problem: minimise |Ax-b| subject to x &gt;= 0 (where |v| is the 2-norm of the vector v).</p>
-<p>Arguments: A, an m x n matrix, in the form double A[n][m], so the columns of A are A[0], A[1], ..., A[n-1] b, the m-vector</p>
-<p>!!! NB: A and B will both be modified unless preserve is !!! non-zero (see below).</p>
-<p>x, the solution will be placed here m ) the dimensions of A n ) preserve, copy A and b before solving the problem rnorm, (double *) the value of |Ax-b| with the determined x if the function was successful or if the iteration count was exceeded. This can be NULL. lambda, an n-vector which will contain the dual vector on completion (that is, the Lagrange multipliers). This can be NULL.</p>
-<p>On exit: The return value will be 0 on success, and negative if a problem occurred: -1: m &gt; MAX_EQNS or m &lt;= 0 -2: n &gt; MAX_VARS or n &lt;= 0 -3: iteration count exceeded: more than 3*n iterations performed -4: memory allocation problems</p>
-<p>The algorithm is similar to the simplex algorithm, and uses Lagrange multipliers.</p>
-<p>1 Set P:={}, Z:={1,2,...,n}, x:=0 2 Compute w := A^T (b-Ax) 3 If Z={} or if w_j &lt;= 0 for all j in Z, stop 4 Find t in Z such that w_t = max { w_j : j in Z } 5 Move index t from Z to P 6 Let A_P denote the m x n matrix defined by </p>
-<pre class="fragment">                   ( column j of A   if j in P
- column j of A_P := (
-                   ( 0               if j in Z
-</pre><p>Compute the n-vector z as a solution of the regular least squares problem minimise | A_P z - b |. Note that only the components z_j, j in P, are determined by this problem. Define z_j:=0 for j in Z. 7 If z_j&gt;0 for all j in P, then set x:=z and goto step 2 8 Find an index q in P such that x_q/(x_q-z_q) = min { x_j/(x_j-z_j) : z_j &lt;= 0, j in P } 9 Set alpha := x_q/(x_q-z_q) 10 Set x := x + alpha(z-x) 11 Move from set P to set Z all j in P for which x_j=0. Go to step 6.</p>
-<p>On termination, x satisfies x_j&gt;0 for j in P and x_j=0 for j in Z, and x is a solution to the least squares problem minimise |A_P z - b|.</p>
-<p>Step 6 (finding the solution to the least squares problem |A_P z - b|) is performed using a QR factorisation of A_P, which in turn is calculated using Householder matrices and Givens rotations, and clever tricks for keeping track of the QR factorisation of A_P as P changes, as we describe below. </p>
-
-<p>Definition at line <a class="el" href="_g_c_i___lsqnonneg_8c_source.html#l00388">388</a> of file <a class="el" href="_g_c_i___lsqnonneg_8c_source.html">GCI_Lsqnonneg.c</a>.</p>
+<p>Minimise |Ax-b| subject to x &gt;= 0 (where |v| is the 2-norm of the vector v). !!! NB: A and B will both be modified unless preserve is non-zero (see below).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">A</td><td>An m x n matrix, in the form double A[n][m], so the columns of A are A[0], A[1], ..., A[n-1] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">b</td><td>The m-vector </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">x</td><td>The solution </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>The size of the 'm' dimensions of A </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">n</td><td>The size of the 'n' dimensions of A </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">preserve</td><td>Copy A and b before solving the problem so they are not modified </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">rnorm</td><td>The value of |Ax-b| with the determined x if the function was successful or if the iteration count was exceeded. This can be NULL. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">lambda</td><td>An n-vector which will contain the dual vector on completion (that is, the Lagrange multipliers). This can be NULL. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The return value will be 0 on success, and negative if a problem occurred:<ul>
+<li>-1: m &gt; MAX_EQNS or m &lt;= 0</li>
+<li>-2: n &gt; MAX_VARS or n &lt;= 0</li>
+<li>-3: iteration count exceeded: more than 3*n iterations performed</li>
+<li>-4: memory allocation problems </li>
+</ul>
+</dd></dl>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 11 2014 15:45:15 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 13 2014 16:50:07 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

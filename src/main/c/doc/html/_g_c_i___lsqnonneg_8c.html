@@ -101,9 +101,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:affe776513b24d84b39af8ab0930fef7f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affe776513b24d84b39af8ab0930fef7f"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>max</b>(a, b)&#160;&#160;&#160;((a)&lt;(b) ? (b) : (a))</td></tr>
-<tr class="separator:affe776513b24d84b39af8ab0930fef7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c707deff4e68c7283f2ed73665e0c77"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_g_c_i___lsqnonneg_8c.html#a5c707deff4e68c7283f2ed73665e0c77">MAX_VARS</a>&#160;&#160;&#160;50</td></tr>
 <tr class="memdesc:a5c707deff4e68c7283f2ed73665e0c77"><td class="mdescLeft">&#160;</td><td class="mdescRight">The greatest number of variables to be determined.  <a href="#a5c707deff4e68c7283f2ed73665e0c77">More...</a><br/></td></tr>
 <tr class="separator:a5c707deff4e68c7283f2ed73665e0c77"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -118,9 +115,6 @@ Macros</h2></td></tr>
 #define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_g_c_i___lsqnonneg_8c.html#a156b862ebf6d213f5da19b9e3ccb779e">TOL</a>&#160;&#160;&#160;(100*<a class="el" href="_g_c_i___lsqnonneg_8c.html#a6ebf6899d6c1c8b7b9d09be872c05aae">EPS</a>)</td></tr>
 <tr class="memdesc:a156b862ebf6d213f5da19b9e3ccb779e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tolerance. <br/></td></tr>
 <tr class="separator:a156b862ebf6d213f5da19b9e3ccb779e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a581f9a5f6455213315a5e37ff197f44e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a581f9a5f6455213315a5e37ff197f44e"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>Amatrix</b>(row, col)&#160;&#160;&#160;A[col][row]</td></tr>
-<tr class="separator:a581f9a5f6455213315a5e37ff197f44e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -243,21 +237,29 @@ Functions</h2></td></tr>
 
 <p>Function GCI_lsqnonneg. </p>
 <p>This function solves the non-negative least squares problem.</p>
-<p>This function solves the non-negative least squares problem: minimise |Ax-b| subject to x &gt;= 0 (where |v| is the 2-norm of the vector v).</p>
-<p>Arguments: A, an m x n matrix, in the form double A[n][m], so the columns of A are A[0], A[1], ..., A[n-1] b, the m-vector</p>
-<p>!!! NB: A and B will both be modified unless preserve is !!! non-zero (see below).</p>
-<p>x, the solution will be placed here m ) the dimensions of A n ) preserve, copy A and b before solving the problem rnorm, (double *) the value of |Ax-b| with the determined x if the function was successful or if the iteration count was exceeded. This can be NULL. lambda, an n-vector which will contain the dual vector on completion (that is, the Lagrange multipliers). This can be NULL.</p>
-<p>On exit: The return value will be 0 on success, and negative if a problem occurred: -1: m &gt; MAX_EQNS or m &lt;= 0 -2: n &gt; MAX_VARS or n &lt;= 0 -3: iteration count exceeded: more than 3*n iterations performed -4: memory allocation problems</p>
+<p>This function solves the non-negative least squares problem: minimise <code>|Ax-b|</code> subject to <code>x &gt;= 0</code> (where |v| is the 2-norm of the vector v).</p>
 <p>The algorithm is similar to the simplex algorithm, and uses Lagrange multipliers.</p>
-<p>1 Set P:={}, Z:={1,2,...,n}, x:=0 2 Compute w := A^T (b-Ax) 3 If Z={} or if w_j &lt;= 0 for all j in Z, stop 4 Find t in Z such that w_t = max { w_j : j in Z } 5 Move index t from Z to P 6 Let A_P denote the m x n matrix defined by </p>
-<pre class="fragment">                   ( column j of A   if j in P
- column j of A_P := (
-                   ( 0               if j in Z
-</pre><p>Compute the n-vector z as a solution of the regular least squares problem minimise | A_P z - b |. Note that only the components z_j, j in P, are determined by this problem. Define z_j:=0 for j in Z. 7 If z_j&gt;0 for all j in P, then set x:=z and goto step 2 8 Find an index q in P such that x_q/(x_q-z_q) = min { x_j/(x_j-z_j) : z_j &lt;= 0, j in P } 9 Set alpha := x_q/(x_q-z_q) 10 Set x := x + alpha(z-x) 11 Move from set P to set Z all j in P for which x_j=0. Go to step 6.</p>
+<ol type="1">
+<li>Set <code>P:={}, Z:={1,2,...,n}, x:=0</code></li>
+<li>Compute <code>w := A^T (b-Ax)</code></li>
+<li>If <code>Z={}</code> or <code>if w_j &lt;= 0</code> for all j in Z, stop</li>
+<li>Find t in Z such that <code>w_t = max { w_j : j in Z }</code></li>
+<li>Move index t from Z to P</li>
+<li><p class="startli">Let A_P denote the m x n matrix defined by </p>
+<pre class="fragment">       column j of A_P := ( column j of A   if j in P
+                          ( 0               if j in Z
+</pre><p class="startli">Compute the n-vector z as a solution of the regular least squares problem minimise <code>| A_P z - b |</code>. Note that only the components z_j, j in P, are determined by this problem. Define z_j:=0 for j in Z.</p>
+</li>
+<li>If <code>z_j&gt;0</code> for all j in P, then set <code>x:=z</code> and goto step 2</li>
+<li>Find an index q in P such that <code>x_q/(x_q-z_q) = min { x_j/(x_j-z_j) : z_j &lt;= 0, j in P }</code></li>
+<li>Set <code>alpha := x_q/(x_q-z_q)</code></li>
+<li>Set <code>x := x + alpha(z-x)</code></li>
+<li>Move from set P to set Z all j in P for which <code>x_j=0</code>. Go to step 6.</li>
+</ol>
 <p>On termination, x satisfies x_j&gt;0 for j in P and x_j=0 for j in Z, and x is a solution to the least squares problem minimise |A_P z - b|.</p>
-<p>Step 6 (finding the solution to the least squares problem |A_P z - b|) is performed using a QR factorisation of A_P, which in turn is calculated using Householder matrices and Givens rotations, and clever tricks for keeping track of the QR factorisation of A_P as P changes, as we describe below. </p>
+<p>Step 6 (finding the solution to the least squares problem <code>|A_P z - b|</code>) is performed using a QR factorisation of A_P, which in turn is calculated using Householder matrices and Givens rotations, and clever tricks for keeping track of the QR factorisation of A_P as P changes, as we describe below. </p>
 
-<p>Definition at line <a class="el" href="_g_c_i___lsqnonneg_8c_source.html#l00388">388</a> of file <a class="el" href="_g_c_i___lsqnonneg_8c_source.html">GCI_Lsqnonneg.c</a>.</p>
+<p>Definition at line <a class="el" href="_g_c_i___lsqnonneg_8c_source.html#l00360">360</a> of file <a class="el" href="_g_c_i___lsqnonneg_8c_source.html">GCI_Lsqnonneg.c</a>.</p>
 
 </div>
 </div>
@@ -451,7 +453,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 11 2014 15:45:15 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 13 2014 15:22:04 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

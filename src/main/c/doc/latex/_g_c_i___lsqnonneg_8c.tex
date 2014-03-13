@@ -14,9 +14,6 @@ S\-L\-I\-M Curve -\/ Non-\/negative Least Squares.
 \subsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{_g_c_i___lsqnonneg_8c_affe776513b24d84b39af8ab0930fef7f}{\#define {\bfseries max}(a, b)~((a)$<$(b) ? (b) \-: (a))}\label{_g_c_i___lsqnonneg_8c_affe776513b24d84b39af8ab0930fef7f}
-
-\item 
 \#define \hyperlink{_g_c_i___lsqnonneg_8c_a5c707deff4e68c7283f2ed73665e0c77}{M\-A\-X\-\_\-\-V\-A\-R\-S}~50
 \begin{DoxyCompactList}\small\item\em The greatest number of variables to be determined. \end{DoxyCompactList}\item 
 \#define \hyperlink{_g_c_i___lsqnonneg_8c_a8be9be2628a7cde262d0ad7c4ebf9339}{M\-A\-X\-\_\-\-E\-Q\-N\-S}~10000
@@ -26,10 +23,7 @@ S\-L\-I\-M Curve -\/ Non-\/negative Least Squares.
 \begin{DoxyCompactList}\small\item\em Approximate machine epsilon. \end{DoxyCompactList}\item 
 \hypertarget{_g_c_i___lsqnonneg_8c_a156b862ebf6d213f5da19b9e3ccb779e}{\#define \hyperlink{_g_c_i___lsqnonneg_8c_a156b862ebf6d213f5da19b9e3ccb779e}{T\-O\-L}~(100$\ast$\hyperlink{_g_c_i___lsqnonneg_8c_a6ebf6899d6c1c8b7b9d09be872c05aae}{E\-P\-S})}\label{_g_c_i___lsqnonneg_8c_a156b862ebf6d213f5da19b9e3ccb779e}
 
-\begin{DoxyCompactList}\small\item\em Tolerance. \end{DoxyCompactList}\item 
-\hypertarget{_g_c_i___lsqnonneg_8c_a581f9a5f6455213315a5e37ff197f44e}{\#define {\bfseries Amatrix}(row, col)~A\mbox{[}col\mbox{]}\mbox{[}row\mbox{]}}\label{_g_c_i___lsqnonneg_8c_a581f9a5f6455213315a5e37ff197f44e}
-
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Tolerance. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -102,31 +96,35 @@ Function G\-C\-I\-\_\-lsqnonneg.
 
 This function solves the non-\/negative least squares problem.
 
-This function solves the non-\/negative least squares problem\-: minimise $\vert$\-Ax-\/b$\vert$ subject to x $>$= 0 (where $\vert$v$\vert$ is the 2-\/norm of the vector v).
-
-Arguments\-: A, an m x n matrix, in the form double A\mbox{[}n\mbox{]}\mbox{[}m\mbox{]}, so the columns of A are A\mbox{[}0\mbox{]}, A\mbox{[}1\mbox{]}, ..., A\mbox{[}n-\/1\mbox{]} b, the m-\/vector
-
-!!! N\-B\-: A and B will both be modified unless preserve is !!! non-\/zero (see below).
-
-x, the solution will be placed here m ) the dimensions of A n ) preserve, copy A and b before solving the problem rnorm, (double $\ast$) the value of $\vert$\-Ax-\/b$\vert$ with the determined x if the function was successful or if the iteration count was exceeded. This can be N\-U\-L\-L. lambda, an n-\/vector which will contain the dual vector on completion (that is, the Lagrange multipliers). This can be N\-U\-L\-L.
-
-On exit\-: The return value will be 0 on success, and negative if a problem occurred\-: -\/1\-: m $>$ M\-A\-X\-\_\-\-E\-Q\-N\-S or m $<$= 0 -\/2\-: n $>$ M\-A\-X\-\_\-\-V\-A\-R\-S or n $<$= 0 -\/3\-: iteration count exceeded\-: more than 3$\ast$n iterations performed -\/4\-: memory allocation problems
+This function solves the non-\/negative least squares problem\-: minimise {\ttfamily $\vert$\-Ax-\/b$\vert$} subject to {\ttfamily x $>$= 0} (where $\vert$v$\vert$ is the 2-\/norm of the vector v).
 
 The algorithm is similar to the simplex algorithm, and uses Lagrange multipliers.
 
-1 Set P\-:=\{\}, Z\-:=\{1,2,...,n\}, x\-:=0 2 Compute w \-:= A$^\wedge$\-T (b-\/\-Ax) 3 If Z=\{\} or if w\-\_\-j $<$= 0 for all j in Z, stop 4 Find t in Z such that w\-\_\-t = max \{ w\-\_\-j \-: j in Z \} 5 Move index t from Z to P 6 Let A\-\_\-\-P denote the m x n matrix defined by \begin{DoxyVerb}                   ( column j of A   if j in P
- column j of A_P := (
-                   ( 0               if j in Z
+
+\begin{DoxyEnumerate}
+\item Set {\ttfamily P\-:=\{\}, Z\-:=\{1,2,...,n\}, x\-:=0}
+\item Compute {\ttfamily w \-:= A$^\wedge$\-T (b-\/\-Ax)}
+\item If {\ttfamily Z=\{\}} or {\ttfamily if w\-\_\-j $<$= 0} for all j in Z, stop
+\item Find t in Z such that {\ttfamily w\-\_\-t = max \{ w\-\_\-j \-: j in Z \}}
+\item Move index t from Z to P
+\item Let A\-\_\-\-P denote the m x n matrix defined by \begin{DoxyVerb}       column j of A_P := ( column j of A   if j in P
+                          ( 0               if j in Z
 \end{DoxyVerb}
 
 
-Compute the n-\/vector z as a solution of the regular least squares problem minimise $\vert$ A\-\_\-\-P z -\/ b $\vert$. Note that only the components z\-\_\-j, j in P, are determined by this problem. Define z\-\_\-j\-:=0 for j in Z. 7 If z\-\_\-j$>$0 for all j in P, then set x\-:=z and goto step 2 8 Find an index q in P such that x\-\_\-q/(x\-\_\-q-\/z\-\_\-q) = min \{ x\-\_\-j/(x\-\_\-j-\/z\-\_\-j) \-: z\-\_\-j $<$= 0, j in P \} 9 Set alpha \-:= x\-\_\-q/(x\-\_\-q-\/z\-\_\-q) 10 Set x \-:= x + alpha(z-\/x) 11 Move from set P to set Z all j in P for which x\-\_\-j=0. Go to step 6.
+Compute the n-\/vector z as a solution of the regular least squares problem minimise {\ttfamily $\vert$ A\-\_\-\-P z -\/ b $\vert$}. Note that only the components z\-\_\-j, j in P, are determined by this problem. Define z\-\_\-j\-:=0 for j in Z.
+\item If {\ttfamily z\-\_\-j$>$0} for all j in P, then set {\ttfamily x\-:=z} and goto step 2
+\item Find an index q in P such that {\ttfamily x\-\_\-q/(x\-\_\-q-\/z\-\_\-q) = min \{ x\-\_\-j/(x\-\_\-j-\/z\-\_\-j) \-: z\-\_\-j $<$= 0, j in P \}}
+\item Set {\ttfamily alpha \-:= x\-\_\-q/(x\-\_\-q-\/z\-\_\-q)}
+\item Set {\ttfamily x \-:= x + alpha(z-\/x)}
+\item Move from set P to set Z all j in P for which {\ttfamily x\-\_\-j=0}. Go to step 6.
+\end{DoxyEnumerate}
 
 On termination, x satisfies x\-\_\-j$>$0 for j in P and x\-\_\-j=0 for j in Z, and x is a solution to the least squares problem minimise $\vert$\-A\-\_\-\-P z -\/ b$\vert$.
 
-Step 6 (finding the solution to the least squares problem $\vert$\-A\-\_\-\-P z -\/ b$\vert$) is performed using a Q\-R factorisation of A\-\_\-\-P, which in turn is calculated using Householder matrices and Givens rotations, and clever tricks for keeping track of the Q\-R factorisation of A\-\_\-\-P as P changes, as we describe below. 
+Step 6 (finding the solution to the least squares problem {\ttfamily $\vert$\-A\-\_\-\-P z -\/ b$\vert$}) is performed using a Q\-R factorisation of A\-\_\-\-P, which in turn is calculated using Householder matrices and Givens rotations, and clever tricks for keeping track of the Q\-R factorisation of A\-\_\-\-P as P changes, as we describe below. 
 
-Definition at line 388 of file G\-C\-I\-\_\-\-Lsqnonneg.\-c.
+Definition at line 360 of file G\-C\-I\-\_\-\-Lsqnonneg.\-c.
 
 \hypertarget{_g_c_i___lsqnonneg_8c_a26f057044890214807647841dfeddc11}{\index{G\-C\-I\-\_\-\-Lsqnonneg.\-c@{G\-C\-I\-\_\-\-Lsqnonneg.\-c}!Givens\-Apply@{Givens\-Apply}}
 \index{Givens\-Apply@{Givens\-Apply}!GCI_Lsqnonneg.c@{G\-C\-I\-\_\-\-Lsqnonneg.\-c}}

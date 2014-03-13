@@ -64,7 +64,7 @@
    provide a version of step (3) to handle the case of arbitrary
    x data with no instrument response.
 
- \file EcfGlobal.h
+ \file EcfGlobal.c
  */
 
 

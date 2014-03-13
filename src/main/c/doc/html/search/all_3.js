@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['householder',['Householder',['../_g_c_i___lsqnonneg_8c.html#a9dc0b48ff8ccb3ab5bfcd48e73fd1aa9',1,'GCI_Lsqnonneg.c']]]
+  ['noise_5ftype',['noise_type',['../_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89',1,'Ecf.h']]]
 ];

@@ -82,7 +82,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">EcfSingle.c File Reference</div>  </div>
@@ -98,43 +97,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div>
 <p><a href="_ecf_single_8c_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
-Macros</h2></td></tr>
-<tr class="memitem:af5f941a121d48cfb608cdd4a63a1f430"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><b>do_frees</b></td></tr>
-<tr class="separator:af5f941a121d48cfb608cdd4a63a1f430"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a12f94f60ba55450a3c96ff5354f4e196"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a12f94f60ba55450a3c96ff5354f4e196"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_marquardt_step</b> (float x[], float y[], int ndata, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float param[], int paramfree[], int nparam, <a class="el" href="_ecf_8h.html#ab577c048e57126ea37f6656e97e547e7">restrain_type</a> restrain, void(*fitfunc)(float, float[], float *, float[], int), float yfit[], float dy[], float **covar, float **alpha, float *chisq, float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam)</td></tr>
-<tr class="separator:a12f94f60ba55450a3c96ff5354f4e196"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb8daa724709f15dfe9b3b95d7e2c5ca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afb8daa724709f15dfe9b3b95d7e2c5ca"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_marquardt_step_instr</b> (float xincr, float y[], int ndata, int fit_start, int fit_end, float instr[], int ninstr, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float param[], int paramfree[], int nparam, <a class="el" href="_ecf_8h.html#ab577c048e57126ea37f6656e97e547e7">restrain_type</a> restrain, void(*fitfunc)(float, float[], float *, float[], int), float yfit[], float dy[], float **covar, float **alpha, float *chisq, float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam, float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv, int *pfnvals_len, int *pdy_dparam_nparam_size)</td></tr>
-<tr class="separator:afb8daa724709f15dfe9b3b95d7e2c5ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5be7339bce1cb57d8723988385b82b5e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5be7339bce1cb57d8723988385b82b5e"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_marquardt_estimate_errors</b> (float **alpha, int nparam, int mfit, float d[], float **v, float interval)</td></tr>
-<tr class="separator:a5be7339bce1cb57d8723988385b82b5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad62c421e86238246287fc9cadf4bf171"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ecf_single_8c.html#ad62c421e86238246287fc9cadf4bf171">GCI_triple_integral</a> (float xincr, float y[], int fit_start, int fit_end, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float *Z, float *A, float *tau, float *fitted, float *residuals, float *chisq, int division)</td></tr>
 <tr class="memdesc:ad62c421e86238246287fc9cadf4bf171"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start with an easy one: the three integral method.  <a href="#ad62c421e86238246287fc9cadf4bf171">More...</a><br/></td></tr>
 <tr class="separator:ad62c421e86238246287fc9cadf4bf171"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c72ce45f467e73bdbfdeecba86a2d3a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3c72ce45f467e73bdbfdeecba86a2d3a"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_triple_integral_instr</b> (float xincr, float y[], int fit_start, int fit_end, float instr[], int ninstr, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float *Z, float *A, float *tau, float *fitted, float *residuals, float *chisq, int division)</td></tr>
-<tr class="separator:a3c72ce45f467e73bdbfdeecba86a2d3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7790a7e8ebdca31efd349e44add17cd9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ecf_single_8c.html#a7790a7e8ebdca31efd349e44add17cd9">GCI_triple_integral_fitting_engine</a> (float xincr, float y[], int fit_start, int fit_end, float instr[], int ninstr, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float *Z, float *A, float *tau, float *fitted, float *residuals, float *chisq, float chisq_target)</td></tr>
 <tr class="memdesc:a7790a7e8ebdca31efd349e44add17cd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The main entry point for Triple Integral or Rapid Lifetime Determination (RLD).  <a href="#a7790a7e8ebdca31efd349e44add17cd9">More...</a><br/></td></tr>
 <tr class="separator:a7790a7e8ebdca31efd349e44add17cd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5bbaf55df7653f2f443e38b6f6b1e1a9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ecf_single_8c.html#a5bbaf55df7653f2f443e38b6f6b1e1a9">GCI_marquardt</a> (float x[], float y[], int ndata, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float param[], int paramfree[], int nparam, <a class="el" href="_ecf_8h.html#ab577c048e57126ea37f6656e97e547e7">restrain_type</a> restrain, void(*fitfunc)(float, float[], float *, float[], int), float *fitted, float *residuals, float **covar, float **alpha, float *chisq, float chisq_delta, float chisq_percent, float **erraxes)</td></tr>
 <tr class="memdesc:a5bbaf55df7653f2f443e38b6f6b1e1a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Now for the non-linear least squares fitting algorithms.  <a href="#a5bbaf55df7653f2f443e38b6f6b1e1a9">More...</a><br/></td></tr>
 <tr class="separator:a5bbaf55df7653f2f443e38b6f6b1e1a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a527b18f8e48919e46f32af4889662f48"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a527b18f8e48919e46f32af4889662f48"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_marquardt_instr</b> (float xincr, float y[], int ndata, int fit_start, int fit_end, float instr[], int ninstr, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float param[], int paramfree[], int nparam, <a class="el" href="_ecf_8h.html#ab577c048e57126ea37f6656e97e547e7">restrain_type</a> restrain, void(*fitfunc)(float, float[], float *, float[], int), float *fitted, float *residuals, float **covar, float **alpha, float *chisq, float chisq_delta, float chisq_percent, float **erraxes)</td></tr>
-<tr class="separator:a527b18f8e48919e46f32af4889662f48"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f0e656f93772e14f4a879297e17556f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ecf_single_8c.html#a2f0e656f93772e14f4a879297e17556f">GCI_marquardt_compute_fn</a> (float x[], float y[], int ndata, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float param[], int paramfree[], int nparam, void(*fitfunc)(float, float[], float *, float[], int), float yfit[], float dy[], float **alpha, float beta[], float *chisq, float old_chisq, float alambda)</td></tr>
 <tr class="memdesc:a2f0e656f93772e14f4a879297e17556f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Used by GCI_marquardt to evaluate the linearised fitting matrix alpha and vector beta and to calculate chi^2.  <a href="#a2f0e656f93772e14f4a879297e17556f">More...</a><br/></td></tr>
 <tr class="separator:a2f0e656f93772e14f4a879297e17556f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad97ce4de715a51cf1fba23af5309e32e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad97ce4de715a51cf1fba23af5309e32e"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_marquardt_compute_fn_instr</b> (float xincr, float y[], int ndata, int fit_start, int fit_end, float instr[], int ninstr, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float param[], int paramfree[], int nparam, void(*fitfunc)(float, float[], float *, float[], int), float yfit[], float dy[], float **alpha, float beta[], float *chisq, float old_chisq, float alambda, float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv, int *pfnvals_len, int *pdy_dparam_nparam_size)</td></tr>
-<tr class="separator:ad97ce4de715a51cf1fba23af5309e32e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa71017f42eaaac4f5246ba5c931e0838"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ecf_single_8c.html#aa71017f42eaaac4f5246ba5c931e0838">GCI_marquardt_compute_fn_final</a> (float x[], float y[], int ndata, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float param[], int paramfree[], int nparam, void(*fitfunc)(float, float[], float *, float[], int), float yfit[], float dy[], float *chisq)</td></tr>
 <tr class="memdesc:aa71017f42eaaac4f5246ba5c931e0838"><td class="mdescLeft">&#160;</td><td class="mdescRight">These two variants, used just before the Marquardt fitting functions terminate, compute the function values at all points, whether or not they are being fitted.  <a href="#aa71017f42eaaac4f5246ba5c931e0838">More...</a><br/></td></tr>
 <tr class="separator:aa71017f42eaaac4f5246ba5c931e0838"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,35 +120,14 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_marquardt_compute_
 <tr class="memitem:a94bbfd4c5b3d3a79fd840731954f3976"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ecf_single_8c.html#a94bbfd4c5b3d3a79fd840731954f3976">GCI_marquardt_fitting_engine</a> (float xincr, float *trans, int ndata, int fit_start, int fit_end, float prompt[], int nprompt, <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89">noise_type</a> noise, float sig[], float param[], int paramfree[], int nparam, <a class="el" href="_ecf_8h.html#ab577c048e57126ea37f6656e97e547e7">restrain_type</a> restrain, void(*fitfunc)(float, float[], float *, float[], int), float *fitted, float *residuals, float *chisq, float **covar, float **alpha, float **erraxes, float chisq_target, float chisq_delta, int chisq_percent)</td></tr>
 <tr class="memdesc:a94bbfd4c5b3d3a79fd840731954f3976"><td class="mdescLeft">&#160;</td><td class="mdescRight">GCI_marquardt_fitting_engine.  <a href="#a94bbfd4c5b3d3a79fd840731954f3976">More...</a><br/></td></tr>
 <tr class="separator:a94bbfd4c5b3d3a79fd840731954f3976"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26e45e21bc6592ea929a9b103fe9c4d2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26e45e21bc6592ea929a9b103fe9c4d2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_marquardt_cleanup</b> (void)</td></tr>
-<tr class="separator:a26e45e21bc6592ea929a9b103fe9c4d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>SLIM Curve - Exponential Curve Fitting. </p>
 <p>Based on the 2003 version of the ECF library. This has been modified to remove modified Numeric Recipes code. Also, this takes account of the fact that we may be handling Poisson noise.</p>
-<p>This file contains functions for single transient analysis. Utility code is found in EcfUtil.c and global analysis code in <a class="el" href="_ecf_global_8c_source.html">EcfGlobal.c</a>. </p>
+<p>This file contains functions for single transient analysis. Utility code is found in EcfUtil.c and global analysis code in <a class="el" href="_ecf_global_8c.html" title="GLOBAL ANALYSIS. ">EcfGlobal.c</a>. </p>
 
 <p>Definition in file <a class="el" href="_ecf_single_8c_source.html">EcfSingle.c</a>.</p>
-</div><h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="af5f941a121d48cfb608cdd4a63a1f430"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define do_frees</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line"><span class="keywordflow">if</span> (fnvals) free(fnvals);\</div>
-<div class="line">    if (dy_dparam_pure) GCI_ecf_free_matrix(dy_dparam_pure);\</div>
-<div class="line">    if (dy_dparam_conv) GCI_ecf_free_matrix(dy_dparam_conv);</div>
-</div><!-- fragment -->
-<p>Definition at line <a class="el" href="_ecf_single_8c_source.html#l00606">606</a> of file <a class="el" href="_ecf_single_8c_source.html">EcfSingle.c</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a class="anchor" id="a5bbaf55df7653f2f443e38b6f6b1e1a9"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1034,8 +989,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_marquardt_cleanup
     <tr><td class="paramdir">[in]</td><td class="paramname">fit_start</td><td>The index into the y array marking the start to the data to be used in the fit. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fit_end</td><td>The index into the y array marking the end of the data to be used in the fit. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">instr</td><td>The instrument reponse (IRF) or prompt signal to be used (optional, can pass NULL). </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">noise</td><td>The noise_type to be used. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">sig</td><td>The standard deviation at each data point in y if noise_type NOISE_GIVEN is used (optional, can pass NULL). </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">noise</td><td>The <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89" title="Noise Type. ">noise_type</a> to be used. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">sig</td><td>The standard deviation at each data point in y if <a class="el" href="_ecf_8h.html#a603ad628eaeb162f9f6326cbec927b89" title="Noise Type. ">noise_type</a> NOISE_GIVEN is used (optional, can pass NULL). </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">Z</td><td>The returned background value from the fit. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">A</td><td>The returned amplitude value from the fit. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">tau</td><td>The returned lifetime value from the fit. </td></tr>
@@ -1055,7 +1010,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>GCI_marquardt_cleanup
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 11 2014 15:45:15 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Mar 13 2014 15:22:04 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -32,8 +32,8 @@ Definition in file \hyperlink{_g_c_i___phasor_8h_source}{G\-C\-I\-\_\-\-Phasor.\
 \item[{int}]{fit\-\_\-start, }
 \item[{int}]{fit\-\_\-end, }
 \item[{float $\ast$}]{Z, }
-\item[{float $\ast$}]{U, }
-\item[{float $\ast$}]{V, }
+\item[{float $\ast$}]{u, }
+\item[{float $\ast$}]{v, }
 \item[{float $\ast$}]{taup, }
 \item[{float $\ast$}]{taum, }
 \item[{float $\ast$}]{tau, }
@@ -76,23 +76,12 @@ tau phi = taup = 1/w $\ast$ (v/u) tau mod = taum = 1/w $\ast$ sqrt(1/(u$^\wedge$
 \hline
 \mbox{\tt out}  & {\em residuals} & An array containing the difference between the data and the fit. \\
 \hline
-\mbox{\tt out}  & {\em chisq} & The resulting reduced chi squared value of the fit.\\
+\mbox{\tt out}  & {\em chisq} & The resulting reduced chi squared value of the fit. \\
 \hline
 \end{DoxyParams}
-Take transient data and perform phasor analysis, returning u, v, and estimated lifetime.
-
-See Clayton 2004 or Leray 2008 Classic Phasor or Polar approach to F\-L\-I\-M
-
-u = integral(data(t) $\ast$ cos(wt)) dt / integral(data(t)) dt v = integral(data(t) $\ast$ sin(wt)) dt / integral(data(t)) dt
-
-tau phi = taup = 1/w $\ast$ (v/u) tau mod = taum = 1/w $\ast$ sqrt(1/(u$^\wedge$2 + v$^\wedge$2) -\/ 1) tau average = tau = (taup + taum) / 2
-
-Z must have been estimated previously so that it can be subtracted from the data here A is estimated by making the photon count in the fit the same as the data
-
-chisq is calculated for comparison with other methods but is not used as there is no optimisation with this method 
-
-Definition at line 82 of file G\-C\-I\-\_\-\-Phasor.\-c.
-
+\begin{DoxyReturn}{Returns}
+An error code, 0 = success. 
+\end{DoxyReturn}
 \hypertarget{_g_c_i___phasor_8h_a23c618928152a85a0e2974de68ede0f5}{\index{G\-C\-I\-\_\-\-Phasor.\-h@{G\-C\-I\-\_\-\-Phasor.\-h}!G\-C\-I\-\_\-\-Phasor\-\_\-get\-Period@{G\-C\-I\-\_\-\-Phasor\-\_\-get\-Period}}
 \index{G\-C\-I\-\_\-\-Phasor\-\_\-get\-Period@{G\-C\-I\-\_\-\-Phasor\-\_\-get\-Period}!GCI_Phasor.h@{G\-C\-I\-\_\-\-Phasor.\-h}}
 \subsubsection[{G\-C\-I\-\_\-\-Phasor\-\_\-get\-Period}]{\setlength{\rightskip}{0pt plus 5cm}double G\-C\-I\-\_\-\-Phasor\-\_\-get\-Period (
@@ -107,7 +96,3 @@ Get the phasor period that was calculated and used in the last call to G\-C\-I\-
 \begin{DoxyReturn}{Returns}
 The period in the time units of xinc. 
 \end{DoxyReturn}
-
-
-Definition at line 57 of file G\-C\-I\-\_\-\-Phasor.\-c.
-
