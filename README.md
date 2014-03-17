@@ -40,7 +40,7 @@ the SLIM Curve code. This invokes the C code using JNI, with
 For further details, see:
     https://slim-curve.github.io/
 
-## Directory Contents
+## Directory contents
 
 * `src` - source files
 * `src/main/c` - The source files for the SLIM Curve library
@@ -49,30 +49,40 @@ For further details, see:
 * `src/slim-curve-cmd/c/doc` - API documentaion
 * `test_files` - dat and ini settings file for testing
 
-## To build the standalone program using CMake and gcc under Linux
+## Building the source
 
-Create a build folder, and cd to it
-```
-mkdir build
-cd build
-```
-Run CMake
-```
-cmake ../CMakeLists.txt
-```
-Run make
-```
-make
-```
-	
-## To Run the standalone executable
+To build the standalone program using CMake and gcc under Linux:
 
-Copy the executable to the test_files folder for convenience
-```
-cp slim-curve-cmd ../test_files
-```
-Run the program with the test files
-```
-cd ../test_files
-./slim-curve-cmd test.ini transient.dat
-```
+1.  Create a build folder, and cd to it
+
+    ```
+    mkdir build
+    cd build
+    ```
+
+2.  Run CMake
+
+    ```
+    cmake ../CMakeLists.txt
+    ```
+
+3.  Run make
+
+    ```
+    make
+    ```
+
+## Running the standalone executable
+
+1.  Copy the executable to the `test_files` folder for convenience
+
+    ```
+    cp slim-curve-cmd ../test_files
+    ```
+
+2.  Run the program with the test files
+
+    ```
+    cd ../test_files
+    ./slim-curve-cmd test.ini transient.dat
+    ```
