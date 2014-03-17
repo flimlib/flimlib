@@ -40,7 +40,7 @@ the SLIM Curve code. This invokes the C code using JNI, with
 For further details, see:
     https://slim-curve.github.io/
 
-== Directory Contents ==
+## Directory Contents
 
 * `src` - source files
 * `src/main/c` - The source files for the SLIM Curve library
@@ -49,7 +49,7 @@ For further details, see:
 * `src/slim-curve-cmd/c/doc` - API documentaion
 * `test_files` - dat and ini settings file for testing
 
-== To build the standalone program using CMake and gcc under Linux ==
+## To build the standalone program using CMake and gcc under Linux
 
 Create a build folder, and cd to it
 ```
@@ -65,7 +65,7 @@ Run make
 make
 ```
 	
-== To Run the standalone executable ==
+## To Run the standalone executable
 
 Copy the executable to the test_files folder for convenience
 ```
