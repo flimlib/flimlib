@@ -78,8 +78,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">SLIM-curve package for exponential curve fitting of spectral lifetime data. </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>SLIM Curve is an exponential curve fitting library used for Fluorescent Lifetime Imaging or FLIM and Spectral Lifetime Imaging or SLIM. It is based on code developed by Paul Barber and his group at the Gray Institute for Radiation Oncology &amp; Biology and used for FLIM functionality in his TRI2 (Time Resolved Imaging) software. It is also used in the LOCI SLIM Plugin project.</p>
-<p>There are two algorithms used for curve fitting within SLIM Curve: The first is a triple integral method that does a very fast estimate of a single exponential lifetime component. The second is a Levenberg-Marquardt algorithm or LMA that uses an iterative, least-squares-minimization approach to generate a fit. This works with single, double and triple exponential models, as well as stretched exponential.</p>
+<div class="textblock"><p>SLIM Curve is a curve fitting library used for Fluorescent Lifetime Imaging or FLIM and Spectral Lifetime Imaging or SLIM. It is based on code developed by Paul Barber and the Advanced Technology Group at the Gray Institute for Radiation Oncology &amp; Biology, University of Oxford, and used for FLIM functionality in his TRI2 (Time Resolved Imaging) software. It is also used in the LOCI SLIM Plugin project.</p>
+<p>For exponential lifetime fitting there are two core algorithms within SLIM Curve: The first is a triple integral method that does a very fast estimate of a single exponential lifetime component. The second is a Levenberg-Marquardt algorithm or LMA that uses an iterative, least-squares-minimization approach to generate a fit. This works with single, double and triple exponential models, as well as stretched exponential. There is also code to perform 'global' analysis over a number of signals symultaneously (e.g. over an image), where the lifetimes can be considered constant across the data set, but the amplitudes are allowed to vary for each signal. There is also a completely generic global analysis function. A third algorithm is available to perform phasor analysis.</p>
+<p>In addition there is a non-negative linear least squares algorithm that is useful for spectral unmixing in SLIM.</p>
 <p>The code is written in C89 compatible C and is thread safe for fitting multiple pixels concurrently. Several files are provided as wrappers to call this library from Java code: EcfWrapper.c and .h provide a subset of function calls used by SLIM Plugin, these may be invoked directly from Java using JNA. In addition there is a Java CurveFitter project that provides a wrapper to the SLIM Curve code. This invokes the C code using JNI, with loci_curvefitter_SLIMCurveFitter.c and .h.</p>
 <p>For further details, see: <a href="http://loci.wisc.edu/software/slim-curve">http://loci.wisc.edu/software/slim-curve</a></p>
 <p>If you are familiar with the program TRI2, that uses SLIM Curve, this screenshot may help you to understand the meaning of the parameters.</p>
@@ -120,7 +121,7 @@ cd build
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Mar 13 2014 16:50:07 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Mar 17 2014 11:56:14 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
