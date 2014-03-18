@@ -12,6 +12,7 @@
 		<relativePath />
 	</parent>
 
+	<groupId>slim-curve</groupId>
 	<artifactId>slim-curve</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>nar</packaging>
