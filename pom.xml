@@ -18,6 +18,7 @@
 
 	<name>SLIM Curve</name>
 	<description>A package for exponential curve fitting of combined spectral lifetime image data.</description>
+	<url>https://slim-curve.github.io/</url>
 	<inceptionYear>2010</inceptionYear>
 
 	<licenses>
