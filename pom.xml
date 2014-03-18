@@ -29,6 +29,11 @@
 		</license>
 	</licenses>
 
+	<organization>
+		<name>SLIM Curve</name>
+		<url>https://github.com/slim-curve/</url>
+	</organization>
+
 	<build>
 		<plugins>
 			<plugin>
