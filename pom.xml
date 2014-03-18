@@ -117,6 +117,26 @@ Regents of the University of Wisconsin-Madison.</organizationName>
 		</developer>
 	</developers>
 
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/slim-curve/slim-curve/issues</url>
+	</issueManagement>
+
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://jenkins.imagej.net/job/SLIM-curve/</url>
+	</ciManagement>
+
+	<mailingLists>
+		<mailingList>
+			<name>SLIM Curve</name>
+			<subscribe>http://loci.wisc.edu/mailman/listinfo/slim-curve</subscribe>
+			<unsubscribe>http://loci.wisc.edu/mailman/listinfo/slim-curve</unsubscribe>
+			<post>slim-curve@loci.wisc.edu</post>
+			<archive>http://loci.wisc.edu/pipermail/slim-curve/</archive>
+		</mailingList>
+	</mailingLists>
+
 	<scm>
 		<connection>scm:git:git://github.com/uw-loci/slim-curve</connection>
 		<developerConnection>scm:git:git@github.com:uw-loci/slim-curve</developerConnection>
