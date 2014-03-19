@@ -10,7 +10,7 @@ In addition there is a non-negative linear least squares algorithm that is usefu
 The code is written in C89 compatible C and is thread safe for fitting multiple pixels concurrently.  Several files are provided as wrappers to call this library from Java code:  EcfWrapper.c and .h provide a subset of function calls used by SLIM Plugin, these may be invoked directly from Java using JNA.  In addition there is a Java CurveFitter project that provides a wrapper to the SLIM Curve code.  This invokes the C code using JNI, with loci_curvefitter_SLIMCurveFitter.c and .h.
 
 For further details, see:
-    http://loci.wisc.edu/software/slim-curve
+    http://slim-curve.github.io/
     
 If you are familiar with the program TRI2, that uses SLIM Curve, this screenshot may help you to understand the meaning of the parameters.
 
