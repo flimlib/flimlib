@@ -37,7 +37,12 @@ JNA. In addition there is a Java CurveFitter project that provides a wrapper to
 the SLIM Curve code. This invokes the C code using JNI, with
 `loci_curvefitter_SLIMCurveFitter.c` and `.h`.
 
-For further details, see:
+For an overview and commentary on the repository structure, see:
+
+    https://github.com/slim-curve/slim-curve/wiki/Project-structure
+
+See also the SLIM Curve web site:
+
     https://slim-curve.github.io/
 
 ## Directory contents
