@@ -460,9 +460,7 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 
    The process is:
    - for Gaussian noise, use Levenberg-Marquardt directly
-   - for Poisson noise, use Levenberg-Marquardt to get an initial
-   estimate of the parameters assuming constant error variance, then
-   use amoeba to improve the estimate, assuming that the error
+   - for Poisson noise, use Levenberg-Marquardt assuming that the error
    variance is proportional to the function value (with a minimum
    variance of 15 to handle the case when the Poisson distribution
    is not approximately Gaussian, so that the very noisy tails do
@@ -520,6 +518,19 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
    value rather than being convolved with the instrument response only
    from time zero.  For this reason, the fitfunc should ignore
    param[0], as the fitting routines will handle this offset.
+*/
+
+/* Originally the comment above had this text:
+   - for Poisson noise, use Levenberg-Marquardt to get an initial
+   estimate of the parameters assuming constant error variance, then
+   use amoeba to improve the estimate, assuming that the error
+   variance is proportional to the function value (with a minimum
+   variance of 15 to handle the case when the Poisson distribution
+   is not approximately Gaussian, so that the very noisy tails do
+   not inappropriately weight the solution).
+
+   But in the current form of the library there is no evidence that 
+   amoeba is used any more, so the comment has been changed.
 */
 
 /* These two functions do the whole job */
