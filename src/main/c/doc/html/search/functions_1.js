@@ -3,7 +3,7 @@ var searchData=
   ['gci_5fecf_5ffree_5fmatrix',['GCI_ecf_free_matrix',['../_ecf_8h.html#afd88f267cae9ae28b315c683b4b82732',1,'Ecf.h']]],
   ['gci_5fecf_5fmatrix',['GCI_ecf_matrix',['../_ecf_8h.html#a2ad195c79ea0a1f4f1065d0ca2e9023e',1,'Ecf.h']]],
   ['gci_5flsqnonneg',['GCI_lsqnonneg',['../_g_c_i___lsqnonneg_8h.html#a22eea7bf01a7e9cc5c446c203b497d36',1,'GCI_Lsqnonneg.h']]],
-  ['gci_5fmarquardt_5ffitting_5fengine',['GCI_marquardt_fitting_engine',['../_ecf_8h.html#a94bbfd4c5b3d3a79fd840731954f3976',1,'Ecf.h']]],
+  ['gci_5fmarquardt_5ffitting_5fengine',['GCI_marquardt_fitting_engine',['../_ecf_8h.html#ae0d1a8e9fbe07999187bace488004c4a',1,'Ecf.h']]],
   ['gci_5fmarquardt_5fglobal_5fexps_5finstr',['GCI_marquardt_global_exps_instr',['../_ecf_8h.html#adaf97138127a9b5b4db9de0c15a95742',1,'Ecf.h']]],
   ['gci_5fmarquardt_5fglobal_5fgeneric_5finstr',['GCI_marquardt_global_generic_instr',['../_ecf_8h.html#ac92d80a24a54ae6853e5c49de4e965ab',1,'Ecf.h']]],
   ['gci_5fmultiexp_5flambda',['GCI_multiexp_lambda',['../_ecf_8h.html#a2344b98c118e8e514a67a6331235525a',1,'Ecf.h']]],

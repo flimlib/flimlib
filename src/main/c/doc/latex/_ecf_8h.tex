@@ -32,7 +32,7 @@ enum \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} \
 \item 
 int \hyperlink{_ecf_8h_a7790a7e8ebdca31efd349e44add17cd9}{G\-C\-I\-\_\-triple\-\_\-integral\-\_\-fitting\-\_\-engine} (float xincr, float y\mbox{[}$\,$\mbox{]}, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$Z, float $\ast$A, float $\ast$tau, float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, float chisq\-\_\-target)
 \begin{DoxyCompactList}\small\item\em The main entry point for Triple Integral or Rapid Lifetime Determination (R\-L\-D). \end{DoxyCompactList}\item 
-int \hyperlink{_ecf_8h_a94bbfd4c5b3d3a79fd840731954f3976}{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine} (float xincr, float $\ast$trans, int ndata, int fit\-\_\-start, int fit\-\_\-end, float prompt\mbox{[}$\,$\mbox{]}, int nprompt, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$$\ast$erraxes, float chisq\-\_\-target, float chisq\-\_\-delta, int chisq\-\_\-percent)
+int \hyperlink{_ecf_8h_ae0d1a8e9fbe07999187bace488004c4a}{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine} (float xincr, float $\ast$trans, int ndata, int fit\-\_\-start, int fit\-\_\-end, float instr\mbox{[}$\,$\mbox{]}, int ninstr, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float param\mbox{[}$\,$\mbox{]}, int paramfree\mbox{[}$\,$\mbox{]}, int nparam, \hyperlink{_ecf_8h_ab577c048e57126ea37f6656e97e547e7}{restrain\-\_\-type} restrain, void($\ast$fitfunc)(float, float\mbox{[}$\,$\mbox{]}, float $\ast$, float\mbox{[}$\,$\mbox{]}, int), float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, float $\ast$$\ast$covar, float $\ast$$\ast$alpha, float $\ast$$\ast$erraxes, float chisq\-\_\-target, float chisq\-\_\-delta, int chisq\-\_\-percent)
 \begin{DoxyCompactList}\small\item\em The main entry point for L\-M and M\-L\-E fitting. \end{DoxyCompactList}\item 
 \hypertarget{_ecf_8h_ad62c421e86238246287fc9cadf4bf171}{int {\bfseries G\-C\-I\-\_\-triple\-\_\-integral} (float xincr, float y\mbox{[}$\,$\mbox{]}, int fit\-\_\-start, int fit\-\_\-end, \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} noise, float sig\mbox{[}$\,$\mbox{]}, float $\ast$Z, float $\ast$A, float $\ast$tau, float $\ast$fitted, float $\ast$residuals, float $\ast$chisq, int division)}\label{_ecf_8h_ad62c421e86238246287fc9cadf4bf171}
 
@@ -186,7 +186,7 @@ Free a 2d matrix.
 
 Allocate a 2d matrix for ecf fitting. 
 
-\hypertarget{_ecf_8h_a94bbfd4c5b3d3a79fd840731954f3976}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine@{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine}}
+\hypertarget{_ecf_8h_ae0d1a8e9fbe07999187bace488004c4a}{\index{Ecf.\-h@{Ecf.\-h}!G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine@{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine}}
 \index{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine@{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine}!Ecf.h@{Ecf.\-h}}
 \subsubsection[{G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine}]{\setlength{\rightskip}{0pt plus 5cm}int G\-C\-I\-\_\-marquardt\-\_\-fitting\-\_\-engine (
 \begin{DoxyParamCaption}
@@ -195,8 +195,8 @@ Allocate a 2d matrix for ecf fitting.
 \item[{int}]{ndata, }
 \item[{int}]{fit\-\_\-start, }
 \item[{int}]{fit\-\_\-end, }
-\item[{float}]{prompt\mbox{[}$\,$\mbox{]}, }
-\item[{int}]{nprompt, }
+\item[{float}]{instr\mbox{[}$\,$\mbox{]}, }
+\item[{int}]{ninstr, }
 \item[{{\bf noise\-\_\-type}}]{noise, }
 \item[{float}]{sig\mbox{[}$\,$\mbox{]}, }
 \item[{float}]{param\mbox{[}$\,$\mbox{]}, }
@@ -214,7 +214,7 @@ Allocate a 2d matrix for ecf fitting.
 \item[{float}]{chisq\-\_\-delta, }
 \item[{int}]{chisq\-\_\-percent}
 \end{DoxyParamCaption}
-)}}\label{_ecf_8h_a94bbfd4c5b3d3a79fd840731954f3976}
+)}}\label{_ecf_8h_ae0d1a8e9fbe07999187bace488004c4a}
 
 
 The main entry point for L\-M and M\-L\-E fitting. 
@@ -233,9 +233,9 @@ Uses G\-C\-I\-\_\-marquardt\-\_\-instr() to fit repeatedly until chisq\-\_\-targ
 \hline
 \mbox{\tt in}  & {\em fit\-\_\-end} & The index into the y array marking the end of the data to be used in the fit. \\
 \hline
-\mbox{\tt in}  & {\em prompt} & The instrument response (I\-R\-F) or prompt signal to be used (optional, can pass N\-U\-L\-L). \\
+\mbox{\tt in}  & {\em instr} & The instrument response (I\-R\-F) or prompt signal to be used (optional, can pass N\-U\-L\-L). \\
 \hline
-\mbox{\tt in}  & {\em nprompt} & The number of data points in the prompt (ignored if prompt = N\-U\-L\-L). \\
+\mbox{\tt in}  & {\em ninstr} & The number of data points in the prompt (ignored if prompt = N\-U\-L\-L). \\
 \hline
 \mbox{\tt in}  & {\em noise} & The \hyperlink{_ecf_8h_a603ad628eaeb162f9f6326cbec927b89}{noise\-\_\-type} to be used. \\
 \hline

@@ -82,7 +82,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <p>For exponential lifetime fitting there are two core algorithms within SLIM Curve: The first is a triple integral method that does a very fast estimate of a single exponential lifetime component. The second is a Levenberg-Marquardt algorithm or LMA that uses an iterative, least-squares-minimization approach to generate a fit. This works with single, double and triple exponential models, as well as stretched exponential. There is also code to perform 'global' analysis over a number of signals symultaneously (e.g. over an image), where the lifetimes can be considered constant across the data set, but the amplitudes are allowed to vary for each signal. There is also a completely generic global analysis function. A third algorithm is available to perform phasor analysis.</p>
 <p>In addition there is a non-negative linear least squares algorithm that is useful for spectral unmixing in SLIM.</p>
 <p>The code is written in C89 compatible C and is thread safe for fitting multiple pixels concurrently. Several files are provided as wrappers to call this library from Java code: EcfWrapper.c and .h provide a subset of function calls used by SLIM Plugin, these may be invoked directly from Java using JNA. In addition there is a Java CurveFitter project that provides a wrapper to the SLIM Curve code. This invokes the C code using JNI, with loci_curvefitter_SLIMCurveFitter.c and .h.</p>
-<p>For further details, see: <a href="http://loci.wisc.edu/software/slim-curve">http://loci.wisc.edu/software/slim-curve</a></p>
+<p>For further details, see: <a href="http://slim-curve.github.io/">http://slim-curve.github.io/</a></p>
 <p>If you are familiar with the program TRI2, that uses SLIM Curve, this screenshot may help you to understand the meaning of the parameters.</p>
 <div class="image">
 <img src="params_in_tri2.png" alt="params_in_tri2.png"/>
@@ -121,7 +121,7 @@ cd build
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Mar 17 2014 11:56:14 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 19 2014 12:16:24 for SLIM Curve by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
