@@ -1869,7 +1869,7 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
  */
  
 int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_start, int fit_end,
-						float prompt[], int nprompt,
+						float instr[], int ninstr,
 						noise_type noise, float sig[],
 						float param[], int paramfree[],
 					   int nparam, restrain_type restrain,
@@ -1885,7 +1885,7 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 	if (ecf_exportParams) ecf_ExportParams_OpenFile ();
 
 	// If there is no prompt the data before fit_start is redundant and can adversly effect the fit, remove it
-	if (nprompt <= 0) {
+	if (ninstr <= 0) {
 		trans = &(trans[fit_start]);  // we can change the pointer since it has been passed 'by value'
 		fit_end -= fit_start;
 		ndata -= fit_start;
@@ -1894,7 +1894,7 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 
 	// All of the work is done by the ECF module
 	ret = GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
-							  prompt, nprompt, noise, sig,
+							  instr, ninstr, noise, sig,
 							  param, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, covar, alpha, &local_chisq,
 							  chisq_delta, chisq_percent_float, erraxes);
@@ -1907,7 +1907,7 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 		oldChisq = local_chisq;
 		tries++;
 		ret += GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
-							  prompt, nprompt, noise, sig,
+							  instr, ninstr, noise, sig,
 							  param, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, covar, alpha, &local_chisq,
 							  chisq_delta, chisq_percent_float, erraxes);

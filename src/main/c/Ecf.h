@@ -94,8 +94,8 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
  * \param[in] ndata The number of data points.
  * \param[in] fit_start The index into the y array marking the start to the data to be used in the fit. Some data before this start index is required for convolution with the prompt.
  * \param[in] fit_end The index into the y array marking the end of the data to be used in the fit.
- * \param[in] prompt The instrument response (IRF) or prompt signal to be used (optional, can pass NULL).
- * \param[in] nprompt The number of data points in the prompt (ignored if prompt = NULL).
+ * \param[in] instr The instrument response (IRF) or prompt signal to be used (optional, can pass NULL).
+ * \param[in] ninstr The number of data points in the prompt (ignored if prompt = NULL).
  * \param[in] noise The #noise_type to be used.
  * \param[in] sig The standard deviation at each data point in y if #noise_type NOISE_GIVEN is used (optional, can pass NULL).
  * \param[in,out] param An array of parameters, the order of which must match fitfunc. Provide parameter estimates, these are overridden with the fitted values.
@@ -115,7 +115,7 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
  * \return An error code, 0 = success.
  */
 int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_start, int fit_end, 
-						float prompt[], int nprompt,
+						float instr[], int ninstr,
 						noise_type noise, float sig[],
 						float param[], int paramfree[],
 					   int nparam, restrain_type restrain,
