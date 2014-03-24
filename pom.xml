@@ -35,6 +35,14 @@
 		<url>https://github.com/slim-curve/</url>
 	</organization>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>native-lib-loader</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -80,6 +88,30 @@
 					<organizationName>Gray Institute University of Oxford and Board of
 Regents of the University of Wisconsin-Madison.</organizationName>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/main/assembly/libs-assembly.xml</descriptor>
+					</descriptors>
+					<archive>
+						<manifest>
+							<packageName>loci.slim</packageName>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

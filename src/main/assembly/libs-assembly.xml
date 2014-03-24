@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  SLIM-curve package for exponential curve fitting of spectral lifetime data.
+  %%
+  Copyright (C) 2010 - 2014 Gray Institute University of Oxford and Board of
+  Regents of the University of Wisconsin-Madison.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+	<id>libs-assembly</id>
+	<formats>
+		<format>jar</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<fileSet>
+			<directory>${project.build.outputDirectory}</directory>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/nar/lib/x86_64-MacOSX-gcc/shared</directory>
+			<outputDirectory>META-INF/lib/osx_64</outputDirectory>
+			<includes>
+				<include>*.dylib</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/nar/lib/i386-MacOSX-gcc/shared</directory>
+			<outputDirectory>META-INF/lib/osx_32</outputDirectory>
+			<includes>
+				<include>*.dylib</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/nar/lib/amd64-Windows-gcc/shared</directory>
+			<outputDirectory>META-INF/lib/windows_64</outputDirectory>
+			<includes>
+				<include>*.dll</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/nar/lib/x86-Windows-gcc/shared</directory>
+			<outputDirectory>META-INF/lib/windows_32</outputDirectory>
+			<includes>
+				<include>*.dll</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/nar/lib/amd64-Linux-gcc/shared</directory>
+			<outputDirectory>META-INF/lib/linux_64</outputDirectory>
+			<includes>
+				<include>*.so</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/nar/lib/i386-Linux-gcc/shared</directory>
+			<outputDirectory>META-INF/lib/linux_32</outputDirectory>
+			<includes>
+				<include>*.so</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</assembly>
