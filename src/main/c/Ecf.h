@@ -1,10 +1,10 @@
-
 /*
- * SLIM-curve package for exponential curve fitting of spectral lifetime data.
- * 
+ * #%L
+ * SLIM Curve package for exponential curve fitting of spectral lifetime data.
+ * %%
  * Copyright (C) 2010 - 2014 Gray Institute University of Oxford and Board of
  * Regents of the University of Wisconsin-Madison.
- * 
+ * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
- * 
+ * #L%
  */
 
 /** SLIM Curve - Exponential Curve Fitting Header
