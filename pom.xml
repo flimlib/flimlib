@@ -136,10 +136,10 @@ Regents of the University of Wisconsin-Madison.</organizationName>
 	<mailingLists>
 		<mailingList>
 			<name>SLIM Curve</name>
-			<subscribe>http://loci.wisc.edu/mailman/listinfo/slim-curve</subscribe>
-			<unsubscribe>http://loci.wisc.edu/mailman/listinfo/slim-curve</unsubscribe>
-			<post>slim-curve@loci.wisc.edu</post>
-			<archive>http://loci.wisc.edu/pipermail/slim-curve/</archive>
+			<subscribe>http://imagej.net/mailman/listinfo/slim-curve</subscribe>
+			<unsubscribe>http://imagej.net/mailman/listinfo/slim-curve</unsubscribe>
+			<post>slim-curve@imagej.net</post>
+			<archive>http://imagej.net/pipermail/slim-curve/</archive>
 		</mailingList>
 	</mailingLists>
 
