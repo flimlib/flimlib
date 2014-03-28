@@ -41,6 +41,7 @@ the SLIM Curve code. This invokes the C code using JNI, with
 
 * [SLIM Curve wiki](https://github.com/slim-curve/slim-curve/wiki)
 * [SLIM Curve web site](https://slim-curve.github.io/)
+* [SLIM Curve Doxygen docs](http://code.imagej.net/slim-curve/html/)
 
 ## Directory contents
 
