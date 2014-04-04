@@ -77,8 +77,8 @@
 				<configuration>
 					<licenseName>gpl_v3</licenseName>
 					<projectName>SLIM-curve package for exponential curve fitting of spectral lifetime data.</projectName>
-					<organizationName>Gray Institute University of Oxford and Board of
-Regents of the University of Wisconsin-Madison.</organizationName>
+					<organizationName>University of Oxford and Board of Regents of the
+University of Wisconsin-Madison.</organizationName>
 				</configuration>
 			</plugin>
 		</plugins>
