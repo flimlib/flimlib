@@ -1,7 +1,7 @@
 /**
 @mainpage SLIM-curve package for exponential curve fitting of spectral lifetime data.
 
-SLIM Curve is a curve fitting library used for Fluorescent Lifetime Imaging or FLIM and Spectral Lifetime Imaging or SLIM.  It is based on code developed by Paul Barber and the Advanced Technology Group at the Gray Institute for Radiation Oncology & Biology, University of Oxford, and used for FLIM functionality in his TRI2 (Time Resolved Imaging) software.  It is also used in the LOCI SLIM Plugin project.
+SLIM Curve is a curve fitting library used for Fluorescent Lifetime Imaging or FLIM and Spectral Lifetime Imaging or SLIM.  It is based on code developed by Paul Barber and the Advanced Technology Group at the Cancer Research UK and Medical Research Council Oxford Institute for Radiation Oncology, University of Oxford, and used for FLIM functionality in their TRI2 (Time Resolved Imaging) software.  It is also used in the SLIM Curve plugin for ImageJ.
 
 For exponential lifetime fitting there are two core algorithms within SLIM Curve: The first is a triple integral method that does a very fast estimate of a single exponential lifetime component. The second is a Levenberg-Marquardt algorithm or LMA that uses an iterative, least-squares-minimization approach to generate a fit. This works with single, double and triple exponential models, as well as stretched exponential. There is also code to perform 'global' analysis over a number of signals symultaneously (e.g. over an image), where the lifetimes can be considered constant across the data set, but the amplitudes are allowed to vary for each signal. There is also a completely generic global analysis function. A third algorithm is available to perform phasor analysis.
 
