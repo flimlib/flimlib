@@ -21,6 +21,10 @@
  * #L%
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Header file for functions defined in lsqnonneg.c */
 
 /** 
@@ -58,3 +62,7 @@
 */
 int GCI_lsqnonneg(double **A, double *b, double *x, int m, int n,
 		  int preserve, double *rnorm, double *lambda);
+
+#ifdef __cplusplus
+}
+#endif

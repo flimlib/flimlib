@@ -29,6 +29,10 @@
 
 #include "Ecf.h"  /* in case there's anything we need from there */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define MAXFIT 20  /* The maximum number of parameters we'll ever try
 		              to fit; saves dynamic allocation of small arrays.
 				      If this is increased, then the arrays chisq50 etc.
@@ -136,6 +140,10 @@ char ecf_exportParams_path[256];
 void ecf_ExportParams_OpenFile (void);
 void ecf_ExportParams_CloseFile (void);
 void ecf_ExportParams (float param[], int nparam, float chisq);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GCI_ECF_INTERNAL */
 

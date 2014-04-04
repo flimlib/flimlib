@@ -31,6 +31,10 @@
 #ifndef _GCI_ECF
 #define _GCI_ECF
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* #defines which are publically needed */
 
 /** Noise Type.
@@ -659,6 +663,10 @@ void GCI_ecf_free_matrix(float **m);
 void ECF_ExportParams_start (char path[]);
 /** Stop exporting fit details to a file for each fit. */
 void ECF_ExportParams_stop (void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _GCI_ECF */
 

@@ -21,6 +21,10 @@
  * #L%
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef PHASOR_FITTING_H
 #define PHASOR_FITTING_H
 
@@ -68,5 +72,9 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
  *
  */
 double GCI_Phasor_getPeriod();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* PHASOR_FITTING_H */
