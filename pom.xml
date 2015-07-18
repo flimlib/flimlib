@@ -87,9 +87,11 @@
 					<projectName>SLIM-curve package for exponential curve fitting of spectral lifetime data.</projectName>
 					<organizationName>University of Oxford and Board of Regents of the
 University of Wisconsin-Madison.</organizationName>
-					<!-- NB: It seems these excludes are not respected.
-					     Probably something wrong with the syntax. For now,
-					     they are here merely for documentation purposes. -->
+					<!--
+					NB: It seems these excludes are not respected.
+					Probably something wrong with the syntax. For now,
+					they are here merely for documentation purposes.
+					-->
 					<excludes>
 						<exclude>src/main/c/jni.h</exclude>
 						<exclude>src/main/c/jni_md.h</exclude>
