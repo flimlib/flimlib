@@ -37,6 +37,13 @@ extern "C" {
 
 /* #defines which are publically needed */
 
+#define MAXFIT 20  /* The maximum number of parameters we'll ever try
+		              to fit; saves dynamic allocation of small arrays.
+				      If this is increased, then the arrays chisq50 etc.
+				      in ecf.c will need to be extended.  The values can
+				      be calculated by using the test function at the end
+				      of the file. */
+
 /** Noise Type.
 'NOISE_CONST' - every data point is assumed to have the same supplied variance.<br>
 'NOISE_GIVEN' - every data point can have an individual variance, given via a data array.<br>
@@ -58,6 +65,27 @@ typedef enum { FIT_GLOBAL_MULTIEXP, FIT_GLOBAL_STRETCHEDEXP } fit_type;
  * Chooses the restrain type, either the default with very wide sensible limits (ECF_RESTRAIN_DEFAULT) or 'user' defined limits (ECF_RESTRAIN_USER). See #GCI_set_restrain_limits.
  */
 typedef enum { ECF_RESTRAIN_DEFAULT, ECF_RESTRAIN_USER } restrain_type;
+
+/** DecayModelSelParamValuesAndFit
+ * struct to hold parameters and results during decay model selection.
+ */
+typedef struct {
+    void          (*fitfunc)(float, float [], float *, float [], int);
+    int             nparam;
+    float           params[MAXFIT];
+    int             nparamfree;
+    int             paramfree[MAXFIT];
+    restrain_type   restrain;
+    float          *fitted;
+    float          *residuals;
+    float           chisq_target;
+    float           chisq_delta;
+    int             chisq_percent;
+    float           chisq;
+    float         **covar;
+    float         **alpha;
+    float         **erraxes;
+} DecayModelSelParamValuesAndFit;
 
 /* Single transient analysis functions */
 
@@ -161,6 +189,30 @@ int GCI_marquardt_instr(float xincr, float y[],
 					float **covar, float **alpha, float *chisq,
 					float chisq_delta, float chisq_percent, float **erraxes);
 void GCI_marquardt_cleanup(void);
+
+/**
+ * 	Model selection between mono and bi models and returns the most suitable model.
+ *
+ * \param[in] xincr The time increment in between the values in the y array.
+ * \param[in] trans The transient (time resolved) signal to be analysed, the 'data'.
+ * \param[in] ndata The number of data points.
+ * \param[in] fit_start The index into the y array marking the start to the data to be used in the fit. Some data before this start index is required for convolution with the prompt.
+ * \param[in] fit_end The index into the y array marking the end of the data to be used in the fit.
+ * \param[in] instr The instrument response (IRF) or prompt signal to be used (optional, can pass NULL).
+ * \param[in] ninstr The number of data points in the prompt (ignored if prompt = NULL).
+ * \param[in] noise The #noise_type to be used.
+ * \param[in] sig The standard deviation at each data point in y if #noise_type NOISE_GIVEN is used (optional, can pass NULL).
+ * \param[in,out] param An array of parameters, the order of which must match fitfunc. Provide parameter estimates, these are overridden with the fitted values.
+ * \param[out] chi_diff The raw chisq difference between the fits using the two models, for bi to be chosen this value > 5.99
+ * \param[out] model The most likely model, coded as model=1 for mono, model=2 for bi
+ * \return An error code, 0 = success.
+ */
+int GCI_EcfModelSelectionEngine(float xincr, float *trans, int ndata, int fit_start, int fit_end,
+					 	      float instr[], int ninstr,
+						      noise_type noise, float sig[],
+                              DecayModelSelParamValuesAndFit *paramsandfits,
+                              float *chisq_diff, int *model);
+
 
 /** Global analysis analysis function for exponential functions. 
 

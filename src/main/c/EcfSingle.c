@@ -1920,6 +1920,72 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 	return ret;		// summed number of iterations
 }
 
+/** GCI_EcfModelSelectionEngine
+	Does model selection between mono and bi models and returns the most suitable model as
+	*model = 1 for mono
+	*model = 2 for bi
+*/
+int GCI_EcfModelSelectionEngine(float xincr, float *trans, int ndata, int fit_start, int fit_end,
+					 	      float prompt[], int nprompt,
+						      noise_type noise, float sig[],
+                              DecayModelSelParamValuesAndFit *paramsandfits,
+                              float *chisq_diff, int *model)
+{
+    float        *param, *fitted, *residuals, **covar, **alpha, **erraxes, *chisq;
+    int           nparam, nparamfree, *paramfree, k, K=2, iters;
+    restrain_type restrain;
+    float         chisq_target, chisq_delta;
+    int           chisq_percent;
+    void        (*fitfunc)(float, float [], float *, float [], int);
+    int           df_mono, df_bi;
+
+    for (k=1; k<=K; k++)
+    {
+        fitfunc       =  paramsandfits[k].fitfunc;
+        nparam        =  paramsandfits[k].nparam;
+        param         =  paramsandfits[k].params;
+        nparamfree    =  paramsandfits[k].nparamfree;
+        paramfree     =  paramsandfits[k].paramfree;
+        restrain      =  paramsandfits[k].restrain;
+        fitted        =  paramsandfits[k].fitted;
+        residuals     =  paramsandfits[k].residuals;
+        covar         =  paramsandfits[k].covar;
+        alpha         =  paramsandfits[k].alpha;
+        erraxes       =  paramsandfits[k].erraxes;
+        chisq_target  =  paramsandfits[k].chisq_target;
+        chisq_delta   =  paramsandfits[k].chisq_delta;
+        chisq_percent =  paramsandfits[k].chisq_percent;
+        chisq         = &paramsandfits[k].chisq;    
+
+	    iters = GCI_marquardt_fitting_engine(xincr,trans/*&gTransient[gTransStartIndex]*/, ndata, fit_start, fit_end,
+									         prompt, nprompt, noise, NULL, param, paramfree, nparam, restrain,
+								 	         fitfunc, fitted, residuals, chisq,
+						   		 	         covar, alpha, erraxes, chisq_target,    // specify absolute chisq
+						   			         chisq_delta, chisq_percent);
+    	
+	    if (iters < 0) {return (iters);}
+
+        *chisq /= (fit_end-fit_start-nparamfree);
+
+        scaleDataAccordingToSignalNoise(&residuals[fit_start],
+                                        fit_end-fit_start,
+                                        &fitted[fit_start]);
+    }
+	
+    //do most probable model calculations
+    df_mono = ndata-paramsandfits[1].nparamfree;
+    df_bi   = ndata-paramsandfits[2].nparamfree;
+    *chisq_diff = (paramsandfits[1].chisq*(float)df_mono)-(paramsandfits[2].chisq*(float)df_bi);
+
+    if (*chisq_diff>5.99)   // 5.99 from the chisq tables
+        *model = 2;//bi-exp
+    else
+        *model = 1;
+
+    return (0);
+}
+
+
 /* Cleanup function */
 void GCI_marquardt_cleanup(void)
 {

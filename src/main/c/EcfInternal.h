@@ -33,13 +33,6 @@
 extern "C" {
 #endif
 
-#define MAXFIT 20  /* The maximum number of parameters we'll ever try
-		              to fit; saves dynamic allocation of small arrays.
-				      If this is increased, then the arrays chisq50 etc.
-				      in ecf.c will need to be extended.  The values can
-				      be calculated by using the test function at the end
-				      of the file. */
-
 #define MAXITERS 80
 #define MAXREFITS 10
 #define MAXBINS 2048 /* Maximum number of lifetime bins; saves dynamic allocation of small arrays */
