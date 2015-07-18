@@ -1966,10 +1966,6 @@ int GCI_EcfModelSelectionEngine(float xincr, float *trans, int ndata, int fit_st
 	    if (iters < 0) {return (iters);}
 
         *chisq /= (fit_end-fit_start-nparamfree);
-
-        scaleDataAccordingToSignalNoise(&residuals[fit_start],
-                                        fit_end-fit_start,
-                                        &fitted[fit_start]);
     }
 	
     //do most probable model calculations
