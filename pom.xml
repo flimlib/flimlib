@@ -52,7 +52,6 @@
 				<extensions>true</extensions>
 				<configuration>
 					<c>
-						<name>gcc</name>
 						<includes>
 							<include>**/*.c</include>
 						</includes>
@@ -66,7 +65,6 @@
 						</options>
 					</c>
 					<linker>
-						<name>gcc</name>
 						<options>
 							<option>${architecture.option}</option>
 							<option>${subsystem.option}</option>
