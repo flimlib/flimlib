@@ -4,8 +4,7 @@ the Advanced Technology Group at the [Cancer Research UK and Medical Research
 Council Oxford Institute for Radiation Oncology] (http://www.rob.ox.ac.uk/),
 University of Oxford, as well as the [Laboratory for Optical and Computational
 Instrumentation](http://loci.wisc.edu/) at the University of Wisconsin-Madison.
-SLIM Curve is used for FLIM functionality in his TRI2 (Time Resolved Imaging)
-software. SLIM Curve is used for FLIM functionality in the Advanced Technology
+SLIM Curve is used for FLIM functionality in the Advanced Technology
 Group's [Time Resolved Imaging](https://www.assembla.com/spaces/ATD_TRI/wiki)
 (TRI2) software, as well as in the [SLIM Curve plugin for
 ImageJ](http://fiji.sc/SLIM_Curve).
