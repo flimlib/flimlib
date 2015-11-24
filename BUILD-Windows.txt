@@ -1,3 +1,6 @@
+Environment Variables to compile SLIM-curve C code in Maven using MSVC 2008
+---------------------------------------------------------------------------
+
 PATH added:
 
 C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE;C:\Program Files\Microsoft Visual Studio 9.0\VC\BIN;C:\Program Files\Microsoft SDKs\Windows\v6.0A\bin\;
