@@ -46,6 +46,11 @@ JNIEXPORT jint JNICALL Java_loci_slim_SLIMCurve_RLD_1fit
     jdouble *chi_square_ref;
     int return_value;
 
+    //Instead of crashing, return -1
+    if(y == NULL || z == NULL || a == NULL || tau == NULL || fitted == NULL || chi_square == NULL) {
+       return -1;
+    }
+
     // convert the arrays
     y_array = (*env)->GetDoubleArrayElements(env, y, 0);
     instr_array = NULL;
@@ -109,6 +114,11 @@ JNIEXPORT jint JNICALL Java_loci_slim_SLIMCurve_LMA_1fit
     jdouble *chi_square_ref;
     int return_value;
 
+
+    //Instead of crashing, return -1
+    if(y == NULL || param == NULL || param_free == NULL || fitted == NULL || chi_square == NULL) {
+       return -1;
+    }
     // convert the arrays
     y_array = (*env)->GetDoubleArrayElements(env, y, 0);
     instr_array = NULL;
