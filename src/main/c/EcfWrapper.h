@@ -38,20 +38,20 @@ extern "C" {
 #include "Ecf.h"
 
 int RLD_fit(
-        double x_inc,
-        double y[],
-        int fit_start,
-        int fit_end,
-        double instr[],
-        int n_instr,
-        noise_type noise,
-        double sig[],
-        double *z,
-        double *a,
-        double *tau,
-        double fitted[],
-        double *chi_square,
-        double chi_square_target
+     double x_inc,
+     double y[],
+     int fit_start,
+     int fit_end,
+     double instr[],
+     int n_instr,
+     int noise,//noise_type noise,
+     double sig[],
+     double *z,
+     double *a,
+     double *tau,
+     double fitted[],
+     double *chi_square,
+     double chi_square_target
         );
 
 int LMA_fit(
@@ -61,7 +61,7 @@ int LMA_fit(
         int fit_end,
         double instr[],
         int n_instr,
-        noise_type noise,
+     	int noise,//noise_type noise,
         double sig[],
         double param[],
         int param_free[],
