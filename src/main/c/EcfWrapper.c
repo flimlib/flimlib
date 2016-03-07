@@ -142,17 +142,18 @@ int RLD_fit(
 	*a          = (double) a_float;
 	*tau        = (double) tau_float;
 	*chi_square = (double) chi_square_float;
-    
-	free(y_float);
-	free(sig_float);
-
+   	if (y_float) 
+		free(y_float);
+	if (sig_float)
+		free(sig_float);
 	if (instr_float) {
 		free(instr_float);
 	}
 	if (fitted_float) {
 		free(fitted_float);
 	}
-	free(residuals_float);
+	if (residuals_float)
+		free(residuals_float);
 	return return_value;
 }
 
@@ -214,9 +215,8 @@ int LMA_fit(
 	int i;
 	for (i = 0; i < n_data; ++i) {
 		y_float[i] = (float) y[i];
-		sig_float[i] = ( sig ? (float) sig[i] : 1.0f );
+		sig_float[i] = ( sig ? (float) sig[i] : 1.0f ); 
 	}
-
 	if (instr) {
 		int i;
 		instr_float = (float *)malloc((size_t) n_instr * sizeof(float));
@@ -236,7 +236,7 @@ int LMA_fit(
 			param_float[1] = (float) param[2]; // a
 			param_float[2] = (float) param[3]; // tau
 			break;
-		case 4: //TODO: fix these indices
+		case 4: 
 			// stretched exponential fit
 			param_float[0] = (float) param[1]; // z
 			param_float[1] = (float) param[2]; // a
@@ -272,6 +272,7 @@ int LMA_fit(
 	else {
 		fitfunc = GCI_multiexp_tau;
 	}
+
 	return_value = GCI_marquardt_fitting_engine(
 			(float) x_inc,
 			y_float,
@@ -298,9 +299,10 @@ int LMA_fit(
 			chi_square_percent);
 	*chi_square = (double) chi_square_float;
 
-	free(y_float);
-	free(sig_float);
-
+	if (y_float)
+		free(y_float);
+	if (sig_float)
+		free(sig_float);
 	if (instr_float) {
 		free(instr_float);
 	}
@@ -350,10 +352,10 @@ int LMA_fit(
 			param[7] = (double) param_float[6]; // tau3
 			break;
 	}
-
-	free(param_float);
-    
-	free(residuals_float);
+	if (param_float)
+		free(param_float);
+	if (residuals_float)
+		free(residuals_float);
 	GCI_ecf_free_matrix(covar_float);
 	GCI_ecf_free_matrix(alpha_float);
 	GCI_ecf_free_matrix(err_axes_float);
