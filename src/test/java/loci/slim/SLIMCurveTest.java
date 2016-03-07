@@ -28,12 +28,13 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
- * Tests {@link SLIMCurve}.
+ * Tests {@link SLIMCurve}.  Test parameters currently based 
+ * off of values in files data.data and test.ini
  * 
  * @author Zach Petersen
  */
 public class SLIMCurveTest {
-	final double xInc = .048828;
+	final double xInc = 0.048828125; 
 	final double y[] = {
 			40.000000, 45.000000, 34.000000, 54.000000, 44.000000,
 			53.000000, 47.000000, 56.000000, 62.000000, 66.000000,
@@ -80,14 +81,14 @@ public class SLIMCurveTest {
 	final int fitStart = 10;
 	final int fitEnd = 203;
 	final double instr[] = {
-			0.009110,
-			0.038822,
-			0.131711,
-			0.252389,
-			0.277230,
-			0.180233,
-			0.079276,
-			0.031228
+			0.00911042001098394393920898437500000,
+			0.03882249817252159118652343750000000,
+			0.13171100616455078125000000000000000,
+			0.25238901376724243164062500000000000,
+			0.27722999453544616699218750000000000,
+			0.18023300170898437500000000000000000,
+			0.07927619665861129760742187500000000,
+			0.03122770041227340698242187500000000
 	};  
 	final int nInstr = 8;
 	final int noise = 5;
@@ -133,17 +134,17 @@ public class SLIMCurveTest {
 		SLIMCurve slimCurve = new SLIMCurve();
 		final int lma = slimCurve.fitLMA(xInc, y, fitStart, fitEnd, instr, nInstr, noise, sig, param, paramFree, nParam, fitted, chiSquare, chiSquareTarget, chiSquareDelta);
 		System.out.println("LMA estimate = " + lma);
-		System.out.println("A: " + param[1] + " Tau: " + param[2] + " Z: " + param[0] + " X^2: " + (chiSquare[0] / chi_sq_adjust));
-		int _lma = 17;
-		int _a = 11795;
+		System.out.println("A: " + param[2] + " Tau: " + param[3] + " Z: " + param[1] + " X^2: " + (chiSquare[0] / chi_sq_adjust));
+		int _lma = 58;
+		int _a = 10501;
 		int _tau = 2;
-		int _z = 105;
-		int _x2 = 414;
-//		assertEquals("rld value is not correct", _lma, lma);
-//		assertEquals("a value is not correct", _a, (int)a[0]);
-//		assertEquals("tau value is not correct", _tau, (int)tau[0]);
-//		assertEquals("z value is not correct", _z, (int)z[0]);
-//		assertEquals("Chi squared value is not correct", _x2, (int)chiSquare[0] / chi_sq_adjust);
+		int _z = -163;
+		int _x2 = 437;
+		assertEquals("lma value is not correct", _lma, lma);
+		assertEquals("a value is not correct", _a, (int)param[2]);
+		assertEquals("tau value is not correct", _tau, (int)param[3]);
+		assertEquals("z value is not correct", _z, (int)param[1]);
+		assertEquals("Chi squared value is not correct", _x2, (int)chiSquare[0] / chi_sq_adjust);
 	
 	}
 
