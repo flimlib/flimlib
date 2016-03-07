@@ -27,6 +27,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+noise_type getNoiseModels (int val)
+{  // This is from TRI2 and must match the noise models, between TRI2 ui and     SLIM Curve - This is not a good thing to have! TRI2 should save the SLIM Cu    rve type
+
+    switch (val)
+    {
+        case 1:
+            return NOISE_GAUSSIAN_FIT;
+            break;
+        case 2:
+            return NOISE_POISSON_DATA;
+            break;
+        case 3:
+            return NOISE_POISSON_FIT;
+            break;
+        case 4:
+            return NOISE_MLE;
+            break;
+        default:
+            return NOISE_POISSON_FIT;
+            break;
+    }
+}
+
 /*
  * Rapid Lifetime Determination fit method.
  * 
@@ -56,7 +80,7 @@ int RLD_fit(
 		int fit_end,
 		double instr[],
 		int n_instr,
-		int noise,//noise_type noise,
+		int noise,
 		double sig[],
 		double *z,
 		double *a,
@@ -65,6 +89,7 @@ int RLD_fit(
 		double *chi_square,
 		double chi_square_target
 		) {
+	noise_type nt_noise = getNoiseModels(noise);
 	int n_data = fit_end + 1;
 	float x_inc_float = (float) x_inc;
 	float *y_float = (float *)malloc((size_t) n_data * sizeof(float));
@@ -103,7 +128,7 @@ int RLD_fit(
 			fit_end,
 			instr_float,
 			n_instr,
-			NOISE_POISSON_FIT,//TODO: hardcoded value
+			nt_noise,
 			sig_float,
 			&z_float,
 			&a_float,
@@ -159,7 +184,7 @@ int LMA_fit(
 		int fit_end,
 		double instr[],
 		int n_instr,
-		int noise,//noise_type noise,
+		int noise,
 		double sig[],
 		double param[],
 		int param_free[],
@@ -170,10 +195,10 @@ int LMA_fit(
 		double chi_square_delta
 		) {
 
+	noise_type nt_noise = getNoiseModels(noise);
 	restrain_type restrain = ECF_RESTRAIN_DEFAULT;
 	int chi_square_percent = 95;
-
-	int n_data = fit_end + 1;
+	int n_data = fit_end + 1; 
 	float *y_float = (float *)malloc((size_t) n_data * sizeof(float));
 	float *sig_float = (float *)malloc((size_t) n_data * sizeof(float));
 	float *instr_float = 0;
@@ -211,7 +236,7 @@ int LMA_fit(
 			param_float[1] = (float) param[2]; // a
 			param_float[2] = (float) param[3]; // tau
 			break;
-		case 4:
+		case 4: //TODO: fix these indices
 			// stretched exponential fit
 			param_float[0] = (float) param[1]; // z
 			param_float[1] = (float) param[2]; // a
@@ -247,7 +272,6 @@ int LMA_fit(
 	else {
 		fitfunc = GCI_multiexp_tau;
 	}
-
 	return_value = GCI_marquardt_fitting_engine(
 			(float) x_inc,
 			y_float,
@@ -256,8 +280,7 @@ int LMA_fit(
 			fit_end,
 			instr_float,
 			n_instr,
-			//noise,
-			NOISE_POISSON_FIT,
+			nt_noise,
 			sig_float,
 			param_float,
 			param_free,
@@ -327,6 +350,7 @@ int LMA_fit(
 			param[7] = (double) param_float[6]; // tau3
 			break;
 	}
+
 	free(param_float);
     
 	free(residuals_float);
