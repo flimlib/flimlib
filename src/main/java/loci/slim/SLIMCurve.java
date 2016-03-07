@@ -78,7 +78,7 @@ public class SLIMCurve {
 
 	static {
 		NarSystem.loadLibrary();
-		System.err.println("SLIM Curve loaded!");
+		//System.err.println("SLIM Curve loaded!");
 	}
 
 	/** Does the RLD fit with native library via JNI. */
