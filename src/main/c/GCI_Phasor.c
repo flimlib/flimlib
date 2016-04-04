@@ -29,9 +29,13 @@
  * \file GCI_Phasor.c
  */
 
+#include "GCI_Phasor.h"
+
 #include <math.h>
 #include <string.h>
-#include "GCI_Phasor.h"
+#include <stdlib.h>
+#include <stdio.h>
+
 
 #ifndef NULL
 #define NULL 0
@@ -84,14 +88,12 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 							  float *chisq)
 {
     // Z must contain a bg estimate
-	
 	int   i, ret = PHASOR_ERR_NO_ERROR, nBins;
 	float *data, u, v, A, w, I, Ifit, bg, chisq_local, res, sigma2;
 
 	data = &(y[fit_start]);	
 	nBins = (fit_end - fit_start);
 	bg = *Z;
-
     if (!data)
         return (PHASOR_ERR_INVALID_DATA);
     if (nBins<0)
@@ -128,20 +130,19 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 	if (fitted == NULL)
 		return 0;
 
-	memset(fitted, 0, (size_t)fit_end*sizeof(float));
-	memset(residuals, 0, (size_t)fit_end*sizeof(float));
+	float *fitted_float = (float*)malloc((size_t) fit_end * sizeof(float));
+	float *residuals_float = (float*)malloc((size_t) fit_end * sizeof(float));
 	
 	// integral over nominal fit data
 	for (Ifit=0.0f, i=fit_start; i<fit_end; i++) 
 		Ifit += expf((float)(-(i-fit_start))*xincr/(*tau));
-
 	// Estimate A
 	A = I / Ifit;
 
 	// Calculate fit
-	for (i=fit_start; i<fit_end; i++)
-		fitted[i] = bg + A * expf((float)(-(i-fit_start))*xincr/(*tau));
-
+	for (i=fit_start; i<fit_end; i++){
+		fitted_float[i] = bg + A * expf((float)(-(i-fit_start))*xincr/(*tau));
+	}
 	// OK, so now fitted contains our data for the timeslice of interest.
 	// We can calculate a chisq value and plot the graph, along with
 	// the residuals.
@@ -151,26 +152,29 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 
 	chisq_local = 0.0f;
 	for (i=0; i<fit_start; i++) {
-		res = y[i]-fitted[i];
-		if (residuals != NULL)
-			residuals[i] = res;
+		res = y[i]-fitted_float[i];
+		//if (residuals != NULL)
+		//	residuals[i] = res;
+		if (residuals_float != NULL)
+			residuals_float[i] = res;
 	}
 
 
 //	case NOISE_POISSON_FIT:
 		/* Summation loop over all data */
 		for (i=fit_start ; i<fit_end; i++) {
-			res = y[i] - fitted[i];
-			if (residuals != NULL)
-				residuals[i] = res;
+			res = y[i] - fitted_float[i];
+			if (residuals_float != NULL)
+				residuals_float[i] = res;
 			/* don't let variance drop below 1 */
-			sigma2 = (fitted[i] > 1 ? 1.0f/fitted[i] : 1.0f);
+			sigma2 = (fitted_float[i] > 1 ? 1.0f/fitted_float[i] : 1.0f);
 			chisq_local += res * res * sigma2;
 		}
 
 	if (chisq != NULL)
 		*chisq = chisq_local;
-
+	free(residuals_float);
+	free(fitted_float);
     return (ret);
 }
 
