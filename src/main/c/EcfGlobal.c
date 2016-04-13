@@ -72,6 +72,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "EcfInternal.h"
+#include "EcfGlobal.h" 
 
 typedef struct {
 	float **P, **Q, ***S;
@@ -234,8 +235,6 @@ int GCI_marquardt_global_compute_global_generic_fn_final(
 		float *chisq_trans, float *chisq_global,
 		float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 		int *pfnvals_len, int *pdy_dparam_nparam_size);
-
-
 
 /*         *****             UTILITY CODE             *****        */
 
