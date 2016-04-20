@@ -1,32 +1,12 @@
-import loci.slim.NarSystem;
+package loci.slim;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-
 
 public class SwigWrapperTest {
-//	static {
-//		System.loadLibrary("PhasorWrapper");
-//	}
 
-	static {
-		NarSystem.loadLibrary();
-	}
-	
-//	interface CLibrary extends Library {
-//	    CLibrary clib = (CLibrary) Native.loadLibrary("GCI_Phasor", CLibrary.class);
-//	    public double GCI_Phasor_getPeriod();
-//	    public void GCI_Phasor_setPhasorPeriod(double x);
-//	}
-//	
-//	@Test
-//	public void testJNAPhasor(){
-//		System.setProperty("jna.library.path", "C:Users/zjpetersen/Documents/LOCI/GitHubClones/slim-curve/src/main/c");
-//		CLibrary.clib.GCI_Phasor_setPhasorPeriod(5);
-//		System.out.println(CLibrary.clib.GCI_Phasor_getPeriod());		
-//		
-//	}
+
+	final int NEVER_CALLED = -100;
 	final float xInc = 0.048828125f; 
 	final float y[] = {
 		40.000000f, 45.000000f, 34.000000f, 54.000000f, 44.000000f,
@@ -95,57 +75,70 @@ public class SwigWrapperTest {
 	final float chisq_delta = 0;
 	final int drop_bad_transients = 0;
 	final int gparam[] = {};
-	
+	//final float fit[][] = {{1}, {2}};
 	@Test
 	public void testGCIGlobalWrapper() {
-		SWIGTYPE_p_float z = EcfGlobal.new_floatp();
-		EcfGlobal.floatp_assign(z, 0f);
-		
-		SWIGTYPE_p_float u = EcfGlobal.new_floatp();
-		SWIGTYPE_p_float v = EcfGlobal.new_floatp();
-		SWIGTYPE_p_float taup = EcfGlobal.new_floatp();
-		SWIGTYPE_p_float taum = EcfGlobal.new_floatp();
-		SWIGTYPE_p_float tau = EcfGlobal.new_floatp();
-		SWIGTYPE_p_p_float fitted = EcfGlobal.GCI_ecf_matrix(0, 0);
-		SWIGTYPE_p_p_float residuals = EcfGlobal.GCI_ecf_matrix(0, 0);
-		SWIGTYPE_p_float chiSquare = EcfGlobal.new_floatp();
-		SWIGTYPE_p_p_float trans = EcfGlobal.GCI_ecf_matrix(0, 0);
-		SWIGTYPE_p_p_float param = EcfGlobal.GCI_ecf_matrix(0, 0);
-		SWIGTYPE_p_float chisq_global = EcfGlobal.new_floatp();
-		SWIGTYPE_p_int df = EcfGlobal.new_intp();
-		noise_type noise = noise_type.NOISE_POISSON_DATA;
-		restrain_type restrain = restrain_type.ECF_RESTRAIN_DEFAULT;
-		int result = EcfGlobal.GCI_marquardt_global_exps_instr(xInc, trans, ndata, ntrans, 
-				fitStart, fitEnd, instr, nInstr, noise, sig, ftype, param, paramFree, nParam, 
-				restrain, chisq_delta, fitted, residuals, chisq_trans, chisq_global, df, drop_bad_transients);
-		int x = EcfGlobal.test(5);		
-		System.out.println("x equals:" + x);
+
+		float trans = 0;
+		float param = 0;
+		float residuals = 0;
+		int df = 0;
+		float chisq_global = 0;
+		int noise = 5;
+		float fit = 0;
+		int restrain = 1;
+		int fitFunc = 0;
+		int result = NEVER_CALLED;
+		result = SLIMCurve.GCI_marquardt_global_exps_instr(xInc, trans, ndata, ntrans, fitStart, 
+				fitEnd, instr, nInstr, noise, sig, ftype, param, paramFree, nParam, restrain, 
+				chisq_delta, fit, residuals, chisq_trans, chisq_global, df, drop_bad_transients);
 		System.out.println("result: " + result);
+		assertTrue(result != NEVER_CALLED);
 		
-		int genericResult = EcfGlobal.GCI_marquardt_global_generic_instr(xInc, trans, ndata, ntrans, fitStart, fitEnd,
-				instr, nInstr, noise, sig, param, paramFree, nParam, gparam, restrain, chisq_delta, null, fitted, 
+		int genericResult = NEVER_CALLED;
+		genericResult = SLIMCurve.GCI_marquardt_global_generic_instr(xInc, trans, ndata, ntrans, fitStart, fitEnd,
+				instr, nInstr, noise, sig, param, paramFree, nParam, gparam, restrain, chisq_delta, fitFunc, fit, 
 				residuals, chisq_trans, chisq_global, df);
 		System.out.println("generic result: " + genericResult);
+		assertTrue(genericResult != NEVER_CALLED);
 	}
 	
 	@Test
 	public void testPhasorWrapper() {
-		SWIGTYPE_p_float z = GCI_Phasor.new_floatp();
-		GCI_Phasor.floatp_assign(z, 0f);
-
-		SWIGTYPE_p_float u = GCI_Phasor.new_floatp();
-		SWIGTYPE_p_float v = GCI_Phasor.new_floatp();
-		SWIGTYPE_p_float taup = GCI_Phasor.new_floatp();
-		SWIGTYPE_p_float taum = GCI_Phasor.new_floatp();
-		SWIGTYPE_p_float tau = GCI_Phasor.new_floatp();
-		SWIGTYPE_p_float fitted = GCI_Phasor.new_floatp();
-		SWIGTYPE_p_float residuals = GCI_Phasor.new_floatp();
-		SWIGTYPE_p_float chiSquare = GCI_Phasor.new_floatp();
+		float z = 0;
+		float u = 0;
+		float v = 0;
+		float taup = 0;
+		float taum = 0;
+		float tau = 0;
+		float fitted = 0;
+		float residuals = 0;
+		float chiSquare = 0;
 		
-		int result = GCI_Phasor.GCI_Phasor(xInc, y, fitStart, fitEnd, z, u, v, taup, taum, tau, fitted, residuals, chiSquare);
-	
-		System.out.println("result: " + result + ", chiSq: " + GCI_Phasor.floatp_value(chiSquare) + ", phasor period: " + GCI_Phasor.GCI_Phasor_getPeriod());
-		assertTrue(result >= -4 && result <= 0);
+		float result = SLIMCurve.GCI_Phasor(xInc, y, fitStart, fitEnd, z, u, v, taup, taum, tau, fitted, residuals, chiSquare);
+		System.out.println("phasor result: " + result + ",  phasor period: " + cLibrary.GCI_Phasor_getPeriod());
+		assertTrue(result >= 0 || result <= -5);
 	}
 
+	
+//	@Test
+//	public void testPhasorWrapper2() {
+//		SWIGTYPE_p_float z = cLibrary.new_floatp();
+//		cLibrary.floatp_assign(z, 0f);
+//
+//		SWIGTYPE_p_float u = cLibrary.new_floatp();
+//		SWIGTYPE_p_float v = cLibrary.new_floatp();
+//		SWIGTYPE_p_float taup = cLibrary.new_floatp();
+//		SWIGTYPE_p_float taum = cLibrary.new_floatp();
+//		SWIGTYPE_p_float tau = cLibrary.new_floatp();
+//		SWIGTYPE_p_float fitted = cLibrary.new_floatp();
+//		SWIGTYPE_p_float residuals = cLibrary.new_floatp();
+//		SWIGTYPE_p_float chiSquare = cLibrary.new_floatp();
+//	
+//		
+//		int result = cLibrary.GCI_Phasor(xInc, y, fitStart, fitEnd, z, u, v, taup, taum, tau, fitted, residuals, chiSquare);
+//		System.out.println("result: " + result + ", chiSq: " + cLibrary.floatp_value(chiSquare) + ", phasor period: " + cLibrary.GCI_Phasor_getPeriod());
+//
+//	
+//	}
 }
