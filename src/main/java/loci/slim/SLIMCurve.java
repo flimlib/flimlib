@@ -23,16 +23,12 @@
 
 package loci.slim;
 
-import org.scijava.nativelib.NativeLibraryUtil;
-
 /**
  * TODO
  * 
  * @author Aivar Grislis
  */
 public class SLIMCurve {
-
-	private static volatile boolean s_libraryLoaded = false;
 
 	/**
 	 * This supports calling the library using JNI.
@@ -80,12 +76,9 @@ public class SLIMCurve {
 		int paramFree[], int nParam, double fitted[], double chiSquare[],
 		double chiSquareTarget, double chiSquareDelta);
 
-	public SLIMCurve() {
-		// load platform-appropriate native library
-		s_libraryLoaded =
-			NativeLibraryUtil.loadVersionedNativeLibrary(this.getClass(),
-				"slim-curve");
-		System.out.println("SLIM Curve loaded " + s_libraryLoaded);
+	static {
+		NarSystem.loadLibrary();
+		//System.err.println("SLIM Curve loaded!");
 	}
 
 	/** Does the RLD fit with native library via JNI. */

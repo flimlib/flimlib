@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>1.149</version>
+		<version>9.0.0</version>
 		<relativePath />
 	</parent>
 
@@ -21,7 +21,10 @@
 	<description>A package for exponential curve fitting of combined spectral lifetime image data.</description>
 	<url>https://slim-curve.github.io/</url>
 	<inceptionYear>2010</inceptionYear>
-
+	<organization>
+		<name>SLIM Curve</name>
+		<url>https://github.com/slim-curve</url>
+	</organization>
 	<licenses>
 		<license>
 			<name>GNU General Public License v3+</name>
@@ -30,31 +33,103 @@
 		</license>
 	</licenses>
 
-	<organization>
-		<name>SLIM Curve</name>
-		<url>https://github.com/slim-curve</url>
-	</organization>
+	<developers>
+		<developer>
+			<id>paulbarber</id>
+			<name>Paul Barber</name>
+			<email>Paul.Barber@rob.ox.ac.uk</email>
+			<url>http://users.ox.ac.uk/~raob0009/</url>
+			<organization>Cancer Research UK and Medical Research Council Oxford Institute for Radiation Oncology</organization>
+			<organizationUrl>http://www.rob.ox.ac.uk/</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>developer</role>
+			</roles>
+			<timezone>+0</timezone>
+		</developer>
+		<developer>
+			<id>grislis</id>
+			<name>Aivar Grislis</name>
+			<url>http://loci.wisc.edu/people/aivar-grislis</url>
+			<organization>UW-Madison LOCI</organization>
+			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>-6</timezone>
+		</developer>
+		<developer>
+			<id>ctrueden</id>
+			<name>Curtis Rueden</name>
+			<email>ctrueden@wisc.edu</email>
+			<url>http://loci.wisc.edu/people/curtis-rueden</url>
+			<organization>UW-Madison LOCI</organization>
+			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<roles>
+				<role>architect</role>
+			</roles>
+			<timezone>-6</timezone>
+		</developer>
+	</developers>
+
+	<mailingLists>
+		<mailingList>
+			<name>SLIM Curve</name>
+			<subscribe>http://imagej.net/mailman/listinfo/slim-curve</subscribe>
+			<unsubscribe>http://imagej.net/mailman/listinfo/slim-curve</unsubscribe>
+			<post>slim-curve@imagej.net</post>
+			<archive>http://imagej.net/pipermail/slim-curve/</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<connection>scm:git:git://github.com/uw-loci/slim-curve</connection>
+		<developerConnection>scm:git:git@github.com:uw-loci/slim-curve</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/uw-loci/slim-curve</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/slim-curve/slim-curve/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>http://jenkins.imagej.net/job/SLIM-curve/</url>
+	</ciManagement>
+
+	<properties>
+		<nar-maven-plugin.version>3.3.0</nar-maven-plugin.version>
+	</properties>
+
+	<repositories>
+		<!-- NB: for project parent -->
+		<repository>
+			<id>imagej.public</id>
+			<url>http://maven.imagej.net/content/groups/public</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.scijava</groupId>
 			<artifactId>native-lib-loader</artifactId>
-			<version>2.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>${nar.groupId}</groupId>
+				<groupId>com.github.maven-nar</groupId>
 				<artifactId>nar-maven-plugin</artifactId>
-				<version>${nar.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<c>
-						<includes>
-							<include>**/*.c</include>
-						</includes>
 						<options>
 							<option>-I${JAVA_HOME}/include</option>
 							<option>${java.os.include}</option>
@@ -73,6 +148,7 @@
 					<libraries>
 						<library>
 							<type>shared</type>
+							<narSystemPackage>loci.slim</narSystemPackage>
 						</library>
 					</libraries>
 				</configuration>
@@ -125,79 +201,4 @@ University of Wisconsin-Madison.</organizationName>
 			</plugin>
 		</plugins>
 	</build>
-
-	<developers>
-		<developer>
-			<id>paulbarber</id>
-			<name>Paul Barber</name>
-			<email>Paul.Barber@rob.ox.ac.uk</email>
-			<url>http://users.ox.ac.uk/~raob0009/</url>
-			<organization>Cancer Research UK and Medical Research Council Oxford Institute for Radiation Oncology</organization>
-			<organizationUrl>http://www.rob.ox.ac.uk/</organizationUrl>
-			<roles>
-				<role>architect</role>
-				<role>developer</role>
-			</roles>
-			<timezone>+0</timezone>
-		</developer>
-		<developer>
-			<id>grislis</id>
-			<name>Aivar Grislis</name>
-			<url>http://loci.wisc.edu/people/aivar-grislis</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>-6</timezone>
-		</developer>
-		<developer>
-			<id>ctrueden</id>
-			<name>Curtis Rueden</name>
-			<email>ctrueden@wisc.edu</email>
-			<url>http://loci.wisc.edu/people/curtis-rueden</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
-			<roles>
-				<role>architect</role>
-			</roles>
-			<timezone>-6</timezone>
-		</developer>
-	</developers>
-
-	<issueManagement>
-		<system>GitHub Issues</system>
-		<url>https://github.com/slim-curve/slim-curve/issues</url>
-	</issueManagement>
-
-	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://jenkins.imagej.net/job/SLIM-curve/</url>
-	</ciManagement>
-
-	<mailingLists>
-		<mailingList>
-			<name>SLIM Curve</name>
-			<subscribe>http://imagej.net/mailman/listinfo/slim-curve</subscribe>
-			<unsubscribe>http://imagej.net/mailman/listinfo/slim-curve</unsubscribe>
-			<post>slim-curve@imagej.net</post>
-			<archive>http://imagej.net/pipermail/slim-curve/</archive>
-		</mailingList>
-	</mailingLists>
-
-	<scm>
-		<connection>scm:git:git://github.com/uw-loci/slim-curve</connection>
-		<developerConnection>scm:git:git@github.com:uw-loci/slim-curve</developerConnection>
-		<tag>HEAD</tag>
-		<url>https://github.com/uw-loci/slim-curve</url>
-	</scm>
-
-	<repositories>
-		<!-- NB: for project parent -->
-		<repository>
-			<id>imagej.public</id>
-			<url>http://maven.imagej.net/content/groups/public</url>
-		</repository>
-	</repositories>
-
 </project>
