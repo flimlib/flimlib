@@ -24,7 +24,6 @@ int GCI_marquardt_global_generic_instr(float xincr, float **trans,
                      float **fitted, float **residuals,
                      float chisq_trans[], float *chisq_global, int *df);
 
-
 #ifdef __cplusplus
 }
 #endif

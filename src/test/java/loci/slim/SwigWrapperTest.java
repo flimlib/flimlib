@@ -3,6 +3,14 @@ package loci.slim;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+
+/**
+ * Tests {@link SLIMCurve} wrapper calls using swig.
+ * Only tests if the calls are done correctly. Does not
+ * verify that the functions work as expected. 
+ * 
+ * @author Zach Petersen
+ */
 public class SwigWrapperTest {
 
 
@@ -65,80 +73,59 @@ public class SwigWrapperTest {
 	};  
 	final int nInstr = 8;
 	final float sig[] = {}; 
-	//final float param[] = {0, 1000, 2}; //z, a, tau
 	final int paramFree[] = {1, 1, 1};
-	final int nParam = 0;	
+	final int nParam = 2;	
 	final float chisq_trans[] = {}; 
 	final int ndata = 203;
-	final int ntrans = 0;
+	final int ntrans = -1;
 	final int ftype = 0;
 	final float chisq_delta = 0;
 	final int drop_bad_transients = 0;
 	final int gparam[] = {};
-	//final float fit[][] = {{1}, {2}};
+	float[] trans = {2,3,4};
+	float[] param = {0, 1000, 2}; //z, a, tau
+	float[] residuals = {0};
+	int[] df = {0};
+	float[] chisq_global = {0};
+	int noise = 5;
+	float[] fitted = {0};
+	int restrain = 1;
+	String fitFunc = "GCI_MULTIEXP_LAMBDA";
+	
 	@Test
-	public void testGCIGlobalWrapper() {
-
-		float trans = 0;
-		float param = 0;
-		float residuals = 0;
-		int df = 0;
-		float chisq_global = 0;
-		int noise = 5;
-		float fit = 0;
-		int restrain = 1;
-		int fitFunc = 0;
+	public void testGCIGlobalWrapperCall() {		
 		int result = NEVER_CALLED;
 		result = SLIMCurve.GCI_marquardt_global_exps_instr(xInc, trans, ndata, ntrans, fitStart, 
 				fitEnd, instr, nInstr, noise, sig, ftype, param, paramFree, nParam, restrain, 
-				chisq_delta, fit, residuals, chisq_trans, chisq_global, df, drop_bad_transients);
+				chisq_delta, fitted, residuals, chisq_trans, chisq_global, df, drop_bad_transients);
 		System.out.println("result: " + result);
 		assertTrue(result != NEVER_CALLED);
 		
-		int genericResult = NEVER_CALLED;
-		genericResult = SLIMCurve.GCI_marquardt_global_generic_instr(xInc, trans, ndata, ntrans, fitStart, fitEnd,
-				instr, nInstr, noise, sig, param, paramFree, nParam, gparam, restrain, chisq_delta, fitFunc, fit, 
+	}
+	@Test
+	public void testGCIGlobalGenericCall() {
+		int result = NEVER_CALLED;
+		result = SLIMCurve.GCI_marquardt_global_generic_instr(xInc, trans, ndata, ntrans, fitStart, fitEnd,
+				instr, nInstr, noise, sig, param, paramFree, nParam, gparam, restrain, chisq_delta, fitFunc, fitted, 
 				residuals, chisq_trans, chisq_global, df);
-		System.out.println("generic result: " + genericResult);
-		assertTrue(genericResult != NEVER_CALLED);
+		System.out.println("generic result: " + result);
+		assertTrue(result != NEVER_CALLED);
 	}
 	
 	@Test
-	public void testPhasorWrapper() {
+	public void testPhasorWrapperCall() {
 		float z = 0;
-		float u = 0;
-		float v = 0;
-		float taup = 0;
-		float taum = 0;
-		float tau = 0;
-		float fitted = 0;
-		float residuals = 0;
-		float chiSquare = 0;
+		float u[] = {0}; 
+		float v[] = {0};
+		float taup[] = {0};
+		float taum[] = {0};
+		float tau[] = {0};
+		float fitted[] = {0};
+		float residuals[] = {0};
+		float chiSquare[] = {0};
 		
 		float result = SLIMCurve.GCI_Phasor(xInc, y, fitStart, fitEnd, z, u, v, taup, taum, tau, fitted, residuals, chiSquare);
-		System.out.println("phasor result: " + result + ",  phasor period: " + cLibrary.GCI_Phasor_getPeriod());
+		System.out.println("phasor result: " + result + ",  phasor period: " + cLibrary.GCI_Phasor_getPeriod() + " chisq: " + chiSquare[0]);
 		assertTrue(result >= 0 || result <= -5);
 	}
-
-	
-//	@Test
-//	public void testPhasorWrapper2() {
-//		SWIGTYPE_p_float z = cLibrary.new_floatp();
-//		cLibrary.floatp_assign(z, 0f);
-//
-//		SWIGTYPE_p_float u = cLibrary.new_floatp();
-//		SWIGTYPE_p_float v = cLibrary.new_floatp();
-//		SWIGTYPE_p_float taup = cLibrary.new_floatp();
-//		SWIGTYPE_p_float taum = cLibrary.new_floatp();
-//		SWIGTYPE_p_float tau = cLibrary.new_floatp();
-//		SWIGTYPE_p_float fitted = cLibrary.new_floatp();
-//		SWIGTYPE_p_float residuals = cLibrary.new_floatp();
-//		SWIGTYPE_p_float chiSquare = cLibrary.new_floatp();
-//	
-//		
-//		int result = cLibrary.GCI_Phasor(xInc, y, fitStart, fitEnd, z, u, v, taup, taum, tau, fitted, residuals, chiSquare);
-//		System.out.println("result: " + result + ", chiSq: " + cLibrary.floatp_value(chiSquare) + ", phasor period: " + cLibrary.GCI_Phasor_getPeriod());
-//
-//	
-//	}
-}
+}	
