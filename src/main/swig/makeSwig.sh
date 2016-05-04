@@ -1,5 +1,39 @@
-swig -java -package loci.slim -outdir target/generated-sources/swig/loci/slim src/main/c/cLibrary.i 
+
 #object files generated in curr directory (so in slim-curve/). To get around this need to cd to desired dir and then cd back here?
-cd target/generated-sources/swig/loci/slim
-cc -c ../../../../../src/main/c/EcfGlobal.c ../../../../../src/main/c/cLibrary_wrap.c ../../../../../src/main/c/EcfUtil.c ../../../../../src/main/c/EcfSingle.c ../../../../../src/main/c/EcfSPA.c ../../../../../src/main/c/GCI_Phasor.c -I"/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home/include" -I"/Library/Java/JavaVirtualMachines/jdk1.8.0_40.jdk/Contents/Home/include/darwin"
-cc -framework JavaVM -bundle EcfGlobal.o cLibrary_wrap.o EcfUtil.o EcfSingle.o EcfSPA.o GCI_Phasor.o -o libEcfGlobalWrapper.jnilib
+TARGETDIR="target/generated-sources/swig/loci/slim"
+SOURCEDIR="../../../../../src/main/c"
+JNIDIRMAC="/Library/Java/JavaVirtualMachines/jdk"*"/Contents/Home/include"
+JNIDIRLINUX="/usr/lib/jvm/jdk*/include"
+HOME=`pwd`
+platform="unknown"
+unamestr=`uname`
+#determine OS
+if [[ "$unamestr" == 'Linux' ]]; then
+   platform='linux'
+elif [[ "$unamestr" == 'Darwin' ]]; then
+   platform='mac'
+fi
+if [[ $platform == 'linux' ]]; then
+	cd $JNIDIRLINUX #TODO: Hack to get the expanded directory
+	JNIDIRLINUX=`pwd`
+	cd $HOME
+	#Swig commands to generate swig files for linux
+	swig -java -package loci.slim -outdir $TARGETDIR src/main/c/cLibrary.i 
+	cd $TARGETDIR
+	cc -c -fpic $SOURCEDIR/*.c -I"$JNIDIRLINUX" -I"$JNIDIRLINUX/linux"
+	cc -shared *.o -o libEcfGlobalWrapper.so
+	rm *.o
+elif [[ $platform == 'mac' ]]; then
+	cd $JNIDIRMAC #TODO: Hack to get the expanded directory. 
+	JNIDIRMAC=`pwd`
+	cd $HOME
+	#Swig commands to generate swig files for linux
+	swig -java -package loci.slim -outdir $TARGETDIR src/main/c/cLibrary.i 
+	cd $TARGETDIR
+	cc -c $SOURCEDIR/*.c -I"$JNIDIRMAC" -I"$JNIDIRMAC/darwin"
+	cc -framework JavaVM -bundle *.o -o libEcfGlobalWrapper.jnilib
+	rm *.o
+else
+	echo "Unsupported OS: $unamestr"
+fi
+
