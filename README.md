@@ -36,6 +36,11 @@ JNA. In addition there is a Java CurveFitter project that provides a wrapper to
 the SLIM Curve code. This invokes the C code using JNI, with
 `loci_curvefitter_SLIMCurveFitter.c` and `.h`.
 
+Additionally, there is wrapper code in `cLibrary.i` to wrap the remaining external
+functions in `GCI_Phasor.c` and `EcfGlobal.c`.  This code generates swig wrapper files 
+which enable you to call these functions from Java.  They are generated 
+automatically in Eclipse when the slim-curve project is updated.
+
 ## See also
 
 * [SLIM Curve wiki](https://github.com/slim-curve/slim-curve/wiki)
