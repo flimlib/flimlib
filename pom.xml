@@ -123,21 +123,83 @@
 	</dependencies>
 
 	<build>
+		    <pluginManagement>
+             <plugins>
+                 <plugin>
+                     <!--  
+                     NB: Make Eclipse generate code in a full build; see:
+                     http://wiki.eclipse.org/M2E_plugin_execution_not_covered
+                    -->      
+                       <groupId>org.eclipse.m2e</groupId>
+                     <artifactId>lifecycle-mapping</artifactId>
+                     <version>1.0.0</version>
+                     <configuration>
+                         <lifecycleMappingMetadata>
+                             <pluginExecutions>
+                                 <pluginExecution>
+                                     <pluginExecutionFilter>
+                                         <groupId>org.codehaus.mojo</groupId>
+                                         <artifactId>exec-maven-plugin</artifactId>
+                                         <versionRange>1.4.0</versionRange>
+                                         <goals>
+                                             <goal>java</goal>
+                                         </goals>
+                                     </pluginExecutionFilter>
+                                     <action>
+                                         <execute>
+                                             <runOnConfiguration>true</runOnConfiguration>
+                                             <runOnIncremental>false</runOnIncremental>
+                                         </execute>
+                                     </action>
+                                 </pluginExecution>
+                                 <pluginExecution>
+                                 	<pluginExecutionFilter>
+                                 		<groupId>
+                                 			org.codehaus.mojo
+                                 		</groupId>
+                                 		<artifactId>
+                                 			exec-maven-plugin
+                                 		</artifactId>
+                                 		<versionRange>
+                                 			[1.4.0,)
+                                 		</versionRange>
+                                 		<goals>
+                                 			<goal>exec</goal>
+                                 		</goals>
+                                 	</pluginExecutionFilter>
+                                 	<action>
+                                 		<execute>
+                                 			<runOnConfigurations>true</runOnConfigurations>	
+                                 			<runOnIncremental>false</runOnIncremental>
+                                 		</execute>
+                                 	</action>
+                                 </pluginExecution>
+                             </pluginExecutions>
+                         </lifecycleMappingMetadata>
+                     </configuration>
+                 </plugin>
+             </plugins>
+         </pluginManagement>
+
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
 				<executions>
 					<execution>
+						<id>my-execution</id>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
-				</execution>
+					</execution>
 				</executions>
 				<configuration>
 					<executable>src/main/swig/makeSwig.sh</executable>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<groupId>com.github.maven-nar</groupId>
 				<artifactId>nar-maven-plugin</artifactId>
@@ -179,7 +241,7 @@ University of Wisconsin-Madison.</organizationName>
 					NB: It seems these excludes are not respected.
 					Probably something wrong with the syntax. For now,
 					they are here merely for documentation purposes.
-					-->
+					-->	
 					<excludes>
 						<exclude>src/main/c/jni.h</exclude>
 						<exclude>src/main/c/jni_md.h</exclude>
