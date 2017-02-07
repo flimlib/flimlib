@@ -66,7 +66,8 @@ public:
 	float xincr;		///< The time increment inbetween the values in the y array.
 	float *transient;   ///< The transient (time resolved) signal to be analysed, the 'data'.
 	int ndata;          ///< The number of data points.
-	int fit_start;      ///< The index into the y array marking the start to the data to be used in the fit.
+	int data_start;     ///< The index into the y array marking the start to the transient.
+	int fit_start;      ///< The index into the y array marking the start to the data to be used in the fit. Data between data_start and fit_start is used for convolution with the IRF.
 	int fit_end;        ///< The index into the y array marking the end of the data to be used in the fit.
 	float *instr;       ///< The instrument reponse (IRF) or prompt signal to be used (optional, can be NULL).
 	int ninstr;         ///< The number of data points in the prompt (ignored if prompt = NULL).
@@ -222,7 +223,7 @@ public:
 		int err = checkValues();
 		if (err < 0) return err;
 
-		iterations = GCI_triple_integral_fitting_engine(xincr, &transient[fit_start], ninstr, fit_end - fit_start,
+		iterations = GCI_triple_integral_fitting_engine(xincr, &transient[data_start], fit_start - data_start, fit_end - data_start,
 			instr, ninstr, noise, sig, Z, A, tau, fitted, residuals, chisq, chisq_target*(fit_end - fit_start + ninstr - 3));
 
 		freePrivateVars();
@@ -257,7 +258,7 @@ public:
 		int err = checkValues();
 		if (err < 0) return err;
 
-		iterations = GCI_marquardt_fitting_engine(xincr, &transient[fit_start], ndata - fit_start, ninstr, fit_end - fit_start,
+		iterations = GCI_marquardt_fitting_engine(xincr, &transient[data_start], ndata - data_start, fit_start-data_start, fit_end-data_start,
 			instr, ninstr, noise, sig, param, paramfree, nparam, restrain, fitfunc,
 			fitted, residuals, chisq, covar, alpha, err_axes, chisq_target*(fit_end - fit_start + ninstr - _nparamfree), chisq_delta, chisq_percent);
 
