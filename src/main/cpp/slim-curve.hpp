@@ -95,8 +95,9 @@ public:
 		xincr = 1.0;		
 		transient = NULL;
 		ndata = 0;          
-		fit_start = 0;      
-		fit_end = 0;        
+		data_start = 0;
+		fit_start = 0;
+		fit_end = 0;
 		instr = NULL;
 		ninstr = 0;         
 		noise = NOISE_POISSON_FIT;
