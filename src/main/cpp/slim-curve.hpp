@@ -272,6 +272,8 @@ public:
 		int err = checkValues();
 		if (err < 0) return err;
 
+		if (restrain==ECF_RESTRAIN_USER) GCI_set_restrain_limits(nparam, _restrained, _restrained_min, _restrained_max);
+
 		iterations = GCI_marquardt_fitting_engine(time_incr, &transient[data_start], ndata - data_start, fit_start-data_start, fit_end-data_start,
 			instr, ninstr, noise_model, noise_sd, param, paramfree, nparam, restrain, fitfunc,
 			fitted, residuals, chisq, covar, alpha, err_axes, chisq_target*(fit_end - fit_start + ninstr - _nparamfree), chisq_delta, chisq_percent);
@@ -281,21 +283,18 @@ public:
 		return iterations;
 	}
 
-	// TODO Make this work
 	void restrainParameter(int parameter, float min, float max) {
 		_restrained[parameter] = 1;
 		_restrained_min[parameter] = min;
 		_restrained_max[parameter] = max;
-
-		GCI_set_restrain_limits(MAXFIT, _restrained, _restrained_min, _restrained_max);
+		restrain = ECF_RESTRAIN_USER;
 	}
 
 	void clearRestrained(void) {
 		memset(_restrained, 0, MAXFIT * sizeof(int));
 		memset(_restrained_min, 0, MAXFIT * sizeof(float));
 		memset(_restrained_max, 0, MAXFIT * sizeof(float));
-
-		GCI_set_restrain_limits(MAXFIT, _restrained, _restrained_min, _restrained_max);
+		restrain = ECF_RESTRAIN_DEFAULT;
 	}
 
 	float getReducedChiSq(void) {

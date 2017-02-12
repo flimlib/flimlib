@@ -130,6 +130,9 @@ int main(int argc, const char * argv[])
 	}
 	cout << "LMAi Z:" << params[0] << " A1:" << params[1] << " tau1:" << params[2] << " A2:" << params[3] << " tau2:" << params[4] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:"<< iterations << "\n";
 
+	// Let's restrain Z>0 ...
+	SlimCurve.restrainParameter(SLIM_CURVE_STRETCHED_PARAM_Z, 0.0, INFINITY);
+
 	// Run the LMA Tri exp, fix tau3=0.5;
 	SlimCurve.paramfree[SLIM_CURVE_TRI_PARAM_TAU3] = 0;
 	params[SLIM_CURVE_TRI_PARAM_TAU3] = 0.5;
@@ -146,8 +149,8 @@ int main(int argc, const char * argv[])
 	params[3] = 1.5;
 	// all other params from last fit
 
-	// TODO Let's restrain Z>0 ...
-	//SlimCurve.restrainParameter(SLIM_CURVE_STRETCHED_PARAM_Z, 0.0, INFINITY);
+	// Clear previous restraining
+	SlimCurve.clearRestrained();
 
 	// Run the LMA stretched exp
 	iterations = SlimCurve.fitLMA(SLIM_CURVE_STRETCHED);
