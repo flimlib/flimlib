@@ -97,8 +97,8 @@ public:
 	int ninstr;         ///< The number of data points in the prompt (ignored if prompt = NULL).
 	noise_type noise_model;   ///< The #noise_type to be used.
 	float *noise_sd;    ///< The standard deviation at each data point in y if #noise_type NOISE_GIVEN is used (optional, can pass NULL).
-	float *param;       ///<
-	int paramfree[MAXFIT];     ///< An array indicating which parameters are free (1), fixed (0)
+	float param[MAXFIT];  ///< The fitted parameters, also allows starting values to be passed.
+	int paramfree[MAXFIT]; ///< An array indicating which parameters are free (1), fixed (0)
 	int nparam;         ///< The number of parameters.
 	restrain_type restrain; ///< Parameter #restrain_type.Normally use ECF_RESTRAIN_DEFAULT.Use ECF_RESTRAIN_USER if restraining parameters has been setup via GCI_set_restrain_limits.
 	float *fitted;      ///< An array containing values fitted to the data, the 'fit'. Fit points are coincident in time with the data points.
@@ -126,9 +126,9 @@ public:
 		ninstr = 0;         
 		noise_model = NOISE_POISSON_FIT;
 		noise_sd = NULL;
-		param = NULL;
-		memset(paramfree, 1, MAXFIT*sizeof(int));
-		nparam = 0;         
+		memset(param, 0, MAXFIT * sizeof(int));
+		memset(paramfree, 1, MAXFIT * sizeof(int));
+		nparam = 0;
 		restrain = ECF_RESTRAIN_DEFAULT;
 		fitted = NULL;  
 		residuals = NULL;

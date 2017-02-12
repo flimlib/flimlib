@@ -45,7 +45,6 @@ float xincr = 0.058628749f;
 int main(int argc, const char * argv[])
 {
 	// Return values
-	float params[MAXFIT] = { 0 };
 	float fitted[ndata];
 	float residuals[ndata];
 	float chisq;
@@ -57,7 +56,6 @@ int main(int argc, const char * argv[])
 	// Load up the fitter inputs
 	SlimCurve.transient = transient;
 	SlimCurve.ndata = ndata;
-	SlimCurve.param = params;   // starting values, will contain the fitted values at end of fit.
 	SlimCurve.time_incr = xincr;
 	SlimCurve.chisq = &chisq;
 
@@ -72,7 +70,7 @@ int main(int argc, const char * argv[])
 		cout << "ERROR with SlimCurve.fitRLD\n";
 		exit(0);
 	}
-	cout << "RLD Z:" << params[0] << " A:" << params[1] << " tau:" << params[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
+	cout << "RLD Z:" << SlimCurve.param[0] << " A:" << SlimCurve.param[1] << " tau:" << SlimCurve.param[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
 
 	// Run the LMA fit function: will use params[] as a starting point
 	iterations = SlimCurve.fitLMA(SLIM_CURVE_MONO);
@@ -81,7 +79,7 @@ int main(int argc, const char * argv[])
 		cout << "ERROR with SlimCurve.fitLMA\n";
 		exit(0);
 	}
-	cout << "LMA Z:" << params[0] << " A:" << params[1] << " tau:" << params[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
+	cout << "LMA Z:" << SlimCurve.param[0] << " A:" << SlimCurve.param[1] << " tau:" << SlimCurve.param[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
 
 
 
@@ -96,7 +94,7 @@ int main(int argc, const char * argv[])
 		cout << "ERROR with SlimCurve.fitRLD\n";
 		exit(0);
 	}
-	cout << "RLDi Z:" << params[0] << " A:" << params[1] << " tau:" << params[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
+	cout << "RLDi Z:" << SlimCurve.param[0] << " A:" << SlimCurve.param[1] << " tau:" << SlimCurve.param[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
 
 	// Assign the optional fitter Outputs to make plots if we want
 //	SlimCurve.fitted = fitted;
@@ -110,14 +108,14 @@ int main(int argc, const char * argv[])
 		cout << "ERROR with SlimCurve.fitLMA\n";
 		exit(0);
 	}
-	cout << "LMAi Z:" << params[0] << " A:" << params[1] << " tau:" << params[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
+	cout << "LMAi Z:" << SlimCurve.param[0] << " A:" << SlimCurve.param[1] << " tau:" << parSlimCurve.paramams[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
 
 	// Setup a resonable start for tri-exp
-	params[1] /= 3.0;      // divide the amplitude A1
-	params[3] = params[1]; // let A2 = A1
-	params[4] = params[2] / 2.0f; // let tau2 = tau1 / 2
-	params[5] = params[1]; // let A3 = A1
-	params[6] = params[2] / 3.0f; // let tau3 = tau1 / 2
+	SlimCurve.param[1] /= 3.0;      // divide the amplitude A1
+	SlimCurve.param[3] = SlimCurve.param[1]; // let A2 = A1
+	SlimCurve.param[4] = SlimCurve.param[2] / 2.0f; // let tau2 = tau1 / 2
+	SlimCurve.param[5] = SlimCurve.param[1]; // let A3 = A1
+	SlimCurve.param[6] = SlimCurve.param[2] / 3.0f; // let tau3 = tau1 / 2
 								 // all other params from last fit
 
 	// Run the LMA Bi exp
@@ -128,25 +126,25 @@ int main(int argc, const char * argv[])
 		cout << "ERROR with SlimCurve.fitLMA\n";
 		exit(0);
 	}
-	cout << "LMAi Z:" << params[0] << " A1:" << params[1] << " tau1:" << params[2] << " A2:" << params[3] << " tau2:" << params[4] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:"<< iterations << "\n";
+	cout << "LMAi Z:" << SlimCurve.param[0] << " A1:" << SlimCurve.param[1] << " tau1:" << SlimCurve.param[2] << " A2:" << SlimCurve.param[3] << " tau2:" << SlimCurve.param[4] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:"<< iterations << "\n";
 
 	// Let's restrain Z>0 ...
 	SlimCurve.restrainParameter(SLIM_CURVE_STRETCHED_PARAM_Z, 0.0, INFINITY);
 
 	// Run the LMA Tri exp, fix tau3=0.5;
 	SlimCurve.paramfree[SLIM_CURVE_TRI_PARAM_TAU3] = 0;
-	params[SLIM_CURVE_TRI_PARAM_TAU3] = 0.5;
+	SlimCurve.param[SLIM_CURVE_TRI_PARAM_TAU3] = 0.5;
 	iterations = SlimCurve.fitLMA(SLIM_CURVE_TRI);
 	if (iterations <= 0) {
 		// An error occurred
 		cout << "ERROR with SlimCurve.fitLMA\n";
 		exit(0);
 	}
-	cout << "LMAi Z:" << params[0] << " A1:" << params[1] << " tau1:" << params[2] << " A2:" << params[3] << " tau2:" << params[4] << " A3:" << params[5] << " tau3:" << params[6] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
+	cout << "LMAi Z:" << SlimCurve.param[0] << " A1:" << SlimCurve.param[1] << " tau1:" << SlimCurve.param[2] << " A2:" << SlimCurve.param[3] << " tau2:" << SlimCurve.param[4] << " A3:" << SlimCurve.param[5] << " tau3:" << SlimCurve.param[6] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
 
 	// Setup a resonable start for stretched-exp
-	params[2] = 2.0;
-	params[3] = 1.5;
+	SlimCurve.param[2] = 2.0;
+	SlimCurve.param[3] = 1.5;
 	// all other params from last fit
 
 	// Clear previous restraining
@@ -159,7 +157,7 @@ int main(int argc, const char * argv[])
 		cout << "ERROR with SlimCurve.fitLMA\n";
 		exit(0);
 	}
-	cout << "LMAi Z:" << params[0] << " A1:" << params[1] << " tau1:" << params[2] << " h:" << params[3] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
+	cout << "LMAi Z:" << SlimCurve.param[0] << " A1:" << SlimCurve.param[1] << " tau1:" << SlimCurve.param[2] << " h:" << SlimCurve.param[3] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
 
 
 }
