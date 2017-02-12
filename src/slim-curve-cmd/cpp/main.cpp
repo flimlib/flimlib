@@ -47,7 +47,6 @@ int main(int argc, const char * argv[])
 	// Return values
 	float fitted[ndata];
 	float residuals[ndata];
-	float chisq;
 	int iterations = 0;
 
 	// Create a fitter
@@ -57,13 +56,11 @@ int main(int argc, const char * argv[])
 	SlimCurve.transient = transient;
 	SlimCurve.ndata = ndata;
 	SlimCurve.time_incr = xincr;
-	SlimCurve.chisq = &chisq;
-
-	// Run the RLD fit function: Basic fit, no prompt, on data subset
 	SlimCurve.data_start = transient_rise;
 	SlimCurve.fit_start = transient_peak;
 	SlimCurve.fit_end = transient_end;
 
+	// Run the RLD fit function: Basic fit, no prompt, on data subset
 	iterations = SlimCurve.fitRLD();
 	if (iterations <= 0) {
 		// An error occurred
@@ -108,7 +105,7 @@ int main(int argc, const char * argv[])
 		cout << "ERROR with SlimCurve.fitLMA\n";
 		exit(0);
 	}
-	cout << "LMAi Z:" << SlimCurve.param[0] << " A:" << SlimCurve.param[1] << " tau:" << parSlimCurve.paramams[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
+	cout << "LMAi Z:" << SlimCurve.param[0] << " A:" << SlimCurve.param[1] << " tau:" << SlimCurve.param[2] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:" << iterations << "\n";
 
 	// Setup a resonable start for tri-exp
 	SlimCurve.param[1] /= 3.0;      // divide the amplitude A1

@@ -81,7 +81,6 @@ class SLIMCurve {
 	float _restrained_max[MAXFIT];
 	float *_fitted = NULL;
 	float *_residuals = NULL;
-	float _chisq = 0.0f;
 	float **_covar = NULL;
 	float **_alpha = NULL;
 	float **_err_axes = NULL;
@@ -103,7 +102,7 @@ public:
 	restrain_type restrain; ///< Parameter #restrain_type.Normally use ECF_RESTRAIN_DEFAULT.Use ECF_RESTRAIN_USER if restraining parameters has been setup via GCI_set_restrain_limits.
 	float *fitted;      ///< An array containing values fitted to the data, the 'fit'. Fit points are coincident in time with the data points.
 	float *residuals;   ///< An array containing the difference between the fit and the data. Points are coincident in time with the data points.
-	float *chisq;       ///< The resulting raw chi squared value of the fit. To get the reduced chisq, divide by the degrees of freedom (fit_end - fit_start - nparam), see getReducedChiSq()
+	float chisq;       ///< The resulting raw chi squared value of the fit. To get the reduced chisq, divide by the degrees of freedom (fit_end - fit_start - nparam), see getReducedChiSq()
 	float chisq_target; ///< A raw chi squared value to aim for. If this value is reached fitting will stop. If you want to aim for a reduced chisq (say 1.1 or 1.0) you must multiply by the degree of freedom. (TRI2: "Try refits")
 	float chisq_delta;  ///< An individual fit will continue if the chisq value changes by more then this amount.Try 1E-5. (TRI2: "Stopping Criterion")
 	int chisq_percent;  ///< Defines the confidence interval when calculating the error axes, e.g. 95 % .
@@ -132,7 +131,7 @@ public:
 		restrain = ECF_RESTRAIN_DEFAULT;
 		fitted = NULL;  
 		residuals = NULL;
-		chisq = NULL;
+		chisq = 0;
 		chisq_target = 1.0;
 		chisq_delta = 0.0000001f;
 		chisq_percent = 95;  
@@ -176,8 +175,6 @@ public:
 			if (_residuals == NULL) return SLIM_CURVE_MEMORY_ERROR;
 			residuals = _residuals;
 		}
-
-		if (chisq == NULL) chisq = &_chisq;
 
 		if (covar == NULL) {
 			_covar = GCI_ecf_matrix(ndata, ndata);
@@ -238,7 +235,7 @@ public:
 		if (err < 0) return err;
 
 		iterations = GCI_triple_integral_fitting_engine(time_incr, &transient[data_start], fit_start - data_start, fit_end - data_start,
-			instr, ninstr, noise_model, noise_sd, Z, A, tau, fitted, residuals, chisq, chisq_target*(fit_end - fit_start + ninstr - 3));
+			instr, ninstr, noise_model, noise_sd, Z, A, tau, fitted, residuals, &chisq, chisq_target*(fit_end - fit_start + ninstr - 3));
 
 		freePrivateVars();
 
@@ -276,7 +273,7 @@ public:
 
 		iterations = GCI_marquardt_fitting_engine(time_incr, &transient[data_start], ndata - data_start, fit_start-data_start, fit_end-data_start,
 			instr, ninstr, noise_model, noise_sd, param, paramfree, nparam, restrain, fitfunc,
-			fitted, residuals, chisq, covar, alpha, err_axes, chisq_target*(fit_end - fit_start + ninstr - _nparamfree), chisq_delta, chisq_percent);
+			fitted, residuals, &chisq, covar, alpha, err_axes, chisq_target*(fit_end - fit_start + ninstr - _nparamfree), chisq_delta, chisq_percent);
 
 		freePrivateVars();
 
@@ -298,7 +295,7 @@ public:
 	}
 
 	float getReducedChiSq(void) {
-		return (*chisq / (fit_end - fit_start - nparam));
+		return (chisq / (fit_end - fit_start - nparam));
 	}
 
 };
