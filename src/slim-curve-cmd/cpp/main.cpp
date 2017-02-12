@@ -58,7 +58,7 @@ int main(int argc, const char * argv[])
 	SlimCurve.transient = transient;
 	SlimCurve.ndata = ndata;
 	SlimCurve.param = params;   // starting values, will contain the fitted values at end of fit.
-	SlimCurve.xincr = xincr;
+	SlimCurve.time_incr = xincr;
 	SlimCurve.chisq = &chisq;
 
 	// Run the RLD fit function: Basic fit, no prompt, on data subset
@@ -102,7 +102,8 @@ int main(int argc, const char * argv[])
 //	SlimCurve.fitted = fitted;
 //	SlimCurve.residuals = residuals;
 
-	// Run the LMA fit function: with instr
+	// Run the LMA fit function: with instr and maximum likelihood (NOISE_MLE)
+	SlimCurve.noise_model = NOISE_MLE;
 	iterations = SlimCurve.fitLMA(SLIM_CURVE_MONO);
 	if (iterations <= 0) {
 		// An error occurred
@@ -129,7 +130,9 @@ int main(int argc, const char * argv[])
 	}
 	cout << "LMAi Z:" << params[0] << " A1:" << params[1] << " tau1:" << params[2] << " A2:" << params[3] << " tau2:" << params[4] << " chisq:" << SlimCurve.getReducedChiSq() << " iterations:"<< iterations << "\n";
 
-	// Run the LMA Tri exp
+	// Run the LMA Tri exp, fix tau3=0.5;
+	SlimCurve.paramfree[SLIM_CURVE_TRI_PARAM_TAU3] = 0;
+	params[SLIM_CURVE_TRI_PARAM_TAU3] = 0.5;
 	iterations = SlimCurve.fitLMA(SLIM_CURVE_TRI);
 	if (iterations <= 0) {
 		// An error occurred
@@ -144,7 +147,7 @@ int main(int argc, const char * argv[])
 	// all other params from last fit
 
 	// TODO Let's restrain Z>0 ...
-
+	//SlimCurve.restrainParameter(SLIM_CURVE_STRETCHED_PARAM_Z, 0.0, INFINITY);
 
 	// Run the LMA stretched exp
 	iterations = SlimCurve.fitLMA(SLIM_CURVE_STRETCHED);

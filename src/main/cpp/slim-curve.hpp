@@ -47,14 +47,38 @@
 #define SLIM_CURVE_TRI 2
 #define SLIM_CURVE_STRETCHED 3
 
+// parameter order as defined by GCI_multiexp_tau()
+#define SLIM_CURVE_MONO_PARAM_Z 0
+#define SLIM_CURVE_MONO_PARAM_A 1
+#define SLIM_CURVE_MONO_PARAM_TAU 2
+#define SLIM_CURVE_BI_PARAM_Z 0
+#define SLIM_CURVE_BI_PARAM_A1 1
+#define SLIM_CURVE_BI_PARAM_TAU1 2
+#define SLIM_CURVE_BI_PARAM_A2 3
+#define SLIM_CURVE_BI_PARAM_TAU2 4
+#define SLIM_CURVE_TRI_PARAM_Z 0
+#define SLIM_CURVE_TRI_PARAM_A1 1
+#define SLIM_CURVE_TRI_PARAM_TAU1 2
+#define SLIM_CURVE_TRI_PARAM_A2 3
+#define SLIM_CURVE_TRI_PARAM_TAU2 4
+#define SLIM_CURVE_TRI_PARAM_A3 5
+#define SLIM_CURVE_TRI_PARAM_TAU3 6
+
+// parameter order as defined by GCI_stretchedexp()
+#define SLIM_CURVE_STRETCHED_PARAM_Z 0
+#define SLIM_CURVE_STRETCHED_PARAM_A 1
+#define SLIM_CURVE_STRETCHED_PARAM_TAU 2
+#define SLIM_CURVE_STRETCHED_PARAM_H 3
 
 // Set default values
 float chisq_target = 1.0f;
 
 class SLIMCurve {
 	// Local stores in case user does not provide them
-	int * _paramfree = NULL;
 	int _nparamfree = 0;
+	int _restrained[MAXFIT];
+	float _restrained_min[MAXFIT];
+	float _restrained_max[MAXFIT];
 	float *_fitted = NULL;
 	float *_residuals = NULL;
 	float _chisq = 0.0f;
@@ -63,7 +87,7 @@ class SLIMCurve {
 	float **_err_axes = NULL;
 
 public:
-	float xincr;		///< The time increment inbetween the values in the y array.
+	float time_incr;		///< The time increment inbetween the values in the y array.
 	float *transient;   ///< The transient (time resolved) signal to be analysed, the 'data'.
 	int ndata;          ///< The number of data points.
 	int data_start;     ///< The index into the y array marking the start to the transient.
@@ -71,10 +95,10 @@ public:
 	int fit_end;        ///< The index into the y array marking the end of the data to be used in the fit.
 	float *instr;       ///< The instrument reponse (IRF) or prompt signal to be used (optional, can be NULL).
 	int ninstr;         ///< The number of data points in the prompt (ignored if prompt = NULL).
-	noise_type noise;   ///< The #noise_type to be used.
-	float *sig;         ///< The standard deviation at each data point in y if #noise_type NOISE_GIVEN is used (optional, can pass NULL).
+	noise_type noise_model;   ///< The #noise_type to be used.
+	float *noise_sd;    ///< The standard deviation at each data point in y if #noise_type NOISE_GIVEN is used (optional, can pass NULL).
 	float *param;       ///<
-	int *paramfree;     ///< An array indicating which parameters are free (1), fixed (0)
+	int paramfree[MAXFIT];     ///< An array indicating which parameters are free (1), fixed (0)
 	int nparam;         ///< The number of parameters.
 	restrain_type restrain; ///< Parameter #restrain_type.Normally use ECF_RESTRAIN_DEFAULT.Use ECF_RESTRAIN_USER if restraining parameters has been setup via GCI_set_restrain_limits.
 	float *fitted;      ///< An array containing values fitted to the data, the 'fit'. Fit points are coincident in time with the data points.
@@ -92,7 +116,7 @@ public:
 
 	SLIMCurve() {
 		// Default values
-		xincr = 1.0;		
+		time_incr = 1.0;		
 		transient = NULL;
 		ndata = 0;          
 		data_start = 0;
@@ -100,10 +124,10 @@ public:
 		fit_end = 0;
 		instr = NULL;
 		ninstr = 0;         
-		noise = NOISE_POISSON_FIT;
-		sig = NULL;
+		noise_model = NOISE_POISSON_FIT;
+		noise_sd = NULL;
 		param = NULL;
-		paramfree = NULL;
+		memset(paramfree, 1, MAXFIT*sizeof(int));
 		nparam = 0;         
 		restrain = ECF_RESTRAIN_DEFAULT;
 		fitted = NULL;  
@@ -117,6 +141,10 @@ public:
 		err_axes = NULL;   
 		iterations = 0; 
 		fitfunc = GCI_multiexp_tau;
+
+		memset(_restrained, 0, MAXFIT * sizeof(int));
+		memset(_restrained_min, 0, MAXFIT * sizeof(float));
+		memset(_restrained_max, 0, MAXFIT * sizeof(float));
 	}
 
 	~SLIMCurve(){
@@ -131,21 +159,10 @@ public:
 		if (fit_end <= fit_start) fit_end = ndata-1;
 		if (fit_end > ndata-1) return SLIM_CURVE_SETTINGS_ERROR;
 
-		if (noise == NOISE_GIVEN && sig == NULL) return SLIM_CURVE_SETTINGS_ERROR;
+		if (noise_model == NOISE_GIVEN && noise_sd == NULL) return SLIM_CURVE_SETTINGS_ERROR;
 
-		if (paramfree == NULL) {
-			_paramfree = (int *)malloc(nparam * sizeof(int));
-			if (_paramfree == NULL) return SLIM_CURVE_MEMORY_ERROR;
-			for (int i = 0; i < nparam; i++) {
-				_paramfree[i] = 1;
-			}
-			paramfree = _paramfree;
-			_nparamfree = nparam;
-		}
-		else {
-			for (int i = 0, _nparamfree = 0; i < nparam; i++) {
-				if (paramfree[i]) _nparamfree++;
-			}
+		for (int i = 0, _nparamfree = 0; i < nparam; i++) {
+			if (paramfree[i]) _nparamfree++;
 		}
 
 		if (fitted == NULL) {
@@ -184,10 +201,6 @@ public:
 	}
 
 	void freePrivateVars() {
-		if (_paramfree) {
-			free(_paramfree);
-			_paramfree = paramfree = NULL;
-		}
 
 		if (_fitted) {
 			free(_fitted);
@@ -224,8 +237,8 @@ public:
 		int err = checkValues();
 		if (err < 0) return err;
 
-		iterations = GCI_triple_integral_fitting_engine(xincr, &transient[data_start], fit_start - data_start, fit_end - data_start,
-			instr, ninstr, noise, sig, Z, A, tau, fitted, residuals, chisq, chisq_target*(fit_end - fit_start + ninstr - 3));
+		iterations = GCI_triple_integral_fitting_engine(time_incr, &transient[data_start], fit_start - data_start, fit_end - data_start,
+			instr, ninstr, noise_model, noise_sd, Z, A, tau, fitted, residuals, chisq, chisq_target*(fit_end - fit_start + ninstr - 3));
 
 		freePrivateVars();
 
@@ -259,13 +272,30 @@ public:
 		int err = checkValues();
 		if (err < 0) return err;
 
-		iterations = GCI_marquardt_fitting_engine(xincr, &transient[data_start], ndata - data_start, fit_start-data_start, fit_end-data_start,
-			instr, ninstr, noise, sig, param, paramfree, nparam, restrain, fitfunc,
+		iterations = GCI_marquardt_fitting_engine(time_incr, &transient[data_start], ndata - data_start, fit_start-data_start, fit_end-data_start,
+			instr, ninstr, noise_model, noise_sd, param, paramfree, nparam, restrain, fitfunc,
 			fitted, residuals, chisq, covar, alpha, err_axes, chisq_target*(fit_end - fit_start + ninstr - _nparamfree), chisq_delta, chisq_percent);
 
 		freePrivateVars();
 
 		return iterations;
+	}
+
+	// TODO Make this work
+	void restrainParameter(int parameter, float min, float max) {
+		_restrained[parameter] = 1;
+		_restrained_min[parameter] = min;
+		_restrained_max[parameter] = max;
+
+		GCI_set_restrain_limits(MAXFIT, _restrained, _restrained_min, _restrained_max);
+	}
+
+	void clearRestrained(void) {
+		memset(_restrained, 0, MAXFIT * sizeof(int));
+		memset(_restrained_min, 0, MAXFIT * sizeof(float));
+		memset(_restrained_max, 0, MAXFIT * sizeof(float));
+
+		GCI_set_restrain_limits(MAXFIT, _restrained, _restrained_min, _restrained_max);
 	}
 
 	float getReducedChiSq(void) {
