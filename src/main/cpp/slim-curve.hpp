@@ -25,9 +25,16 @@
   C++ interface for SLIM Curve.
 
   Caller _has_ to provide:
-	transient array
-	ndata
-	param array
+	  SlimCurve.transient
+	  SlimCurve.ndata
+	  SlimCurve.time_incr
+	  SlimCurve.data_start
+	  SlimCurve.fit_start
+	  SlimCurve.fit_end
+
+  Optionally
+
+
 
 */
 
@@ -46,6 +53,11 @@
 #define SLIM_CURVE_BI 1
 #define SLIM_CURVE_TRI 2
 #define SLIM_CURVE_STRETCHED 3
+
+// parameter order as defined by RLD()
+#define SLIM_CURVE_RLD_PARAM_Z 0
+#define SLIM_CURVE_RLD_PARAM_A 1
+#define SLIM_CURVE_RLD_PARAM_TAU 2
 
 // parameter order as defined by GCI_multiexp_tau()
 #define SLIM_CURVE_MONO_PARAM_Z 0
@@ -225,6 +237,20 @@ public:
 		}
 	}
 
+	void setupData(float* ltransient, int lndata, float lxincr=1.0, int ldata_start=0, int lfit_start=0, int lfit_end=0) {
+		transient = ltransient;
+		ndata = lndata;
+		time_incr = lxincr;
+		data_start = ldata_start;
+		fit_start = lfit_start;
+		fit_end = lfit_end;
+	}
+
+	void setupIRF(float* linstr, int lninstr) {
+		instr = linstr;
+		ninstr = lninstr;
+	}
+
 	int fitRLD() {
 
 		float *Z = &(param[0]);
@@ -278,6 +304,15 @@ public:
 		freePrivateVars();
 
 		return iterations;
+	}
+
+	void fixParameter(int parameter, float value) {
+		paramfree[parameter] = 0;
+		param[parameter] = value;
+	}
+
+	void clearFixed(void) {
+		memset(paramfree, 1, MAXFIT * sizeof(int));
 	}
 
 	void restrainParameter(int parameter, float min, float max) {
