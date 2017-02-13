@@ -186,5 +186,17 @@ int main(int argc, const char * argv[])
 		<< " chisq:" << SlimCurve.getReducedChiSq()
 		<< " iterations:" << iterations << "\n";
 
-
+	
+	// Run the phasor analysis
+	int error = SlimCurve.fitPhasor(50.0f);
+	if (SLIM_CURVE_SUCCESS != error) {
+		// An error occurred
+		cout << "ERROR with SlimCurve.fitPhasor\n";
+		exit(0);
+	}
+	cout << "Phasor Z:" << SlimCurve.param[SLIM_CURVE_PHASOR_PARAM_Z]
+		<< " tau:" << SlimCurve.param[SLIM_CURVE_PHASOR_PARAM_TAU]
+		<< " u:" << SlimCurve.param[SLIM_CURVE_PHASOR_PARAM_U]
+		<< " v:" << SlimCurve.param[SLIM_CURVE_PHASOR_PARAM_V]
+		<< " chisq:" << SlimCurve.getReducedChiSq() << "\n";
 }

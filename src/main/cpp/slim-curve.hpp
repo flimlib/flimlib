@@ -105,15 +105,25 @@
 #define SLIM_CURVE_STRETCHED_PARAM_TAU 2
 #define SLIM_CURVE_STRETCHED_PARAM_H 3
 
+// parameter order as defined by GCI_Phasor()
+#define SLIM_CURVE_PHASOR_PARAM_Z 0
+#define SLIM_CURVE_PHASOR_PARAM_TAU 2
+#define SLIM_CURVE_PHASOR_PARAM_U 7
+#define SLIM_CURVE_PHASOR_PARAM_V 8
+#define SLIM_CURVE_PHASOR_PARAM_TAUP 9
+#define SLIM_CURVE_PHASOR_PARAM_TAUM 10
+
 // Set default values
 float chisq_target = 1.0f;
 
 class SLIMCurve {
-	// Local stores in case user does not provide them
+	// Fixing and restraining
 	int _nparamfree = 0;
 	int _restrained[MAXFIT];
 	float _restrained_min[MAXFIT];
 	float _restrained_max[MAXFIT];
+
+	// Local stores in case user does not provide them
 	float *_fitted = NULL;
 	float *_residuals = NULL;
 	float **_covar = NULL;
@@ -276,9 +286,9 @@ public:
 
 	int fitRLD() {
 
-		float *Z = &(param[0]);
-		float *A = &(param[1]);
-		float *tau = &(param[2]);
+		float *Z = &(param[SLIM_CURVE_RLD_PARAM_Z]);
+		float *A = &(param[SLIM_CURVE_RLD_PARAM_A]);
+		float *tau = &(param[SLIM_CURVE_RLD_PARAM_TAU]);
 
 		int err = checkValues();
 		if (err < 0) return err;
@@ -327,6 +337,28 @@ public:
 		freePrivateVars();
 
 		return iterations;
+	}
+
+	int fitPhasor(float lZ=0.0f) {
+
+		float *Z = &(param[SLIM_CURVE_PHASOR_PARAM_Z]);
+		float *u = &(param[SLIM_CURVE_PHASOR_PARAM_U]);
+		float *v = &(param[SLIM_CURVE_PHASOR_PARAM_V]);
+		float *taup = &(param[SLIM_CURVE_PHASOR_PARAM_TAUP]);
+		float *taum = &(param[SLIM_CURVE_PHASOR_PARAM_TAUM]);
+		float *tau = &(param[SLIM_CURVE_PHASOR_PARAM_TAU]);
+
+		*Z = lZ;  // This function requires a Z in order to subtract it
+
+		int err = checkValues();
+		if (err < 0) return err;
+
+		GCI_Phasor(time_incr, &transient[data_start], fit_start - data_start, fit_end - data_start,
+			Z, u, v, taup, taum, tau, fitted, residuals, &chisq);
+
+		freePrivateVars();
+
+		return SLIM_CURVE_SUCCESS;
 	}
 
 	void fixParameter(int parameter, float value) {
