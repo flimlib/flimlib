@@ -21,7 +21,7 @@
  * #L%
  */
 
- /* 
+ /** 
   C++ interface for SLIM Curve.
 
   Caller _has_ to at least use:
@@ -58,7 +58,7 @@
 	SlimCurve.noise_model = NOISE_MLE;  // To use maximum likelihood
 	SlimCurve.fitLMA(SLIM_CURVE_MONO);  // To do a mono fit
 
-
+	\file slim-curve.hpp
 */
 
 #include <stdio.h>      /* printf, scanf, NULL */
@@ -116,6 +116,9 @@
 // Set default values
 float chisq_target = 1.0f;
 
+/**
+	Global class for a SLIM Curve fitter
+*/
 class SLIMCurve {
 	// Fixing and restraining
 	int _nparamfree = 0;
@@ -158,6 +161,9 @@ public:
 
 	void(*fitfunc)(float x, float param[], float *y, float dy_dparam[], int nparam);  ///< A function that executes the fitting function at pt x, given the parameters
 
+	/**
+	 * Constructor: make sure all vars are assigned.
+	 */
 	SLIMCurve() {
 		// Default values
 		time_incr = 1.0;		
@@ -191,10 +197,17 @@ public:
 		memset(_restrained_max, 0, MAXFIT * sizeof(float));
 	}
 
+	/**
+	* Destructor: make sure all arrays are freed.
+	*/
 	~SLIMCurve(){
 		freePrivateVars();  // Should be done by fit functions, but just make sure.
 	}
 
+	/**
+		Check the input values and assign pointers to arrays if required.
+		May use the private variables.
+	*/
 	int checkValues() {
 		if (transient == NULL) return SLIM_CURVE_SETTINGS_ERROR;
 		if (ndata == 0) return SLIM_CURVE_SETTINGS_ERROR;
@@ -242,6 +255,9 @@ public:
 		return SLIM_CURVE_SUCCESS;
 	}
 
+	/**
+		If the private variables have been used to assign arrays, free them here.
+	*/
 	void freePrivateVars() {
 
 		if (_fitted) {
@@ -270,6 +286,15 @@ public:
 		}
 	}
 
+	/**	
+	* Convenience function to setup the data required for a fit
+	* \param[in] ltransient The transient (time resolved) signal to be analysed, the 'data'.
+	* \param[in] lndata The number of data points.
+	* \param[in] lxincr The time increment in between the values in the y array.
+	* \param[in] data_start The index into the y array marking the start to the data.
+	* \param[in] fit_start The index into the y array marking the start to the data to be used in the fit.
+	* \param[in] fit_end The index into the y array marking the end of the data to be used in the fit.
+	*/
 	void setupData(float* ltransient, int lndata, float lxincr=1.0, int ldata_start=0, int lfit_start=0, int lfit_end=0) {
 		transient = ltransient;
 		ndata = lndata;
@@ -279,11 +304,20 @@ public:
 		fit_end = lfit_end;
 	}
 
+	/**
+	* Convenience function to setup the IRF
+	* \param[in] instr The instrument response (IRF) or prompt signal to be used.
+	* \param[in] ninstr The number of data points in the prompt.
+	*/
 	void setupIRF(float* linstr, int lninstr) {
 		instr = linstr;
 		ninstr = lninstr;
 	}
 
+	/**
+	* Wrapper for GCI_triple_integral_fitting_engine()
+	* Uses the parameters already setup to perform the fit
+	*/
 	int fitRLD() {
 
 		float *Z = &(param[SLIM_CURVE_RLD_PARAM_Z]);
@@ -301,6 +335,10 @@ public:
 		return iterations;
 	}
 
+	/**
+	* Wrapper for GCI_marquardt_fitting_engine()
+	* Uses the parameters already setup to perform the fit
+	*/
 	int fitLMA(int type) {
 
 		switch (type)
@@ -339,6 +377,10 @@ public:
 		return iterations;
 	}
 
+	/**
+	* Wrapper for GCI_Phasor()
+	* Uses the parameters already setup to perform the fit
+	*/
 	int fitPhasor(float lZ=0.0f) {
 
 		float *Z = &(param[SLIM_CURVE_PHASOR_PARAM_Z]);
@@ -361,15 +403,29 @@ public:
 		return SLIM_CURVE_SUCCESS;
 	}
 
+	/**
+	* Convenience function for fixing a parameter in a LMA fit
+	* /param[in] parameter Index into paramter array of the parameter you wish to fix, use e.g. SLIM_CURVE_MONO_TAU etc.
+	* /param[in] value The value to fix the paramter to in future fits.
+	*/
 	void fixParameter(int parameter, float value) {
 		paramfree[parameter] = 0;
 		param[parameter] = value;
 	}
 
+	/**
+	* Clear all fixing of paramters; make all parameters free
+	*/
 	void clearFixed(void) {
 		memset(paramfree, 1, MAXFIT * sizeof(int));
 	}
 
+	/**
+	* Convenience function for restraining a parameter in a LMA fit
+	* /param[in] parameter Index into paramter array of the parameter you wish to fix, use e.g. SLIM_CURVE_MONO_TAU etc.
+	* /param[in] min The min value to restrain the paramter to in future fits.
+	* /param[in] max The max value to restrain the paramter to in future fits.
+	*/
 	void restrainParameter(int parameter, float min, float max) {
 		_restrained[parameter] = 1;
 		_restrained_min[parameter] = min;
@@ -377,6 +433,9 @@ public:
 		restrain = ECF_RESTRAIN_USER;
 	}
 
+	/**
+	* Clear all restraining of paramters; make all parameters free
+	*/
 	void clearRestrained(void) {
 		memset(_restrained, 0, MAXFIT * sizeof(int));
 		memset(_restrained_min, 0, MAXFIT * sizeof(float));
@@ -384,6 +443,10 @@ public:
 		restrain = ECF_RESTRAIN_DEFAULT;
 	}
 
+	/**
+	* Get the reduced chi squared value for the last fit performed based in the chisq and the degrees of freedom
+	* /return The reduce chisq value
+	*/
 	float getReducedChiSq(void) {
 		return (chisq / (fit_end - fit_start - nparam));
 	}
