@@ -24,16 +24,39 @@
  /* 
   C++ interface for SLIM Curve.
 
-  Caller _has_ to provide:
-	  SlimCurve.transient
-	  SlimCurve.ndata
-	  SlimCurve.time_incr
-	  SlimCurve.data_start
-	  SlimCurve.fit_start
-	  SlimCurve.fit_end
+  Caller _has_ to at least use:
+	SlimCurve.setupData(transient, ndata);
+  but better is:
+	SlimCurve.setupData(transient, ndata, xincr, transient_rise, transient_peak, transient_end);
 
-  Optionally
+  And should read results using e.g.:
+	SlimCurve.param[SLIM_CURVE_BI_PARAM_Z]
+	SlimCurve.param[SLIM_CURVE_BI_PARAM_A1]
+	SlimCurve.param[SLIM_CURVE_BI_PARAM_TAU1]
+	etc.
 
+  Optionally can use: 
+	SlimCurve.setupIRF(instr, ninstr);
+	SlimCurve.restrainParameter(SLIM_CURVE_X_PARAM_Y, min, max);
+	SlimCurve.fixParameter(SLIM_CURVE_X_PARAM_Y, value);
+
+  Can also optionally get the fit and residuals; before fitting do this:
+	float fitted[ndata];
+	float residuals[ndata];
+	SlimCurve.fitted = fitted;
+	SlimCurve.residuals = residuals;
+  and use fitted[] and residuals[] after the fit.
+  Similarly for:
+	SlimCurve.covar
+	SlimCurve.alpha
+	SlimCurve.err_axes
+
+  A good sequence would be to use:
+    SlimCurve.setupData(transient, ndata, xincr, transient_rise, transient_peak, transient_end);
+	SlimCurve.setupIRF(instr, ninstr);
+	SlimCurve.fitRLD();    // To get initial parameter estimates
+	SlimCurve.noise_model = NOISE_MLE;  // To use maximum likelihood
+	SlimCurve.fitLMA(SLIM_CURVE_MONO);  // To do a mono fit
 
 
 */
