@@ -49,16 +49,18 @@ automatically in Eclipse when the slim-curve project is updated.
 
 ## Directory contents
 
+* `lib` - pre-compiled dll files for Windows 32 and 64 bit.
 * `src` - source files
 * `src/main/c` - The source files for the SLIM Curve library
-* `src/slim-curve-cmd/c` - The source files for the standalone executable
-  wrapper for the library
-* `src/slim-curve-cmd/c/doc` - API documentaion
+* `src/main/cpp` - The C++ include file for a SLIMCurve class for use in C++ projects
+* `src/slim-curve-cmd/c` - The source files for the standalone executable wrapper for the library
+* `src/slim-curve-cmd/cpp` - The source files for the standalone executable written in C++
+* `src/matlab` - Wrapper and example code for use of the library with Matlab
 * `test_files` - dat and ini settings file for testing
 
 ## Building the source
 
-To build the standalone program using CMake and gcc under Linux:
+To build the library and standalone program using CMake and gcc under Linux:
 
 1.  Create a build folder, and cd to it
 
@@ -79,6 +81,8 @@ To build the standalone program using CMake and gcc under Linux:
     make
     ```
 
+On Windows you can use CMake to create a Visual Studio project for the library and test programs.
+    
 ## Running the standalone executable
 
 1.  Copy the executable to the `test_files` folder for convenience
