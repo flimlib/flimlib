@@ -121,17 +121,17 @@ float chisq_target = 1.0f;
 */
 class SLIMCurve {
 	// Fixing and restraining
-	int _nparamfree = 0;
+	int _nparamfree;
 	int _restrained[MAXFIT];
 	float _restrained_min[MAXFIT];
 	float _restrained_max[MAXFIT];
 
 	// Local stores in case user does not provide them
-	float *_fitted = NULL;
-	float *_residuals = NULL;
-	float **_covar = NULL;
-	float **_alpha = NULL;
-	float **_err_axes = NULL;
+	float *_fitted;
+	float *_residuals;
+	float **_covar;
+	float **_alpha;
+	float **_err_axes;
 
 public:
 	float time_incr;		///< The time increment inbetween the values in the y array.
@@ -166,6 +166,12 @@ public:
 	 */
 	SLIMCurve() {
 		// Default values
+		_nparamfree = 0;
+		_fitted = NULL;
+		_residuals = NULL;
+		_covar = NULL;
+		_alpha = NULL;
+		_err_axes = NULL;
 		time_incr = 1.0;		
 		transient = NULL;
 		ndata = 0;          
