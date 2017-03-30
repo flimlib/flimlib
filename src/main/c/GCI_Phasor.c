@@ -90,6 +90,8 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
     // Z must contain a bg estimate
 	int   i, ret = PHASOR_ERR_NO_ERROR, nBins;
 	float *data, u, v, A, w, I, Ifit, bg, chisq_local, res, sigma2;
+	float *fitted_float;
+	float *residuals_float;
 
 	data = &(y[fit_start]);	
 	nBins = (fit_end - fit_start);
@@ -130,8 +132,8 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 	if (fitted == NULL)
 		return 0;
 
-	float *fitted_float = (float*)malloc((size_t) fit_end * sizeof(float));
-	float *residuals_float = (float*)malloc((size_t) fit_end * sizeof(float));
+	fitted_float = (float*)malloc((size_t) fit_end * sizeof(float));
+	residuals_float = (float*)malloc((size_t) fit_end * sizeof(float));
 	
 	// integral over nominal fit data
 	for (Ifit=0.0f, i=fit_start; i<fit_end; i++) 
