@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>9.0.0</version>
+		<version>17.1.1</version>
 		<relativePath />
 	</parent>
 
@@ -37,40 +37,27 @@
 		<developer>
 			<id>paulbarber</id>
 			<name>Paul Barber</name>
-			<email>Paul.Barber@rob.ox.ac.uk</email>
-			<url>http://users.ox.ac.uk/~raob0009/</url>
-			<organization>Cancer Research UK and Medical Research Council Oxford Institute for Radiation Oncology</organization>
-			<organizationUrl>http://www.rob.ox.ac.uk/</organizationUrl>
 			<roles>
-				<role>architect</role>
+				<role>lead</role>
+				<role>founder</role>
 				<role>developer</role>
 			</roles>
-			<timezone>+0</timezone>
-		</developer>
-		<developer>
-			<id>grislis</id>
-			<name>Aivar Grislis</name>
-			<url>http://loci.wisc.edu/people/aivar-grislis</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<timezone>-6</timezone>
 		</developer>
 		<developer>
 			<id>ctrueden</id>
 			<name>Curtis Rueden</name>
-			<email>ctrueden@wisc.edu</email>
-			<url>http://loci.wisc.edu/people/curtis-rueden</url>
-			<organization>UW-Madison LOCI</organization>
-			<organizationUrl>http://loci.wisc.edu/</organizationUrl>
+			<url>https://imagej.net/User:Rueden</url>
 			<roles>
-				<role>architect</role>
+				<role>maintainer</role>
 			</roles>
-			<timezone>-6</timezone>
 		</developer>
 	</developers>
+	<contributors>
+		<contributor>
+			<name>Aivar Grislis</name>
+			<properties><id>grislis</id></properties>
+		</contributor>
+	</contributors>
 
 	<mailingLists>
 		<mailingList>
@@ -98,6 +85,13 @@
 	</ciManagement>
 
 	<properties>
+		<package-name>loci.slim</package-name>
+
+		<license.licenseName>gpl_v3</license.licenseName>
+		<license.projectName>SLIM-curve package for exponential curve fitting of spectral lifetime data.</license.projectName>
+		<license.copyrightOwners>University of Oxford and Board of Regents of the
+University of Wisconsin-Madison.</license.copyrightOwners>
+
 		<nar-maven-plugin.version>3.3.0</nar-maven-plugin.version>
 	</properties>
 
@@ -224,7 +218,7 @@
 					<libraries>
 						<library>
 							<type>shared</type>
-							<narSystemPackage>loci.slim</narSystemPackage>
+							<narSystemPackage>${package-name}</narSystemPackage>
 						</library>
 					</libraries>
 				</configuration>
@@ -260,7 +254,7 @@ University of Wisconsin-Madison.</organizationName>
 					</descriptors>
 					<archive>
 						<manifest>
-							<packageName>loci.slim</packageName>
+							<packageName>${package-name}</packageName>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 						</manifest>
 					</archive>
