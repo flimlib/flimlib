@@ -39,7 +39,6 @@ set(SLIM_CURVE_CPP      src/slim-curve-cmd/cpp/main.cpp
 
 # Build a dll
 add_library(slim-curve SHARED ${SLIM_CURVE_COMMON} ${SLIM_CURVE_LIB})
-target_link_libraries(slim-curve m)
 
 # Build a dll test program
 add_executable(slim-curve-dll-test  ${SLIM_CURVE_MAIN})
@@ -52,5 +51,7 @@ add_executable(slim-curve-cmd ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN})
 add_executable(slim-curve-cmd-cpp ${SLIM_CURVE_COMMON} ${SLIM_CURVE_CPP})
 
 if(UNIX)
-target_link_libraries(slim-curve-cmd m) #link the math library
+  # Link the math library
+  target_link_libraries(slim-curve m)
+  target_link_libraries(slim-curve-cmd m)
 endif(UNIX)
