@@ -34,7 +34,7 @@
   RLD return_value 2
   RLD estimate A 11515.900391 T 2.392674 Z 208.731979 X2 8.997931
   LMA return value 10
-  LMA fitted A 16494.630859 T 2.648733 H 1.377989 Z -2194.706299 X2 204.412872
+  LMA fitted A 16494.* T 2.6487* H 1.3779* Z -2194.* X2 204.4* (glob)
 
   $ ./slim-curve-cmd settings5.ini data.dat
   Settings: settings5.ini
