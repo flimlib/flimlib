@@ -1,0 +1,9 @@
+language: c
+os:
+  - linux
+  - osx
+branches:
+  only:
+  - master
+  - "/.*-[0-9]+\\..*/"
+script: ".travis/build.sh"
