@@ -63,6 +63,7 @@
 
 #include <stdio.h>      /* printf, scanf, NULL */
 #include <stdlib.h>     /* calloc, exit, free */
+#include <string.h>     /* memset */
 
 #include "Ecf.h"
 #include "GCI_Phasor.h"
