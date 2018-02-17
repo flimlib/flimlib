@@ -14,7 +14,17 @@ else
     exit 1
   fi
   "$PIP" install --user cram
-  CRAM=$HOME/.local/bin/cram
+  if which cram; then
+    CRAM=cram
+  elif -f /usr/local/bin/cram; then
+    CRAM=cram
+  elif -f "$HOME/local/bin/cram"; then
+    CRAM=$HOME/.local/bin/cram
+  else
+    echo "Cram purportedly installed, but cannot find it."
+    "$PIP" show -f cram
+    exit 2
+  fi
 fi
 
 # Prepare the build environment
