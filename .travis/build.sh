@@ -5,17 +5,15 @@ if which cram; then
   CRAM=cram
 else
   # Need to install cram
-  if ! which pip; then
-    # Need to install pip
-    if [ $(uname) = "Darwin" ]; then
-      brew install python
-    else
-      echo "No cram, no pip. Cannot continue."
-      exit 1
-    fi
+  if which pip; then
+    PIP=pip
+  elif which pip2; then
+    PIP=pip2
+  else
+    echo "No cram, no pip. Cannot continue."
+    exit 1
   fi
-  pip install --user cram
-  CRAM=/cram
+  "$PIP" install --user cram
   CRAM=$HOME/.local/bin/cram
 fi
 
