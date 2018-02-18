@@ -16,11 +16,16 @@ else
   "$PIP" install --user cram
   if which cram; then
     CRAM=cram
-  elif [ -f /usr/local/bin/cram ]; then
-    CRAM=/usr/local/bin/cram
-  elif [ -f "$HOME/local/bin/cram" ]; then
-    CRAM=$HOME/.local/bin/cram
   else
+    for dir in \
+      /usr/local/bin \
+      "$HOME/Library/Python/2.7/bin" \
+      "$HOME/.local/bin"
+    do
+      test -f "$dir/cram" && CRAM="$dir/cram"
+    done
+  fi
+  if -z "$CRAM"; then
     echo "Cram purportedly installed, but cannot find it."
     "$PIP" show -f cram
     exit 2
