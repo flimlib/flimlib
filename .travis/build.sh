@@ -25,7 +25,7 @@ else
       test -f "$dir/cram" && CRAM="$dir/cram"
     done
   fi
-  if -z "$CRAM"; then
+  if [ -z "$CRAM" ]; then
     echo "Cram purportedly installed, but cannot find it."
     "$PIP" show -f cram
     exit 2
