@@ -16,9 +16,9 @@ else
   "$PIP" install --user cram
   if which cram; then
     CRAM=cram
-  elif -f /usr/local/bin/cram; then
-    CRAM=cram
-  elif -f "$HOME/local/bin/cram"; then
+  elif [ -f /usr/local/bin/cram ]; then
+    CRAM=/usr/local/bin/cram
+  elif [ -f "$HOME/local/bin/cram" ]; then
     CRAM=$HOME/.local/bin/cram
   else
     echo "Cram purportedly installed, but cannot find it."
