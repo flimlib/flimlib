@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6)
 
 project(slim-curve)
 
-include_directories("src/main/c" "src/main/cpp" "src/slim-curve-cmd/c/iniparser/src")
+include_directories("src/main/c" "src/main/cpp" "src/slim-curve-cmd/c/iniparser/src" "src/test/c")
 
 # Common files we always need
 set(SLIM_CURVE_COMMON   src/main/c/EcfGlobal.c
@@ -18,10 +18,24 @@ set(SLIM_CURVE_COMMON   src/main/c/EcfGlobal.c
                         src/main/c/GCI_Phasor.c
 )
 
+# Old library for comparison
+set(SLIM_CURVE_OLD  	src/test/c/OldEcfGlobal.c
+                        src/test/c/OldEcfSingle.c
+)
+
 # Additional files for the stand alone program
 set(SLIM_CURVE_MAIN     src/slim-curve-cmd/c/main.c
                         src/slim-curve-cmd/c/iniparser/src/iniparser.c
                         src/slim-curve-cmd/c/iniparser/src/dictionary.c
+)
+
+# Additional files for the stand alone testing
+set(SLIM_CURVE_TEST     src/test/c/main.c
+                        src/test/c/json.c
+                        src/test/c/json_helper.c
+                        src/test/c/output.c
+                        src/test/c/parser.c
+                        src/test/c/tests.c
 )
 
 # Aditional files for a library
@@ -50,8 +64,12 @@ add_executable(slim-curve-cmd ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN})
 # Build a stand alone c++ program
 add_executable(slim-curve-cmd-cpp ${SLIM_CURVE_COMMON} ${SLIM_CURVE_CPP})
 
+# Build a test program
+add_executable(slim-curve-test ${SLIM_CURVE_COMMON} ${SLIM_CURVE_TEST} ${SLIM_CURVE_OLD})
+
 if(UNIX)
   # Link the math library
   target_link_libraries(slim-curve m)
   target_link_libraries(slim-curve-cmd m)
+  target_link_libraries(slim-curve-test m)
 endif(UNIX)
