@@ -19,6 +19,7 @@
 
 // Predeclarations
 // the next fn uses GCI_triple_integral_*() to fit repeatedly until chisq_target is met
+/*
 int Old_GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, int fit_end,
 										   float instr[], int ninstr, noise_type noise, float sig[],
 										   float *Z, float *A, float *tau, float *fitted, float *residuals,
@@ -56,7 +57,7 @@ int Old_GCI_marquardt_step_instr(float xincr, float y[],
 								 float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam,
 								 float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
 								 int *pfnvals_len, int *pdy_dparam_nparam_size);
-
+*/
 int GCI_marquardt_step(float x[], float y[], int ndata,
 					   noise_type noise, float sig[],
 					   float param[], int paramfree[], int nparam,
@@ -370,7 +371,7 @@ void do_fit(int exponents, json_t *inputs, json_t *outputs, float tolerance, int
 	
 	// do a RLD fit		
 	if (old) {
-		return_value =  Old_GCI_triple_integral_fitting_engine(
+		return_value =  /*Old_*/GCI_triple_integral_fitting_engine(
 															   x_inc,
 															   y,
 															   fit_start,
@@ -457,7 +458,7 @@ void do_fit(int exponents, json_t *inputs, json_t *outputs, float tolerance, int
 	
 	// do a LMA fit
 	if (old) {
-		return_value = Old_GCI_marquardt_fitting_engine(
+		return_value = /*Old_*/GCI_marquardt_fitting_engine(
 														x_inc,
 														y,
 														ndata,

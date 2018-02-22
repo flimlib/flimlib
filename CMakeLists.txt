@@ -19,9 +19,9 @@ set(SLIM_CURVE_COMMON   src/main/c/EcfGlobal.c
 )
 
 # Old library for comparison
-set(SLIM_CURVE_OLD  	src/test/c/OldEcfGlobal.c
-                        src/test/c/OldEcfSingle.c
-)
+#set(SLIM_CURVE_OLD  	src/test/c/OldEcfGlobal.c
+#                        src/test/c/OldEcfSingle.c
+#)
 
 # Additional files for the stand alone program
 set(SLIM_CURVE_MAIN     src/slim-curve-cmd/c/main.c
@@ -65,7 +65,7 @@ add_executable(slim-curve-cmd ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN})
 add_executable(slim-curve-cmd-cpp ${SLIM_CURVE_COMMON} ${SLIM_CURVE_CPP})
 
 # Build a test program
-add_executable(slim-curve-test ${SLIM_CURVE_COMMON} ${SLIM_CURVE_TEST} ${SLIM_CURVE_OLD})
+add_executable(slim-curve-test ${SLIM_CURVE_COMMON} ${SLIM_CURVE_TEST})
 
 if(UNIX)
   # Link the math library
