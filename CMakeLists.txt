@@ -59,6 +59,9 @@ add_executable(slim-curve-cmd ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN})
 # Build a stand alone c++ program
 add_executable(slim-curve-cmd-cpp ${SLIM_CURVE_COMMON} ${SLIM_CURVE_CPP})
 
+# Build a test program
+add_executable(slim-curve-test ${SLIM_CURVE_COMMON} ${SLIM_CURVE_TEST})
+
 if(UNIX)
   # Link the math library
   target_link_libraries(slim-curve m)
