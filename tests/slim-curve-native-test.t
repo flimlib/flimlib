@@ -3,8 +3,6 @@
 # greps changed json string from output as new reference
   $ (./slim-curve-test ./original.json) | grep '^[\s\S]*{' > ref.json
 
-# This test should pass
-  $ ./slim-curve-test temp.json | grep -Pzo "\n*TEST(.+\n)*FAIL(.+\n)*"; test $? -eq 1
+  # finds FAILed tests from output
+  $ (./slim-curve-test ./ref.json) | perl -0777 -ne "while(m/\nTEST((.*\S.*)\n)+FAIL((.*\S.*)\n)+/g){print $&}"
 
-# greps FAILed tests from output and reverse return code of grep
-  $ ./slim-curve-test ref.json | grep -Pzo "\n*TEST(.+\n)*FAIL(.+\n)*"; test $? -eq 1
