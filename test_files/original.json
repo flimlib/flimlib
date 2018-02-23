@@ -1,5 +1,6 @@
 {
     "testrun": {
+	"tolerance": "0.008",
         "tests": [
             {
                 "test": "mono-exp",
@@ -1480,7 +1481,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, noise type 0",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "0",
                     "xinc": "0.0390625",
@@ -1498,7 +1499,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, noise type 1",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "1",
                     "xinc": "0.0390625",
@@ -1516,7 +1517,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, noise type 2",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "2",
                     "xinc": "0.0390625",
@@ -1534,7 +1535,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, noise type 3",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "3",
                     "xinc": "0.0390625",
@@ -1552,7 +1553,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, noise type 4",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "4",
                     "xinc": "0.0390625",
@@ -1570,7 +1571,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, noise type 5",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "5",
                     "xinc": "0.0390625",
@@ -1588,7 +1589,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, instrument response, noise type 0",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "0",
                     "xinc": "0.0390625",
@@ -1611,7 +1612,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, instrument response, noise type 1",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "1",
                     "xinc": "0.0390625",
@@ -1634,7 +1635,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, instrument response, noise type 2",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "2",
                     "xinc": "0.0390625",
@@ -1657,7 +1658,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, instrument response, noise type 3",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "3",
                     "xinc": "0.0390625",
@@ -1680,7 +1681,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, instrument response, noise type 4",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "4",
                     "xinc": "0.0390625",
@@ -1703,7 +1704,7 @@
             {
                 "test": "tri-exp",
                 "comment": "Test tri-exp transient, instrument response, noise type 5",
-                "tolerance": "0.00006",
+                "tolerance0": "0.00006",
                 "inputs": {
                     "noise": "5",
                     "xinc": "0.0390625",
