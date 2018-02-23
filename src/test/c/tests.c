@@ -17,47 +17,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Predeclarations
-// the next fn uses GCI_triple_integral_*() to fit repeatedly until chisq_target is met
-/*
-int Old_GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, int fit_end,
-										   float instr[], int ninstr, noise_type noise, float sig[],
-										   float *Z, float *A, float *tau, float *fitted, float *residuals,
-										   float *chisq, float chisq_target);
-
-// the next fn uses GCI_marquardt_instr() to fit repeatedly until chisq_target is met
-int Old_GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_start, int fit_end, 
-									 float prompt[], int nprompt,
-									 noise_type noise, float sig[],
-									 float param[], int paramfree[],
-									 int nparam, restrain_type restrain,
-									 void (*fitfunc)(float, float [], float *, float [], int),
-									 float *fitted, float *residuals, float *chisq,
-									 float **covar, float **alpha, float **erraxes,
-									 float chisq_target, float chisq_delta, int chisq_percent);
-
-int Old_GCI_marquardt_step(float x[], float y[], int ndata,
-						   noise_type noise, float sig[],
-						   float param[], int paramfree[], int nparam,
-						   restrain_type restrain,
-						   void (*fitfunc)(float, float [], float *, float [], int),
-						   float yfit[], float dy[],
-						   float **covar, float **alpha, float *chisq,
-						   float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam);
-
-int Old_GCI_marquardt_step_instr(float xincr, float y[],
-								 int ndata, int fit_start, int fit_end,
-								 float instr[], int ninstr,
-								 noise_type noise, float sig[],
-								 float param[], int paramfree[], int nparam,
-								 restrain_type restrain,
-								 void (*fitfunc)(float, float [], float *, float [], int),
-								 float yfit[], float dy[],
-								 float **covar, float **alpha, float *chisq,
-								 float *alambda, int *pmfit, float *pochisq, float *paramtry, float *beta, float *dparam,
-								 float **pfnvals, float ***pdy_dparam_pure, float ***pdy_dparam_conv,
-								 int *pfnvals_len, int *pdy_dparam_nparam_size);
-*/
 int GCI_marquardt_step(float x[], float y[], int ndata,
 					   noise_type noise, float sig[],
 					   float param[], int paramfree[], int nparam,

@@ -8,7 +8,7 @@
  */
 
 #include "parser.h"
-#include "ecf.h"
+#include "../../main/c/Ecf.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

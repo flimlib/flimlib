@@ -18,11 +18,6 @@ set(SLIM_CURVE_COMMON   ../slim-curve/src/main/c/EcfGlobal.c
                         ../slim-curve/src/main/c/GCI_Phasor.c
 )
 
-# Old library for comparison
-set(SLIM_CURVE_OLD  	OldEcfGlobal.c
-                        OldEcfSingle.c
-)
-
 
 # Additional files for the stand alone program
 set(SLIM_CURVE_MAIN     main.c
@@ -34,7 +29,7 @@ set(SLIM_CURVE_MAIN     main.c
 )
 
 # Build a test program
-add_executable(slim-curve-test ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN} ${SLIM_CURVE_OLD})
+add_executable(slim-curve-test ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN})
 
 if(UNIX)
 target_link_libraries(slim-curve-test m) #link the math library
