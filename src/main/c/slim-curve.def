@@ -1,5 +1,6 @@
 LIBRARY "slim-curve"
 EXPORTS
+    GCI_EcfModelSelectionEngine
     GCI_triple_integral_fitting_engine
     GCI_marquardt_fitting_engine
     GCI_triple_integral
@@ -11,6 +12,7 @@ EXPORTS
     GCI_marquardt_global_generic_instr
     GCI_SPA_1D_marquardt
     GCI_SPA_2D_marquardt
+    GCI_SPA_1D_marquardt_instr
     GCI_SPA_2D_marquardt_instr
     GCI_SPA_1D_marquardt_global_exps_instr
     GCI_SPA_2D_marquardt_global_exps_instr
@@ -21,7 +23,10 @@ EXPORTS
     GCI_multiexp_tau
     GCI_stretchedexp
     GCI_Phasor
+    GCI_Phasor_getPeriod
     GCI_ecf_matrix
     GCI_ecf_free_matrix
     ECF_ExportParams_start
     ECF_ExportParams_stop
+    RLD_fit
+    LMA_fit

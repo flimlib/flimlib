@@ -21,19 +21,41 @@
  * #L%
  */
 
-package loci.slim;
+package slim;
 
 import static org.junit.Assert.*;
 
+import java.util.Random;
+
 import org.junit.Test;
+//import org.scijava.nativelib.NativeLoader;
+
+import slim.*;
+
 
 /**
  * Tests {@link SLIMCurve}.  Test parameters currently based 
  * off of values in files data.data and test.ini
  * 
- * @author Zach Petersen
+ * @author Zach Petersen, Dasong Gao
  */
 public class SLIMCurveTest {
+//static {
+//        
+//        try {
+//            System.loadLibrary("slim-curve");
+//            System.loadLibrary("slim-curve-java");
+//        	//NativeLoader.loadLibrary("META-INF/lib/windows_64/slim-curve-java");
+//            //NativeLoader.loadLibrary("META-INF/lib/windows_64/slim-curve");
+//            
+//        } catch (Exception e) {
+//            //System.err.println("Native library failed to load. Exiting.\n" + e);
+//            System.err.println("Cannot extract native library. Exiting.\n" + e);
+//            System.exit(1);
+//        }
+//    }
+	public static final int TEST_SIZE = 100;
+	final int NEVER_CALLED = -100;
 	final double xInc = 0.048828125; 
 	final double y[] = {
 			40.000000, 45.000000, 34.000000, 54.000000, 44.000000,
@@ -76,7 +98,7 @@ public class SLIMCurveTest {
 			376.000000, 338.000000, 377.000000, 367.000000, 355.000000,
 			352.000000, 375.000000, 339.000000, 347.000000, 316.000000,
 			295.000000, 322.000000, 311.000000, 294.000000, 304.000000,
-			264.000000, 293.000000, 294.000000, 283.000000 
+			264.000000, 293.000000, 294.000000, 283.000000
 			}; 
 	final int fitStart = 10;
 	final int fitEnd = 203;
@@ -90,26 +112,38 @@ public class SLIMCurveTest {
 			0.07927619665861129760742187500000000,
 			0.03122770041227340698242187500000000
 	};  
-	final int nInstr = 8;
 	final int noise = 5;
 	final double sig[] = {}; 
 	final double z[]  = {0};
 	final double a[]  = {1000};
 	final double tau[] = {2};
-	final double fitted[] = {0};  
+	final double fitted[] = new double[y.length];  
 	final double chiSquare[] = {0}; 
-	final double chiSquareTarget = 237.5;
+	final double chiSquareTarget = 237.5f;
 	final int chi_sq_adjust = fitEnd - fitStart - 3;
+	final int nInstr = instr.length; 
+	final int paramFree[] = {1, 1, 1};
+	final int nParam = 2;	
+	final float chisq_trans[] = {}; 
+	final int ndata = 203;
+	final int ntrans = -1;
+	final int ftype = 0;
+	final float chisq_delta = 0;
+	final int drop_bad_transients = 0;
+	final int gparam[] = {};
+	float[] trans = {2,3,4};
+	float[] param = {0, 1000, 2}; //z, a, tau
+	float[] residuals = {0};
+	int[] df = {0};
+	float[] chisq_global = {0};
+	int restrain = 1;
+	String fitFunc = "GCI_MULTIEXP_LAMBDA";
 	
-	static {
-		NarSystem.loadLibrary();
-	}
 
 	/** Tests {@link SLIMCurve#fitRLD}. */
 	@Test
 	public void testFitRLD() {
-		SLIMCurve slimCurve = new SLIMCurve();
-		final int rld = slimCurve.fitRLD(xInc, y, fitStart, fitEnd, instr, nInstr, noise, sig, z, a, tau, fitted, chiSquare, chiSquareTarget);
+		final int rld = SLIMCurve.RLD_fit(xInc, y, fitStart, fitEnd, instr, noise, sig, z, a, tau, fitted, chiSquare, chiSquareTarget);
 		System.out.println("RLD estimate = " + rld);
 		System.out.println("A: " + a[0] + " Tau: " + tau[0] + " Z: " + z[0] + " X^2: " + (chiSquare[0] / chi_sq_adjust));
 		int _rld = 2;
@@ -129,10 +163,8 @@ public class SLIMCurveTest {
 	public void testFitLMA() {
 		final double param[] = {chiSquare[0] / chi_sq_adjust, 0, 1000, 2}; //chi squared, z, a, tau
 		final int paramFree[] = {1, 1, 1};
-		final int nParam = 3;
 		final double chiSquareDelta = .01;
-		SLIMCurve slimCurve = new SLIMCurve();
-		final int lma = slimCurve.fitLMA(xInc, y, fitStart, fitEnd, instr, nInstr, noise, sig, param, paramFree, nParam, fitted, chiSquare, chiSquareTarget, chiSquareDelta);
+		final int lma = SLIMCurve.LMA_fit(xInc, y, fitStart, fitEnd, instr, noise, sig, param, paramFree, fitted, chiSquare, chiSquareTarget, chiSquareDelta);
 		System.out.println("LMA estimate = " + lma);
 		System.out.println("A: " + param[2] + " Tau: " + param[3] + " Z: " + param[1] + " X^2: " + (chiSquare[0] / chi_sq_adjust));
 		int _lma = 58;
@@ -146,6 +178,129 @@ public class SLIMCurveTest {
 		assertEquals("z value is not correct", _z, (int)param[1]);
 		assertEquals("Chi squared value is not correct", _x2, (int)chiSquare[0] / chi_sq_adjust);
 	
+	}
+	/*@Test
+	public void testGCIGlobalWrapperCall() {		
+		int result = NEVER_CALLED;
+		result = SLIMCurve.GCI_marquardt_global_exps_instr(xInc, trans, fitStart, 
+				fitEnd, instr, instr.length, noise, sig, ftype, param, paramFree, restrain, 
+				chisq_delta, fitted, residuals, chisq_trans, chisq_global, null, drop_bad_transients);
+		System.out.println("result: " + result);
+		assertTrue(result != NEVER_CALLED);
+		
+	}
+	@Test
+	public void testGCIGlobalGenericCall() {
+		int result = NEVER_CALLED;
+		result = SLIMCurve.GCI_marquardt_global_generic_instr(xInc, trans, fitStart, fitEnd,
+				instr, nInstr, noise, sig, param, paramFree, nParam, gparam, restrain, chisq_delta, FitFunc.GCI_MULTIEXP_LAMBDA, fitted, 
+				residuals, chisq_trans, chisq_global, null);
+		System.out.println("generic result: " + result);
+		assertTrue(result != NEVER_CALLED);
+	}
+		final int nInstr = 8;
+	final float sig[] = {}; 
+	final int paramFree[] = {1, 1, 1};
+	final int nParam = 2;	
+	final float chisq_trans[] = {}; 
+	final int ndata = 203;
+	final int ntrans = -1;
+	final int ftype = 0;
+	final float chisq_delta = 0;
+	final int drop_bad_transients = 0;
+	final int gparam[] = {};
+	float[] trans = {2,3,4};
+	float[] param = {0, 1000, 2}; //z, a, tau
+	float[] residuals = {0};
+	int[] df = {0};
+	float[] chisq_global = {0};
+	int noise = 5;
+	float[] fitted = {0};
+	int restrain = 1;
+	String fitFunc = "GCI_MULTIEXP_LAMBDA";
+	
+	@Test
+	public void testGCIGlobalWrapperCall() {		
+		int result = NEVER_CALLED;
+		result = SLIMCurve.GCI_marquardt_global_exps_instr(xInc, trans, ndata, ntrans, fitStart, 
+				fitEnd, instr, nInstr, noise, sig, ftype, param, paramFree, nParam, restrain, 
+				chisq_delta, fitted, residuals, chisq_trans, chisq_global, df, drop_bad_transients);
+		System.out.println("result: " + result);
+		assertTrue(result != NEVER_CALLED);
+		
+	}
+	@Test
+	public void testGCIGlobalGenericCall() {
+		int result = NEVER_CALLED;
+		result = SLIMCurve.GCI_marquardt_global_generic_instr(xInc, trans, ndata, ntrans, fitStart, fitEnd,
+				instr, nInstr, noise, sig, param, paramFree, nParam, gparam, restrain, chisq_delta, fitFunc, fitted, 
+				residuals, chisq_trans, chisq_global, df);
+		System.out.println("generic result: " + result);
+		assertTrue(result != NEVER_CALLED);
+	}
+	
+	@Test
+	public void testPhasorWrapperCall() {
+		float z = 0;
+		float u[] = {0}; 
+		float v[] = {0};
+		float taup[] = {0};
+		float taum[] = {0};
+		float tau[] = {0};
+		float fitted[] = {0};
+		float residuals[] = {0};
+		float chiSquare[] = {0};
+		
+		float result = SLIMCurve.GCI_Phasor(xInc, y, fitStart, fitEnd, z, u, v, taup, taum, tau, fitted, residuals, chiSquare);
+		System.out.println("phasor result: " + result + ",  phasor period: " + cLibrary.GCI_Phasor_getPeriod() + " chisq: " + chiSquare[0]);
+		assertTrue(result >= 0 || result <= -5);
+	}
+	*/
+	
+	/** Tests {@link Float2DMatrix}.  */
+	@Test
+	public void testFloat2DMatrix() {
+		Random rng = new Random();
+		for (int i = 0; i < TEST_SIZE; i++) {
+			int row = rng.nextInt(10) + 1;
+			int col = rng.nextInt(10) + 1;
+			// generates random 2D array
+			float[][] arr = new float[row][col];
+			for (int j = 0; j < row; j++)
+				for (int k = 0; k < col; k++)
+					arr[j][k] = rng.nextFloat();
+			// feed into C and back
+			Float2DMatrix mat = new Float2DMatrix(arr);
+			float[][] arrOut = mat.asArray();
+			// test if C array can be freed
+			mat.delete();
+			assertEquals(arr.length, arrOut.length);
+			for (int j = 0; j < arr.length; j++)
+				assertArrayEquals("Float2DMatrix not equal", arr[j], arrOut[j], 1e-10f);
+		}
+	}
+	
+	/** Tests {@link Float2DMatrix}.  */
+	@Test
+	public void testInt2DMatrix() {
+		Random rng = new Random();
+		for (int i = 0; i < TEST_SIZE; i++) {
+			int row = rng.nextInt(10) + 1;
+			int col = rng.nextInt(10) + 1;
+			// generates random 2D array
+			int[][] arr = new int[row][col];
+			for (int j = 0; j < row; j++)
+				for (int k = 0; k < col; k++)
+					arr[j][k] = rng.nextInt();
+			// feed into C and back
+			Int2DMatrix mat = new Int2DMatrix(arr);
+			int[][] arrOut = mat.asArray();
+			// test if C array can be freed
+			mat.delete();
+			assertEquals(arr.length, arrOut.length);
+			for (int j = 0; j < arr.length; j++)
+				assertArrayEquals("Int2DMatrix not equal", arr[j], arrOut[j]);
+		}
 	}
 
 }

@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-		http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -15,7 +12,6 @@
 	<groupId>slim-curve</groupId>
 	<artifactId>slim-curve</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<packaging>nar</packaging>
 
 	<name>SLIM Curve</name>
 	<description>A package for exponential curve fitting of combined spectral lifetime image data.</description>
@@ -57,6 +53,10 @@
 			<name>Aivar Grislis</name>
 			<properties><id>grislis</id></properties>
 		</contributor>
+		<contributor>
+			<name>Dasong Gao</name>
+			<properties><id>Xanthorapedia</id></properties>
+		</contributor>
 	</contributors>
 
 	<mailingLists>
@@ -85,14 +85,14 @@
 	</ciManagement>
 
 	<properties>
-		<package-name>loci.slim</package-name>
+		<package-name>slim</package-name>
 
 		<license.licenseName>gpl_v3</license.licenseName>
 		<license.projectName>SLIM-curve package for exponential curve fitting of spectral lifetime data.</license.projectName>
 		<license.copyrightOwners>University of Oxford and Board of Regents of the
 University of Wisconsin-Madison.</license.copyrightOwners>
 
-		<nar-maven-plugin.version>3.3.0</nar-maven-plugin.version>
+		<skipTests>true</skipTests>
 	</properties>
 
 	<repositories>
@@ -107,6 +107,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		<dependency>
 			<groupId>org.scijava</groupId>
 			<artifactId>native-lib-loader</artifactId>
+			<version>2.2.0</version>
 		</dependency>
 
 		<dependency>
@@ -117,154 +118,144 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 	</dependencies>
 
 	<build>
-		    <pluginManagement>
-             <plugins>
-                 <plugin>
-                     <!--  
-                     NB: Make Eclipse generate code in a full build; see:
-                     http://wiki.eclipse.org/M2E_plugin_execution_not_covered
-                    -->      
-                       <groupId>org.eclipse.m2e</groupId>
-                     <artifactId>lifecycle-mapping</artifactId>
-                     <version>1.0.0</version>
-                     <configuration>
-                         <lifecycleMappingMetadata>
-                             <pluginExecutions>
-                                 <pluginExecution>
-                                     <pluginExecutionFilter>
-                                         <groupId>org.codehaus.mojo</groupId>
-                                         <artifactId>exec-maven-plugin</artifactId>
-                                         <versionRange>1.4.0</versionRange>
-                                         <goals>
-                                             <goal>java</goal>
-                                         </goals>
-                                     </pluginExecutionFilter>
-                                     <action>
-                                         <execute>
-                                             <runOnConfiguration>true</runOnConfiguration>
-                                             <runOnIncremental>false</runOnIncremental>
-                                         </execute>
-                                     </action>
-                                 </pluginExecution>
-                                 <pluginExecution>
-                                 	<pluginExecutionFilter>
-                                 		<groupId>
-                                 			org.codehaus.mojo
-                                 		</groupId>
-                                 		<artifactId>
-                                 			exec-maven-plugin
-                                 		</artifactId>
-                                 		<versionRange>
-                                 			[1.4.0,)
-                                 		</versionRange>
-                                 		<goals>
-                                 			<goal>exec</goal>
-                                 		</goals>
-                                 	</pluginExecutionFilter>
-                                 	<action>
-                                 		<execute>
-                                 			<runOnConfigurations>true</runOnConfigurations>	
-                                 			<runOnIncremental>false</runOnIncremental>
-                                 		</execute>
-                                 	</action>
-                                 </pluginExecution>
-                             </pluginExecutions>
-                         </lifecycleMappingMetadata>
-                     </configuration>
-                 </plugin>
-             </plugins>
-         </pluginManagement>
-
+		<pluginManagement>
+			<plugins>
+				<plugin><!--  
+					NB: Make Eclipse generate code in a full build; see:
+					http://wiki.eclipse.org/M2E_plugin_execution_not_covered
+					-->
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>exec-maven-plugin</artifactId>
+										<versionRange>1.4.0</versionRange>
+										<goals>
+											<goal>java</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnConfiguration>true</runOnConfiguration>
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											exec-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.4.0,)
+										</versionRange>
+										<goals>
+											<goal>exec</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnConfigurations>true</runOnConfigurations>	
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<!-- Include swig generated sources -->
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.4.0</version>
+				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>my-execution</id>
+						<id>add-source</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>exec</goal>
+							<goal>add-source</goal>
 						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/java/slim/</source>
+							</sources>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<executable>src/main/swig/makeSwig.sh</executable>
-				</configuration>
-			</plugin>
-			
-			<plugin>
-				<groupId>com.github.maven-nar</groupId>
-				<artifactId>nar-maven-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<c>
-						<options>
-							<option>-I${JAVA_HOME}/include</option>
-							<option>${java.os.include}</option>
-							<option>${stack.protector.option}</option>
-							<option>${architecture.option}</option>
-							<option>${subsystem.option}</option>
-							<option>${debug.option}</option>
-						</options>
-					</c>
-					<linker>
-						<options>
-							<option>${architecture.option}</option>
-							<option>${subsystem.option}</option>
-						</options>
-					</linker>
-					<libraries>
-						<library>
-							<type>shared</type>
-							<narSystemPackage>${package-name}</narSystemPackage>
-						</library>
-					</libraries>
-				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<configuration>
-					<licenseName>gpl_v3</licenseName>
-					<projectName>SLIM-curve package for exponential curve fitting of spectral lifetime data.</projectName>
-					<organizationName>University of Oxford and Board of Regents of the
-University of Wisconsin-Madison.</organizationName>
-					<!--
-					NB: It seems these excludes are not respected.
-					Probably something wrong with the syntax. For now,
-					they are here merely for documentation purposes.
-					-->	
-					<excludes>
-						<exclude>src/main/c/jni.h</exclude>
-						<exclude>src/main/c/jni_md.h</exclude>
-						<exclude>src/main/c/loci_*.h</exclude>
-						<exclude>src/matlab/**</exclude>
-						<exclude>src/slim-curve-cmd/c/iniparser/**</exclude>
-					</excludes>
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>natives-windows</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>natives-windows</classifier>
+							<classesDirectory>target/natives/Windows_64</classesDirectory>
+							<includes>
+								<include>**/*.dll</include>
+							</includes>
+							<skipIfEmpty>true</skipIfEmpty>
+						</configuration>
+					</execution>
+					<execution>
+						<id>natives-macos</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>natives-macos</classifier>
+							<classesDirectory>target/natives/Darwin_64</classesDirectory>
+							<includes>
+								<include>**/*.dylib</include>
+								<include>**/*.jnilib</include>
+							</includes>
+							<skipIfEmpty>true</skipIfEmpty>
+						</configuration>
+					</execution>
+					<execution>
+						<id>natives-linux</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classifier>natives-linux</classifier>
+							<classesDirectory>target/natives/Linux_64</classesDirectory>
+							<includes>
+								<include>**/*.so</include>
+							</includes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
+				<groupId>org.honton.chas</groupId>
+				<artifactId>exists-maven-plugin</artifactId>
+				<version>0.0.1</version>
 				<configuration>
-					<appendAssemblyId>false</appendAssemblyId>
-					<descriptors>
-						<descriptor>src/main/assembly/libs-assembly.xml</descriptor>
-					</descriptors>
-					<archive>
-						<manifest>
-							<packageName>${package-name}</packageName>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-					</archive>
+					<property>maven.deploy.skip</property>
 				</configuration>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>exists</goal>
 						</goals>
 					</execution>
 				</executions>

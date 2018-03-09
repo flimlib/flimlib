@@ -6,6 +6,10 @@ cmake_minimum_required(VERSION 2.6)
 
 project(slim-curve)
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 include_directories("src/main/c" "src/main/cpp" "src/slim-curve-cmd/c/iniparser/src" "src/test/c")
 
 # Common files we always need
@@ -68,3 +72,43 @@ if(UNIX)
   target_link_libraries(slim-curve-cmd m)
   target_link_libraries(slim-curve-test m)
 endif(UNIX)
+
+# Setup swig to build a java lib
+set(CMAKE_SWIG_FLAGS -package slim)
+
+find_package(SWIG REQUIRED)
+find_package(Java REQUIRED)
+find_package(JNI REQUIRED)
+include(UseJava)
+include(UseSWIG)
+include_directories(${JNI_INCLUDE_DIRS})
+
+set( CMAKE_SWIG_OUTDIR ${PROJECT_SOURCE_DIR}/target/generated-sources/java/slim )
+
+# Build the C code into a dynamic library
+set_property(SOURCE src/main/swig/SLIMCurve.i PROPERTY CPLUSPLUS ON)
+swig_add_library(
+    slim-curve-java 
+    TYPE SHARED
+    LANGUAGE java 
+    SOURCES 
+    	src/main/swig/SLIMCurve.i
+)
+swig_link_libraries(
+	slim-curve-java
+	slim-curve
+)
+
+# Detect target bitness and architecture
+set( TARGET_NATIVE ${PROJECT_SOURCE_DIR}/target/natives )
+math(EXPR BITS "8*${CMAKE_SIZEOF_VOID_P}")
+set( TARGET_ARCH_BITS ${TARGET_NATIVE}/${CMAKE_SYSTEM_NAME}_${BITS} )
+
+# Copy target to the directory after build
+file(MAKE_DIRECTORY ${TARGET_ARCH_BITS})
+add_custom_command(TARGET slim-curve-java POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:slim-curve-java> ${TARGET_ARCH_BITS}
+)
+add_custom_command(TARGET slim-curve POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:slim-curve> ${TARGET_ARCH_BITS}
+)

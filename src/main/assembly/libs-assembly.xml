@@ -34,49 +34,37 @@
 	<fileSets>
 		<fileSet>
 			<directory>${project.build.outputDirectory}</directory>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>.</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/nar/lib/x86_64-MacOSX-gcc/shared</directory>
+			<directory>${project.basedir}/../build/bin/Debug</directory>
 			<outputDirectory>META-INF/lib/osx_64</outputDirectory>
 			<includes>
 				<include>*.dylib</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/nar/lib/i386-MacOSX-gcc/shared</directory>
-			<outputDirectory>META-INF/lib/osx_32</outputDirectory>
-			<includes>
-				<include>*.dylib</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/nar/lib/amd64-Windows-gcc/shared</directory>
+			<directory>${project.basedir}/../build/bin/Debug</directory>
 			<outputDirectory>META-INF/lib/windows_64</outputDirectory>
 			<includes>
 				<include>*.dll</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/nar/lib/x86-Windows-gcc/shared</directory>
-			<outputDirectory>META-INF/lib/windows_32</outputDirectory>
-			<includes>
-				<include>*.dll</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/nar/lib/amd64-Linux-gcc/shared</directory>
+			<directory>${project.basedir}/../build/bin/Debug</directory>
 			<outputDirectory>META-INF/lib/linux_64</outputDirectory>
 			<includes>
 				<include>*.so</include>
 			</includes>
 		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/nar/lib/i386-Linux-gcc/shared</directory>
-			<outputDirectory>META-INF/lib/linux_32</outputDirectory>
-			<includes>
-				<include>*.so</include>
-			</includes>
-		</fileSet>
 	</fileSets>
+	<!-- TODO delete dependencies (for debug purposes) -->
+	<dependencySets>
+    <dependencySet>
+      <outputDirectory>.</outputDirectory>
+      <useProjectArtifact>true</useProjectArtifact>
+      <unpack>true</unpack>
+      <scope>runtime</scope>
+    </dependencySet>
+  </dependencySets>
 </assembly>

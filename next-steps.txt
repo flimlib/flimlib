@@ -1,0 +1,81 @@
+CMAKE (with the help of swig and gcc) PRODUCES THE FOLLOWING:
+
+macOS (64-bit)               Linux 64-bit                   Windows 64-bit
+---------------------------------------------------------------------
+libslimcurve.dylib           libslimcurve.so                slimcurve.dll
+libslimcurve_jni.dylib       libslimcurve_jni.so            slimcurve_jni.dll
+slim-curve-native-macos.jar  slim-curve-native-linux64.jar  slim-curve-native-win64.jar
+
+ALL PLATFORMS
+-------------
+slim-curve.jar -- knows how to System.loadLibrary; actually has the API: slim.SLIMCurve class
+
+
+STRATEGY:
+- Use CMake to build all of the above. Lean on Java to compile the Java code. Make JARs.
+- Lean on mvn command line tool ONLY to deploy the JAR(s) to the Maven repository.
+Pro: no need to use maven to build. Only CMake.
+Con: Need to be careful with each platform-specific CI build, that it deploys the right thing(s).
+- Only one platform should deploy the platform-independent slim-curve.jar -- my vote is Travis/Linux.
+
+Look at imagej/imagej-launcher bin/build-macos and bin/deploy-macos for an example of this sort of thing in action.
+- Will not show you how to mix in the SWIG logic.
+- But will show how to deploy a binary file to a Maven repository using deploy:deploy-file.
+
+Another potentially valuable project to study is spirvcrossj, the Java wrapper around SPIRV-cross:
+   https://github.com/scenerygraphics/spirvcrossj
+
+@skalarproduktraum is an active and talented member of our community, and available on Gitter if you have questions or discussion.
+Look for him in scenerygraphics/SciView, but also imagej/imagej probably would work.
+
+QUESTIONS
+How to depend on slim-curve from Java using Maven in a nice way?
+
+  <dependency>
+    <groupId>slim-curve</groupId>
+    <artifactId>slim-curve</artifactId>
+  </dependency>
+  <!-- Don't want to explicitly declare dependency on any of the platform-specific stuff! -->
+
+
+FOR DEPLOYMENT OF THIS STUFF TO IMAGEJ:
+
+Deployment strategy #1: bare native libs
+- $IMAGEJ_DIR/lib/win64/slimcurve.dll
+- $IMAGEJ_DIR/lib/macosx/libslimcurve.dylib
+- $IMAGEJ_DIR/lib/linux64/libslimcurve.so
+- (can also have lib/win32 and lib/linux32; forget that for now, can deal with later if we want 32-bit)
+Pro: Easy to load via System.loadLibrary; only ship to relevant platform
+Con: Only a solution for ImageJ/Fiji; not for Maven-based dependencies in e.g. Eclipse
+- Probably don't want to do this, because then consuming slimcurve in downstream Java code sucks.
+
+Deployment strategy #2: one JAR file wrapper per platform
+- $IMAGEJ_DIR/jars/win64/slimcurve-native-win64.jar --- inside is slimcurve.dll and slimcurve_jni.dll
+- $IMAGEJ_DIR/jars/macosx/slimcurve-native-macosx.jar --- inside is libslimcurve.dylib and libslimcurve_jni.dylib
+- $IMAGEJ_DIR/jars/linux64/slimcurve-native-linux64.jar --- inside is libslimcurve.so and libslimcurve_jni.so
+Pro: JARs are targeted, only ship to the relevant platform
+Pro: Easier to deploy because e.g. AppVeyor deploys windows JAR, Travis deploys macOS and Linux JARs
+Con: More JAR files; can seem convoluted
+Con: Need a strategy to load the native lib out of the JAR -- we have a tool for that: scijava/native-lib-loader
+
+Deployment strategy #3: one single native JAR file for all supported platforms
+- $IMAGEJ_DIR/jars/slimcurve-natives.jar --- inside is slimcurve.dll and slimcurve_jni.dll
+- $IMAGEJ_DIR/jars/macosx/slimcurve-macosx.jar --- inside is libslimcurve.dylib and libslimcurve_jni.dylib
+- $IMAGEJ_DIR/jars/linux64/slimcurve-linux64.jar --- inside is libslimcurve.so and libslimcurve_jni.so
+Pro: convenient to consume a single JAR
+Con: JAR is fat and bloated and not very extensible
+Con: Harder to deploy because e.g. AppVeyor and Travis need to somehow aggregate their build artifacts and make a single JAR and deploy it
+Con: Need a strategy to load the native lib out of the JAR -- we have a tool for that: scijava/native-lib-loader
+
+
+[ACTION ITEMS FOR NEXT TIME]
+- Fix SWIG build to work cross-platform
+- Study spirvcrossj build strategy and deployment
+- Study imagej-launcher deployment as needed
+- Study native-lib-loader to see how to unpack and load the native libs
+ -- Note that spirvcrossj's Loader class does NOT use native-lib-loader, but maybe it should! He replicates exactly the same logic manually.
+ -- We should enhance native-lib-loader as needed for good and awesome
+Goal: dependency on slim-curve that automagically loads the right native, and gives access to the API.
+- Java-side unit tests proving this works cross-platform.
+
+Once we have ironed out all this build junk, we can start actually using it from ImageJ, and write a new suite of ImageJ Ops that call it.

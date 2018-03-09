@@ -69,7 +69,7 @@ typedef enum { ECF_RESTRAIN_DEFAULT, ECF_RESTRAIN_USER } restrain_type;
 /** DecayModelSelParamValuesAndFit
  * struct to hold parameters and results during decay model selection.
  */
-typedef struct {
+typedef struct _DMSPVAF {
     void          (*fitfunc)(float, float [], float *, float [], int);
     int             nparam;
     float           params[MAXFIT];
