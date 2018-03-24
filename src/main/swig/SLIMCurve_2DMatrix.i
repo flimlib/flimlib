@@ -50,7 +50,7 @@ using Int2DMatrix = ParamMatrix<int>;
 		JCALL3(Release##JType##ArrayElements, jenv, arow, elements, JNI_ABORT);
 	}
 }
-// Conversion: jType[][](J) <- Xxx2DMatrix(C) in Xxx2DMatrix::asArray
+// Conversion: jType[][](J) <- Xxx2DMatrix(C) in Xxx2DMatrix::asArray only
 %typemap(jstype) ParamMatrix<jType> *asArray "jType[][]"
 %typemap(javaout) ParamMatrix<jType> *asArray {return $jnicall;}
 %typemap(jtype) ParamMatrix<jType> *asArray "jType[][]"
@@ -71,20 +71,23 @@ using Int2DMatrix = ParamMatrix<int>;
 	}
 }
 // Conversion: XXX2DMATRIX(JType)(J) -> (jType **, int, int)(C) for output arguments
-%define mapName (jType ARR_INPUT[], int NROW, int NCOL) %enddef
+%define mapName (jType **ARR_INPUT, int NCOL, int NROW) %enddef
 %typemap(jstype) mapName "MatName"
 %typemap(javain) mapName "$javainput.getCPtr($javainput)"
 %typemap(jtype) mapName "long"
 %typemap(jni) mapName "jlong"
 %typemap(in) mapName {
 	// $input: jType[](J)
-	// $1: jType **, $2: int NROW, $1: int NCOL(C)
+	// $1: jType **, $2: int NCOL, $3: int NROW(C)
 	XXX2DMATRIX(JType) *fp = (XXX2DMATRIX(JType)*)$input;
 	$1 = fp->arr;
-	$2 = fp->nrow;
-	$3 = fp->ncol;
+	$2 = fp->ncol;
+	$3 = fp->nrow;
 }
 /* Java code to be inserted into SLIMCurve class */
+%typemap(javaimports) ParamMatrix<jType> %{
+import java.util.Arrays;
+%}
 %typemap(javacode) ParamMatrix<jType> %{
 /* Checks array dimensions before converted into a Float2DMatrix */
 private static void checkArray(final jType[][] arr) {
@@ -99,6 +102,16 @@ private static void checkArray(final jType[][] arr) {
 	for (jType[] arrRow : arr)
 		if (arrRow.length != col)
 			throw new IllegalArgumentException("Array not rectangular");
+}
+
+@Override
+public String toString() {
+	String data = "[ ";
+	jType[][] arr = this.asArray();
+	for(int i = 0; i < arr.length - 1; i++) 
+		data += Arrays.toString(arr[i]) + ", ";
+	data += Arrays.toString(arr[arr.length - 1]) + " ]";
+	return String.format("%s(%d*%d): %s", this.getClass().getSimpleName(), this.getNrow(), this.getNcol(), data);
 }
 %}
 %template(JType##2DMatrix) ParamMatrix<jType>;

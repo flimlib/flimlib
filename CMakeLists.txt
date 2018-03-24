@@ -83,19 +83,19 @@ include(UseJava)
 include(UseSWIG)
 include_directories(${JNI_INCLUDE_DIRS})
 
-set( CMAKE_SWIG_OUTDIR ${PROJECT_SOURCE_DIR}/target/generated-sources/java/slim )
+set( CMAKE_SWIG_OUTDIR ${PROJECT_SOURCE_DIR}/target/generated-sources/main/java/slim )
 
 # Build the C code into a dynamic library
 set_property(SOURCE src/main/swig/SLIMCurve.i PROPERTY CPLUSPLUS ON)
 swig_add_library(
-    slim-curve-java 
+    slim-curve-jni 
     TYPE SHARED
     LANGUAGE java 
     SOURCES 
     	src/main/swig/SLIMCurve.i
 )
 swig_link_libraries(
-	slim-curve-java
+	slim-curve-jni
 	slim-curve
 )
 
@@ -106,8 +106,8 @@ set( TARGET_ARCH_BITS ${TARGET_NATIVE}/${CMAKE_SYSTEM_NAME}_${BITS} )
 
 # Copy target to the directory after build
 file(MAKE_DIRECTORY ${TARGET_ARCH_BITS})
-add_custom_command(TARGET slim-curve-java POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:slim-curve-java> ${TARGET_ARCH_BITS}
+add_custom_command(TARGET slim-curve-jni POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:slim-curve-jni> ${TARGET_ARCH_BITS}
 )
 add_custom_command(TARGET slim-curve POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:slim-curve> ${TARGET_ARCH_BITS}

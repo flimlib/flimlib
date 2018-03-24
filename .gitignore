@@ -5,4 +5,5 @@ target
 build
 src/matlab/*.mex*
 src/main/c/doxygen.exe
+*.log
 /bin/

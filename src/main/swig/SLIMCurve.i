@@ -1,4 +1,4 @@
-%module SLIMCurve
+%module(directors="1") SLIMCurve
 
 %{
 #include <algorithm>
@@ -10,45 +10,59 @@
 #define PKG_NAME "slim"
 %}
 
-%include "enums.swg"
-// for custom typemaps
+// custom typemaps
 %include "SLIMCurve_1DArray.i" // arrays (with length parameter)
 %include "SLIMCurve_2DMatrix.i" // 2D arrays (with/out length parameter)
 %include "SLIMCurve_FittingFunc.i" // fitting function pointer
 %include "SLIMCurve_DMSPVAF.i" // struct used by mode selection engine
+%include "SLIMCurve_Enums.i" // all of the enums
 
 %javaconst(1);
 // rename enums to meet java naming conventions
+ENUMMAP(FITTYPEENUM, fit_type, FitType);
 %rename(NoiseType) noise_type;
 %rename(RestrainType) restrain_type;
-%rename(FitType) fit_type;
-%rename(FitFunc) fitfunc;
 
-// input 1d array maps
-ARRMAP(INTARR_in, int, Int, JNI_ABORT)
-ARRMAP(FLTARR_in, float, Float, JNI_ABORT)
-ARRMAP(DBLARR_in, double, Double, JNI_ABORT)
+// input 1d array (with length) maps
+ARRMAP(INTARRIN_LEN, 1, 1, int, Int, JNI_ABORT, false, 0)
+ARRMAP(FLTARRIN_LEN, 1, 1, float, Float, JNI_ABORT, false, 0)
+ARRMAP(FLTPTRIN_LEN, 0, 1, float, Float, JNI_ABORT, false, 0)
+ARRMAP(FLTARRIN_NUL, 1, 1, float, Float, JNI_ABORT, true, 0)
+ARRMAP(FLTPTRIN_KEEP, 0, 0, float, Float, JNI_ABORT, true, 1)
+ARRMAP(DBLARRIN_NUL, 1, 1, double, Double, JNI_ABORT, true, 0)
 
 // input 2d array maps
 MATMAP(F2D_in, float, Float, F, Float2DMatrix)
 MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 
 // Tell swig to use corresponding typemaps (OUTPUT defined in typemaps.i)
-%apply int *INPUT { int* };
+%apply int *INOUT { int* };
+%apply float *INOUT { float *Z,  float *A, float *tau, float *residuals, float *fitted };
 %apply float *OUTPUT { float * };
-%apply double *OUTPUT { double * };
+%apply double *INOUT { double * };
+%apply FITTYPEENUM { int ftype };
 %apply F2D_in {
 	(float **trans, int ndata, int ntrans)
 }
-%apply INTARR_in {
+%apply INTARRIN_LEN {
 	(int paramfree[], int nparam),
+	(int paramfree[], int nparamfree),
 	(int param_free[], int n_param)
 }
-%apply FLTARR_in {
-	(float instr[], int ninstr),
+%apply FLTARRIN_LEN {
+	(float params[], int nparam),
 	(float y[], int ndata)
 }
-%apply DBLARR_in {
+%apply FLTPTRIN_LEN {
+	(float *trans, int ndata)
+}
+%apply FLTARRIN_NUL {
+	(float instr[], int ninstr)
+}
+%apply FLTPTRIN_KEEP {
+	float *fitted_buf, float *residuals_buf
+}
+%apply DBLARRIN_NUL {
 	(double instr[], int n_instr)
 }
 
@@ -58,17 +72,18 @@ MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 %include "../c/EcfWrapper.h"
 %include "../c/GCI_Phasor.h"
 
+%pragma(java) jniclassimports=%{
+  import org.scijava.nativelib.NativeLoader;
+  import java.io.IOException;
+%}
+
 %pragma(java) jniclasscode=%{
 	static {
-		
 		try {
-			System.loadLibrary("slim-curve");
-			System.loadLibrary("slim-curve-java");
-			//NativeLoader.loadLibrary("slim-curve");
-			//NativeLoader.loadLibrary("slim-curve-java");
-		} catch (Exception e) {
-			//System.err.println("Native library failed to load. Exiting.\n" + e);
-			System.err.println("Cannot extract native library. Exiting.\n" + e);
+			NativeLoader.loadLibrary("slim-curve");
+			NativeLoader.loadLibrary("slim-curve-jni");
+		} catch (IOException e) {
+			System.err.println("Failed to load library:\n" + e.getMessage());
 			System.exit(1);
 		}
 	}
