@@ -40,31 +40,13 @@ How to depend on slim-curve from Java using Maven in a nice way?
 
 FOR DEPLOYMENT OF THIS STUFF TO IMAGEJ:
 
-Deployment strategy #1: bare native libs
-- $IMAGEJ_DIR/lib/win64/slimcurve.dll
-- $IMAGEJ_DIR/lib/macosx/libslimcurve.dylib
-- $IMAGEJ_DIR/lib/linux64/libslimcurve.so
-- (can also have lib/win32 and lib/linux32; forget that for now, can deal with later if we want 32-bit)
-Pro: Easy to load via System.loadLibrary; only ship to relevant platform
-Con: Only a solution for ImageJ/Fiji; not for Maven-based dependencies in e.g. Eclipse
-- Probably don't want to do this, because then consuming slimcurve in downstream Java code sucks.
-
-Deployment strategy #2: one JAR file wrapper per platform
+Deployment strategy: one JAR file wrapper per platform
 - $IMAGEJ_DIR/jars/win64/slimcurve-native-win64.jar --- inside is slimcurve.dll and slimcurve_jni.dll
 - $IMAGEJ_DIR/jars/macosx/slimcurve-native-macosx.jar --- inside is libslimcurve.dylib and libslimcurve_jni.dylib
 - $IMAGEJ_DIR/jars/linux64/slimcurve-native-linux64.jar --- inside is libslimcurve.so and libslimcurve_jni.so
 Pro: JARs are targeted, only ship to the relevant platform
 Pro: Easier to deploy because e.g. AppVeyor deploys windows JAR, Travis deploys macOS and Linux JARs
 Con: More JAR files; can seem convoluted
-Con: Need a strategy to load the native lib out of the JAR -- we have a tool for that: scijava/native-lib-loader
-
-Deployment strategy #3: one single native JAR file for all supported platforms
-- $IMAGEJ_DIR/jars/slimcurve-natives.jar --- inside is slimcurve.dll and slimcurve_jni.dll
-- $IMAGEJ_DIR/jars/macosx/slimcurve-macosx.jar --- inside is libslimcurve.dylib and libslimcurve_jni.dylib
-- $IMAGEJ_DIR/jars/linux64/slimcurve-linux64.jar --- inside is libslimcurve.so and libslimcurve_jni.so
-Pro: convenient to consume a single JAR
-Con: JAR is fat and bloated and not very extensible
-Con: Harder to deploy because e.g. AppVeyor and Travis need to somehow aggregate their build artifacts and make a single JAR and deploy it
 Con: Need a strategy to load the native lib out of the JAR -- we have a tool for that: scijava/native-lib-loader
 
 

@@ -1,6 +1,9 @@
 #!/bin/sh
 
 # Install needed tools
+if which brew; then
+  brew install swig
+fi
 if which cram; then
   CRAM=cram
 else
