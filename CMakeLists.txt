@@ -49,6 +49,9 @@ set(SLIM_CURVE_CPP      src/slim-curve-cmd/cpp/main.cpp
 # Build a dll
 add_library(slim-curve SHARED ${SLIM_CURVE_COMMON} ${SLIM_CURVE_LIB})
 
+# Build a static lib
+add_library(slim-curve-static STATIC ${SLIM_CURVE_COMMON})
+
 # Build a dll test program
 add_executable(slim-curve-dll-test  ${SLIM_CURVE_MAIN})
 target_link_libraries(slim-curve-dll-test slim-curve)
