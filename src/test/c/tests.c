@@ -79,7 +79,7 @@ void compareIntExact(json_t *outputs, char *name, int value, int *changed, int *
 		*changed = TRUE;
 	}
 	else {
-		printf("%s got %d expected %d\n", name, value, goldenValue, value);
+		printf("%s got %d expected %d\n", name, value, goldenValue);
 		if (value != goldenValue) {
 			printf("FAIL %d\n", *changed);
 			*changed = FALSE;
