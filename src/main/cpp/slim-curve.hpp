@@ -225,7 +225,8 @@ public:
 
 		if (noise_model == NOISE_GIVEN && noise_sd == NULL) return SLIM_CURVE_SETTINGS_ERROR;
 
-		for (int i = 0, _nparamfree = 0; i < nparam; i++) {
+		_nparamfree = 0;
+		for (int i = 0; i < nparam; i++) {
 			if (paramfree[i]) _nparamfree++;
 		}
 
