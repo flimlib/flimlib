@@ -325,8 +325,9 @@ public:
 	/**
 	* Wrapper for GCI_triple_integral_fitting_engine()
 	* Uses the parameters already setup to perform the fit
+	* \param freeVars If 0 the method will not free the private arrays used for fitting, this speeds up repeated use.
 	*/
-	int fitRLD() {
+	int fitRLD(int freeVars = 1) {
 
 		float *Z = &(param[SLIM_CURVE_RLD_PARAM_Z]);
 		float *A = &(param[SLIM_CURVE_RLD_PARAM_A]);
@@ -338,7 +339,7 @@ public:
 		iterations = GCI_triple_integral_fitting_engine(time_incr, &transient[data_start], fit_start - data_start, fit_end - data_start,
 			instr, ninstr, noise_model, noise_sd, Z, A, tau, fitted, residuals, &chisq, chisq_target*(fit_end - fit_start + ninstr - 3));
 
-		freePrivateVars();
+		if(freeVars) freePrivateVars();
 
 		return iterations;
 	}
@@ -346,8 +347,10 @@ public:
 	/**
 	* Wrapper for GCI_marquardt_fitting_engine()
 	* Uses the parameters already setup to perform the fit
+	* \param type One of SLIM_CURVE_MONO, SLIM_CURVE_BI etc.
+	* \param freeVars If 0 the method will not free the private arrays used for fitting, this speeds up repeated use.
 	*/
-	int fitLMA(int type) {
+	int fitLMA(int type, int freeVars = 1) {
 
 		switch (type)
 		{
@@ -380,7 +383,7 @@ public:
 			instr, ninstr, noise_model, noise_sd, param, paramfree, nparam, restrain, fitfunc,
 			fitted, residuals, &chisq, covar, alpha, err_axes, chisq_target*(fit_end - fit_start + ninstr - _nparamfree), chisq_delta, chisq_percent);
 
-		freePrivateVars();
+		if (freeVars) freePrivateVars();
 
 		return iterations;
 	}
@@ -388,8 +391,10 @@ public:
 	/**
 	* Wrapper for GCI_Phasor()
 	* Uses the parameters already setup to perform the fit
+	* \param lz The fixed background value to subtract from the transient
+	* \param freeVars If 0 the method will not free the private arrays used for fitting, this speeds up repeated use.
 	*/
-	int fitPhasor(float lZ=0.0f) {
+	int fitPhasor(float lZ=0.0f, int freeVars = 1) {
 
 		float *Z = &(param[SLIM_CURVE_PHASOR_PARAM_Z]);
 		float *u = &(param[SLIM_CURVE_PHASOR_PARAM_U]);
@@ -406,7 +411,7 @@ public:
 		GCI_Phasor(time_incr, &transient[data_start], fit_start - data_start, fit_end - data_start,
 			Z, u, v, taup, taum, tau, fitted, residuals, &chisq);
 
-		freePrivateVars();
+		if (freeVars) freePrivateVars();
 
 		return SLIM_CURVE_SUCCESS;
 	}

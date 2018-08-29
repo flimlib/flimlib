@@ -201,4 +201,6 @@ int main(int argc, const char * argv[])
 		<< " u:" << SlimCurve.param[SLIM_CURVE_PHASOR_PARAM_U]
 		<< " v:" << SlimCurve.param[SLIM_CURVE_PHASOR_PARAM_V]
 		<< " chisq:" << SlimCurve.getReducedChiSq() << "\n";
+
+	return 0;
 }
