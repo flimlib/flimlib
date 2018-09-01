@@ -1,4 +1,4 @@
-  $ cp "$TESTDIR/../build/bin/slim-curve-cmd" "$TESTDIR"/../test_files/* .
+  $ cp "$TESTDIR/../target/build/bin/slim-curve-cmd" "$TESTDIR"/../test_files/* .
 
   $ ./slim-curve-cmd settings1.ini data.dat
   Settings: settings1.ini

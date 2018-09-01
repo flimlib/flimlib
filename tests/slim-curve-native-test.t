@@ -1,4 +1,7 @@
-  $ cp "$TESTDIR/../build/bin/slim-curve-test" "$TESTDIR"/../test_files/* .
+  $ cp "$TESTDIR/../target/build/bin/slim-curve-test" "$TESTDIR"/../test_files/* .
+
+  $ (./slim-curve-test ./test.json) | grep "TESTS RUN"
+  84 TESTS RUN, 31 SUCCESSES, 53 FAILURES
 
   $ (./slim-curve-test ./test.json) | grep "TESTS RUN"
   84 TESTS RUN, 31 SUCCESSES, 53 FAILURES

@@ -144,6 +144,7 @@ set_target_properties(
         LIBRARY_OUTPUT_DIRECTORY            "${OUT_DIR_W_BITS}"
 )
 
+######################debug utility: print all properties######################
 # # Get all propreties that cmake supports (for debug purposes)
 # execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)
 

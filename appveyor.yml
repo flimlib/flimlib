@@ -1,0 +1,36 @@
+version: 1.0.{build}
+
+clone_folder: c:\projects\slim-curve
+
+image: Visual Studio 2017
+platform: x64
+configuration: Release
+
+# lifted from https://github.com/opensim-org/opensim-core/blob/master/appveyor.yml
+cache:
+  ## Cache swig, which we install via AppVeyor.
+  # The syntax here is <dir-to-cache> -> <invalidated-when-this-file-changes>
+  # If the appveyor.yml script is changed, then the cache is invalidated.
+  # https://www.appveyor.com/docs/build-cache/
+  - C:\ProgramData\chocolatey\bin # -> appveyor.yml # swig.exe
+  - C:\ProgramData\chocolatey\lib # -> appveyor.yml # supporting swig Lib files.
+
+install:
+  - cmake --version
+
+  ## Use Chocolatey to install SWIG.
+  # Only install swig if it isn't present (as a result of AppVeyor's caching).
+  # SWIG 3.0.8 is the minimum required version, but it does not yet exist in
+  # Chocolatey.
+  - IF NOT EXIST C:\ProgramData\chocolatey\bin\swig.exe choco install swig --version 3.0.9 --yes --limit-output #> $null
+# lifted from https://github.com/opensim-org/opensim-core/blob/master/appveyor.yml
+
+matrix:
+  fast_finish: true
+
+build_script:
+  - mvn install
+
+test_script:
+  - dir %APPVEYOR_BUILD_FOLDER%\target
+  - dir %APPVEYOR_BUILD_FOLDER%\target\natives

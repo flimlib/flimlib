@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>17.1.1</version>
+		<version>23.1.1</version>
 		<relativePath />
 	</parent>
 
@@ -91,10 +91,7 @@
 		<license.projectName>SLIM-curve package for exponential curve fitting of spectral lifetime data.</license.projectName>
 		<license.copyrightOwners>University of Oxford and Board of Regents of the
 University of Wisconsin-Madison.</license.copyrightOwners>
-
-		<skipTests>true</skipTests>
-		<native-lib-loader.version>2.2.1-SNAPSHOT</native-lib-loader.version>
-		<enforcer.skip>true</enforcer.skip>
+		<!-- <enforcer.skip>true</enforcer.skip> -->
 	</properties>
 
 	<repositories>
@@ -133,6 +130,11 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 			</activation>
 			<properties>
 				<asm.osNameArch>windows_64</asm.osNameArch>
+				<!-- <cmake.generator>-GUnix Makefiles</cmake.generator> -->
+				<!-- <cmake.generator>-GVisual Studio 14 2015 Win64</cmake.generator> -->
+				<cmake.generator>-GVisual Studio 15 2017 Win64</cmake.generator>
+				<cmake.flag.config>--config</cmake.flag.config>
+				<cmake.flag.release>Release</cmake.flag.release>
 			</properties>
 		</profile>
 		<profile>
@@ -163,9 +165,9 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin><!--  
+				<plugin><!--
 					NB: Make Eclipse generate code in a full build; see:
-					http://wiki.eclipse.org/M2E_plugin_execution_not_covered
+					https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html
 					-->
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -217,15 +219,57 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<!-- Include swig generated sources -->
 		<plugins>
+			<!-- build the native library -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>native-cmake</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>cmake</executable>
+							<workingDirectory>${project.build.directory}/build</workingDirectory>
+							<arguments>
+								<argument>${project.basedir}</argument>
+								<!-- CMAKE_BUILD_TYPE specifies build option for Linux/MacOS -->
+								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
+								<argument>${cmake.generator}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>native-cmake-build</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>cmake</executable>
+							<workingDirectory>${project.build.directory}/build</workingDirectory>
+							<arguments>
+								<argument>--build</argument>
+								<argument>.</argument>
+								<!-- But on windows, only "- -config Release" sets the option -->
+								<argument>${cmake.flag.config}</argument>
+								<argument>${cmake.flag.release}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Include swig generated sources -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
 					<execution>
 						<id>add-source</id>
-						<phase>generate-sources</phase>
+						<phase>process-sources</phase>
 						<goals>
 							<goal>add-source</goal>
 						</goals>
@@ -268,7 +312,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<forkMode>once</forkMode>
-					<argLine>-Djava.library.path="${project.build.directory}/natives"</argLine>
+					<argLine>-Djava.library.path=${project.build.directory}/natives</argLine>
 				</configuration>
 			</plugin>
 			<plugin>

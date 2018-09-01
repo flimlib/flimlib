@@ -1,12 +1,5 @@
 #!/bin/sh
 
-git clone https://github.com/scijava/native-lib-loader.git
-cd native-lib-loader
-git fetch origin refs/pull/20/head:pr_20
-git checkout pr_20
-mvn clean install
-cd ..
-
 # Install needed tools
 if which brew; then
   brew install swig
@@ -42,22 +35,24 @@ else
   fi
 fi
 
-# Prepare the build environment
-rm -rf build
-mkdir -p build
-cd build
-cmake ..
+# # Prepare the build environment
+# rm -rf build
+# mkdir -p build
+# cd build
+# cmake ..
 
-# Build the code
-make
+# # Build the code
+# make
 
-# Run the unit tests
-"$CRAM" ../tests
-
-cd ..
+# cd ..
 mvn package
 
 exit_code=$?
+
+# Run the unit tests
+"$CRAM" ./tests
+
+exit_code=$((exit_code | $?))
 
 ls -l ./target/
 ls -l ./target/natives/

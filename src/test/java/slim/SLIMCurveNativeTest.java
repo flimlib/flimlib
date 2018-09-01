@@ -1,15 +1,12 @@
 package slim;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,10 +23,10 @@ public class SLIMCurveNativeTest {
 		JSONObject testRun = (JSONObject) ((JSONObject) parser.parse(new FileReader("./test_files/ref.json")))
 				.get("testrun");
 
-		JSONArray tests = (JSONArray) testRun.get("tests");
+		JSONArray parsedTests = (JSONArray) testRun.get("tests");
 		this.tolerance = testRun.containsKey("tolerance") ? Float.parseFloat((String) testRun.get("tolerance")) : 10;
 
-		Iterator<?> itr = tests.iterator();
+		Iterator<?> itr = parsedTests.iterator();
 		while (itr.hasNext()) {
 			this.tests.add(new NativeTest((JSONObject) itr.next(), this.tolerance));
 		}
@@ -37,7 +34,8 @@ public class SLIMCurveNativeTest {
 
 	@Test
 	public void runTests() {
-		this.tolerance += 1;
+		for (NativeTest t: tests)
+			t.run();
 	}
 }
 
@@ -82,7 +80,6 @@ class NativeTest {
 		this.Z = new float[] { getFloat(outputs, "z", 2.0f) };
 		this.A = new float[] { getFloat(outputs, "a", 1.0f) };
 		this.tau = new float[] { getFloat(outputs, "t", 3.0f) };
-		run();
 	}
 
 	public void run() {
