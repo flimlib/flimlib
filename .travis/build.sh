@@ -35,17 +35,8 @@ else
   fi
 fi
 
-# # Prepare the build environment
-# rm -rf build
-# mkdir -p build
-# cd build
-# cmake ..
-
-# # Build the code
-# make
-
-# cd ..
-mvn package
+curl -fsLO https://raw.githubusercontent.com/scijava/scijava-scripts/master/travis-build.sh
+sh travis-build.sh
 
 exit_code=$?
 

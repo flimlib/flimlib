@@ -91,7 +91,9 @@
 		<license.projectName>SLIM-curve package for exponential curve fitting of spectral lifetime data.</license.projectName>
 		<license.copyrightOwners>University of Oxford and Board of Regents of the
 University of Wisconsin-Madison.</license.copyrightOwners>
-		<!-- <enforcer.skip>true</enforcer.skip> -->
+
+		<!-- NB: Deploy releases to the ImageJ Maven repository. -->
+		<releaseProfiles>deploy-to-imagej</releaseProfiles>
 	</properties>
 
 	<repositories>

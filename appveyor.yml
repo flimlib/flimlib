@@ -29,8 +29,11 @@ install:
 matrix:
   fast_finish: true
 
+before_build:
+  - ps: .\.appveyor\setup.ps1
+
 build_script:
-  - mvn install
+  - ps: .\.appveyor\build.ps1
 
 test_script:
   - dir %APPVEYOR_BUILD_FOLDER%\target
