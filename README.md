@@ -1,5 +1,5 @@
 # SLIM Curve
-[![](https://travis-ci.org/slim-curve/slim-curve.svg?branch=java-lib)](https://travis-ci.org/slim-curve/slim-curve)
+[![](https://travis-ci.org/slim-curve/slim-curve.svg?branch=java-lib)](https://travis-ci.org/slim-curve/slim-curve "Travis")    [![](https://ci.appveyor.com/api/projects/status/github/slim-curve/slim-curve?svg=true)](https://ci.appveyor.com/project/scijava/slim-curve "AppVeyor")
 
 SLIM Curve is a curve fitting library used for Fluorescent Lifetime Imaging or
 FLIM and Spectral Lifetime Imaging or SLIM.  It is developed by Paul Barber and
