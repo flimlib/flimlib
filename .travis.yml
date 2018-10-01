@@ -22,3 +22,9 @@ branches:
   - master
   - "/.*-[0-9]+\\..*/"
 script: ".travis/build.sh"
+
+cache:
+  directories:
+  - $HOME/.cache/pip
+  - $HOME/.m2
+  - $HOME/Library/Caches/Homebrew

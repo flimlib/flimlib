@@ -14,6 +14,7 @@ cache:
   # https://www.appveyor.com/docs/build-cache/
   - C:\ProgramData\chocolatey\bin # -> appveyor.yml # swig.exe
   - C:\ProgramData\chocolatey\lib # -> appveyor.yml # supporting swig Lib files.
+  - C:\Users\appveyor\.m2
 
 install:
   - cmake --version
