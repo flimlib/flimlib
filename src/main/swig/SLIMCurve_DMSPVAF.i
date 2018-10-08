@@ -1,51 +1,51 @@
 %module SLIMCurve
 
-// struct name of DecayModelSelParamValuesAndFit
-%extend _DMSPVAF {
-	// Add constructor
-	_DMSPVAF(
-		void (*fitfunc)(float, float [], float *, float [], int),
-		float params[],
-		int nparam,
-		int paramfree[],
-		int nparamfree,
-		restrain_type restrain,
-		float *fitted_buf,
-		float *residuals_buf,
-		float chisqtarget,
-		float chisqdelta,
-		int chisqpercent,
-		float chisq,
-		float **covar,
-		float **alpha,
-		float **erraxes) {
-		DecayModelSelParamValuesAndFit* ret = new DecayModelSelParamValuesAndFit();
-		ret->fitfunc = fitfunc;
-		ret->nparam = nparam;
-		std::copy(params, params + nparam, ret->params);
-		ret->nparamfree = nparamfree;
-		std::copy(paramfree, paramfree + nparam, ret->paramfree);
-		ret->restrain = restrain;
-		// named _buf to distinguish them from variables with the same name 
-		// but different typemaps, see SLIMCurve.i)
-		ret->fitted = fitted_buf;
-		ret->residuals = residuals_buf;
-		ret->chisq_target = chisqtarget;
-		ret->chisq_delta = chisqdelta;
-		ret->chisq_percent = chisqpercent;
-		ret->chisq = chisq;
-		ret->covar = covar;
-		ret->alpha = alpha;
-		ret->erraxes = erraxes;
-		printf("covar: %p\n", covar);
-		printf("fitted: %p, residuals: %p\n", fitted_buf, residuals_buf);
-		return ret;
-	}
+%ignore _DMSPVAF;
+%ignore DecayModelSelParamValuesAndFit;
+
+// let swig know about the struct before defining DecayModel
+typedef struct _DMSPVAF {
+    void          (*fitfunc)(float, float [], float *, float [], int);
+    int             nparam;
+    float           params[MAXFIT];
+    int             nparamfree;
+    int             paramfree[MAXFIT];
+    restrain_type   restrain;
+    float          *fitted;
+    float          *residuals;
+    float           chisq_target;
+    float           chisq_delta;
+    int             chisq_percent;
+    float           chisq;
+    float         **covar;
+    float         **alpha;
+    float         **erraxes;
+} DecayModelSelParamValuesAndFit;
+
+%inline %{
+#include "decmod.h"
+
+// The thread-local global variable is defined so that multiple fitting
+// functions can coexist in different threads safely.
+#ifndef THREAD_FITFUNC
+#define THREAD_FITFUNC
+// At any given time, no more than two c instance of FitFunc should exist
+// (only one of them should be stored at [0] here just before its execution).
+// The only exception is .
+static thread_local FitFunc *t_fitfunc[2] = { 0 };
+#endif
+%}
+
+// numinputs=0 ignores the jni argument.
+// this map feeds the constructor the JNI environment
+%typemap(in, numinputs=0) JNIEnv * {
+	$1 = jenv;
 }
 
 // Conversion: DecayModelSelParamValuesAndFit[2](J) -> (C) */
+// %define DMSPVAF _DMSPVAF *paramsandfits %enddef
 %define DMSPVAF DecayModelSelParamValuesAndFit* paramsandfits %enddef
-%typemap(jstype) DMSPVAF "DecayModelSelParamValuesAndFit[]"
+%typemap(jstype) DMSPVAF "DecayModel[]"
 %typemap(javain, pre="
 	if($javainput.length != 2)
 		throw new IllegalArgumentException(\"Requires 2 models.\");
@@ -57,33 +57,74 @@
 	if($javainput[0] == null || $javainput[1] == null)
 		throw new NullPointerException(\"Array contains null\");
 ") DMSPVAF "$javainput"
-%typemap(jtype) DMSPVAF "DecayModelSelParamValuesAndFit[]"
+%typemap(jtype) DMSPVAF "DecayModel[]"
 %typemap(jni) DMSPVAF "jobjectArray"
-%typemap(in) DMSPVAF {
-	// $input = DecayModelSelParamValuesAndFit[]
+%typemap(in) DMSPVAF (DecayModel *decmods[2]) {
+	// $input = DecayModel[]
 	// $1 = DecayModelSelParamValuesAndFit*
 	// This conversion recovers the objects from $input.cPtr (jlong)
-	$1 = new DecayModelSelParamValuesAndFit[3]; // index starts at 1 in GCI_EcfModelSelectionEngine
-	jclass DMSClass = JCALL1(FindClass, jenv, PKG_NAME"/DecayModelSelParamValuesAndFit");
+	jclass DMSClass = JCALL1(FindClass, jenv, PKG_NAME"/DecayModel");
 	jfieldID ptrID = JCALL3(GetFieldID, jenv, DMSClass, "swigCPtr", "J");
 	jobject dms_0 = JCALL2(GetObjectArrayElement, jenv, $input, 0);
-	$1[1] = *(DecayModelSelParamValuesAndFit*)JCALL2(GetLongField, jenv, dms_0, ptrID);
+	decmods[0] = (DecayModel*)JCALL2(GetLongField, jenv, dms_0, ptrID);
 	jobject dms_1 = JCALL2(GetObjectArrayElement, jenv, $input, 1);
-	$1[2] = *(DecayModelSelParamValuesAndFit*)JCALL2(GetLongField, jenv, dms_1, ptrID);
-printf("%p, %p, %p\n", $1[0].covar, $1[1].covar, $1[2].covar);
+	decmods[1] = (DecayModel*)JCALL2(GetLongField, jenv, dms_1, ptrID);
 
+	// fill in the fitfunc cache and DecayModelSelParamValuesAndFit's fitfunc pointer
+	t_fitfunc[0] = decmods[0]->getFitfunc();
+	decmods[0]->fitfunc = &do_fit0;
+	t_fitfunc[1] = decmods[1]->getFitfunc();
+	decmods[1]->fitfunc = &do_fit1;
+
+	// index starts at 1 in GCI_EcfModelSelectionEngine
+	$1 = new DecayModelSelParamValuesAndFit[3];
+	$1[1] = *dynamic_cast<DecayModelSelParamValuesAndFit*>(decmods[0]);
+	$1[2] = *dynamic_cast<DecayModelSelParamValuesAndFit*>(decmods[1]);
 }
+
 %typemap(freearg) DMSPVAF {
-printf("fitted: %p, residuals: %p\n", $1[1].fitted, $1[1].residuals);
-printf("fitted: %p, residuals: %p\n", $1[2].fitted, $1[2].residuals);
-	// there is a jarray pointer at the head
-	std::free((jarray*)$1[1].fitted - sizeof(jarray*));
-	std::free((jarray*)$1[1].residuals - sizeof(jarray*));
-	std::free((jarray*)$1[2].fitted - sizeof(jarray*));
-	std::free((jarray*)$1[1].residuals - sizeof(jarray*));
+	// copy back results
+	std::copy($1[1].params, $1[1].params + $1[1].nparam, decmods$argnum[0]->params);
+	std::copy($1[2].params, $1[2].params + $1[2].nparam, decmods$argnum[1]->params);
+	decmods$argnum[0]->chisq = $1[1].chisq;
+	decmods$argnum[1]->chisq = $1[2].chisq;
+	// in case of builtin
+	if (!t_fitfunc[0])
+		t_fitfunc[0]->nparam = 0;
+	if (!t_fitfunc[1])
+		t_fitfunc[1]->nparam = 0;
+	t_fitfunc[0] = t_fitfunc[1] = 0;
+
 	delete[] $1;
 }
 
-// do not generate getter/setter for members in DecayModelSelParamValuesAndFit (one-time use)
-%rename("$ignore", fullname=1, regextarget=1, %$isvariable)"_DMSPVAF::.*";
-%ignore _DMSPVAF::fitfunc; // not sure why I have to ignore it again
+// %typemap(freearg) DMSPVAF {
+// 	// in case of builtin
+// 	if (!t_fitfunc[0])
+// 		t_fitfunc[0]->nparam = 0;
+// 	if (!t_fitfunc[1])
+// 		t_fitfunc[1]->nparam = 0;
+// 	t_fitfunc[0] = t_fitfunc[1] = 0;
+
+// 	// there is a jarray pointer at the head of each kept-alive arrays
+// 	jfloatArray* jarrs[] = {
+// 		(jfloatArray*)($1[1].fitted) - 1,
+// 		(jfloatArray*)($1[1].residuals) - 1,
+// 		(jfloatArray*)($1[2].fitted) - 1,
+// 		(jfloatArray*)($1[2].residuals) - 1
+// 	};
+// 	for (int i = 0; i < 4; i++) {
+// 		// if still not garbage collected, commit and release array
+// 		if (!JCALL2(IsSameObject, jenv, *jarrs[i], NULL)) {
+// 			jsize len = JCALL1(GetArrayLength, jenv, *jarrs[i]);
+// 			JCALL4(SetFloatArrayRegion, jenv, *jarrs[i], 0, len, (jfloat*)(jarrs[i] + 1));
+// 			JCALL1(DeleteWeakGlobalRef, jenv, *jarrs[i]);
+// 		}
+// 		std::free(jarrs[i]);
+// 	}
+// 	delete[] $1;
+// }
+
+//%apply _DMSPVAF *paramsandfits { DecayModelSelParamValuesAndFit *paramsandfits };
+
+%include "../cpp/decmod.h"

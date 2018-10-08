@@ -7,3 +7,4 @@ src/matlab/*.mex*
 src/main/c/doxygen.exe
 *.log
 /bin/
+/Debug/

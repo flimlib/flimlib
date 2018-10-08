@@ -5,8 +5,8 @@
 
 #define JXXXARRAY(xxx) j##xxx##Array
 #define XXX2DMATRIX(xxx) xxx##2DMatrix
-using Float2DMatrix = ParamMatrix<float>;
-using Int2DMatrix = ParamMatrix<int>;
+typedef ParamMatrix<float> Float2DMatrix;
+typedef ParamMatrix<int> Int2DMatrix;
 %}
 
 %extend ParamMatrix {
@@ -106,12 +106,23 @@ private static void checkArray(final jType[][] arr) {
 
 @Override
 public String toString() {
-	String data = "[ ";
+	// nparray-like string reprensentation
+	String data = "";
 	jType[][] arr = this.asArray();
-	for(int i = 0; i < arr.length - 1; i++) 
-		data += Arrays.toString(arr[i]) + ", ";
-	data += Arrays.toString(arr[arr.length - 1]) + " ]";
-	return String.format("%s(%d*%d): %s", this.getClass().getSimpleName(), this.getNrow(), this.getNcol(), data);
+	for(int i = 0; i < arr.length; i++) {
+		String row = "";
+		for(int j = 0; j < arr[i].length; j++) {
+			jType abs = Math.abs(arr[i][j]);
+			row += String.format((abs >= 1e6 || abs <= 1e-6) ? "%13e " : "%13f ", arr[i][j]);
+		}
+		if (i == 0)
+			data += "[ [ " + row + "]\n";
+		else if (i < arr.length - 1)
+			data += "  [ " + row + "]\n";
+		else
+			data += "  [ " + row + "] ]\n";
+	}
+	return data;
 }
 %}
 %template(JType##2DMatrix) ParamMatrix<jType>;

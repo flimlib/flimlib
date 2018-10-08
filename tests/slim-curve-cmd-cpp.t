@@ -1,4 +1,4 @@
-  $ "$TESTDIR/../build/slim-curve-cmd-cpp"
+  $ "$TESTDIR/../build/bin/slim-curve-cmd-cpp"
   RLD Z:160.399 A:13382.2 tau:2.44568 chisq:15.8987 iterations:2
   LMA Z:207.124 A:11414.5 tau:2.28133 chisq:12.8064 iterations:16
   RLDi Z:160.399 A:12220.6 tau:2.44568 chisq:16.1303 iterations:2

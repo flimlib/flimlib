@@ -122,6 +122,43 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>asm-win</id>
+			<activation>
+				<os>
+					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<asm.filename>asm-windows</asm.filename>
+			</properties>
+		</profile>
+		<profile>
+			<id>asm-osx</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<asm.filename>asm-osx</asm.filename>
+			</properties>
+		</profile>
+		<profile>
+			<id>asm-linux</id>
+			<activation>
+				<os>
+					<family>unix</family>
+					<name>Linux</name>
+				</os>
+			</activation>
+			<properties>
+				<asm.filename>asm-linux</asm.filename>
+			</properties>
+		</profile>
+	</profiles>
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -200,6 +237,30 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				</executions>
 			</plugin>
 			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<appendAssemblyId>true</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/main/assembly/${asm.filename}.xml</descriptor>
+					</descriptors>
+					<archive>
+						<manifest>
+							<packageName>${package-name}</packageName>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<executions>
@@ -249,7 +310,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> -->
 			<plugin>
 				<groupId>org.honton.chas</groupId>
 				<artifactId>exists-maven-plugin</artifactId>

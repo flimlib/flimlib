@@ -16,6 +16,7 @@
 %include "SLIMCurve_FittingFunc.i" // fitting function pointer
 %include "SLIMCurve_DMSPVAF.i" // struct used by mode selection engine
 %include "SLIMCurve_Enums.i" // all of the enums
+%include "SLIMCurve_ProgressFunc.i" // progress function for SPA
 
 %javaconst(1);
 // rename enums to meet java naming conventions

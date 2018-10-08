@@ -83,14 +83,20 @@ include(UseJava)
 include(UseSWIG)
 include_directories(${JNI_INCLUDE_DIRS})
 
+# direcotries where the generated java classes and c wrapper are kept
 set( CMAKE_SWIG_OUTDIR ${PROJECT_SOURCE_DIR}/target/generated-sources/main/java/slim )
+file(MAKE_DIRECTORY ${CMAKE_SWIG_OUTDIR})
+set( SWIG_OUTFILE_DIR ${PROJECT_SOURCE_DIR}/target/generated-sources/main/cpp )
+file(MAKE_DIRECTORY ${SWIG_OUTFILE_DIR})
+
+set(CMAKE_CXX_STANDARD 11)
 
 # Build the C code into a dynamic library
 set_property(SOURCE src/main/swig/SLIMCurve.i PROPERTY CPLUSPLUS ON)
 swig_add_library(
     slim-curve-jni 
     TYPE SHARED
-    LANGUAGE java 
+    LANGUAGE java
     SOURCES 
     	src/main/swig/SLIMCurve.i
 )
@@ -103,12 +109,58 @@ swig_link_libraries(
 set( TARGET_NATIVE ${PROJECT_SOURCE_DIR}/target/natives )
 math(EXPR BITS "8*${CMAKE_SIZEOF_VOID_P}")
 set( TARGET_ARCH_BITS ${TARGET_NATIVE}/${CMAKE_SYSTEM_NAME}_${BITS} )
-
-# Copy target to the directory after build
 file(MAKE_DIRECTORY ${TARGET_ARCH_BITS})
-add_custom_command(TARGET slim-curve-jni POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:slim-curve-jni> ${TARGET_ARCH_BITS}
+
+if(WIN32)
+    set( TARGET_LIB_PREFIX "" )
+else()
+    set( TARGET_LIB_PREFIX "lib" )
+endif()
+set_target_properties(
+    slim-curve
+    PROPERTIES
+        PREFIX "${TARGET_LIB_PREFIX}"
+        RUNTIME_OUTPUT_DIRECTORY "${TARGET_ARCH_BITS}"
+        LIBRARY_OUTPUT_DIRECTORY "${TARGET_ARCH_BITS}"
 )
-add_custom_command(TARGET slim-curve POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:slim-curve> ${TARGET_ARCH_BITS}
+set_target_properties(
+    slim-curve-jni
+    PROPERTIES
+        PREFIX "${TARGET_LIB_PREFIX}"
+        RUNTIME_OUTPUT_DIRECTORY "${TARGET_ARCH_BITS}"
+        LIBRARY_OUTPUT_DIRECTORY "${TARGET_ARCH_BITS}"
 )
+
+# Get all propreties that cmake supports
+execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)
+
+# Convert command output into a CMake list
+STRING(REGEX REPLACE ";" "\\\\;" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+STRING(REGEX REPLACE "\n" ";" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+
+function(print_properties)
+    message ("CMAKE_PROPERTY_LIST = ${CMAKE_PROPERTY_LIST}")
+endfunction(print_properties)
+
+function(print_target_properties tgt)
+    if(NOT TARGET ${tgt})
+      message("There is no target named '${tgt}'")
+      return()
+    endif()
+
+    foreach (prop ${CMAKE_PROPERTY_LIST})
+        string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" prop ${prop})
+    # Fix https://stackoverflow.com/questions/32197663/how-can-i-remove-the-the-location-property-may-not-be-read-from-target-error-i
+    if(prop STREQUAL "LOCATION" OR prop MATCHES "^LOCATION_" OR prop MATCHES "_LOCATION$")
+        continue()
+    endif()
+        # message ("Checking ${prop}")
+        get_property(propval TARGET ${tgt} PROPERTY ${prop} SET)
+        if (propval)
+            get_target_property(propval ${tgt} ${prop})
+            message ("${tgt} ${prop} = ${propval}")
+        endif()
+    endforeach(prop)
+endfunction(print_target_properties)
+
+print_target_properties(slim-curve-jni)
