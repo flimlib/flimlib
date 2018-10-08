@@ -3,8 +3,13 @@
 %include "arrays_java.i" // arrays (without length)
 %include "typemaps.i" // pointers as array
 
+%{
+typedef bool boolean;
+#define SWIG_JavaArrayInBoolean SWIG_JavaArrayInBool
+%}
+
 // macro for 1d array maps
-%define ARRMAP(MAPNAME, IS_ARR, HAS_LEN, jType, JType, IO, NULLACC, KEEP_ALLOC)
+%define ARRMAP(MAPNAME, IS_ARR, HAS_LEN, jType, JType, IO, NULLACC)
 // construct the correct typemap name
 // TODO: change to readable macros
 #undef MAPNAME
@@ -26,7 +31,7 @@
 %typemap(javadirectorin) MAPNAME "$jniinput"
 %typemap(jtype) MAPNAME "jType[]"
 %typemap(jni) MAPNAME %{j##jType##Array%}
-%typemap(in) MAPNAME (j##jType *jarr, j##jType##Array *combined_arr = 0, bool do_clean) %{
+%typemap(in) MAPNAME (j##jType *jarr, bool do_clean) %{
 #define MAP_1D_ARR_$1_name
 	// local reference to the java array and the length of it
 	jsize len_$1_name;
@@ -47,25 +52,18 @@
 		len_$1_name = (jsize) JCALL1(GetArrayLength, jenv, $input);
 		if (!SWIG_JavaArrayIn##JType##(jenv, &jarr, (jType **)&carr_$1_name, $input))
 			exit(1);
-
-#if (KEEP_ALLOC == 1)
-// "KEEP_ALLOC" is used to keep the array alive in case it is used later
-// (e.g. allocated for a DecayModelSelParamValuesAndFit struct)
-		// make sure there is enough space for the jarray pointer
-		combined_arr = (j##jType##Array *)std::malloc(len_$1_name * sizeof(jType) + sizeof(j##jType##Array*));
-		// and the reference jarr is not garbage collected
-		combined_arr[0] = (j##jType##Array)JCALL1(NewWeakGlobalRef, jenv, $input);
-		// skip the pointer
-		$1 = (jType*)(combined_arr + 1);
-		for (int i = 0; i < len_$1_name; i++)
-			$1[i] = (j##jType) carr_$1_name[i];
-#else
-		$1 = carr_$1_name;
-#endif
-
-#if (KEEP_ALLOC == 1)
-		delete[] carr_$1_name;
-#endif
+		// $*1_type is the type of $1 elements
+		// should get optimized with release option
+		if (sizeof(jType) != sizeof($*1_type)) {
+			// accomondate for e.g. sizeof(bool) != sizeof(int)
+			$1 = new $*1_type[len_$1_name];
+			for (int i = 0; i < len_$1_name; i++){
+				$1[i] = ($*1_type) carr_$1_name[i];
+			}
+			delete[] carr_$1_name;
+		}
+		else
+			$1 = ($*1_type *) carr_$1_name;
 	}
 
 #if (HAS_LEN == 1)
@@ -85,13 +83,10 @@
 	}
 %}
 %typemap(freearg) MAPNAME %{
-#if (KEEP_ALLOC != 1)
 	if (do_clean$argnum) {
 		// release the resources before exiting
-		// skip if $1 (combined_arr) should be kept alive
 		delete[] $1;
 	}
-#endif
 #undef MAP_1D_ARR_$1_name
 %}
 %enddef

@@ -98,33 +98,4 @@ static thread_local FitFunc *t_fitfunc[2] = { 0 };
 	delete[] $1;
 }
 
-// %typemap(freearg) DMSPVAF {
-// 	// in case of builtin
-// 	if (!t_fitfunc[0])
-// 		t_fitfunc[0]->nparam = 0;
-// 	if (!t_fitfunc[1])
-// 		t_fitfunc[1]->nparam = 0;
-// 	t_fitfunc[0] = t_fitfunc[1] = 0;
-
-// 	// there is a jarray pointer at the head of each kept-alive arrays
-// 	jfloatArray* jarrs[] = {
-// 		(jfloatArray*)($1[1].fitted) - 1,
-// 		(jfloatArray*)($1[1].residuals) - 1,
-// 		(jfloatArray*)($1[2].fitted) - 1,
-// 		(jfloatArray*)($1[2].residuals) - 1
-// 	};
-// 	for (int i = 0; i < 4; i++) {
-// 		// if still not garbage collected, commit and release array
-// 		if (!JCALL2(IsSameObject, jenv, *jarrs[i], NULL)) {
-// 			jsize len = JCALL1(GetArrayLength, jenv, *jarrs[i]);
-// 			JCALL4(SetFloatArrayRegion, jenv, *jarrs[i], 0, len, (jfloat*)(jarrs[i] + 1));
-// 			JCALL1(DeleteWeakGlobalRef, jenv, *jarrs[i]);
-// 		}
-// 		std::free(jarrs[i]);
-// 	}
-// 	delete[] $1;
-// }
-
-//%apply _DMSPVAF *paramsandfits { DecayModelSelParamValuesAndFit *paramsandfits };
-
 %include "../cpp/decmod.h"

@@ -123,6 +123,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 	</dependencies>
 
 	<profiles>
+		<!-- Os name (for naming the artifact and the os-specific directory in it) -->
 		<profile>
 			<id>asm-win</id>
 			<activation>
@@ -131,7 +132,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				</os>
 			</activation>
 			<properties>
-				<asm.filename>asm-windows</asm.filename>
+				<asm.osNameArch>windows_64</asm.osNameArch>
 			</properties>
 		</profile>
 		<profile>
@@ -142,7 +143,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				</os>
 			</activation>
 			<properties>
-				<asm.filename>asm-osx</asm.filename>
+				<asm.osNameArch>osx_64</asm.osNameArch>
 			</properties>
 		</profile>
 		<profile>
@@ -154,7 +155,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				</os>
 			</activation>
 			<properties>
-				<asm.filename>asm-linux</asm.filename>
+				<asm.osNameArch>linux_64</asm.osNameArch>
 			</properties>
 		</profile>
 	</profiles>
@@ -236,12 +237,13 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 					</execution>
 				</executions>
 			</plugin>
+			<!-- Make native jar -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<appendAssemblyId>true</appendAssemblyId>
 					<descriptors>
-						<descriptor>src/main/assembly/${asm.filename}.xml</descriptor>
+						<descriptor>src/main/assembly/asm.xml</descriptor>
 					</descriptors>
 					<archive>
 						<manifest>
@@ -260,57 +262,15 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 					</execution>
 				</executions>
 			</plugin>
-			<!-- <plugin>
+			<!-- Add natives to classpath for unit test -->
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>natives-windows</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<classifier>natives-windows</classifier>
-							<classesDirectory>target/natives/Windows_64</classesDirectory>
-							<includes>
-								<include>**/*.dll</include>
-							</includes>
-							<skipIfEmpty>true</skipIfEmpty>
-						</configuration>
-					</execution>
-					<execution>
-						<id>natives-macos</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<classifier>natives-macos</classifier>
-							<classesDirectory>target/natives/Darwin_64</classesDirectory>
-							<includes>
-								<include>**/*.dylib</include>
-								<include>**/*.jnilib</include>
-							</includes>
-							<skipIfEmpty>true</skipIfEmpty>
-						</configuration>
-					</execution>
-					<execution>
-						<id>natives-linux</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<classifier>natives-linux</classifier>
-							<classesDirectory>target/natives/Linux_64</classesDirectory>
-							<includes>
-								<include>**/*.so</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin> -->
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkMode>once</forkMode>
+					<argLine>-Djava.library.path="${project.build.directory}/natives"</argLine>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.honton.chas</groupId>
 				<artifactId>exists-maven-plugin</artifactId>

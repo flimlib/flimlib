@@ -4,19 +4,14 @@
 %typemap(javaclassmodifiers) FitFunc "class"
 %typemap(javainterfaces) FitFunc "FitFunc"
 
-%ignore t_jenv;
-%ignore t_fitfunc;
-%ignore do_fit0;
-%ignore do_fit1;
+// ignore global variables
+%rename("$ignore", regextarget=1) "^t_";
+%rename("$ignore", regextarget=1) "^do_";
+%rename("$ignore", regextarget=1) "^NTV_";
+%rename("$ignore", regextarget=1) "^GCI_(multi|stretched)exp";
 %ignore FitFunc::FitFunc(fitfunc func_ptr);
 %ignore FitFunc::func_ptr;
 %ignore FitFunc::nparam;
-%ignore GCI_multiexp_lambda;
-%ignore GCI_multiexp_tau;
-%ignore GCI_stretchedexp;
-%ignore NTV_GCI_MULTIEXP_LAMBDA;
-%ignore NTV_GCI_MULTIEXP_TAU;
-%ignore NTV_GCI_STRETCHEDEXP;
 
 %javaconst(0);
 
@@ -36,17 +31,19 @@
 // (only one of them should be stored at [0] here just before its execution).
 // The only exception is .
 static thread_local FitFunc *t_fitfunc[2] = { 0 };
+static thread_local jfloatArray t_param = NULL;
+static thread_local jfloatArray t_dy_dparam = NULL;
 #endif
 
-// Static wapper functions for executing the stored fitfunc
+// Static fitting worker for executing the cached fitfunc
 static void do_fit0(float x, float param[], float *y, float dy_dparam[], int nparam) {
-	t_fitfunc[0]->fit(x, param, y, dy_dparam);
+	*y = t_fitfunc[0]->fit(x, param, dy_dparam);
 }
 // Used in GCI_EcfModelSelectionEngine. There is probably no way of knowing
 // the FitFunc of which model is being called during the execution, so it is
 // hard-coded.
 static void do_fit1(float x, float param[], float *y, float dy_dparam[], int nparam) {
-	t_fitfunc[1]->fit(x, param, y, dy_dparam);
+	*y = t_fitfunc[1]->fit(x, param, dy_dparam);
 }
 
 const FitFunc& NTV_GCI_MULTIEXP_LAMBDA = FitFunc(GCI_multiexp_lambda);
@@ -83,7 +80,7 @@ void (*fitfunc)(float, float [], float *, float [], int)
 		t_fitfunc[0]->nparam = 0;
 	if (t_fitfunc[1])
 		t_fitfunc[1]->nparam = 0;
-	t_fitfunc[0] = t_fitfunc[1] = 0;
+	t_fitfunc[0] = t_fitfunc[1] = NULL;
 %}
 
 %define fitfunc_ref FitFunc & %enddef
@@ -103,18 +100,17 @@ void (*fitfunc)(float, float [], float *, float [], int)
 
 // directorin copies c array into java array before the jni call
 // directorout copies back to c array after that
-%typemap(directorin,descriptor="[F") float y[] %{
-	$input = jenv->NewFloatArray(1);
-	jenv->SetFloatArrayRegion($input, 0, 1, $1);
-%}
-%typemap(directorargout) float y[] %{
-	jenv->GetFloatArrayRegion($input, 0, 1, $1);
-%}
-%typemap(directorin,descriptor="[F") float[] %{
-	// length is hidden from java (should be set before do_fit)
-	$input = jenv->NewFloatArray(this->nparam);
+%typemap(directorin,descriptor="[F") float[] {
+	// don't bother allocating a new array if length is the same
+	// $1_name = param or dy_dparam depending on which is being mapped
+	if (!t_$1_name || jenv->GetArrayLength(t_$1_name) != this->nparam) {
+		if (t_$1_name)
+			jenv->DeleteGlobalRef(t_$1_name);
+		t_$1_name = (jfloatArray)jenv->NewGlobalRef(jenv->NewFloatArray(this->nparam));
+	}
+	$input = t_$1_name;
 	jenv->SetFloatArrayRegion($input, 0, this->nparam, $1);
-%}
+}
 %typemap(directorargout) float[] {
 	jsize sz = jenv->GetArrayLength($input);
 	jenv->GetFloatArrayRegion($input, 0, this->nparam, $1);
@@ -122,9 +118,10 @@ void (*fitfunc)(float, float [], float *, float [], int)
 
 %feature("director") FitFunc;
 
-ARRMAP(FLTARRIN, 1, 0, float, Float, 0, false, 0)
-%apply FLTARRIN { float param[], float dy_dparam[], float y[] };
-
+// make sure swig knows float[] type and don't mess up in SLIMCurveJNI
+ARRMAP(FLTARRIN, 1, 0, float, Float, 0, false)
+%apply FLTARRIN { float param[], float dy_dparam[] };
+// override
 %typemap(in) float dy_dparam[] (jfloat *jarr, jfloatArray, bool do_clean) %{
 #define MAP_1D_ARR_dy_dparam
 	// local reference to the java array and the length of it
@@ -149,8 +146,8 @@ ARRMAP(FLTARRIN, 1, 0, float, Float, 0, false, 0)
 			delegate = i;
 		}
 
-		public void fit(float x, float[] param, float[] y, float[] dy_dparam) {
-			delegate.fit(x, param, y, dy_dparam);
+		public float fit(final float x, final float[] param, final float[] dy_dparam) {
+			return delegate.fit(x, param, dy_dparam);
 		}
 	}
 

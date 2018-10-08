@@ -6,6 +6,15 @@ cmake_minimum_required(VERSION 2.6)
 
 project(slim-curve)
 
+# CXX Build options
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
+# Common output directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -89,8 +98,6 @@ file(MAKE_DIRECTORY ${CMAKE_SWIG_OUTDIR})
 set( SWIG_OUTFILE_DIR ${PROJECT_SOURCE_DIR}/target/generated-sources/main/cpp )
 file(MAKE_DIRECTORY ${SWIG_OUTFILE_DIR})
 
-set(CMAKE_CXX_STANDARD 11)
-
 # Build the C code into a dynamic library
 set_property(SOURCE src/main/swig/SLIMCurve.i PROPERTY CPLUSPLUS ON)
 swig_add_library(
@@ -108,59 +115,65 @@ swig_link_libraries(
 # Detect target bitness and architecture
 set( TARGET_NATIVE ${PROJECT_SOURCE_DIR}/target/natives )
 math(EXPR BITS "8*${CMAKE_SIZEOF_VOID_P}")
-set( TARGET_ARCH_BITS ${TARGET_NATIVE}/${CMAKE_SYSTEM_NAME}_${BITS} )
-file(MAKE_DIRECTORY ${TARGET_ARCH_BITS})
+set( OUT_DIR_W_BITS ${TARGET_NATIVE} ) #/x${BITS} )
+file(MAKE_DIRECTORY ${OUT_DIR_W_BITS})
 
 if(WIN32)
     set( TARGET_LIB_PREFIX "" )
 else()
     set( TARGET_LIB_PREFIX "lib" )
 endif()
+# RUNTIME_ for dll output and LIBRARY_ for .so/.dylib/.jnilib output
+# _DEBUG _RELEASE are for MSVC in particular
 set_target_properties(
     slim-curve
     PROPERTIES
-        PREFIX "${TARGET_LIB_PREFIX}"
-        RUNTIME_OUTPUT_DIRECTORY "${TARGET_ARCH_BITS}"
-        LIBRARY_OUTPUT_DIRECTORY "${TARGET_ARCH_BITS}"
+        PREFIX                              "${TARGET_LIB_PREFIX}"
+        RUNTIME_OUTPUT_DIRECTORY            "${OUT_DIR_W_BITS}"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG      "${OUT_DIR_W_BITS}"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE    "${OUT_DIR_W_BITS}"
+        LIBRARY_OUTPUT_DIRECTORY            "${OUT_DIR_W_BITS}"
 )
 set_target_properties(
     slim-curve-jni
     PROPERTIES
-        PREFIX "${TARGET_LIB_PREFIX}"
-        RUNTIME_OUTPUT_DIRECTORY "${TARGET_ARCH_BITS}"
-        LIBRARY_OUTPUT_DIRECTORY "${TARGET_ARCH_BITS}"
+        PREFIX                              "${TARGET_LIB_PREFIX}"
+        RUNTIME_OUTPUT_DIRECTORY            "${OUT_DIR_W_BITS}"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG      "${OUT_DIR_W_BITS}"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE    "${OUT_DIR_W_BITS}"
+        LIBRARY_OUTPUT_DIRECTORY            "${OUT_DIR_W_BITS}"
 )
 
-# Get all propreties that cmake supports
-execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)
+# # Get all propreties that cmake supports (for debug purposes)
+# execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)
 
-# Convert command output into a CMake list
-STRING(REGEX REPLACE ";" "\\\\;" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
-STRING(REGEX REPLACE "\n" ";" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+# # Convert command output into a CMake list
+# STRING(REGEX REPLACE ";" "\\\\;" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+# STRING(REGEX REPLACE "\n" ";" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
 
-function(print_properties)
-    message ("CMAKE_PROPERTY_LIST = ${CMAKE_PROPERTY_LIST}")
-endfunction(print_properties)
+# function(print_properties)
+#     message ("CMAKE_PROPERTY_LIST = ${CMAKE_PROPERTY_LIST}")
+# endfunction(print_properties)
 
-function(print_target_properties tgt)
-    if(NOT TARGET ${tgt})
-      message("There is no target named '${tgt}'")
-      return()
-    endif()
+# function(print_target_properties tgt)
+#     if(NOT TARGET ${tgt})
+#       message("There is no target named '${tgt}'")
+#       return()
+#     endif()
 
-    foreach (prop ${CMAKE_PROPERTY_LIST})
-        string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" prop ${prop})
-    # Fix https://stackoverflow.com/questions/32197663/how-can-i-remove-the-the-location-property-may-not-be-read-from-target-error-i
-    if(prop STREQUAL "LOCATION" OR prop MATCHES "^LOCATION_" OR prop MATCHES "_LOCATION$")
-        continue()
-    endif()
-        # message ("Checking ${prop}")
-        get_property(propval TARGET ${tgt} PROPERTY ${prop} SET)
-        if (propval)
-            get_target_property(propval ${tgt} ${prop})
-            message ("${tgt} ${prop} = ${propval}")
-        endif()
-    endforeach(prop)
-endfunction(print_target_properties)
+#     foreach (prop ${CMAKE_PROPERTY_LIST})
+#         string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" prop ${prop})
+#     # Fix https://stackoverflow.com/questions/32197663/how-can-i-remove-the-the-location-property-may-not-be-read-from-target-error-i
+#     if(prop STREQUAL "LOCATION" OR prop MATCHES "^LOCATION_" OR prop MATCHES "_LOCATION$")
+#         continue()
+#     endif()
+#         # message ("Checking ${prop}")
+#         get_property(propval TARGET ${tgt} PROPERTY ${prop} SET)
+#         if (propval)
+#             get_target_property(propval ${tgt} ${prop})
+#             message ("${tgt} ${prop} = ${propval}")
+#         endif()
+#     endforeach(prop)
+# endfunction(print_target_properties)
 
-print_target_properties(slim-curve-jni)
+# print_target_properties(slim-curve-jni)

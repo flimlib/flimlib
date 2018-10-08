@@ -30,7 +30,7 @@ public:
 
 	DecayModel() : _DMSPVAF() {}
 
-	DecayModel(JNIEnv *jenv, FitFunc &fitfunc, jfloatArray params, jintArray paramfree, restrain_type restrain,
+	DecayModel(JNIEnv *jenv, FitFunc &fitfunc, jfloatArray params, jbooleanArray paramfree, restrain_type restrain,
 		int ndata, float chisq_target, float chisq_delta, int chisq_percent);
 
 	~DecayModel();
@@ -53,6 +53,9 @@ private:
 jfloatArray DecayModel::getParams() {
 	GETJNIENV;
 	// update the java array object
+	// this method is different from the other two below
+	// because param lives within a Decmod whereas fitted and residuals
+	// are allocated
 	jenv->SetFloatArrayRegion(paramsref, 0, nparam, params);
 	return paramsref;
 }
@@ -71,7 +74,7 @@ jfloatArray DecayModel::getResiduals() {
 	return residualsref;
 }
 
-DecayModel::DecayModel(JNIEnv *jenv, FitFunc &fitfunc, jfloatArray params, jintArray paramfree, restrain_type restrain,
+DecayModel::DecayModel(JNIEnv *jenv, FitFunc &fitfunc, jfloatArray params, jbooleanArray paramfree, restrain_type restrain,
 	int ndata, float chisq_target, float chisq_delta, int chisq_percent) : _DMSPVAF() {
 	// save for destructor and getFitted/getResiduals
 	jenv->GetJavaVM(&this->jvm);
@@ -79,15 +82,18 @@ DecayModel::DecayModel(JNIEnv *jenv, FitFunc &fitfunc, jfloatArray params, jintA
 	this->fitfuncobj = &fitfunc; this->fitfunc = NULL;
 	this->nparam = std::min<jsize>(jenv->GetArrayLength(params), MAXFIT);
 	this->fitfuncobj->nparam = nparam;
+	// create a GlobalRef so that the array cannot be GC-ed
 	this->paramsref = (jfloatArray)jenv->NewGlobalRef(jenv->NewFloatArray(nparam));
 	jenv->GetFloatArrayRegion(params, 0, nparam, (jfloat*)this->params);
-	jenv->GetIntArrayRegion(paramfree, 0, nparam, (jint*)this->paramfree);
+	bool paramfree_tmp[20];
+	jenv->GetBooleanArrayRegion(paramfree, 0, nparam, (jboolean *)paramfree_tmp);
 	this->nparamfree = 0;
-	for (int i = 0; i < nparam; i++)
-		this->nparamfree += (this->paramfree[i] > 0);
+	for (int i = 0; i < nparam; i++) {
+		this->paramfree[i] = (paramfree_tmp[i] ? 1 : 0);
+		this->nparamfree += this->paramfree[i];
+	}
 	this->restrain = restrain;
 	this->ndata = ndata;
-	// create a GlobalRef so that the array cannot be GC-ed
 	this->fittedref = (jfloatArray)jenv->NewGlobalRef(jenv->NewFloatArray(ndata));
 	this->fitted = jenv->GetFloatArrayElements(fittedref, NULL);
 	this->residualsref = (jfloatArray)jenv->NewGlobalRef(jenv->NewFloatArray(ndata));
@@ -104,7 +110,7 @@ DecayModel::~DecayModel() {
 	GETJNIENV;
 	// after GlobalRef is stripped, the refs will be GC-ed if no java ref to them exists
 	if (!jenv->IsSameObject(paramsref, NULL))
-		jenv->DeleteGlobalRef(residualsref);
+		jenv->DeleteGlobalRef(paramsref);
 	if (!jenv->IsSameObject(fittedref, NULL)) {
 		jenv->ReleaseFloatArrayElements(fittedref, fitted, JNI_ABORT);
 		jenv->DeleteGlobalRef(fittedref);

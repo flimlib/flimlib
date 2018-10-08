@@ -4,9 +4,11 @@ typedef void (*fitfunc)(float, float [], float *, float [], int);
 
 class FitFunc {
 public:
-	virtual void fit(float x, float param[], float y[], float dy_dparam[]) {
+	virtual float fit(float x, float param[], float dy_dparam[]) {
+		float y = 0;
 		if (this->func_ptr)
-			this->func_ptr(x, param, y, dy_dparam, nparam);
+			this->func_ptr(x, param, &y, dy_dparam, nparam);
+		return y;
 	}
 
 	FitFunc() : func_ptr(NULL) {}
@@ -15,7 +17,8 @@ public:
 
 	virtual ~FitFunc() {}
 
-	int nparam; // hidden from java side
+	// needed for creating array to feed into java callback
+	int nparam;
 
 private:
 	const fitfunc func_ptr;

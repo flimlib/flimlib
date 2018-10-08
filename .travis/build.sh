@@ -1,5 +1,12 @@
 #!/bin/sh
 
+git clone https://github.com/scijava/native-lib-loader.git
+cd native-lib-loader
+git fetch origin refs/pull/20/head:pr_20
+git checkout pr_20
+mvn clean install
+cd ..
+
 # Install needed tools
 if which brew; then
   brew install swig
@@ -50,8 +57,10 @@ make
 cd ..
 mvn package
 
+exit_code=$?
+
 ls -l ./target/
 ls -l ./target/natives/
-ls -l ./target/natives/*_64/
 
+exit $exit_code
 # TODO: Maven deploy artifacts

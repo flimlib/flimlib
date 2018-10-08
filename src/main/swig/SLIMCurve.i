@@ -25,12 +25,13 @@ ENUMMAP(FITTYPEENUM, fit_type, FitType);
 %rename(RestrainType) restrain_type;
 
 // input 1d array (with length) maps
-ARRMAP(INTARRIN_LEN, 1, 1, int, Int, JNI_ABORT, false, 0)
-ARRMAP(FLTARRIN_LEN, 1, 1, float, Float, JNI_ABORT, false, 0)
-ARRMAP(FLTPTRIN_LEN, 0, 1, float, Float, JNI_ABORT, false, 0)
-ARRMAP(FLTARRIN_NUL, 1, 1, float, Float, JNI_ABORT, true, 0)
-ARRMAP(FLTPTRIN_KEEP, 0, 0, float, Float, JNI_ABORT, true, 1)
-ARRMAP(DBLARRIN_NUL, 1, 1, double, Double, JNI_ABORT, true, 0)
+ARRMAP(BOLARRIN_LEN, 1, 1, boolean, Boolean, JNI_ABORT, false)
+ARRMAP(FLTARRIN_LEN, 1, 1, float, Float, JNI_ABORT, false)
+ARRMAP(FLTPTRIN_LEN, 0, 1, float, Float, JNI_ABORT, false)
+ARRMAP(FLTARRIN_LUL, 1, 1, float, Float, JNI_ABORT, true)
+ARRMAP(FLTARRIN_NUL, 1, 0, float, Float, JNI_ABORT, true)
+ARRMAP(DBLARRIN_LUL, 1, 1, double, Double, JNI_ABORT, true)
+ARRMAP(DBLARRIN_NUL, 1, 0, double, Double, JNI_ABORT, true)
 
 // input 2d array maps
 MATMAP(F2D_in, float, Float, F, Float2DMatrix)
@@ -45,7 +46,7 @@ MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 %apply F2D_in {
 	(float **trans, int ndata, int ntrans)
 }
-%apply INTARRIN_LEN {
+%apply BOLARRIN_LEN {
 	(int paramfree[], int nparam),
 	(int paramfree[], int nparamfree),
 	(int param_free[], int n_param)
@@ -57,14 +58,17 @@ MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 %apply FLTPTRIN_LEN {
 	(float *trans, int ndata)
 }
-%apply FLTARRIN_NUL {
+%apply FLTARRIN_LUL {
 	(float instr[], int ninstr)
 }
-%apply FLTPTRIN_KEEP {
-	float *fitted_buf, float *residuals_buf
+%apply FLTARRIN_NUL {
+	float sig[]
+}
+%apply DBLARRIN_LUL {
+	(double instr[], int n_instr)
 }
 %apply DBLARRIN_NUL {
-	(double instr[], int n_instr)
+	double sig[]
 }
 
 // Grab functions from header files as class methods
