@@ -36,7 +36,7 @@ else
 fi
 
 curl -fsLO https://raw.githubusercontent.com/scijava/scijava-scripts/master/travis-build.sh
-sh travis-build.sh
+sh travis-build.sh $encrypted_58cee4862e74_key $encrypted_58cee4862e74_iv
 
 exit_code=$?
 

@@ -1,4 +1,5 @@
 language: java
+jdk: oraclejdk8
 
 # https://github.com/travis-ci/travis-ci/issues/2316#issuecomment-245829804
 matrix:
@@ -23,9 +24,14 @@ branches:
   - "/.*-[0-9]+\\..*/"
 install: true
 script: ".travis/build.sh"
-
 cache:
   directories:
-  - $HOME/.cache/pip
-  - $HOME/.m2
-  - $HOME/Library/Caches/Homebrew
+  - "~/.cache/pip"
+  - "~/.m2/repository"
+  - "~/Library/Caches/Homebrew"
+env:
+  global:
+  - secure: Im/xV+qMft3ON8PkSata1TC5g5G9S3KLgF4nhUF/mZHeSyAF1OPLVmxTXXuTJn+1MRq4ijf5jji6EXxkJTIYQwKdHWVwU3ViXqCOSlsivCAYRA3wtd2xV0BLO8N0BjC0H5CwPQQFtmiJ+jGhyStW2MPKguzpw3v0VIWvuRgVjl0=
+  - secure: BJowkqRXjQjYJ73yzXdMeUoAFu0KJiP0mupeCTISKTFWCH+oaAGGg7M1GAJ2ul845f41RM2W/3ViS2EZKRJRj3GXTUZgyRWdojEjvJSP6WZDMD/olcFUvbHwaYT1v+m1FbfAqJjj3TjRHw8lYvB5mYnD8uaHo/dXym6FjcTYFE8=
+  - secure: K+BoI59+4OvREtZS/tLpz0awsuQuEbIbvhoJSN2WsXk5Fvci+9F6ZrTrI4maewzEKc7wzQrlbTYs7iW7ZXKYkknmQlxhnUpLlxyaaOR1X3BclhPpda5F7nzUjK1Oix6Lt+hYPxogZJVIaJX8IQrHbn2bRdNrROzNd5m4m1cCZuQ=
+  - secure: jDOIEMqsrOX9hayak/c99jb9tJzY+K3kOV7Dd21VSYct/dMlTGCvvG2TdbRzs4dWF43fTOyndG0KJbwY1cY66Z9QFEwCzEC7WLbTHua0ZSUNcHSzebblggptyPUAny3g46R711UFvkO4D9Ry7zjN/PHgRlAViw/vWKc21tsHpP8=
