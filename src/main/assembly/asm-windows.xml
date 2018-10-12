@@ -26,56 +26,31 @@
 	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
-	<id>libs-assembly</id>
+	<id>natives-windows</id>
 	<formats>
 		<format>jar</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<fileSets>
 		<fileSet>
-			<directory>${project.build.outputDirectory}</directory>
-			<outputDirectory>/</outputDirectory>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/nar/lib/x86_64-MacOSX-gcc/shared</directory>
-			<outputDirectory>META-INF/lib/osx_64</outputDirectory>
-			<includes>
-				<include>*.dylib</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/nar/lib/i386-MacOSX-gcc/shared</directory>
-			<outputDirectory>META-INF/lib/osx_32</outputDirectory>
-			<includes>
-				<include>*.dylib</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/nar/lib/amd64-Windows-gcc/shared</directory>
+			<directory>${project.build.directory}/natives/Windows_64</directory>
 			<outputDirectory>META-INF/lib/windows_64</outputDirectory>
 			<includes>
 				<include>*.dll</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/nar/lib/x86-Windows-gcc/shared</directory>
-			<outputDirectory>META-INF/lib/windows_32</outputDirectory>
+			<directory>${project.build.directory}/natives/Windows_64/Debug</directory>
+			<outputDirectory>META-INF/lib/windows_64</outputDirectory>
 			<includes>
 				<include>*.dll</include>
 			</includes>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/nar/lib/amd64-Linux-gcc/shared</directory>
-			<outputDirectory>META-INF/lib/linux_64</outputDirectory>
+			<directory>${project.build.directory}/natives/Windows_64/Release</directory>
+			<outputDirectory>META-INF/lib/windows_64</outputDirectory>
 			<includes>
-				<include>*.so</include>
-			</includes>
-		</fileSet>
-		<fileSet>
-			<directory>${project.build.directory}/nar/lib/i386-Linux-gcc/shared</directory>
-			<outputDirectory>META-INF/lib/linux_32</outputDirectory>
-			<includes>
-				<include>*.so</include>
+				<include>*.dll</include>
 			</includes>
 		</fileSet>
 	</fileSets>

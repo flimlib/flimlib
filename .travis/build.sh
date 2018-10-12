@@ -1,6 +1,9 @@
 #!/bin/sh
 
 # Install needed tools
+if which brew; then
+  brew install swig
+fi
 if which cram; then
   CRAM=cram
 else
@@ -32,16 +35,18 @@ else
   fi
 fi
 
-# Prepare the build environment
-rm -rf build
-mkdir -p build
-cd build
-cmake ..
+curl -fsLO https://raw.githubusercontent.com/scijava/scijava-scripts/master/travis-build.sh
+sh travis-build.sh
 
-# Build the code
-make
+exit_code=$?
 
 # Run the unit tests
-"$CRAM" ../tests
+"$CRAM" ./tests
 
+exit_code=$((exit_code | $?))
+
+ls -l ./target/
+ls -l ./target/natives/
+
+exit $exit_code
 # TODO: Maven deploy artifacts

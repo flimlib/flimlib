@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-		http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>17.1.1</version>
+		<version>23.1.1</version>
 		<relativePath />
 	</parent>
 
 	<groupId>slim-curve</groupId>
 	<artifactId>slim-curve</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<packaging>nar</packaging>
 
 	<name>SLIM Curve</name>
 	<description>A package for exponential curve fitting of combined spectral lifetime image data.</description>
@@ -57,6 +53,10 @@
 			<name>Aivar Grislis</name>
 			<properties><id>grislis</id></properties>
 		</contributor>
+		<contributor>
+			<name>Dasong Gao</name>
+			<properties><id>Xanthorapedia</id></properties>
+		</contributor>
 	</contributors>
 
 	<mailingLists>
@@ -85,18 +85,18 @@
 	</ciManagement>
 
 	<properties>
-		<package-name>loci.slim</package-name>
+		<package-name>slim</package-name>
 
 		<license.licenseName>gpl_v3</license.licenseName>
 		<license.projectName>SLIM-curve package for exponential curve fitting of spectral lifetime data.</license.projectName>
 		<license.copyrightOwners>University of Oxford and Board of Regents of the
 University of Wisconsin-Madison.</license.copyrightOwners>
 
-		<nar-maven-plugin.version>3.3.0</nar-maven-plugin.version>
+		<!-- NB: Deploy releases to the ImageJ Maven repository. -->
+		<releaseProfiles>deploy-to-imagej</releaseProfiles>
 	</properties>
 
 	<repositories>
-		<!-- NB: for project parent -->
 		<repository>
 			<id>imagej.public</id>
 			<url>http://maven.imagej.net/content/groups/public</url>
@@ -105,152 +105,190 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.scijava</groupId>
-			<artifactId>native-lib-loader</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.scijava</groupId>
+			<artifactId>native-lib-loader</artifactId>
+		</dependency>
 	</dependencies>
 
-	<build>
-		    <pluginManagement>
-             <plugins>
-                 <plugin>
-                     <!--  
-                     NB: Make Eclipse generate code in a full build; see:
-                     http://wiki.eclipse.org/M2E_plugin_execution_not_covered
-                    -->      
-                       <groupId>org.eclipse.m2e</groupId>
-                     <artifactId>lifecycle-mapping</artifactId>
-                     <version>1.0.0</version>
-                     <configuration>
-                         <lifecycleMappingMetadata>
-                             <pluginExecutions>
-                                 <pluginExecution>
-                                     <pluginExecutionFilter>
-                                         <groupId>org.codehaus.mojo</groupId>
-                                         <artifactId>exec-maven-plugin</artifactId>
-                                         <versionRange>1.4.0</versionRange>
-                                         <goals>
-                                             <goal>java</goal>
-                                         </goals>
-                                     </pluginExecutionFilter>
-                                     <action>
-                                         <execute>
-                                             <runOnConfiguration>true</runOnConfiguration>
-                                             <runOnIncremental>false</runOnIncremental>
-                                         </execute>
-                                     </action>
-                                 </pluginExecution>
-                                 <pluginExecution>
-                                 	<pluginExecutionFilter>
-                                 		<groupId>
-                                 			org.codehaus.mojo
-                                 		</groupId>
-                                 		<artifactId>
-                                 			exec-maven-plugin
-                                 		</artifactId>
-                                 		<versionRange>
-                                 			[1.4.0,)
-                                 		</versionRange>
-                                 		<goals>
-                                 			<goal>exec</goal>
-                                 		</goals>
-                                 	</pluginExecutionFilter>
-                                 	<action>
-                                 		<execute>
-                                 			<runOnConfigurations>true</runOnConfigurations>	
-                                 			<runOnIncremental>false</runOnIncremental>
-                                 		</execute>
-                                 	</action>
-                                 </pluginExecution>
-                             </pluginExecutions>
-                         </lifecycleMappingMetadata>
-                     </configuration>
-                 </plugin>
-             </plugins>
-         </pluginManagement>
+	<profiles>
+		<!-- Os name (for naming the artifact and the os-specific directory in it) -->
+		<profile>
+			<id>asm-win</id>
+			<activation>
+				<os>
+					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<asm.osNameArch>windows_64</asm.osNameArch>
+				<!-- <cmake.generator>-GUnix Makefiles</cmake.generator> -->
+				<!-- <cmake.generator>-GVisual Studio 14 2015 Win64</cmake.generator> -->
+				<cmake.generator>-GVisual Studio 15 2017 Win64</cmake.generator>
+				<cmake.flag.config>--config</cmake.flag.config>
+				<cmake.flag.release>Release</cmake.flag.release>
+			</properties>
+		</profile>
+		<profile>
+			<id>asm-osx</id>
+			<activation>
+				<os>
+					<family>mac</family>
+				</os>
+			</activation>
+			<properties>
+				<asm.osNameArch>osx_64</asm.osNameArch>
+			</properties>
+		</profile>
+		<profile>
+			<id>asm-linux</id>
+			<activation>
+				<os>
+					<family>unix</family>
+					<name>Linux</name>
+				</os>
+			</activation>
+			<properties>
+				<asm.osNameArch>linux_64</asm.osNameArch>
+			</properties>
+		</profile>
+	</profiles>
 
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin><!--
+					NB: Make Eclipse generate code in a full build; see:
+					https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html
+					-->
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>exec-maven-plugin</artifactId>
+										<versionRange>1.4.0</versionRange>
+										<goals>
+											<goal>java</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnConfiguration>true</runOnConfiguration>
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.codehaus.mojo
+										</groupId>
+										<artifactId>
+											exec-maven-plugin
+										</artifactId>
+										<versionRange>
+											[1.4.0,)
+										</versionRange>
+										<goals>
+											<goal>exec</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnConfigurations>true</runOnConfigurations>	
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
+			<!-- build the native library -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.4.0</version>
 				<executions>
 					<execution>
-						<id>my-execution</id>
+						<id>native-cmake</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
+						<configuration>
+							<executable>cmake</executable>
+							<workingDirectory>${project.build.directory}/build</workingDirectory>
+							<arguments>
+								<argument>${project.basedir}</argument>
+								<!-- CMAKE_BUILD_TYPE specifies build option for Linux/MacOS -->
+								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
+								<argument>${cmake.generator}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>native-cmake-build</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>cmake</executable>
+							<workingDirectory>${project.build.directory}/build</workingDirectory>
+							<arguments>
+								<argument>--build</argument>
+								<argument>.</argument>
+								<!-- But on windows, only "- -config Release" sets the option -->
+								<argument>${cmake.flag.config}</argument>
+								<argument>${cmake.flag.release}</argument>
+							</arguments>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<executable>src/main/swig/makeSwig.sh</executable>
-				</configuration>
 			</plugin>
-			
-			<plugin>
-				<groupId>com.github.maven-nar</groupId>
-				<artifactId>nar-maven-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<c>
-						<options>
-							<option>-I${JAVA_HOME}/include</option>
-							<option>${java.os.include}</option>
-							<option>${stack.protector.option}</option>
-							<option>${architecture.option}</option>
-							<option>${subsystem.option}</option>
-							<option>${debug.option}</option>
-						</options>
-					</c>
-					<linker>
-						<options>
-							<option>${architecture.option}</option>
-							<option>${subsystem.option}</option>
-						</options>
-					</linker>
-					<libraries>
-						<library>
-							<type>shared</type>
-							<narSystemPackage>${package-name}</narSystemPackage>
-						</library>
-					</libraries>
-				</configuration>
-			</plugin>
+			<!-- Include swig generated sources -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<configuration>
-					<licenseName>gpl_v3</licenseName>
-					<projectName>SLIM-curve package for exponential curve fitting of spectral lifetime data.</projectName>
-					<organizationName>University of Oxford and Board of Regents of the
-University of Wisconsin-Madison.</organizationName>
-					<!--
-					NB: It seems these excludes are not respected.
-					Probably something wrong with the syntax. For now,
-					they are here merely for documentation purposes.
-					-->	
-					<excludes>
-						<exclude>src/main/c/jni.h</exclude>
-						<exclude>src/main/c/jni_md.h</exclude>
-						<exclude>src/main/c/loci_*.h</exclude>
-						<exclude>src/matlab/**</exclude>
-						<exclude>src/slim-curve-cmd/c/iniparser/**</exclude>
-					</excludes>
-				</configuration>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/main/java/</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+			<!-- Make native jar -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<appendAssemblyId>false</appendAssemblyId>
+					<appendAssemblyId>true</appendAssemblyId>
 					<descriptors>
-						<descriptor>src/main/assembly/libs-assembly.xml</descriptor>
+						<descriptor>src/main/assembly/asm.xml</descriptor>
 					</descriptors>
 					<archive>
 						<manifest>
@@ -265,6 +303,30 @@ University of Wisconsin-Madison.</organizationName>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Add natives to classpath for unit test -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<forkMode>once</forkMode>
+					<argLine>-Djava.library.path=${project.build.directory}/natives</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.honton.chas</groupId>
+				<artifactId>exists-maven-plugin</artifactId>
+				<version>0.0.1</version>
+				<configuration>
+					<property>maven.deploy.skip</property>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>exists</goal>
 						</goals>
 					</execution>
 				</executions>

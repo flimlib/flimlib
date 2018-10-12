@@ -1,3 +1,6 @@
+# SLIM Curve
+[![](https://travis-ci.org/slim-curve/slim-curve.svg?branch=java-lib)](https://travis-ci.org/slim-curve/slim-curve "Travis")    [![](https://ci.appveyor.com/api/projects/status/github/slim-curve/slim-curve?svg=true)](https://ci.appveyor.com/project/scijava/slim-curve "AppVeyor")
+
 SLIM Curve is a curve fitting library used for Fluorescent Lifetime Imaging or
 FLIM and Spectral Lifetime Imaging or SLIM.  It is developed by Paul Barber and
 the Advanced Technology Group at the [Cancer Research UK and Medical Research
@@ -60,40 +63,23 @@ automatically in Eclipse when the slim-curve project is updated.
 
 ## Building the source
 
-To build the library and standalone program using CMake and gcc under Linux:
+To build the library and standalone program using maven:
 
-1.  Create a build folder, and cd to it
+  ```
+  mvn clean install
+  ```
 
-    ```
-    mkdir build
-    cd build
-    ```
-
-2.  Run CMake
-
-    ```
-    cmake ../CMakeLists.txt
-    ```
-
-3.  Run make
-
-    ```
-    make
-    ```
-
-On Windows you can use CMake to create a Visual Studio project for the library and test programs.
-    
 ## Running the standalone executable
 
 1.  Copy the executable to the `test_files` folder for convenience
 
     ```
-    cp slim-curve-cmd ../test_files
+    cp target/build/bin/slim-curve-cmd ./test_files
     ```
 
 2.  Run the program with the test files
 
     ```
-    cd ../test_files
+    cd ./test_files
     ./slim-curve-cmd test.ini transient.dat
     ```
