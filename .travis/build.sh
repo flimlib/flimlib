@@ -43,7 +43,7 @@ exit_code=$?
 # NB: We skip tests when doing a release, because:
 # A) The target folder structure differs, and cram hardcodes it; and
 # B) The release already happened and was deployed by now. ;-)
-if [ ! -f release.properties ]
+if [ ! -f ./target/checkout/release.properties ]
 then
   # Run the unit tests
   "$CRAM" ./tests
