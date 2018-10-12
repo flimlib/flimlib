@@ -91,6 +91,8 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 
 		<!-- NB: Deploy releases to the ImageJ Maven repository. -->
 		<releaseProfiles>deploy-to-imagej</releaseProfiles>
+
+		<exists-maven-plugin.version>0.0.6</exists-maven-plugin.version>
 	</properties>
 
 	<repositories>
@@ -316,14 +318,11 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 			<plugin>
 				<groupId>org.honton.chas</groupId>
 				<artifactId>exists-maven-plugin</artifactId>
-				<version>0.0.1</version>
-				<configuration>
-					<property>maven.deploy.skip</property>
-				</configuration>
+				<version>${exists-maven-plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
-							<goal>exists</goal>
+							<goal>remote</goal>
 						</goals>
 					</execution>
 				</executions>
