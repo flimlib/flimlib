@@ -67,10 +67,10 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/uw-loci/slim-curve</connection>
-		<developerConnection>scm:git:git@github.com:uw-loci/slim-curve</developerConnection>
+		<connection>scm:git:git://github.com/slim-curve/slim-curve</connection>
+		<developerConnection>scm:git:git@github.com:slim-curve/slim-curve</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://github.com/uw-loci/slim-curve</url>
+		<url>https://github.com/slim-curve/slim-curve</url>
 	</scm>
 	<issueManagement>
 		<system>GitHub Issues</system>
