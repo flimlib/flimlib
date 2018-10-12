@@ -80,8 +80,8 @@
 		<url>https://github.com/slim-curve/slim-curve/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Jenkins</system>
-		<url>http://jenkins.imagej.net/job/SLIM-curve/</url>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/slim-curve/slim-curve</url>
 	</ciManagement>
 
 	<properties>
