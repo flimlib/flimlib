@@ -40,13 +40,18 @@ sh travis-build.sh $encrypted_58cee4862e74_key $encrypted_58cee4862e74_iv
 
 exit_code=$?
 
-# Run the unit tests
-"$CRAM" ./tests
+# NB: We skip tests when doing a release, because:
+# A) The target folder structure differs, and cram hardcodes it; and
+# B) The release already happened and was deployed by now. ;-)
+if [ ! -f release.properties ]
+then
+  # Run the unit tests
+  "$CRAM" ./tests
 
-exit_code=$((exit_code | $?))
+  exit_code=$((exit_code | $?))
+fi
 
-ls -l ./target/
-ls -l ./target/natives/
+ls -lR ./target/
 
 exit $exit_code
 # TODO: Maven deploy artifacts

@@ -44,5 +44,4 @@ build_script:
   - ps: .\.appveyor\build.ps1
 
 test_script:
-  - dir %APPVEYOR_BUILD_FOLDER%\target
-  - dir %APPVEYOR_BUILD_FOLDER%\target\natives
+  - dir /s %APPVEYOR_BUILD_FOLDER%\target
