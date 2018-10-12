@@ -61,11 +61,8 @@
 
 	<mailingLists>
 		<mailingList>
-			<name>SLIM Curve</name>
-			<subscribe>http://imagej.net/mailman/listinfo/slim-curve</subscribe>
-			<unsubscribe>http://imagej.net/mailman/listinfo/slim-curve</unsubscribe>
-			<post>slim-curve@imagej.net</post>
-			<archive>http://imagej.net/pipermail/slim-curve/</archive>
+			<name>Image.sc Forum</name>
+			<archive>https://forum.image.sc/</archive>
 		</mailingList>
 	</mailingLists>
 
