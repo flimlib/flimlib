@@ -6,6 +6,14 @@ image: Visual Studio 2017
 platform: x64
 configuration: Release
 
+environment:
+  MAVEN_PASS:
+    secure: YdzLF8dSsHb8PwXVy9buOI3lGhJ5ReexXDLvD34eJt1C9FXuf9o6oBX72GTc5Jgd
+  GPG_KEY_NAME:
+    secure: xyRp14pV2TD4fYfi35GfksuJ1I1Wk/5nIEo0F6zB3H8=
+  GPG_PASSPHRASE:
+    secure: gTrK/G3QiaY3zP8fanCshlU9beRK/4tPvzeylGd+kL2v5BmaisUZFlhKNEWCO1Bm
+
 # lifted from https://github.com/opensim-org/opensim-core/blob/master/appveyor.yml
 cache:
   ## Cache swig, which we install via AppVeyor.
