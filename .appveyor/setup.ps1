@@ -84,9 +84,6 @@ If (Test-Path $customSettings) {
       </properties>
     </profile>
   </profiles>
-  <activeProfiles>
-    <activeProfile>copy-launchers</activeProfile>
-  </activeProfiles>
 </settings>'
     $defaultSettings | Out-File $settingsFile
 }
