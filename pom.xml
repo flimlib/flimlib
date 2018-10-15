@@ -93,7 +93,6 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		<releaseProfiles>deploy-to-imagej</releaseProfiles>
 
 		<exists-maven-plugin.version>0.0.6</exists-maven-plugin.version>
-		<createChecksum>true</createChecksum>
 	</properties>
 
 	<repositories>
