@@ -21,6 +21,7 @@ addons:
 branches:
   only:
   - master
+  - test-build-scripts
   - "/.*-[0-9]+\\..*/"
 install: true
 script: ".travis/build.sh"

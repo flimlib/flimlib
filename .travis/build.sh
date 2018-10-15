@@ -57,11 +57,16 @@ ls -lR ./target/
 # Lifted from https://github.com/imagej/imagej-launcher/blob/f14435e80acbe7c84d52695a4794afb570ab65c8/.travis/build.sh
 # Get GAV
 groupId="$(sed -n 's/^\t<groupId>\(.*\)<\/groupId>$/\1/p' ./pom.xml)"
+echo "$groupId"
 groupIdForURL="$(echo $groupId | sed -e 's/\./\//g')"
+echo "$groupIdForURL"
 artifactId="$(sed -n 's/^\t<artifactId>\(.*\)<\/artifactId>$/\1/p' ./pom.xml)"
+echo "artifactId"
 version="$(sed -n 's/^\t<version>\(.*\)<\/version>$/\1/p' ./pom.xml)"
+echo "version"
 
-extraArtifactPaths="target/checkout/target/*.jar"
+extraArtifactPaths="./target/*.jar"
+echo "$extraArtifactPaths"
 
 if [ "$TRAVIS_OS_NAME" = "linux" ]
 then
@@ -69,6 +74,52 @@ then
 else
   classifier="natives-osx_64"
 fi
+
+echo "== Deploying binaries =="
+
+# Check if a release has been deployed for that version
+folderStatus=$(curl -s -o /dev/null -I -w '%{http_code}' http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/)
+if [ "$folderStatus" != "200" ]
+then
+  exit $exit_code
+fi
+
+for artifactPath in $extraArtifactPaths; do
+  fileName="${artifactPath##*/}"
+  echo "$fileName"
+  # Skip the non-classified artifacts
+  if [[ "$fileName" != *"$classifier"* ]]
+  then
+    continue
+  fi
+  extension="${fileName##*.}"
+  # Check if the launcher for that version has already been deployed
+  fileStatus=$(curl -s -o /dev/null -I -w '%{http_code}' http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/$fileName)
+  echo "$extension $fileStatus"
+  if [ "$fileStatus" != "200" ]
+  then
+    echo "$artifactPath $extension"
+    files="$files,$mainFile"
+    types="$types,$mainType"
+    classifiers="$classifiers,$mainClassifier"
+    mainFile="$artifactPath"
+    mainType="$extension"
+    mainClassifier="$classifier"
+  fi
+done
+echo mvn deploy:deploy-file\
+  -Dfile="$mainFile"\
+  -Dfiles="$files"\
+  -DrepositoryId="imagej.releases"\
+  -Durl="dav:https://maven.imagej.net/content/repositories/releases"\
+  -DgeneratePom="false"\
+  -DgroupId="$groupId"\
+  -DartifactId="$artifactId"\
+  -Dversion="$version"\
+  -Dclassifier="$mainClassifier"\
+  -Dclassifiers="$classifiers"\
+  -Dpackaging="$mainType"\
+  -Dtypes="$types"
 
 if [ "$TRAVIS_SECURE_ENV_VARS" = true \
   -a "$TRAVIS_PULL_REQUEST" = false \
