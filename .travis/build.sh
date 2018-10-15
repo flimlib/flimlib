@@ -56,18 +56,18 @@ ls -lR ./target/
 # Deploy artifacts
 # Lifted from https://github.com/imagej/imagej-launcher/blob/f14435e80acbe7c84d52695a4794afb570ab65c8/.travis/build.sh
 # Get GAV
-groupId="$(sed -n 's/^  <groupId>\(.*\)<\/groupId>$/\1/p' pom.xml)"
+groupId="$(sed -n 's/^\t<groupId>\(.*\)<\/groupId>$/\1/p' ./pom.xml)"
 groupIdForURL="$(echo $groupId | sed -e 's/\./\//g')"
-artifactId="$(sed -n 's/^ <artifactId>\(.*\)<\/artifactId>$/\1/p' pom.xml)"
-version="$(sed -n 's/^  <version>\(.*\)<\/version>$/\1/p' pom.xml)"
+artifactId="$(sed -n 's/^\t<artifactId>\(.*\)<\/artifactId>$/\1/p' ./pom.xml)"
+version="$(sed -n 's/^\t<version>\(.*\)<\/version>$/\1/p' ./pom.xml)"
 
-artifactPaths="target/checkout/target/*.jar"
+extraArtifactPaths="target/checkout/target/*.jar"
 
 if [ "$TRAVIS_OS_NAME" = "linux" ]
 then
-  classifier="linux_64"
+  classifier="natives-linux_64"
 else
-  classifier="osx_64"
+  classifier="natives-osx_64"
 fi
 
 if [ "$TRAVIS_SECURE_ENV_VARS" = true \
@@ -83,25 +83,40 @@ then
     exit $exit_code
   fi
 
-  for artifactPath in artifactPaths; do
-    artifactFileName="${artifactPath##*/}"
-    extension="${artifactPath##*.}"
+  for artifactPath in $extraArtifactPaths; do
+    fileName="${artifactPath##*/}"
+    # Skip the non-classified artifacts
+    if [[ "$fileName" != *"$classifier"* ]]
+    then
+      continue
+    fi
+    extension="${fileName##*.}"
     # Check if the launcher for that version has already been deployed
-    fileStatus=$(curl -s -o /dev/null -I -w '%{http_code}' http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/$artifactFileName)
+    fileStatus=$(curl -s -o /dev/null -I -w '%{http_code}' http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/$fileName)
     if [ "$fileStatus" != "200" ]
     then
-      mvn deploy:deploy-file\
-        -Dfile="$artifactPath"\
-        -DrepositoryId="imagej.releases"\
-        -Durl="dav:https://maven.imagej.net/content/repositories/releases"\
-        -DgeneratePom="false"\
-        -DgroupId="$groupId"\
-        -DartifactId="$artifactId"\
-        -Dversion="$version"\
-        -Dclassifier="$classifier"\
-        -Dpackaging="$extension"
+      files="$files,$mainFile"
+      types="$types,$mainType"
+      classifiers="$classifiers,$mainClassifier"
+      mainFile="$artifactPath"
+      mainType="$extension"
+      mainClassifier="$classifier"
     fi
   done
+  mvn deploy:deploy-file\
+    -Dfile="$mainFile"\
+    -Dfiles="$files"\
+    -DrepositoryId="imagej.releases"\
+    -Durl="dav:https://maven.imagej.net/content/repositories/releases"\
+    -DgeneratePom="false"\
+    -DgroupId="$groupId"\
+    -DartifactId="$artifactId"\
+    -Dversion="$version"\
+    -Dclassifier="$mainClassifier"\
+    -Dclassifiers="$classifiers"\
+    -Dpackaging="$mainType"\
+    -Dtypes="$types"
+  exit_code=$((exit_code | $?))
 fi
 
 exit $exit_code
