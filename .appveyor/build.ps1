@@ -63,7 +63,8 @@ If (($Env:APPVEYOR_REPO_TAG -match "false")  -and ($Env:APPVEYOR_REPO_BRANCH -ma
     
 } Else {
     "== Building the artifact locally =="
-    & "mvn" "-B" "-P$profiles" "install" "javadoc:aggregate-jar" 2> $null
+    # & "mvn" "-B" "-P$profiles" "install" "javadoc:aggregate-jar" 2> $null
+    & "mvn" "-B" "-Pdeploy-to-imagej" "deploy" 2> $null
 }
 
 $version = "1.0.0-rc-6"
@@ -78,18 +79,19 @@ $version = "1.0.0-rc-6"
     Get-ChildItem ".\target" -Filter *.jar | 
     Foreach-Object {
         $artifactPath = $_.FullName
-
+"$artifactPath"
         $fileName = [System.IO.Path]::GetFileName("$artifactPath")
-
+"$fileName"
         # Skip the non-classified artifacts
         If (!("$fileName" -like "*$classifier*")) {
             return
         }
         $extension = [System.IO.Path]::GetExtension("$artifactPath") -replace "^\.", ""
+"$extension"
         # Check if the launcher itself was already deployed
         $responseFile = try { (Invoke-Webrequest -uri "http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/$fileName" -UseBasicParsing -method head -TimeoutSec 5).statuscode } catch { $_.Exception.Response.StatusCode.Value__ }
+"$responseFile"
         # Deploy only iff the parent exists and the launcher does not exist
-        "$responseFile"
         If ($responseFile -eq 404) {
             $files="$files,$mainFile"
             $types="$types,$mainType"
