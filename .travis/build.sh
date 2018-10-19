@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Install needed tools
 if which brew; then
@@ -77,6 +77,8 @@ else
   classifier="natives-osx_64"
 fi
 
+echo "$classifier"
+
 echo "== Deploying binaries =="
 
 # Check if a release has been deployed for that version
@@ -90,7 +92,7 @@ for artifactPath in $extraArtifactPaths; do
   fileName="${artifactPath##*/}"
   echo "$fileName"
   # Skip the non-classified artifacts
-  if [ "$fileName" != *"$classifier"* ]
+  if [[ ! "$fileName" =~ "$classifier" ]]
   then
     continue
   fi
