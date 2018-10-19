@@ -61,9 +61,11 @@ echo "$groupId"
 groupIdForURL="$(echo $groupId | sed -e 's/\./\//g')"
 echo "$groupIdForURL"
 artifactId="$(sed -n 's/^\t<artifactId>\(.*\)<\/artifactId>$/\1/p' ./pom.xml)"
-echo "artifactId"
+echo "$artifactId"
 version="$(sed -n 's/^\t<version>\(.*\)<\/version>$/\1/p' ./pom.xml)"
-echo "version"
+echo "$version"
+
+version="1.0.0-rc-3"
 
 extraArtifactPaths="./target/*.jar"
 echo "$extraArtifactPaths"
@@ -88,7 +90,7 @@ for artifactPath in $extraArtifactPaths; do
   fileName="${artifactPath##*/}"
   echo "$fileName"
   # Skip the non-classified artifacts
-  if [[ "$fileName" != *"$classifier"* ]]
+  if [ "$fileName" != *"$classifier"* ]
   then
     continue
   fi
