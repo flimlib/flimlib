@@ -71,10 +71,10 @@ then
   echo "== Deploying binaries =="
 
   # Get GAV
-  groupId="$(sed -n 's/^\t<groupId>\(.*\)<\/groupId>$/\1/p' ./target/checkout/pom.xml)"
+  groupId="$(sed -n 's/^\t<groupId>\(.*\)<\/groupId>$/\1/p' ./pom.xml)"
   groupIdForURL="$(echo $groupId | sed -e 's/\./\//g')"
-  artifactId="$(sed -n 's/^\t<artifactId>\(.*\)<\/artifactId>$/\1/p' ./target/checkout/pom.xml)"
-  version="$(sed -n 's/^\t<version>\(.*\)<\/version>$/\1/p' ./target/checkout/pom.xml)"
+  artifactId="$(sed -n 's/^\t<artifactId>\(.*\)<\/artifactId>$/\1/p' ./pom.xml)"
+  version="$(sed -n 's/^\t<version>\(.*\)<\/version>$/\1/p' ./pom.xml)"
 
   # Check if a release has been deployed for that version
   folderStatus=$(curl -s -o /dev/null -I -w '%{http_code}' http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/)
