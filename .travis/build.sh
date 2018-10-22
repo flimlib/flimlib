@@ -71,10 +71,15 @@ then
   echo "== Deploying binaries =="
 
   # Get GAV
-  groupId="$(sed -n 's/^\t<groupId>\(.*\)<\/groupId>$/\1/p' ./pom.xml)"
+  gav=$(mvn -q \
+    -Dexec.executable=echo \
+    -Dexec.args='${project.groupId}:${project.artifactId}:${project.version}' \
+    --non-recursive \
+    exec:exec)
+  groupId="$(echo $gav | cut -d ":" -f 1)"
   groupIdForURL="$(echo $groupId | sed -e 's/\./\//g')"
-  artifactId="$(sed -n 's/^\t<artifactId>\(.*\)<\/artifactId>$/\1/p' ./pom.xml)"
-  version="$(sed -n 's/^\t<version>\(.*\)<\/version>$/\1/p' ./pom.xml)"
+  artifactId="$(echo $gav | cut -d ":" -f 2)"
+  version="$(echo $gav | cut -d ":" -f 3)"
 
   # Check if a release has been deployed for that version
   folderStatus=$(curl -s -o /dev/null -I -w '%{http_code}' http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/)
@@ -95,9 +100,12 @@ then
     fileStatus=$(curl -s -o /dev/null -I -w '%{http_code}' http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/$fileName)
     if [ "$fileStatus" != "200" ]
     then
-      files="$files,$mainFile"
-      types="$types,$mainType"
-      classifiers="$classifiers,$mainClassifier"
+      if [ ! -z "$mainFile" ]
+      then
+        files="$files,$mainFile"
+        types="$types,$mainType"
+        classifiers="$classifiers,$mainClassifier"
+      fi
       mainFile="$artifactPath"
       mainType="$extension"
       mainClassifier="$classifier"
@@ -105,19 +113,21 @@ then
   done
   if [ ! -z "$mainFile" ]
   then
-    mvn deploy:deploy-file\
-      -Dfile="$mainFile"\
-      -Dfiles="$files"\
-      -DrepositoryId="imagej.releases"\
-      -Durl="dav:https://maven.imagej.net/content/repositories/releases"\
-      -DgeneratePom="false"\
-      -DgroupId="$groupId"\
-      -DartifactId="$artifactId"\
-      -Dversion="$version"\
-      -Dclassifier="$mainClassifier"\
-      -Dclassifiers="$classifiers"\
-      -Dpackaging="$mainType"\
-      -Dtypes="$types"
+    deployCmd="mvn deploy:deploy-file\
+      -Dfile=\"$mainFile\"\
+      -DrepositoryId=\"imagej.releases\"\
+      -Durl=\"dav:https://maven.imagej.net/content/repositories/releases\"\
+      -DgeneratePom=\"false\"\
+      -DgroupId=\"$groupId\"\
+      -DartifactId=\"$artifactId\"\
+      -Dversion=\"$version\"\
+      -Dclassifier=\"$mainClassifier\"\
+      -Dpackaging=\"$mainType\""
+    if [ ! -z "$files" ]
+    then
+      deployCmd="$deployCmd -Dfiles=\"$files\" -Dclassifiers=\"$classifiers\" -Dtypes=\"$types\""
+    fi
+    eval "$deployCmd"
   fi
   exit_code=$((exit_code | $?))
 fi
