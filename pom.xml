@@ -11,7 +11,7 @@
 
 	<groupId>slim-curve</groupId>
 	<artifactId>slim-curve</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0-rc-1</version>
 
 	<name>SLIM Curve</name>
 	<description>A package for exponential curve fitting of combined spectral lifetime image data.</description>
@@ -69,7 +69,7 @@
 	<scm>
 		<connection>scm:git:git://github.com/slim-curve/slim-curve</connection>
 		<developerConnection>scm:git:git@github.com:slim-curve/slim-curve</developerConnection>
-		<tag>HEAD</tag>
+		<tag>slim-curve-1.0.0-rc-1</tag>
 		<url>https://github.com/slim-curve/slim-curve</url>
 	</scm>
 	<issueManagement>
