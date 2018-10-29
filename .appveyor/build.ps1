@@ -49,7 +49,7 @@ If (($Env:APPVEYOR_REPO_TAG -match "false")  -and ($Env:APPVEYOR_REPO_BRANCH -ma
         }
     }
     If (-not ([string]::IsNullOrEmpty($mainFile))) {
-        $deployCmd = "mvn -X deploy:deploy-file" +
+        $deployCmd = "mvn deploy:deploy-file" +
                 " -Dfile=`"$mainFile`"" +
                 " -DrepositoryId=`"imagej.releases`"" +
                 " -Durl=`"dav:https://maven.imagej.net/content/repositories/releases`"" +

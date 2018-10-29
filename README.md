@@ -83,3 +83,27 @@ To build the library and standalone program using maven:
     cd ./test_files
     ./slim-curve-cmd test.ini transient.dat
     ```
+
+## Using from a Java project
+
+To depend on SLIM Curve, you may want to include the Java interface JAR and the native library JAR dependencies in your Maven `pom.xml`:
+
+```
+<dependency>
+  <groupId>slim-curve</groupId>
+  <artifactId>slim-curve</artifactId>
+  <version>1.0.0</version>
+</dependency>
+<dependency>
+  <groupId>slim-curve</groupId>
+  <artifactId>slim-curve</artifactId>
+  <classifier>native-linux_64</classifier>
+  <!-- OR -->
+  <!-- <classifier>native-windows_64</classifier> -->
+  <!-- OR -->
+  <!-- <classifier>native-osx_64</classifier> -->
+  <version>1.0.0</version>
+</dependency>
+```
+
+Note that unlike Java binary the native binary is platform-dependent. So you may want to make sure that the type of your OS coincides with what is specified in the `<classifier>` tag.
