@@ -126,6 +126,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 			<activation>
 				<os>
 					<family>windows</family>
+					<arch>amd64</arch>
 				</os>
 			</activation>
 			<properties>
@@ -142,6 +143,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 			<activation>
 				<os>
 					<family>mac</family>
+					<arch>x86_64</arch>
 				</os>
 			</activation>
 			<properties>
@@ -154,6 +156,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				<os>
 					<family>unix</family>
 					<name>Linux</name>
+					<arch>amd64</arch>
 				</os>
 			</activation>
 			<properties>
