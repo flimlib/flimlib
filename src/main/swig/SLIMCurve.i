@@ -88,8 +88,7 @@ MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 			NativeLoader.loadLibrary("slim-curve");
 			NativeLoader.loadLibrary("slim-curve-jni");
 		} catch (IOException e) {
-			System.err.println("Failed to load library:\n" + e.getMessage());
-			System.exit(1);
+			throw new ExceptionInInitializerError(e);
 		}
 	}
 %}
