@@ -2,7 +2,7 @@
 
 # Install needed tools
 if which brew; then
-  brew install swig
+  HOMEBREW_NO_AUTO_UPDATE=1 brew install swig
 fi
 if which cram; then
   CRAM=cram
