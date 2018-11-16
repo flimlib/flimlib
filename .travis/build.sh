@@ -1,9 +1,6 @@
 #!/bin/bash
 
 # Install needed tools
-if which brew; then
-  HOMEBREW_NO_AUTO_UPDATE=1 brew install swig
-fi
 if which cram; then
   CRAM=cram
 else
