@@ -79,7 +79,7 @@ then
   version="$(echo $gav | cut -d ":" -f 3)"
 
   # Check if a release has been deployed for that version
-  folderStatus=$(curl -s -o /dev/null -I -w '%{http_code}' http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/)
+  folderStatus=$(curl -s -o /dev/null -I -w '%{http_code}' https://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/)
   if [ "$folderStatus" != "200" ]
   then
     exit $exit_code
@@ -94,7 +94,7 @@ then
     fi
     extension="${fileName##*.}"
     # Check if the launcher for that version has already been deployed
-    fileStatus=$(curl -s -o /dev/null -I -w '%{http_code}' http://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/$fileName)
+    fileStatus=$(curl -s -o /dev/null -I -w '%{http_code}' https://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/$fileName)
     if [ "$fileStatus" != "200" ]
     then
       if [ ! -z "$mainFile" ]
