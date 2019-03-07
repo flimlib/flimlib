@@ -441,7 +441,7 @@ int GCI_marquardt_global_exps_instr(float xincr, float **trans,
 	/* Step (1): estimate the global taus */
 	ret = GCI_marquardt_global_exps_est_globals_instr(
 			xincr, trans, ndata, ntrans, fit_start, fit_end,
-			scaled_instr, ninstr, noise, sig,
+			instr != NULL ? scaled_instr : NULL, ninstr, noise, sig,
 			ftype, param, paramfree, nparam, gparam, restrain, chisq_delta,
 			fitted[0], residuals[0], covar, alpha, chisq_global);
 
@@ -487,7 +487,7 @@ int GCI_marquardt_global_exps_instr(float xincr, float **trans,
 	   the individual transient parameters */
 	ret = GCI_marquardt_global_exps_est_params_instr(
 			xincr, trans, ndata, ntrans, fit_start, fit_end,
-			scaled_instr, ninstr, noise, sig, ftype,
+			instr != NULL ? scaled_instr : NULL, ninstr, noise, sig, ftype,
 			param, paramfree, nparam, restrain, chisq_delta,
 			exp_pure, exp_conv, fitted, residuals, covar, alpha,
 			chisq_trans, drop_bad_transients);
@@ -509,7 +509,7 @@ int GCI_marquardt_global_exps_instr(float xincr, float **trans,
 	   covar and alpha are only provided as scratch space. */
 	ret = GCI_marquardt_global_exps_do_fit_instr(
 			xincr, trans, ndata, ntrans, fit_start, fit_end,
-			scaled_instr, ninstr, noise, sig, ftype,
+			instr != NULL ? scaled_instr : NULL, ninstr, noise, sig, ftype,
 			param, paramfree, nparam, restrain, chisq_delta,
 			exp_pure, exp_conv, fitted, residuals, covar, alpha,
 			chisq_trans, chisq_global, drop_bad_transients);
