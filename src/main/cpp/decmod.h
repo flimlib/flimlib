@@ -81,7 +81,6 @@ DecayModel::DecayModel(JNIEnv *jenv, FitFunc &fitfunc, jfloatArray params, jbool
 	// fitfunc (do_fit<0/1>) will be determined at fit-time
 	this->fitfuncobj = &fitfunc; this->fitfunc = NULL;
 	this->nparam = std::min<jsize>(jenv->GetArrayLength(params), MAXFIT);
-	this->fitfuncobj->nparam = nparam;
 	// create a GlobalRef so that the array cannot be GC-ed
 	this->paramsref = (jfloatArray)jenv->NewGlobalRef(jenv->NewFloatArray(nparam));
 	jenv->GetFloatArrayRegion(params, 0, nparam, (jfloat*)this->params);

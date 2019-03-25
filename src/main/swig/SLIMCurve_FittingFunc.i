@@ -37,13 +37,13 @@ static thread_local jfloatArray t_dy_dparam = NULL;
 
 // Static fitting worker for executing the cached fitfunc
 static void do_fit0(float x, float param[], float *y, float dy_dparam[], int nparam) {
-	*y = t_fitfunc[0]->fit(x, param, dy_dparam);
+	*y = t_fitfunc[0]->fit(x, param, dy_dparam, nparam);
 }
 // Used in GCI_EcfModelSelectionEngine. There is probably no way of knowing
 // the FitFunc of which model is being called during the execution, so it is
 // hard-coded.
 static void do_fit1(float x, float param[], float *y, float dy_dparam[], int nparam) {
-	*y = t_fitfunc[1]->fit(x, param, dy_dparam);
+	*y = t_fitfunc[1]->fit(x, param, dy_dparam, nparam);
 }
 
 const FitFunc& NTV_GCI_MULTIEXP_LAMBDA = FitFunc(GCI_multiexp_lambda);
@@ -64,22 +64,11 @@ void (*fitfunc)(float, float [], float *, float [], int)
 %typemap(jni) fitfunc_ptr "jlong"
 %typemap(in) fitfunc_ptr %{
 	t_fitfunc[0] = (FitFunc *) $input;
-	// if one of those flags are set, then the corresponding variable
-	// is defined (in array map) and so nparam can be now determined
-#if defined(MAP_1D_ARR_param)
-	t_fitfunc[0]->nparam = len_param;
-#elif defined(MAP_1D_ARR_paramfree)
-	t_fitfunc[0]->nparam = len_paramfree;
-#endif
 	// feed the static fitting function instead
 	$1 = &do_fit0;
 %}
 %typemap(freearg) fitfunc_ptr %{
 	// in case of reuse
-	if (t_fitfunc[0])
-		t_fitfunc[0]->nparam = 0;
-	if (t_fitfunc[1])
-		t_fitfunc[1]->nparam = 0;
 	t_fitfunc[0] = t_fitfunc[1] = NULL;
 %}
 
@@ -100,20 +89,31 @@ void (*fitfunc)(float, float [], float *, float [], int)
 
 // directorin copies c array into java array before the jni call
 // directorout copies back to c array after that
-%typemap(directorin,descriptor="[F") float[] {
+%typemap(directorin,descriptor="[F") float param[] {
 	// don't bother allocating a new array if length is the same
 	// $1_name = param or dy_dparam depending on which is being mapped
-	if (!t_$1_name || jenv->GetArrayLength(t_$1_name) != this->nparam) {
+	if (!t_$1_name || jenv->GetArrayLength(t_$1_name) != nparam) {
 		if (t_$1_name)
 			jenv->DeleteGlobalRef(t_$1_name);
-		t_$1_name = (jfloatArray)jenv->NewGlobalRef(jenv->NewFloatArray(this->nparam));
+		t_$1_name = (jfloatArray)jenv->NewGlobalRef(jenv->NewFloatArray(nparam));
 	}
 	$input = t_$1_name;
-	jenv->SetFloatArrayRegion($input, 0, this->nparam, $1);
+	jenv->SetFloatArrayRegion($input, 0, nparam, $1);
 }
-%typemap(directorargout) float[] {
+%typemap(directorin,descriptor="[F") (float dy_dparam[], int nparam) {
+	// don't bother allocating a new array if length is the same
+	// $1_name = param or dy_dparam depending on which is being mapped
+	if (!t_$1_name || jenv->GetArrayLength(t_$1_name) != nparam) {
+		if (t_$1_name)
+			jenv->DeleteGlobalRef(t_$1_name);
+		t_$1_name = (jfloatArray)jenv->NewGlobalRef(jenv->NewFloatArray(nparam));
+	}
+	$input = t_$1_name;
+	jenv->SetFloatArrayRegion($input, 0, nparam, $1);
+}
+%typemap(directorargout) (float dy_dparam[], int nparam) {
 	jsize sz = jenv->GetArrayLength($input);
-	jenv->GetFloatArrayRegion($input, 0, this->nparam, $1);
+	jenv->GetFloatArrayRegion($input, 0, nparam, $1);
 }
 
 %feature("director") FitFunc;
@@ -135,7 +135,6 @@ ARRMAP(FLTARRIN, 1, 0, float, Float, 0, false)
 	if (len_param != len_dy_dparam)
 		SWIG_JavaThrowException(jenv, SWIG_JavaIllegalArgumentException,
 			"param number does not match dy_dparam number");
-	t_fitfunc[0]->nparam = len_dy_dparam;
 %}
 
 %typemap(javacode) FitFunc %{
@@ -157,6 +156,10 @@ ARRMAP(FLTARRIN, 1, 0, float, Float, 0, false)
 			return (FitFuncNative)i;
 		}
 		return new FitFuncNativeProxy(i);
+	}
+
+	public float fit(float x, float[] param, float[] dy_dparam) {
+		return fit(x, param, dy_dparam, param.length);
 	}
 %}
 

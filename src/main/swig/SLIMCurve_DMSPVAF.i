@@ -88,11 +88,7 @@ static thread_local FitFunc *t_fitfunc[2] = { 0 };
 	std::copy($1[2].params, $1[2].params + $1[2].nparam, decmods$argnum[1]->params);
 	decmods$argnum[0]->chisq = $1[1].chisq;
 	decmods$argnum[1]->chisq = $1[2].chisq;
-	// in case of builtin
-	if (!t_fitfunc[0])
-		t_fitfunc[0]->nparam = 0;
-	if (!t_fitfunc[1])
-		t_fitfunc[1]->nparam = 0;
+	// in case of reuse
 	t_fitfunc[0] = t_fitfunc[1] = 0;
 
 	delete[] $1;
