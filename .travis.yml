@@ -1,4 +1,5 @@
 language: java
+jdk: openjdk10
 # https://github.com/travis-ci/travis-ci/issues/2316#issuecomment-245829804
 matrix:
   include:
