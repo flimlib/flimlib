@@ -1,13 +1,11 @@
 language: java
-jdk: openjdk8
-
 # https://github.com/travis-ci/travis-ci/issues/2316#issuecomment-245829804
 matrix:
   include:
     - os: linux
-      jdk: openjdk8
     - os: osx
-      osx_image: xcode8.3
+      # https://stackoverflow.com/questions/49748063/pip-install-fails-for-every-package-could-not-find-a-version-that-satisfies/49748494#49748494
+      osx_image: xcode9.3
 
 # https://docs.travis-ci.com/user/installing-dependencies/
 addons:
@@ -22,7 +20,8 @@ branches:
   only:
   - master
   - "/.*-[0-9]+\\..*/"
-install: true
+install:
+  - pip install --user cram
 script: ".travis/build.sh"
 cache:
   directories:
