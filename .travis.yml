@@ -19,6 +19,7 @@ addons:
 branches:
   only:
   - master
+  - dev
   - "/.*-[0-9]+\\..*/"
 install:
   - pip install --user cram
