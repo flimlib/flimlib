@@ -60,12 +60,12 @@ If (Test-Path $customSettings) {
     $defaultSettings='<settings>
   <servers>
     <server>
-      <id>imagej.releases</id>
+      <id>scijava.releases</id>
       <username>appveyor</username>
       <password>${env.MAVEN_PASS}</password>
     </server>
     <server>
-      <id>imagej.snapshots</id>
+      <id>scijava.snapshots</id>
       <username>appveyor</username>
       <password>${env.MAVEN_PASS}</password>
     </server>
