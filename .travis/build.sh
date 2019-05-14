@@ -48,7 +48,7 @@ then
   exit_code=$((exit_code | $?))
 fi
 
-ls -lR ./target/
+# ls -lR ./target/
 
 # Deploy artifacts
 # Lifted from https://github.com/imagej/imagej-launcher/blob/f14435e80acbe7c84d52695a4794afb570ab65c8/.travis/build.sh

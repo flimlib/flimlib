@@ -10,7 +10,7 @@ $version = (Select-Xml -Xml $pom -XPath '/pomNs:project/pomNs:version' -Namespac
 
 If (($Env:APPVEYOR_REPO_TAG -match "false")  -and ($Env:APPVEYOR_REPO_BRANCH -match "master") -and !(Test-Path Env:\APPVEYOR_PULL_REQUEST_NUMBER)) {
     "== Building and deploying master SNAPSHOT =="
-    & "mvn" "-B" "-Pdeploy-to-imagej" "deploy" 2> $null
+    & "mvn" "-B" "-Pdeploy-to-scijava" "deploy" 2> $null
 } ElseIf (($Env:APPVEYOR_REPO_TAG -match "true") -and (Test-Path ($Env:APPVEYOR_BUILD_FOLDER + "\release.properties"))) {
     "== Cutting and deploying release version =="
     & "mvn" "-B" "release:perform" 2> $null
