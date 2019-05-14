@@ -1,10 +1,10 @@
 language: java
 jdk: openjdk8
-# https://github.com/travis-ci/travis-ci/issues/2316#issuecomment-245829804
 matrix:
   include:
     - os: linux
     - os: osx
+      osx_image: xcode9.3
 
 # https://docs.travis-ci.com/user/installing-dependencies/
 addons:
