@@ -16,7 +16,7 @@ If (($Env:APPVEYOR_REPO_TAG -match "false")  -and ($Env:APPVEYOR_REPO_BRANCH -ma
     & "mvn" "-B" "release:perform" 2> $null
 
     # Check if the parent folder in the Nexus is available
-    $responseFolder = try { (Invoke-Webrequest -uri "https://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/" -UseBasicParsing -method head -TimeoutSec 5).statuscode } catch { $_.Exception.Response.StatusCode.Value__ }
+    $responseFolder = try { (Invoke-Webrequest -uri "https://maven.scijava.org/content/repositories/releases/$groupIdForURL/$artifactId/$version/" -UseBasicParsing -method head -TimeoutSec 5).statuscode } catch { $_.Exception.Response.StatusCode.Value__ }
 
     If ($responseFolder -ne 200) {
         exit $LASTEXITCODE
@@ -34,7 +34,7 @@ If (($Env:APPVEYOR_REPO_TAG -match "false")  -and ($Env:APPVEYOR_REPO_BRANCH -ma
         }
         $extension = [System.IO.Path]::GetExtension("$artifactPath") -replace "^\.", ""
         # Check if the launcher itself was already deployed
-        $responseFile = try { (Invoke-Webrequest -uri "https://maven.imagej.net/content/repositories/releases/$groupIdForURL/$artifactId/$version/$fileName" -UseBasicParsing -method head -TimeoutSec 5).statuscode } catch { $_.Exception.Response.StatusCode.Value__ }
+        $responseFile = try { (Invoke-Webrequest -uri "https://maven.scijava.org/content/repositories/releases/$groupIdForURL/$artifactId/$version/$fileName" -UseBasicParsing -method head -TimeoutSec 5).statuscode } catch { $_.Exception.Response.StatusCode.Value__ }
         # Deploy only iff the parent exists and the launcher does not exist
         If ($responseFile -eq 404) {
             # Only start if there is a main artifact
@@ -51,8 +51,8 @@ If (($Env:APPVEYOR_REPO_TAG -match "false")  -and ($Env:APPVEYOR_REPO_BRANCH -ma
     If (-not ([string]::IsNullOrEmpty($mainFile))) {
         $deployCmd = "mvn deploy:deploy-file" +
                 " -Dfile=`"$mainFile`"" +
-                " -DrepositoryId=`"imagej.releases`"" +
-                " -Durl=`"dav:https://maven.imagej.net/content/repositories/releases`"" +
+                " -DrepositoryId=`"scijava.releases`"" +
+                " -Durl=`"dav:https://maven.scijava.org/content/repositories/releases`"" +
                 " -DgeneratePom=`"false`"" +
                 " -DgroupId=`"$groupId`"" +
                 " -DartifactId=`"$artifactId`"" +
