@@ -14,6 +14,7 @@ addons:
   homebrew:
     packages:
       - swig
+    update: true
 
 branches:
   only:
