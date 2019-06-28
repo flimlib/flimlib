@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>26.0.0</version>
+		<version>27.0.1</version>
 		<relativePath />
 	</parent>
 
@@ -122,45 +122,17 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 	<profiles>
 		<!-- Os name (for naming the artifact and the os-specific directory in it) -->
 		<profile>
-			<id>asm-win</id>
+			<id>build-win</id>
 			<activation>
 				<os>
 					<family>windows</family>
-					<arch>amd64</arch>
 				</os>
 			</activation>
 			<properties>
-				<asm.osNameArch>windows_64</asm.osNameArch>
 				<!-- <cmake.generator>-GUnix Makefiles</cmake.generator> -->
-				<!-- <cmake.generator>-GVisual Studio 14 2015 Win64</cmake.generator> -->
 				<cmake.generator>-GVisual Studio 15 2017 Win64</cmake.generator>
 				<cmake.flag.config>--config</cmake.flag.config>
 				<cmake.flag.release>Release</cmake.flag.release>
-			</properties>
-		</profile>
-		<profile>
-			<id>asm-osx</id>
-			<activation>
-				<os>
-					<family>mac</family>
-					<arch>x86_64</arch>
-				</os>
-			</activation>
-			<properties>
-				<asm.osNameArch>osx_64</asm.osNameArch>
-			</properties>
-		</profile>
-		<profile>
-			<id>asm-linux</id>
-			<activation>
-				<os>
-					<family>unix</family>
-					<name>Linux</name>
-					<arch>amd64</arch>
-				</os>
-			</activation>
-			<properties>
-				<asm.osNameArch>linux_64</asm.osNameArch>
 			</properties>
 		</profile>
 	</profiles>
@@ -229,7 +201,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				<artifactId>exec-maven-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>native-cmake</id>
+						<id>native-cmake-generate</id>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>exec</goal>
