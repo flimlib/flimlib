@@ -86,24 +86,30 @@ To build the library and standalone program using maven:
 
 ## Using from a Java project
 
-To depend on SLIM Curve, you may want to include the Java interface JAR and the native library JAR dependencies in your Maven `pom.xml`:
+To depend on SLIM Curve from Maven, simply copy the following to appropriate places in your `pom.xml`:
 
-```
+```xml
+<properties>
+  <slim-curve.version>1.1.0</slim-curve.version>
+</properties>
+
+<!-- SLIM Curve Java interface -->
 <dependency>
   <groupId>slim-curve</groupId>
   <artifactId>slim-curve</artifactId>
-  <version>1.0.0</version>
+  <version>${slim-curve.version}</version>
 </dependency>
+<!-- SLIM Curve native binary -->
 <dependency>
   <groupId>slim-curve</groupId>
   <artifactId>slim-curve</artifactId>
-  <classifier>native-linux_64</classifier>
-  <!-- OR -->
+  <version>${slim-curve.version}</version>
+  <classifier>${scijava.natives.classifier}</classifier>
+  <!-- Or one of the following if you would like to manually specify the binary platform -->
+  <!-- <classifier>native-linux_64</classifier> -->
   <!-- <classifier>native-windows_64</classifier> -->
-  <!-- OR -->
   <!-- <classifier>native-osx_64</classifier> -->
-  <version>1.0.0</version>
 </dependency>
 ```
 
-Note that unlike Java binary the native binary is platform-dependent. So you may want to make sure that the type of your OS coincides with what is specified in the `<classifier>` tag.
+*Note that the native binary is platform-dependent. So you may want to make sure that the `<classifier>` attribute is either automatically detected by the parent `scijava` pom (`${scijava.natives.classifier}`) or manually filled in to match your platform.*
