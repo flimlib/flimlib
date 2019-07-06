@@ -11,7 +11,7 @@
 
 	<groupId>slim-curve</groupId>
 	<artifactId>slim-curve</artifactId>
-	<version>1.1.1-SNAPSHOT</version>
+	<version>1.1.2-SNAPSHOT</version>
 
 	<name>SLIM Curve</name>
 	<description>A package for exponential curve fitting of combined spectral lifetime image data.</description>
