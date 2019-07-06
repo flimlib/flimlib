@@ -88,6 +88,12 @@ endif(UNIX)
 
 # Setup swig to build a java lib
 set(CMAKE_SWIG_FLAGS -package slim)
+# simply to avoid warnings, see https://github.com/CCPPETMR/SIRF/issues/242
+if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.13.5") 
+    # policy introduced in CMake 3.13
+    cmake_policy(SET CMP0086 NEW)
+    cmake_policy(SET CMP0078 NEW)
+endif()
 
 find_package(SWIG REQUIRED)
 find_package(Java REQUIRED)
