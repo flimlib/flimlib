@@ -1275,8 +1275,8 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 			ret = -1;
 
 		if (ret < 0)
-			for (i=0; i<fit_end; i++)
-				(*fitfunc)(xincr*((float)i), param, &(*pfnvals)[i],
+			for (i = 0; i < fit_end; i++)
+				(*fitfunc)(xincr * (i - fit_start), param, &(*pfnvals)[i],
 						   (*pdy_dparam_pure)[i], nparam);
 
 		/* OK, we've got to convolve the model fit with the given
@@ -1327,8 +1327,8 @@ int GCI_marquardt_compute_fn_instr(float xincr, float y[], int ndata,
 			ret = -1;
 
 		if (ret < 0)
-			for (i=0; i<fit_end; i++)
-				(*fitfunc)(xincr*((float)i), param, &yfit[i],
+			for (i = fit_start; i < fit_end; i++)
+				(*fitfunc)(xincr * (i - fit_start), param, &yfit[i],
 						   (*pdy_dparam_conv)[i], nparam);
 	}
 
@@ -1665,8 +1665,8 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			ret = -1;
 
 		if (ret < 0)
-			for (i=0; i<ndata; i++)
-				(*fitfunc)(xincr*((float)i), param, &fnvals[i],
+			for (i = 0; i < ndata; i++)
+				(*fitfunc)(xincr * (i - fit_start), param, &fnvals[i],
 						   dy_dparam_pure[i], nparam);
 
 		/* OK, we've got to convolve the model fit with the given
@@ -1712,8 +1712,8 @@ int GCI_marquardt_compute_fn_final_instr(float xincr, float y[], int ndata,
 			ret = -1;
 
 		if (ret < 0)
-			for (i=0; i<ndata; i++)
-				(*fitfunc)(xincr*((float)i), param, &yfit[i],
+			for (i = 0; i < ndata; i++)
+				(*fitfunc)(xincr * (i - fit_start), param, &yfit[i],
 						   dy_dparam_conv[i], nparam);
 	}
 
@@ -1883,6 +1883,11 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 	int ret, tries=0;
 
 	if (ecf_exportParams) ecf_ExportParams_OpenFile ();
+
+	// FIXME: remove the block below by fixing the array fitting functions (xx_array) in EcfUtil.c to allow arbitrary
+	// starting point, and change the use of those functions in GCI_marquardt_compute_fn_instr() and
+	// GCI_marquardt_compute_fn_final_instr(). The "adverse effect" comes from the fact that t = 0 should be aligned
+	// with i = fit_start instead of i = 0 as in the array fitting functions.
 
 	// If there is no prompt the data before fit_start is redundant and can adversly effect the fit, remove it
 	if (ninstr <= 0) {
