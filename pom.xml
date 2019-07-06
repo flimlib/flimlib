@@ -130,7 +130,6 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 			</activation>
 			<properties>
 				<!-- <cmake.generator>-GUnix Makefiles</cmake.generator> -->
-				<cmake.generator>-GVisual Studio 15 2017 Win64</cmake.generator>
 				<cmake.flag.config>--config</cmake.flag.config>
 				<cmake.flag.release>Release</cmake.flag.release>
 			</properties>
@@ -211,9 +210,9 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 							<workingDirectory>${project.build.directory}/build</workingDirectory>
 							<arguments>
 								<argument>${project.basedir}</argument>
+								<argument>-DCMAKE_GENERATOR_PLATFORM=x64</argument>
 								<!-- CMAKE_BUILD_TYPE specifies build option for Linux/MacOS -->
 								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
-								<argument>${cmake.generator}</argument>
 							</arguments>
 						</configuration>
 					</execution>
