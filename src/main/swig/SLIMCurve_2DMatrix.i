@@ -85,9 +85,6 @@ typedef ParamMatrix<int> Int2DMatrix;
 	$3 = fp->nrow;
 }
 /* Java code to be inserted into SLIMCurve class */
-%typemap(javaimports) ParamMatrix<jType> %{
-import java.util.Arrays;
-%}
 %typemap(javacode) ParamMatrix<jType> %{
 /* Checks array dimensions before converted into a Float2DMatrix */
 private static void checkArray(final jType[][] arr) {

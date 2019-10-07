@@ -3,10 +3,21 @@
 %{
 #include <algorithm>
 #include <iostream>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "Ecf.h"
 #include "EcfGlobal.h"
 #include "EcfWrapper.h"
 #include "GCI_Phasor.h"
+#include "BayesAnalysis.h"
+
+#ifdef __cplusplus
+}
+#endif
+
 #define PKG_NAME "slim"
 %}
 
@@ -39,7 +50,8 @@ MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 
 // Tell swig to use corresponding typemaps (OUTPUT defined in typemaps.i)
 %apply int *INOUT { int* };
-%apply float *INOUT { float *Z,  float *A, float *tau, float *residuals, float *fitted };
+%apply float *INOUT { float *Z,  float *A, float *tau, float *residuals, float *fitted, float *error };
+%apply int *OUTPUT { int *nphotons };
 %apply float *OUTPUT { float * };
 %apply double *INOUT { double * };
 %apply FITTYPEENUM { int ftype };
@@ -76,6 +88,7 @@ MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 %include "../c/EcfGlobal.h"
 %include "../c/EcfWrapper.h"
 %include "../c/GCI_Phasor.h"
+%include "../BayesAnalysis.h"
 
 %pragma(java) jniclassimports=%{
   import org.scijava.nativelib.NativeLoader;
