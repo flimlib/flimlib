@@ -30,3 +30,4 @@ EXPORTS
     ECF_ExportParams_stop
     RLD_fit
     LMA_fit
+    Bayes_fitting_engine
