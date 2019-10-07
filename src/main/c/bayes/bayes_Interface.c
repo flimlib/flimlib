@@ -80,14 +80,15 @@ typedef struct
 	float bayesrapidbghigh;
 } BayesMonoRapidGridConfig_t;
 
+// Search constraints
 static const BayesMonoRapidGridConfig_t BayesMonoRapidGridConfig = {
-	.bayesrapidtaupts = 200,
-	.bayesrapidtaulow = 0.1f,
-	.bayesrapidtauhigh = 5.0f,
+	.bayesrapidtaupts = 100,
+	.bayesrapidtaulow = 1e-6,
+	.bayesrapidtauhigh = 500.0f,
 	.bayesrapidwpts = 200,
 	.bayesrapidwlow = 0.0f,
 	.bayesrapidwhigh = 1.0f,
-	.bayesrapidbghigh = 0.5f
+	.bayesrapidbghigh = 10.0f
 };
 
 typedef struct
