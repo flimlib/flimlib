@@ -1,6 +1,6 @@
 version: 1.0.{build}
 
-clone_folder: c:\projects\slim-curve
+clone_folder: c:\projects\flimlib
 
 image: Visual Studio 2017
 platform: x64

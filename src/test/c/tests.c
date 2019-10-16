@@ -253,7 +253,7 @@ void compareFloat2D(json_t *outputs, char *name, float **values, int rows, int c
 }
 
 /*
- * Custom SLIMCurve fitting tests.
+ * Custom FLIMLib fitting tests.
  */
 void do_fit(int exponents, json_t *inputs, json_t *outputs, float tolerance, int *changed, int *success)
 {

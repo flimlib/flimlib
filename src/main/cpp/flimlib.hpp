@@ -1,6 +1,6 @@
 /*
  * #%L
- * SLIM Curve package for exponential curve fitting of spectral lifetime data.
+ * FLIMLib package for exponential curve fitting of fluorescence lifetime data.
  * %%
  * Copyright (C) 2010 - 2017 University of Oxford and Board of Regents of the
  * University of Wisconsin-Madison.
@@ -22,43 +22,43 @@
  */
 
  /** 
-  C++ interface for SLIM Curve.
+  C++ interface for FLIMLib.
 
   Caller _has_ to at least use:
-	SlimCurve.setupData(transient, ndata);
+	FLIMLib.setupData(transient, ndata);
   but better is:
-	SlimCurve.setupData(transient, ndata, xincr, transient_rise, transient_peak, transient_end);
+	FLIMLib.setupData(transient, ndata, xincr, transient_rise, transient_peak, transient_end);
 
   And should read results using e.g.:
-	SlimCurve.param[SLIM_CURVE_BI_PARAM_Z]
-	SlimCurve.param[SLIM_CURVE_BI_PARAM_A1]
-	SlimCurve.param[SLIM_CURVE_BI_PARAM_TAU1]
+	FLIMLib.param[FLIMLIB_BI_PARAM_Z]
+	FLIMLib.param[FLIMLIB_BI_PARAM_A1]
+	FLIMLib.param[FLIMLIB_BI_PARAM_TAU1]
 	etc.
 
   Optionally can use: 
-	SlimCurve.setupIRF(instr, ninstr);
-	SlimCurve.restrainParameter(SLIM_CURVE_X_PARAM_Y, min, max);
-	SlimCurve.fixParameter(SLIM_CURVE_X_PARAM_Y, value);
+	FLIMLib.setupIRF(instr, ninstr);
+	FLIMLib.restrainParameter(FLIMLIB_X_PARAM_Y, min, max);
+	FLIMLib.fixParameter(FLIMLIB_X_PARAM_Y, value);
 
   Can also optionally get the fit and residuals; before fitting do this:
 	float fitted[ndata];
 	float residuals[ndata];
-	SlimCurve.fitted = fitted;
-	SlimCurve.residuals = residuals;
+	FLIMLib.fitted = fitted;
+	FLIMLib.residuals = residuals;
   and use fitted[] and residuals[] after the fit.
   Similarly for:
-	SlimCurve.covar
-	SlimCurve.alpha
-	SlimCurve.err_axes
+	FLIMLib.covar
+	FLIMLib.alpha
+	FLIMLib.err_axes
 
   A good sequence would be to use:
-    SlimCurve.setupData(transient, ndata, xincr, transient_rise, transient_peak, transient_end);
-	SlimCurve.setupIRF(instr, ninstr);
-	SlimCurve.fitRLD();    // To get initial parameter estimates
-	SlimCurve.noise_model = NOISE_MLE;  // To use maximum likelihood
-	SlimCurve.fitLMA(SLIM_CURVE_MONO);  // To do a mono fit
+  FLIMLib.setupData(transient, ndata, xincr, transient_rise, transient_peak, transient_end);
+	FLIMLib.setupIRF(instr, ninstr);
+	FLIMLib.fitRLD();    // To get initial parameter estimates
+	FLIMLib.noise_model = NOISE_MLE;  // To use maximum likelihood
+	FLIMLib.fitLMA(FLIMLIB_MONO);  // To do a mono fit
 
-	\file slim-curve.hpp
+	\file flimlib.hpp
 */
 
 #include <stdio.h>      /* printf, scanf, NULL */
@@ -68,59 +68,59 @@
 #include "Ecf.h"
 #include "GCI_Phasor.h"
 
-#define SLIM_CURVE_SUCCESS 0
-#define SLIM_CURVE_MEMORY_ERROR -1
-#define SLIM_CURVE_SETTINGS_ERROR -2
-#define SLIM_CURVE_FITTING_ERROR -3
+#define FLIMLIB_SUCCESS 0
+#define FLIMLIB_MEMORY_ERROR -1
+#define FLIMLIB_SETTINGS_ERROR -2
+#define FLIMLIB_FITTING_ERROR -3
 
-#define SLIM_CURVE_MONO 0
-#define SLIM_CURVE_BI 1
-#define SLIM_CURVE_TRI 2
-#define SLIM_CURVE_STRETCHED 3
+#define FLIMLIB_MONO 0
+#define FLIMLIB_BI 1
+#define FLIMLIB_TRI 2
+#define FLIMLIB_STRETCHED 3
 
 // parameter order as defined by RLD()
-#define SLIM_CURVE_RLD_PARAM_Z 0
-#define SLIM_CURVE_RLD_PARAM_A 1
-#define SLIM_CURVE_RLD_PARAM_TAU 2
+#define FLIMLIB_RLD_PARAM_Z 0
+#define FLIMLIB_RLD_PARAM_A 1
+#define FLIMLIB_RLD_PARAM_TAU 2
 
 // parameter order as defined by GCI_multiexp_tau()
-#define SLIM_CURVE_MONO_PARAM_Z 0
-#define SLIM_CURVE_MONO_PARAM_A 1
-#define SLIM_CURVE_MONO_PARAM_TAU 2
-#define SLIM_CURVE_BI_PARAM_Z 0
-#define SLIM_CURVE_BI_PARAM_A1 1
-#define SLIM_CURVE_BI_PARAM_TAU1 2
-#define SLIM_CURVE_BI_PARAM_A2 3
-#define SLIM_CURVE_BI_PARAM_TAU2 4
-#define SLIM_CURVE_TRI_PARAM_Z 0
-#define SLIM_CURVE_TRI_PARAM_A1 1
-#define SLIM_CURVE_TRI_PARAM_TAU1 2
-#define SLIM_CURVE_TRI_PARAM_A2 3
-#define SLIM_CURVE_TRI_PARAM_TAU2 4
-#define SLIM_CURVE_TRI_PARAM_A3 5
-#define SLIM_CURVE_TRI_PARAM_TAU3 6
+#define FLIMLIB_MONO_PARAM_Z 0
+#define FLIMLIB_MONO_PARAM_A 1
+#define FLIMLIB_MONO_PARAM_TAU 2
+#define FLIMLIB_BI_PARAM_Z 0
+#define FLIMLIB_BI_PARAM_A1 1
+#define FLIMLIB_BI_PARAM_TAU1 2
+#define FLIMLIB_BI_PARAM_A2 3
+#define FLIMLIB_BI_PARAM_TAU2 4
+#define FLIMLIB_TRI_PARAM_Z 0
+#define FLIMLIB_TRI_PARAM_A1 1
+#define FLIMLIB_TRI_PARAM_TAU1 2
+#define FLIMLIB_TRI_PARAM_A2 3
+#define FLIMLIB_TRI_PARAM_TAU2 4
+#define FLIMLIB_TRI_PARAM_A3 5
+#define FLIMLIB_TRI_PARAM_TAU3 6
 
 // parameter order as defined by GCI_stretchedexp()
-#define SLIM_CURVE_STRETCHED_PARAM_Z 0
-#define SLIM_CURVE_STRETCHED_PARAM_A 1
-#define SLIM_CURVE_STRETCHED_PARAM_TAU 2
-#define SLIM_CURVE_STRETCHED_PARAM_H 3
+#define FLIMLIB_STRETCHED_PARAM_Z 0
+#define FLIMLIB_STRETCHED_PARAM_A 1
+#define FLIMLIB_STRETCHED_PARAM_TAU 2
+#define FLIMLIB_STRETCHED_PARAM_H 3
 
 // parameter order as defined by GCI_Phasor()
-#define SLIM_CURVE_PHASOR_PARAM_Z 0
-#define SLIM_CURVE_PHASOR_PARAM_TAU 2
-#define SLIM_CURVE_PHASOR_PARAM_U 7
-#define SLIM_CURVE_PHASOR_PARAM_V 8
-#define SLIM_CURVE_PHASOR_PARAM_TAUP 9
-#define SLIM_CURVE_PHASOR_PARAM_TAUM 10
+#define FLIMLIB_PHASOR_PARAM_Z 0
+#define FLIMLIB_PHASOR_PARAM_TAU 2
+#define FLIMLIB_PHASOR_PARAM_U 7
+#define FLIMLIB_PHASOR_PARAM_V 8
+#define FLIMLIB_PHASOR_PARAM_TAUP 9
+#define FLIMLIB_PHASOR_PARAM_TAUM 10
 
 // Set default values
 float chisq_target = 1.0f;
 
 /**
-	Global class for a SLIM Curve fitter
+	Global class for a FLIMLib fitter
 */
-class SLIMCurve {
+class FLIMLib {
 	// Fixing and restraining
 	int _nparamfree;
 	int _restrained[MAXFIT];
@@ -165,7 +165,7 @@ public:
 	/**
 	 * Constructor: make sure all vars are assigned.
 	 */
-	SLIMCurve() {
+	FLIMLib() {
 		// Default values
 		_nparamfree = 0;
 		_fitted = NULL;
@@ -207,7 +207,7 @@ public:
 	/**
 	* Destructor: make sure all arrays are freed.
 	*/
-	~SLIMCurve(){
+	~FLIMLib(){
 		freePrivateVars();  // Should be done by fit functions, but just make sure.
 	}
 
@@ -216,14 +216,14 @@ public:
 		May use the private variables.
 	*/
 	int checkValues() {
-		if (transient == NULL) return SLIM_CURVE_SETTINGS_ERROR;
-		if (ndata == 0) return SLIM_CURVE_SETTINGS_ERROR;
+		if (transient == NULL) return FLIMLIB_SETTINGS_ERROR;
+		if (ndata == 0) return FLIMLIB_SETTINGS_ERROR;
 
 		if (fit_start < 0) fit_start = 0;
 		if (fit_end <= fit_start) fit_end = ndata-1;
-		if (fit_end > ndata-1) return SLIM_CURVE_SETTINGS_ERROR;
+		if (fit_end > ndata-1) return FLIMLIB_SETTINGS_ERROR;
 
-		if (noise_model == NOISE_GIVEN && noise_sd == NULL) return SLIM_CURVE_SETTINGS_ERROR;
+		if (noise_model == NOISE_GIVEN && noise_sd == NULL) return FLIMLIB_SETTINGS_ERROR;
 
 		_nparamfree = 0;
 		for (int i = 0; i < nparam; i++) {
@@ -232,35 +232,35 @@ public:
 
 		if (fitted == NULL) {
 			_fitted = (float *)malloc(ndata * sizeof(int));
-			if (_fitted == NULL) return SLIM_CURVE_MEMORY_ERROR;
+			if (_fitted == NULL) return FLIMLIB_MEMORY_ERROR;
 			fitted = _fitted;
 		}
 
 		if (residuals == NULL) {
 			_residuals = (float *)malloc(ndata * sizeof(int));
-			if (_residuals == NULL) return SLIM_CURVE_MEMORY_ERROR;
+			if (_residuals == NULL) return FLIMLIB_MEMORY_ERROR;
 			residuals = _residuals;
 		}
 
 		if (covar == NULL) {
 			_covar = GCI_ecf_matrix(ndata, ndata);
-			if (_covar == NULL) return SLIM_CURVE_MEMORY_ERROR;
+			if (_covar == NULL) return FLIMLIB_MEMORY_ERROR;
 			covar = _covar;
 		}
 
 		if (alpha == NULL) {
 			_alpha = GCI_ecf_matrix(ndata, ndata);
-			if (_alpha == NULL) return SLIM_CURVE_MEMORY_ERROR;
+			if (_alpha == NULL) return FLIMLIB_MEMORY_ERROR;
 			alpha = _alpha;
 		}
 
 		if (err_axes == NULL) {
 			_err_axes = GCI_ecf_matrix(ndata, ndata);
-			if (_err_axes == NULL) return SLIM_CURVE_MEMORY_ERROR;
+			if (_err_axes == NULL) return FLIMLIB_MEMORY_ERROR;
 			err_axes = _err_axes;
 		}
 
-		return SLIM_CURVE_SUCCESS;
+		return FLIMLIB_SUCCESS;
 	}
 
 	/**
@@ -329,9 +329,9 @@ public:
 	*/
 	int fitRLD(int freeVars = 1) {
 
-		float *Z = &(param[SLIM_CURVE_RLD_PARAM_Z]);
-		float *A = &(param[SLIM_CURVE_RLD_PARAM_A]);
-		float *tau = &(param[SLIM_CURVE_RLD_PARAM_TAU]);
+		float *Z = &(param[FLIMLIB_RLD_PARAM_Z]);
+		float *A = &(param[FLIMLIB_RLD_PARAM_A]);
+		float *tau = &(param[FLIMLIB_RLD_PARAM_TAU]);
 
 		int err = checkValues();
 		if (err < 0) return err;
@@ -347,26 +347,26 @@ public:
 	/**
 	* Wrapper for GCI_marquardt_fitting_engine()
 	* Uses the parameters already setup to perform the fit
-	* \param type One of SLIM_CURVE_MONO, SLIM_CURVE_BI etc.
+	* \param type One of FLIMLIB_MONO, FLIMLIB_BI etc.
 	* \param freeVars If 0 the method will not free the private arrays used for fitting, this speeds up repeated use.
 	*/
 	int fitLMA(int type, int freeVars = 1) {
 
 		switch (type)
 		{
-		case SLIM_CURVE_MONO:
+		case FLIMLIB_MONO:
 			nparam = 3;
 			fitfunc = GCI_multiexp_tau;
 			break;
-		case SLIM_CURVE_BI:
+		case FLIMLIB_BI:
 			nparam = 5;
 			fitfunc = GCI_multiexp_tau;
 			break;
-		case SLIM_CURVE_TRI:
+		case FLIMLIB_TRI:
 			nparam = 7;
 			fitfunc = GCI_multiexp_tau;
 			break;
-		case SLIM_CURVE_STRETCHED:
+		case FLIMLIB_STRETCHED:
 			fitfunc = GCI_stretchedexp;
 			nparam = 4;
 			break;
@@ -396,12 +396,12 @@ public:
 	*/
 	int fitPhasor(float lZ=0.0f, int freeVars = 1) {
 
-		float *Z = &(param[SLIM_CURVE_PHASOR_PARAM_Z]);
-		float *u = &(param[SLIM_CURVE_PHASOR_PARAM_U]);
-		float *v = &(param[SLIM_CURVE_PHASOR_PARAM_V]);
-		float *taup = &(param[SLIM_CURVE_PHASOR_PARAM_TAUP]);
-		float *taum = &(param[SLIM_CURVE_PHASOR_PARAM_TAUM]);
-		float *tau = &(param[SLIM_CURVE_PHASOR_PARAM_TAU]);
+		float *Z = &(param[FLIMLIB_PHASOR_PARAM_Z]);
+		float *u = &(param[FLIMLIB_PHASOR_PARAM_U]);
+		float *v = &(param[FLIMLIB_PHASOR_PARAM_V]);
+		float *taup = &(param[FLIMLIB_PHASOR_PARAM_TAUP]);
+		float *taum = &(param[FLIMLIB_PHASOR_PARAM_TAUM]);
+		float *tau = &(param[FLIMLIB_PHASOR_PARAM_TAU]);
 
 		*Z = lZ;  // This function requires a Z in order to subtract it
 
@@ -413,12 +413,12 @@ public:
 
 		if (freeVars) freePrivateVars();
 
-		return SLIM_CURVE_SUCCESS;
+		return FLIMLIB_SUCCESS;
 	}
 
 	/**
 	* Convenience function for fixing a parameter in a LMA fit
-	* /param[in] parameter Index into paramter array of the parameter you wish to fix, use e.g. SLIM_CURVE_MONO_TAU etc.
+	* /param[in] parameter Index into paramter array of the parameter you wish to fix, use e.g. FLIMLIB_MONO_TAU etc.
 	* /param[in] value The value to fix the paramter to in future fits.
 	*/
 	void fixParameter(int parameter, float value) {
@@ -435,7 +435,7 @@ public:
 
 	/**
 	* Convenience function for restraining a parameter in a LMA fit
-	* /param[in] parameter Index into paramter array of the parameter you wish to fix, use e.g. SLIM_CURVE_MONO_TAU etc.
+	* /param[in] parameter Index into paramter array of the parameter you wish to fix, use e.g. FLIMLIB_MONO_TAU etc.
 	* /param[in] min The min value to restrain the paramter to in future fits.
 	* /param[in] max The max value to restrain the paramter to in future fits.
 	*/

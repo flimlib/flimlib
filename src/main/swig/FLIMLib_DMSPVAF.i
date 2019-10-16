@@ -1,4 +1,4 @@
-%module SLIMCurve
+%module FLIMLib
 
 %ignore _DMSPVAF;
 %ignore DecayModelSelParamValuesAndFit;

@@ -1,4 +1,4 @@
-package slim;
+package flimlib;
 
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import org.json.simple.parser.JSONParser;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SLIMCurveNativeTest {
+public class FLIMLibNativeTest {
 
 	protected ArrayList<NativeTest> tests;
 	protected float tolerance;
@@ -83,11 +83,11 @@ class NativeTest {
 	}
 
 	public void run() {
-		int result = SLIMCurve.GCI_triple_integral_fitting_engine(xincr, y, fit_start, fit_end, instr, noise, sig, Z, A,
+		int result = FLIMLib.GCI_triple_integral_fitting_engine(xincr, y, fit_start, fit_end, instr, noise, sig, Z, A,
 				tau, fitted, residuals, chisq, chisq_target);
 		System.out.printf("Triple Integral chisq is %f\n", chisq[0]);
 		System.out.printf("Triple Integral return value %d a %f t %f z %f\n", result, A[0], tau[0], Z[0]);
-		//SLIMCurve.GCI_marquardt_fitting_engine(xincr, y, ndata, result, result, instr, noise, sig, param, paramfree, restrain, fitfunc, fitted, residuals, chisq, covar, alpha, erraxes, result, chisq_delta, chisq_percent)
+		//FLIMLib.GCI_marquardt_fitting_engine(xincr, y, ndata, result, result, instr, noise, sig, param, paramfree, restrain, fitfunc, fitted, residuals, chisq, covar, alpha, erraxes, result, chisq_delta, chisq_percent)
 	}
 	
 	private static float getFloat(JSONObject source, String property, float defaultVal) {

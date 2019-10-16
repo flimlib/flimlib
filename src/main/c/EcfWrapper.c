@@ -1,6 +1,6 @@
 /*
  * #%L
- * SLIM Curve package for exponential curve fitting of spectral lifetime data.
+ * FLIMLib package for exponential curve fitting of fluorescence lifetime data.
  * %%
  * Copyright (C) 2010 - 2015 University of Oxford and Board of Regents of the
  * University of Wisconsin-Madison.
@@ -29,7 +29,7 @@
 
 
 noise_type getNoiseModels (int val)
-{  // This is from TRI2 and must match the noise models, between TRI2 ui and     SLIM Curve - This is not a good thing to have! TRI2 should save the SLIM Cu    rve type
+{  // This is from TRI2 and must match the noise models, between TRI2 UI and FLIMLib - This is not a good thing to have! TRI2 should save the FLIMLib type
 
     switch (val)
     {

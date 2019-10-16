@@ -1,4 +1,4 @@
-%module SLIMCurve
+%module FLIMLib
 
 %{
 #include "ParamMatrix.h"
@@ -84,7 +84,7 @@ typedef ParamMatrix<int> Int2DMatrix;
 	$2 = fp->ncol;
 	$3 = fp->nrow;
 }
-/* Java code to be inserted into SLIMCurve class */
+/* Java code to be inserted into FLIMLib class */
 %typemap(javaimports) ParamMatrix<jType> %{
 import java.util.Arrays;
 %}

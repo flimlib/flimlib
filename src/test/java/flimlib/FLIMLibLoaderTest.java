@@ -1,6 +1,6 @@
 /*
  * #%L
- * SLIM Curve package for exponential curve fitting of spectral lifetime data.
+ * FLIMLib package for exponential curve fitting of fluorescence lifetime data.
  * %%
  * Copyright (C) 2010 - 2014 Gray Institute University of Oxford and Board of
  * Regents of the University of Wisconsin-Madison.
@@ -21,7 +21,7 @@
  * #L%
  */
 
-package slim;
+package flimlib;
 
 import java.io.IOException;
 
@@ -33,13 +33,13 @@ import org.scijava.nativelib.NativeLoader;
  * 
  * @author Dasong Gao
  */
-public class SLIMCurveLibLoaderTest {
+public class FLIMLibLoaderTest {
 	/** Tests {@link NativeLoader#loadLibrary}. */
 	@Test
 	public void testLoader() {
 		try {
-			NativeLoader.loadLibrary("slim-curve");
-			NativeLoader.loadLibrary("slim-curve-jni");
+			NativeLoader.loadLibrary("flimlib");
+			NativeLoader.loadLibrary("flimlib-jni");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

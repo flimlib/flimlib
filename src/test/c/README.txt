@@ -1,4 +1,4 @@
-SLIMCurve Testing project
+FLIMLib Testing project
 
 I. Test Framework
 
@@ -44,7 +44,7 @@ II.  Running the Tests
 
 There are two test files provided, original.json and test.json.  (They are actually identical except the original.json file has empty output sections [i.e. '"outputs":{}']).
 
-If you run the test with the file original.json (in Windows, '"SLIMCurve Testing" original.json > output') it will run with the old NR-dependent versions of the fitting methods, add the results to the JSON tree, and print out the JSON document to standard output.
+If you run the test with the file original.json (in Windows, '"FLIMLib Testing" original.json > output') it will run with the old NR-dependent versions of the fitting methods, add the results to the JSON tree, and print out the JSON document to standard output.
 
 You can cut & paste from standard output and build test.json.  Running this version exercises the new code under test and prints out test results.
 

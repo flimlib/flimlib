@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-project(slim-curve)
+project(flimlib)
 
 # CXX Build options
 if(NOT CMAKE_BUILD_TYPE)
@@ -20,74 +20,72 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-include_directories("src/main/c" "src/main/cpp" "src/slim-curve-cmd/c/iniparser/src" "src/test/c")
+include_directories("src/main/c" "src/main/cpp" "src/flimlib-cmd/c/iniparser/src" "src/test/c")
 
 # Common files we always need
-set(SLIM_CURVE_COMMON   src/main/c/EcfGlobal.c
-                        src/main/c/EcfSingle.c
-                        src/main/c/EcfSPA.c
-                        src/main/c/EcfUtil.c
-                        src/main/c/EcfWrapper.c
-                        src/main/c/GCI_Lsqnonneg.c
-                        src/main/c/GCI_Phasor.c
+set(FLIMLIB_COMMON   src/main/c/EcfGlobal.c
+                     src/main/c/EcfSingle.c
+                     src/main/c/EcfSPA.c
+                     src/main/c/EcfUtil.c
+                     src/main/c/EcfWrapper.c
+                     src/main/c/GCI_Lsqnonneg.c
+                     src/main/c/GCI_Phasor.c
 )
 
 # Additional files for the stand alone program
-set(SLIM_CURVE_MAIN     src/slim-curve-cmd/c/main.c
-                        src/slim-curve-cmd/c/iniparser/src/iniparser.c
-                        src/slim-curve-cmd/c/iniparser/src/dictionary.c
+set(FLIMLIB_MAIN     src/flimlib-cmd/c/main.c
+                     src/flimlib-cmd/c/iniparser/src/iniparser.c
+                     src/flimlib-cmd/c/iniparser/src/dictionary.c
 )
 
 # Additional files for the stand alone testing
-set(SLIM_CURVE_TEST     src/test/c/main.c
-                        src/test/c/json.c
-                        src/test/c/json_helper.c
-                        src/test/c/output.c
-                        src/test/c/parser.c
-                        src/test/c/tests.c
+set(FLIMLIB_TEST     src/test/c/main.c
+                     src/test/c/json.c
+                     src/test/c/json_helper.c
+                     src/test/c/output.c
+                     src/test/c/parser.c
+                     src/test/c/tests.c
 )
 
 # Aditional files for a library
-set(SLIM_CURVE_LIB      #src/main/c/loci_curvefitter_SLIMCurveFitter.c
-                        #src/main/c/loci_slim_SLIMCurve.c
-                        src/main/c/slim-curve.def
+set(FLIMLIB_LIB      src/main/c/flimlib.def
 )
 
 # Aditional files for a stand alone program based on the C++ interface
-set(SLIM_CURVE_CPP      src/slim-curve-cmd/cpp/main.cpp
-                        src/main/cpp/slim-curve.hpp
-                        src/slim-curve-cmd/c/iniparser/src/iniparser.c
-                        src/slim-curve-cmd/c/iniparser/src/dictionary.c
+set(FLIMLIB_CPP      src/flimlib-cmd/cpp/main.cpp
+                     src/main/cpp/flimlib.hpp
+                     src/flimlib-cmd/c/iniparser/src/iniparser.c
+                     src/flimlib-cmd/c/iniparser/src/dictionary.c
 )
 
 # Build a dll
-add_library(slim-curve SHARED ${SLIM_CURVE_COMMON} ${SLIM_CURVE_LIB})
+add_library(flimlib SHARED ${FLIMLIB_COMMON} ${FLIMLIB_LIB})
 
 # Build a static lib
-add_library(slim-curve-static STATIC ${SLIM_CURVE_COMMON})
+add_library(flimlib-static STATIC ${FLIMLIB_COMMON})
 
 # Build a dll test program
-add_executable(slim-curve-dll-test  ${SLIM_CURVE_MAIN})
-target_link_libraries(slim-curve-dll-test slim-curve)
+add_executable(flimlib-dll-test  ${FLIMLIB_MAIN})
+target_link_libraries(flimlib-dll-test flimlib)
 
 # Build a stand alone program
-add_executable(slim-curve-cmd ${SLIM_CURVE_COMMON} ${SLIM_CURVE_MAIN})
+add_executable(flimlib-cmd ${FLIMLIB_COMMON} ${FLIMLIB_MAIN})
 
 # Build a stand alone c++ program
-add_executable(slim-curve-cmd-cpp ${SLIM_CURVE_COMMON} ${SLIM_CURVE_CPP})
+add_executable(flimlib-cmd-cpp ${FLIMLIB_COMMON} ${FLIMLIB_CPP})
 
 # Build a test program
-add_executable(slim-curve-test ${SLIM_CURVE_COMMON} ${SLIM_CURVE_TEST})
+add_executable(flimlib-test ${FLIMLIB_COMMON} ${FLIMLIB_TEST})
 
 if(UNIX)
   # Link the math library
-  target_link_libraries(slim-curve m)
-  target_link_libraries(slim-curve-cmd m)
-  target_link_libraries(slim-curve-test m)
+  target_link_libraries(flimlib m)
+  target_link_libraries(flimlib-cmd m)
+  target_link_libraries(flimlib-test m)
 endif(UNIX)
 
 # Setup swig to build a java lib
-set(CMAKE_SWIG_FLAGS -package slim)
+set(CMAKE_SWIG_FLAGS -package flimlib)
 # simply to avoid warnings, see https://github.com/CCPPETMR/SIRF/issues/242
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.13.5") 
     # policy introduced in CMake 3.13
@@ -103,23 +101,23 @@ include(UseSWIG)
 include_directories(${JNI_INCLUDE_DIRS})
 
 # direcotries where the generated java classes and c wrapper are kept
-set( CMAKE_SWIG_OUTDIR ${PROJECT_SOURCE_DIR}/target/generated-sources/main/java/slim )
+set( CMAKE_SWIG_OUTDIR ${PROJECT_SOURCE_DIR}/target/generated-sources/main/java/flimlib )
 file(MAKE_DIRECTORY ${CMAKE_SWIG_OUTDIR})
 set( SWIG_OUTFILE_DIR ${PROJECT_SOURCE_DIR}/target/generated-sources/main/cpp )
 file(MAKE_DIRECTORY ${SWIG_OUTFILE_DIR})
 
 # Build the C code into a dynamic library
-set_property(SOURCE src/main/swig/SLIMCurve.i PROPERTY CPLUSPLUS ON)
+set_property(SOURCE src/main/swig/FLIMLib.i PROPERTY CPLUSPLUS ON)
 swig_add_library(
-    slim-curve-jni 
+    flimlib-jni 
     TYPE SHARED
     LANGUAGE java
     SOURCES 
-    	src/main/swig/SLIMCurve.i
+    	src/main/swig/FLIMLib.i
 )
 swig_link_libraries(
-	slim-curve-jni
-	slim-curve
+	flimlib-jni
+	flimlib
 )
 
 # Detect target bitness and architecture
@@ -136,7 +134,7 @@ endif()
 # RUNTIME_ for dll output and LIBRARY_ for .so/.dylib/.jnilib output
 # _DEBUG _RELEASE are for MSVC in particular
 set_target_properties(
-    slim-curve
+    flimlib
     PROPERTIES
         PREFIX                              "${TARGET_LIB_PREFIX}"
         RUNTIME_OUTPUT_DIRECTORY            "${OUT_DIR_W_BITS}"
@@ -145,7 +143,7 @@ set_target_properties(
         LIBRARY_OUTPUT_DIRECTORY            "${OUT_DIR_W_BITS}"
 )
 set_target_properties(
-    slim-curve-jni
+    flimlib-jni
     PROPERTIES
         PREFIX                              "${TARGET_LIB_PREFIX}"
         RUNTIME_OUTPUT_DIRECTORY            "${OUT_DIR_W_BITS}"
@@ -187,4 +185,4 @@ set_target_properties(
 #     endforeach(prop)
 # endfunction(print_target_properties)
 
-# print_target_properties(slim-curve-jni)
+# print_target_properties(flimlib-jni)

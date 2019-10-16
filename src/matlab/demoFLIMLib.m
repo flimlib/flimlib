@@ -1,8 +1,8 @@
-function demoSlimCurve
-% demoSlimCurve     This script runs SlimCurve to demonstrate its
+function demoFLIMLib
+% demoFLIMLib     This script runs FLIMLib to demonstrate its
 %                   functions.
 %
-%   demoSlimCurve creates a figure with four panels:
+%   demoFLIMLib creates a figure with four panels:
 %
 %       The first panel shows default single-exponential fit
 %
@@ -20,12 +20,12 @@ function demoSlimCurve
 % GNU GPL license 3.0
 % copyright 2013 Jakub Nedbal
 
-%% First make sure that the mxSlimCurve file exists.
-if ~exist(['mxSlimCurve.' mexext], 'file')
+%% First make sure that the mxFLIMLib file exists.
+if ~exist(['mxFLIMLib.' mexext], 'file')
     try
-        compileSlimCurve;
+        compileFLIMLib;
     catch %#ok<CTCH>
-        error('Could not compile SlimCurve.');
+        error('Could not compile FLIMLib.');
     end
 end
     
@@ -38,7 +38,7 @@ fprintf('Basic mono-exponential fit...\n');
 [transient, prompt, time, xincr, start, fit_start] = createDecay;
 fit_end = numel(transient) - start - 1;
 [paramsLMA, paramsRLD, fittedLMA] = ...
-    mxSlimCurve(transient(start : end), prompt, xincr, fit_start, 1, 3);
+    mxFLIMLib(transient(start : end), prompt, xincr, fit_start, 1, 3);
 
 % plot the curve and its description
 createPlot(1, time, start, fit_start, fit_end, transient, paramsLMA, ...
@@ -57,7 +57,7 @@ fprintf('2-exponential decay, 1-exponential fit...\n');
 fit_end = numel(transient) - start - 1;
 
 [paramsLMA, paramsRLD, fittedLMA] = ...
-    mxSlimCurve(transient(start : end), prompt, xincr, fit_start, 1, 3);
+    mxFLIMLib(transient(start : end), prompt, xincr, fit_start, 1, 3);
 
 % plot the curve and its description
 createPlot(2, time, start, fit_start, fit_end, transient, paramsLMA, ...
@@ -76,7 +76,7 @@ text(0.65, 0.2, '1.50 ns', 'FontSize', 12);
 %% double-exponential fit
 fprintf('2-exponential decay, 2-exponential fit...\n');
 [paramsLMA, paramsRLD, fittedLMA] = ...
-    mxSlimCurve(transient(start : end), prompt, xincr, fit_start, 2);
+    mxFLIMLib(transient(start : end), prompt, xincr, fit_start, 2);
 
 % plot the curve and its description
 createPlot(3, time, start, fit_start, fit_end, transient, paramsLMA, ...
@@ -107,7 +107,7 @@ for i = 1 : numel(nrPhots)
     [transient, prompt, time, xincr, start, fit_start] = ...
         createManyDecays(nrDecays, tau, nrPhots(i), nrNoise(i));
     [paramsLMA] = ...
-        mxSlimCurve(transient(start : end, :), prompt, xincr, fit_start);
+        mxFLIMLib(transient(start : end, :), prompt, xincr, fit_start);
     hists(i, :) = histc(paramsLMA(3, :), hbins);
     [fits(1, i), fits(2, i)] = ...
         roundtoerror(mean(paramsLMA(3, :)), std(paramsLMA(3, :)));
@@ -131,10 +131,10 @@ for i = 1 : numel(nrPhots)
 end
 
 %% Export the figure
-fprintf('Saving demoSlimCurve.pdf...\n');
+fprintf('Saving demoFLIMLib.pdf...\n');
 set(gcf, 'PaperUnits', 'centimeters', 'PaperSize', [21, 29.7], ...
     'PaperPosition', [0, 0, 21, 29.7], 'Units', 'centimeters')
-saveas(gcf, 'demoSlimCurve', 'pdf')
+saveas(gcf, 'demoFLIMLib', 'pdf')
 
 function createPlot(in, time, start, fit_start, fit_end, transient, ...
                     paramsLMA, fittedLMA, tit)
@@ -203,7 +203,7 @@ elseif size(paramsLMA, 1) == 6
 end
 
 %% Print out the figure
-print(gcf, 'demoSlimCurve.pdf', '-dpdf')
+print(gcf, 'demoFLIMLib.pdf', '-dpdf')
 
 function [transient, prompt, time, xincr, start, fit_start] = ...
     createManyDecays(nrDecays, tau, nrPhots, nrNoise)

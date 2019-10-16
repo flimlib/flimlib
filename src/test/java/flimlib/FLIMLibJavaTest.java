@@ -1,6 +1,6 @@
 /*
  * #%L
- * SLIM Curve package for exponential curve fitting of spectral lifetime data.
+ * FLIMLib package for exponential curve fitting of fluorescence lifetime data.
  * %%
  * Copyright (C) 2010 - 2014 Gray Institute University of Oxford and Board of
  * Regents of the University of Wisconsin-Madison.
@@ -21,7 +21,7 @@
  * #L%
  */
 
-package slim;
+package flimlib;
 
 import static org.junit.Assert.*;
 
@@ -32,12 +32,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests {@link SLIMCurve}.  Test parameters currently based 
+ * Tests {@link FLIMLib}.  Test parameters currently based 
  * off of values in files data.data and test.ini
  * 
- * @author Zach Petersen, Dasong Gao
+ * @author Zach Petersen
+ * @author Dasong Gao
  */
-public class SLIMCurveJavaTest {
+public class FLIMLibJavaTest {
 	public static final int TEST_SIZE = 100;
 	public static final int SEED = 0x1226;
 	final static float tolerance = 1e-5f;
@@ -132,7 +133,7 @@ public class SLIMCurveJavaTest {
 			int chisq_percent,
 			int actualRet, float actualParam[], Float2DMatrix actualCovar, Float2DMatrix actualAlpha, Float2DMatrix actualErraxes,
 			float[] actualFitted, float[] actualResiduals, float[] actualChisquare) {
-		int ret = SLIMCurve.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, instr, 
+		int ret = FLIMLib.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, instr, 
 				noise, sig, param, paramfree, restrain, func, fitted, 
 				residuals, chisquare, covar, alpha, erraxes, chisq_target, chisq_delta, 
 				chisq_percent);
@@ -194,10 +195,10 @@ public class SLIMCurveJavaTest {
 //			sigd[i] = sig[i] = 0f;
 	}
 
-	/** Tests {@link SLIMCurve#fitRLD}. */
+	/** Tests {@link FLIMLib#fitRLD}. */
 	@Test
 	public void testFitRLD() {
-		final int rld = SLIMCurve.RLD_fit(xincd, yd, fit_start, fit_end, instrd, 5, sigd, zd, ad, taud, fittedd, chisquared, chisq_targetd);
+		final int rld = FLIMLib.RLD_fit(xincd, yd, fit_start, fit_end, instrd, 5, sigd, zd, ad, taud, fittedd, chisquared, chisq_targetd);
 		assertEquals("rld incorrect", 2, rld);
 		assertEqualsScaled("a incorrect", 12220.635, ad[0], tolerance);
 		assertEqualsScaled("tau incorrect", 2.44568, taud[0], tolerance);
@@ -205,11 +206,11 @@ public class SLIMCurveJavaTest {
 		assertEqualsScaled("Chi square incorrect", 3322.832275390625, chisquared[0], tolerance);
 	}
 
-	/** Tests {@link SLIMCurve#fitLMA}. */
+	/** Tests {@link FLIMLib#fitLMA}. */
 	@Test
 	public void testFitLMA() {
 		final double param[] = { 5.263157800072804E-5, 0.0, 1000.0, 2.0 };
-		final int lma = SLIMCurve.LMA_fit(xincd, yd, fit_start, fit_end, instrd, 5, sigd, param, paramfree, fittedd, chisquared, chisq_targetd, chisquared[0]);
+		final int lma = FLIMLib.LMA_fit(xincd, yd, fit_start, fit_end, instrd, 5, sigd, param, paramfree, fittedd, chisquared, chisq_targetd, chisquared[0]);
 		assertEquals("lma incorrect", 14, lma);
 		assertEqualsScaled("a incorrect", 12726.5693359375, param[2], tolerance);
 		assertEqualsScaled("tau incorrect", 2.2782721519470215, param[3], tolerance);
@@ -218,32 +219,32 @@ public class SLIMCurveJavaTest {
 	
 	}
 	
-	/** Tests {@link SLIMCurve#GCI_marquardt_global_exps_instr}. */
+	/** Tests {@link FLIMLib#GCI_marquardt_global_exps_instr}. */
 	@Test
 	public void testGCIGlobalWrapperCall() {		
 		int result = DEFAULT_RET;
 		Float2DMatrix fitted = new Float2DMatrix(new float[1][ndata]);
 		Float2DMatrix residuals = new Float2DMatrix(new float[1][ndata]);
-		result = SLIMCurve.GCI_marquardt_global_exps_instr(xinc, trans, fit_start, fit_end, instr, 
+		result = FLIMLib.GCI_marquardt_global_exps_instr(xinc, trans, fit_start, fit_end, instr, 
 				NoiseType.swigToEnum(5), sig, FitType.FIT_GLOBAL_MULTIEXP, param2d, paramfree, restrain, chisq_delta, 
 				fitted, residuals, chisq_trans, chisq_global, df, 1);
 		assertTrue(result != DEFAULT_RET);
 	}
 	
-	/** Tests {@link SLIMCurve#GCI_marquardt_global_generic_instr}. */
+	/** Tests {@link FLIMLib#GCI_marquardt_global_generic_instr}. */
 	@Test
 	public void testGCIGlobalGenericCall() {
 		int result = DEFAULT_RET;
 		Float2DMatrix fitted = new Float2DMatrix(new float[1][ndata]);
 		Float2DMatrix residuals = new Float2DMatrix(new float[1][ndata]);
 		
-		result = SLIMCurve.GCI_marquardt_global_generic_instr(xinc, trans, fit_start, fit_end,
+		result = FLIMLib.GCI_marquardt_global_generic_instr(xinc, trans, fit_start, fit_end,
 				instr, noise, sig, param2d, paramfree, gparam, restrain, chisq_delta, FitFunc.GCI_MULTIEXP_LAMBDA, fitted, 
 				residuals, chisq_trans, chisq_global, df);
 		assertTrue(result != DEFAULT_RET);
 	}
 	
-	/** Tests {@link SLIMCurve#GCI_Phasor}. */
+	/** Tests {@link FLIMLib#GCI_Phasor}. */
 	@Test
 	public void testPhasorWrapperCall() {
 		float u[] = {0}; 
@@ -251,7 +252,7 @@ public class SLIMCurveJavaTest {
 		float taup[] = {0};
 		float taum[] = {0};
 		
-		int ret = SLIMCurve.GCI_Phasor(xinc, y, fit_start, fit_end, z, u, v, taup, taum, tau, fitted, residuals, chisquare);
+		int ret = FLIMLib.GCI_Phasor(xinc, y, fit_start, fit_end, z, u, v, taup, taum, tau, fitted, residuals, chisquare);
 		assertEquals("phasor failed", ret, 0);
 		assertEqualsScaled("z incorrect", 0.0f, z[0], tolerance);
 		assertEqualsScaled("u incorrect", 0.37805783f, u[0], tolerance);
@@ -263,14 +264,14 @@ public class SLIMCurveJavaTest {
 				Arrays.copyOfRange(fitted, fitted.length - 6, fitted.length - 1), tolerance);
 		assertArrayEqualsScaled("residuals incorrect", new float[] {0.6157837f, 16.02414f, -18.667145f, 15.54364f, 21.658447f},
 				Arrays.copyOfRange(residuals, residuals.length - 6, residuals.length - 1), tolerance);
-		assertEqualsScaled("period incorrect", 12.25340843f, SLIMCurve.GCI_Phasor_getPeriod(), tolerance);
+		assertEqualsScaled("period incorrect", 12.25340843f, FLIMLib.GCI_Phasor_getPeriod(), tolerance);
 	}
 	
-	/** Tests {@link SLIMCurve#GCI_triple_integral_fitting_engine} with/without {@code instr}. */
+	/** Tests {@link FLIMLib#GCI_triple_integral_fitting_engine} with/without {@code instr}. */
 	@Test
 	public void testGCI_triple_integral_fitting_engine() {
 		chisquare[0] = z[0] = a[0] = tau[0] = 0;
-		int ret0 = SLIMCurve.GCI_triple_integral_fitting_engine(xinc, y, fit_start, fit_end, null, noise, sig, z, a,
+		int ret0 = FLIMLib.GCI_triple_integral_fitting_engine(xinc, y, fit_start, fit_end, null, noise, sig, z, a,
 				tau, fitted, residuals, chisquare, chisq_target);
 		assertEquals("return value incorrect", 2, ret0);
 		assertEqualsScaled("z incorrect", 160.39937, z[0], tolerance);
@@ -283,7 +284,7 @@ public class SLIMCurveJavaTest {
 				new float[] {-185.9866f, -192.62238f, -194.29349f, -228.999f, 0}, tolerance);
 		
 		chisquare[0] = z[0] = a[0] = tau[0] = 0;
-		int ret1 = SLIMCurve.GCI_triple_integral_fitting_engine(xinc, y, fit_start, fit_end, instr, noise, sig, z, a,
+		int ret1 = FLIMLib.GCI_triple_integral_fitting_engine(xinc, y, fit_start, fit_end, instr, noise, sig, z, a,
 				tau, fitted, residuals, chisquare, chisq_target);
 		assertEquals("return value incorrect", 2, ret1);
 		assertEqualsScaled("z incorrect", 160.39937, z[0], tolerance);
@@ -295,10 +296,10 @@ public class SLIMCurveJavaTest {
 				Arrays.copyOfRange(residuals, residuals.length - 6, residuals.length - 1), tolerance);
 	}
 	
-	/** Tests {@link SLIMCurve#GCI_marquardt_fitting_engine}. */
+	/** Tests {@link FLIMLib#GCI_marquardt_fitting_engine}. */
 	@Test
 	public void testGCI_marquardt_fitting_engine() {
-		int ret0 = SLIMCurve.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, instr, 
+		int ret0 = FLIMLib.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, instr, 
 				noise, sig, param0, paramfree, restrain, FitFunc.GCI_MULTIEXP_TAU, fitted, 
 				residuals, chisquare, covar, alpha, erraxes, chisq_target, chisq_delta, 
 				chisq_percent);
@@ -314,7 +315,7 @@ public class SLIMCurveJavaTest {
 				Arrays.copyOfRange(residuals, residuals.length - 6, residuals.length - 1), tolerance);
 		
 		// z, a should be approximately the same; lambda * tau should be approximately 1
-		int ret1 = SLIMCurve.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, instr, 
+		int ret1 = FLIMLib.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, instr, 
 				noise, sig, param1, paramfree, restrain, FitFunc.GCI_MULTIEXP_LAMBDA, fitted, 
 				residuals, chisquare, covar, alpha, erraxes, chisq_target, chisq_delta, 
 				chisq_percent);
@@ -335,18 +336,18 @@ public class SLIMCurveJavaTest {
 	public void testInstrConsistency() {
 		float[] param0 = new float[] { 160.39937f, 13382.208f, 2.4456801f };
 		float[] param1 = new float[] { 160.39937f, 13382.208f, 2.4456801f };
-		SLIMCurve.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, null,
+		FLIMLib.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, null,
 				noise, sig, param0, paramfree, restrain, FitFunc.GCI_MULTIEXP_TAU, fitted,
 				residuals, chisquare, covar, alpha, erraxes, chisq_target, chisq_delta,
 				chisq_percent);
-		SLIMCurve.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, new float[] {1, 0, 0, 0, 0},
+		FLIMLib.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, new float[] {1, 0, 0, 0, 0},
 				noise, sig, param1, paramfree, restrain, FitFunc.GCI_MULTIEXP_TAU, fitted,
 				residuals, chisquare, covar, alpha, erraxes, chisq_target, chisq_delta,
 				chisq_percent);
 		assertArrayEquals(param0, param1, tolerance);
 	}
 	
-	/** Tests {@link SLIMCurve#GCI_EcfModelSelectionEngine}. */
+	/** Tests {@link FLIMLib#GCI_EcfModelSelectionEngine}. */
 	@Test
 	public void testGCI_EcfModelSelectionEngine() {
 		// setup arguments
@@ -361,7 +362,7 @@ public class SLIMCurveJavaTest {
 				new DecayModel(FitFunc.GCI_MULTIEXP_LAMBDA, param1, paramfree,
 						restrain, fit_end + 1, chisq_target, chisq_delta, chisq_percent)
 		};
-		int ret = SLIMCurve.GCI_EcfModelSelectionEngine(xinc, y, fit_start, fit_end, instr, noise, sig,
+		int ret = FLIMLib.GCI_EcfModelSelectionEngine(xinc, y, fit_start, fit_end, instr, noise, sig,
 				paramsandfits, chisq_diff, model);
 		assertEquals("selection failed", ret, 0);
 		compareWithLMA(xinc, y, fit_start, fit_end, instr, 
@@ -448,7 +449,7 @@ public class SLIMCurveJavaTest {
 			}
 		};
 		
-		int ret = SLIMCurve.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, instr, 
+		int ret = FLIMLib.GCI_marquardt_fitting_engine(xinc, y, fit_start, fit_end, instr, 
 				noise, sig, param1, paramfree, restrain, customLambda, fitted,
 				residuals, chisquare, covar, alpha, erraxes, chisq_target, chisq_delta, 
 				chisq_percent);

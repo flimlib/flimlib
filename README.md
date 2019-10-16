@@ -1,23 +1,20 @@
-# SLIM Curve
-[![](https://travis-ci.org/slim-curve/slim-curve.svg?branch=java-lib)](https://travis-ci.org/slim-curve/slim-curve "Travis")    [![](https://ci.appveyor.com/api/projects/status/github/slim-curve/slim-curve?svg=true)](https://ci.appveyor.com/project/scijava/slim-curve "AppVeyor")
+# FLIMLib
+[![](https://travis-ci.org/FLIMLib/flimlib.svg?branch=java-lib)](https://travis-ci.org/FLIMLib/flimlib "Travis")    [![](https://ci.appveyor.com/api/projects/status/github/flimlib/flimlib?svg=true)](https://ci.appveyor.com/project/scijava/flimlib "AppVeyor")
 
-SLIM Curve is a curve fitting library used for Fluorescent Lifetime Imaging or
-FLIM and Spectral Lifetime Imaging or SLIM.  It is developed by Paul Barber and
-the Advanced Technology Group at the [Cancer Research UK and Medical Research
-Council Oxford Institute for Radiation Oncology] (http://www.rob.ox.ac.uk/),
+FLIMLib is a curve fitting library used for Fluorescent Lifetime Imaging or
+FLIM. It is developed by Paul Barber and the Advanced Technology Group at the
+[Oxford Institute for Radiation Oncology](https://www.oncology.ox.ac.uk/),
 University of Oxford, as well as the [Laboratory for Optical and Computational
-Instrumentation](http://loci.wisc.edu/) at the University of Wisconsin-Madison.
-SLIM Curve is used for FLIM functionality in the Advanced Technology
-Group's [Time Resolved Imaging](https://www.assembla.com/spaces/ATD_TRI/wiki)
-(TRI2) software, as well as in the [SLIM Curve plugin for
-ImageJ](http://fiji.sc/SLIM_Curve).
+Instrumentation](https://loci.wisc.edu/) at the University of
+Wisconsin-Madison. FLIMLib is used for FLIM functionality in the [Time Resolved
+Imaging](https://www.assembla.com/spaces/ATD_TRI/wiki) (TRI2) software, as well
+as in the [FLIMJ plugin for ImageJ](https://imagej.net/FLIMJ).
 
-For exponential lifetime fitting there are two core algorithms within SLIM
-Curve:
+For exponential lifetime fitting there are two core algorithms within FLIMLib:
 
 1. A triple integral method that does a very fast estimate of a single
    exponential lifetime component.
-2. The second is a Levenberg-Marquardt algorithm or LMA that uses an iterative,
+2. A Levenberg-Marquardt algorithm or LMA that uses an iterative,
    least-squares-minimization approach to generate a fit. This works with
    single, double and triple exponential models, as well as stretched
    exponential.
@@ -29,35 +26,32 @@ signal. There is also a completely generic global analysis function. A third
 algorithm is available to perform phasor analysis.
 
 In addition there is a non-negative linear least squares algorithm that is
-useful for spectral unmixing in SLIM.
+useful for spectral unmixing in combined spectral-lifetime imaging (SLIM).
 
 The code is written in C89 compatible C and is thread safe for fitting multiple
 pixels concurrently. Several files are provided as wrappers to call this
 library from Java code: `EcfWrapper.c` and `.h` provide a subset of function
-calls used by the ImageJ plugin; these may be invoked directly from Java using
-JNA. In addition there is a Java CurveFitter project that provides a wrapper to
-the SLIM Curve code. This invokes the C code using JNI, with
-`loci_curvefitter_SLIMCurveFitter.c` and `.h`.
+calls used by the FLIMJ plugin for ImageJ.
 
-Additionally, there is wrapper code in `cLibrary.i` to wrap the remaining external
-functions in `GCI_Phasor.c` and `EcfGlobal.c`.  This code generates swig wrapper files 
-which enable you to call these functions from Java.  They are generated 
-automatically in Eclipse when the slim-curve project is updated.
+Additionally, there is wrapper code in `cLibrary.i` to wrap the remaining
+external functions in `GCI_Phasor.c` and `EcfGlobal.c`. This code generates
+swig wrapper files which enable you to call these functions from Java. They
+are generated automatically in Eclipse when the flimlib project is updated.
 
 ## See also
 
-* [SLIM Curve wiki](https://github.com/slim-curve/slim-curve/wiki)
-* [SLIM Curve web site](https://slim-curve.github.io/)
-* [SLIM Curve Doxygen docs](http://code.imagej.net/slim-curve/html/)
+* [FLIMLib wiki](https://github.com/FLIMLib/flimlib/wiki)
+* [FLIMLib web site](https://flimlib.github.io/)
+* [FLIMLib Doxygen docs](http://code.imagej.net/flimlib/html/)
 
 ## Directory contents
 
 * `lib` - pre-compiled dll files for Windows 32 and 64 bit.
 * `src` - source files
-* `src/main/c` - The source files for the SLIM Curve library
-* `src/main/cpp` - The C++ include file for a SLIMCurve class for use in C++ projects
-* `src/slim-curve-cmd/c` - The source files for the standalone executable wrapper for the library
-* `src/slim-curve-cmd/cpp` - The source files for the standalone executable written in C++
+* `src/main/c` - The source files for the FLIMLib library
+* `src/main/cpp` - The C++ include file for a FLIMLib class for use in C++ projects
+* `src/flimlib-cmd/c` - The source files for the standalone executable wrapper for the library
+* `src/flimlib-cmd/cpp` - The source files for the standalone executable written in C++
 * `src/matlab` - Wrapper and example code for use of the library with Matlab
 * `test_files` - dat and ini settings file for testing
 
@@ -74,36 +68,36 @@ To build the library and standalone program using maven:
 1.  Copy the executable to the `test_files` folder for convenience
 
     ```
-    cp target/build/bin/slim-curve-cmd ./test_files
+    cp target/build/bin/flimlib-cmd ./test_files
     ```
 
 2.  Run the program with the test files
 
     ```
     cd ./test_files
-    ./slim-curve-cmd test.ini transient.dat
+    ./flimlib-cmd test.ini transient.dat
     ```
 
 ## Using from a Java project
 
-To depend on SLIM Curve from Maven, simply copy the following to appropriate places in your `pom.xml`:
+To depend on FLIMLib from Maven, simply copy the following to appropriate places in your `pom.xml`:
 
 ```xml
 <properties>
-  <slim-curve.version>1.1.0</slim-curve.version>
+  <flimlib.version>1.1.0</flimlib.version>
 </properties>
 
-<!-- SLIM Curve Java interface -->
+<!-- FLIMLib Java interface -->
 <dependency>
-  <groupId>slim-curve</groupId>
-  <artifactId>slim-curve</artifactId>
-  <version>${slim-curve.version}</version>
+  <groupId>flimlib</groupId>
+  <artifactId>flimlib</artifactId>
+  <version>${flimlib.version}</version>
 </dependency>
-<!-- SLIM Curve native binary -->
+<!-- FLIMLib native binary -->
 <dependency>
-  <groupId>slim-curve</groupId>
-  <artifactId>slim-curve</artifactId>
-  <version>${slim-curve.version}</version>
+  <groupId>flimlib</groupId>
+  <artifactId>flimlib</artifactId>
+  <version>${flimlib.version}</version>
   <classifier>${scijava.natives.classifier}</classifier>
   <!-- Or one of the following if you would like to manually specify the binary platform -->
   <!-- <classifier>native-linux_64</classifier> -->

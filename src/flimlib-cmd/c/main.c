@@ -1,6 +1,6 @@
 /*
  * #%L
- * SLIM Curve package for exponential curve fitting of spectral lifetime data.
+ * FLIMLib package for exponential curve fitting of fluorescence lifetime data.
  * %%
  * Copyright (C) 2010 - 2015 University of Oxford and Board of Regents of the
  * University of Wisconsin-Madison.
@@ -22,7 +22,7 @@
  */
 
 /* 
-Main.c for the stand alone executable version of SLIM Curve.
+Main.c for the stand alone executable version of FLIMLib.
 Reads ini settings file that is compatible with TRI2.
 Provide transient.dat and optional prompt.dat.
 
@@ -399,7 +399,7 @@ int load_datfile (const char *filename, int *nVals, float **arrayPtr)
 	return 0;
 }
 
-/* Parses ".ini" file and calls SLIM Curve fitting code.
+/* Parses ".ini" file and calls FLIMLib fitting code.
  */
 int parse_and_fit(dictionary *ini, const char *dat_filename) {
     int debug = FALSE; //TRUE;
@@ -535,7 +535,7 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
 }
 
 noise_type getNoiseModel (int val)
-{  // This is from TRI2 and must match the noise models, between TRI2 ui and SLIM Curve - This is not a good thing to have! TRI2 should save the SLIM Curve type
+{  // This is from TRI2 and must match the noise models, between TRI2 UI and FLIMLib - This is not a good thing to have! TRI2 should save the FLIMLib type
 
 	switch (val)
 	{

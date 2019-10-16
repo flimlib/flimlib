@@ -1,4 +1,4 @@
-%module SLIMCurve
+%module FLIMLib
 
 %ignore t_spa_prog;
 %ignore update_SPA_progress;

@@ -1,4 +1,4 @@
-%module(directors="1") SLIMCurve
+%module(directors="1") FLIMLib
 
 %{
 #include <algorithm>
@@ -7,16 +7,16 @@
 #include "EcfGlobal.h"
 #include "EcfWrapper.h"
 #include "GCI_Phasor.h"
-#define PKG_NAME "slim"
+#define PKG_NAME "flimlib"
 %}
 
 // custom typemaps
-%include "SLIMCurve_1DArray.i" // arrays (with length parameter)
-%include "SLIMCurve_2DMatrix.i" // 2D arrays (with/out length parameter)
-%include "SLIMCurve_FittingFunc.i" // fitting function pointer
-%include "SLIMCurve_DMSPVAF.i" // struct used by mode selection engine
-%include "SLIMCurve_Enums.i" // all of the enums
-%include "SLIMCurve_ProgressFunc.i" // progress function for SPA
+%include "FLIMLib_1DArray.i" // arrays (with length parameter)
+%include "FLIMLib_2DMatrix.i" // 2D arrays (with/out length parameter)
+%include "FLIMLib_FittingFunc.i" // fitting function pointer
+%include "FLIMLib_DMSPVAF.i" // struct used by mode selection engine
+%include "FLIMLib_Enums.i" // all of the enums
+%include "FLIMLib_ProgressFunc.i" // progress function for SPA
 
 %javaconst(1);
 // rename enums to meet java naming conventions
@@ -85,8 +85,8 @@ MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 %pragma(java) jniclasscode=%{
 	static {
 		try {
-			NativeLoader.loadLibrary("slim-curve");
-			NativeLoader.loadLibrary("slim-curve-jni");
+			NativeLoader.loadLibrary("flimlib");
+			NativeLoader.loadLibrary("flimlib-jni");
 		} catch (IOException e) {
 			throw new ExceptionInInitializerError(e);
 		}

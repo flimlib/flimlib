@@ -1,4 +1,4 @@
-%module SLIMCurve
+%module FLIMLib
 
 %include "enums.swg"
 

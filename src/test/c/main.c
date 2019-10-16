@@ -107,7 +107,7 @@ void compare_solve_timings() {
 		1.0, 2.0, 3.0 };
 	
     // insert code here...
-    printf("SLIM Curve testing\n");
+    printf("FLIMLib testing\n");
 		
 	begin = clock();
 	for (trial = 0; trial < TRIALS; ++trial) {

@@ -1,4 +1,4 @@
-%module(directors="1") SLIMCurve
+%module(directors="1") FLIMLib
 
 %rename(FitFuncNative) FitFunc;
 %typemap(javaclassmodifiers) FitFunc "class"
@@ -118,7 +118,7 @@ void (*fitfunc)(float, float [], float *, float [], int)
 
 %feature("director") FitFunc;
 
-// make sure swig knows float[] type and don't mess up in SLIMCurveJNI
+// make sure swig knows float[] type and don't mess up in FLIMLibJNI
 ARRMAP(FLTARRIN, 1, 0, float, Float, 0, false)
 %apply FLTARRIN { float param[], float dy_dparam[] };
 // override

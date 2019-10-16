@@ -1,6 +1,6 @@
 /*
  * #%L
- * SLIM Curve package for exponential curve fitting of spectral lifetime data.
+ * FLIMLib package for exponential curve fitting of fluorescence lifetime data.
  * %%
  * Copyright (C) 2010 - 2015 University of Oxford and Board of Regents of the
  * University of Wisconsin-Madison.
@@ -21,7 +21,7 @@
  * #L%
  */
 
-/** SLIM Curve - Exponential Curve Fitting
+/** FLIMLib - Exponential Curve Fitting
  
    Based on the 2003 version of the ECF library.  This has been
    modified to remove modified Numeric Recipes code. Also, this

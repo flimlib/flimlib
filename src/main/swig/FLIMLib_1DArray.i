@@ -1,4 +1,4 @@
-%module SLIMCurve
+%module FLIMLib
 
 %include "arrays_java.i" // arrays (without length)
 %include "typemaps.i" // pointers as array

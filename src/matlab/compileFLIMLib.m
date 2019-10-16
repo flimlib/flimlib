@@ -1,34 +1,34 @@
-function compileSlimCurve(Cpath)
-% compileSlimCurve(Cpath) a function to compile the mxSlimCurve to use with
+function compileFLIMLib(Cpath)
+% compileFLIMLib(Cpath) a function to compile the mxFLIMLib to use with
 %   your installation of Matlab.
 %
-%       Cpath   Directory containing the SlimCurve source code.
+%       Cpath   Directory containing the FLIMLib source code.
 %               [Default = '../main/c/']
 %
-%   The copileSlimCurve function EcfSingle.c, EcfUtil.c, Ecf.h, and 
+%   The compileFLIMLib function EcfSingle.c, EcfUtil.c, Ecf.h, and 
 %   EcfInternal.h from Cpath into its folder and deletes old compiled
-%   binaries. Finally, mxSlimCurve is compiled to run in Matlab.
+%   binaries. Finally, mxFLIMLib is compiled to run in Matlab.
 %
-%   compileSlimCurve assumes that a functioning mex compiler in your Matlab
+%   compileFLIMLib assumes that a functioning mex compiler in your Matlab
 %   installation. If the compiler is installed, functional and compatible
-%   with mxSlimCurve code, this function should run without any problem. If
+%   with mxFLIMLib code, this function should run without any problem. If
 %   if fails to compile, make sure a mex compiler is installed and run the
 %   following command on the Matlab command line to select the compiler:
 %   
 %       mex -setup
 %
 %
-%   The following compilers have been tested with mxSlimCurve:
+%   The following compilers have been tested with mxFLIMLib:
 %   Linux 64-bit:       gcc 4.7.2
 %   Windows XP 32-bit:  Windows SDK 7.1
 %                       gcc 4.7.1 (part of MinGW)
 %
-%   The following compilers are not compatible with mxSlimCurve:
+%   The following compilers are not compatible with mxFLIMLib:
 %   Windows XP 32-bit:  Lcc-win32 2.4.1
 %
 %   Note for Linux users only: The function copies the mexopts.sh file 
 %   from matlabroot directory and removes the instances of "-ansi" from it.
-%   Otherwise, mxSlimCurve will fail to compile.
+%   Otherwise, mxFLIMLib will fail to compile.
 %
 % GNU GPL license 3.0
 % copyright 2013-2014 Jakub Nedbal
@@ -45,7 +45,7 @@ if ~exist(Cpath, 'dir')
     error('Source directory %s for C-files does not exist', Cpath);
 end
 
-% Check if SlimCurve source files exist
+% Check if FLIMLib source files exist
 files = {'EcfSingle.c', 'EcfUtil.c', 'Ecf.h', 'EcfInternal.h'};
 for file = files
     if ~exist([Cpath file{1}], 'file')
@@ -54,14 +54,14 @@ for file = files
 end
 
 
-% Check is mc.SlimCurve.c exists in the current folder.
-if ~exist('mxSlimCurve.c', 'file')
-    error('Cannot find mxSlimCurve.c.');
+% Check is mxFLIMLib.c exists in the current folder.
+if ~exist('mxFLIMLib.c', 'file')
+    error('Cannot find mxFLIMLib.c.');
 end
 
 % On Linux machines:
 % Copy mexopts.sh file from matlabroot and delete all instances of "-ansi"
-% from it. Otherwise mxSlimCurve would not compile
+% from it. Otherwise mxFLIMLib would not compile
 if any(strcmpi(computer, {'GLNXA64', 'GLNX86'}))
     copyfile([matlabroot filesep 'bin' filesep 'mexopts.sh'], ...
              'mexopts.sh', 'f');
@@ -70,7 +70,7 @@ end
 
 % On MAC OS X machines:
 % Copy mexopts.sh file from matlabroot and change instances of 10.7 to 10.8
-% if the MAC OS X version is higher than 10.7. Otherwise mxSlimCurve would
+% if the MAC OS X version is higher than 10.7. Otherwise mxFLIMLib would
 % not compile.
 if strcmpi(computer, 'MACI64')
     copyfile([matlabroot filesep 'bin' filesep 'mexopts.sh'], ...
@@ -79,35 +79,35 @@ if strcmpi(computer, 'MACI64')
 end
 
 
-% Copy all necessary slimcurve source files into the current directory
+% Copy all necessary FLIMLib source files into the current directory
 files = {'EcfSingle.c', 'EcfUtil.c', 'Ecf.h', 'EcfInternal.h'};
 for file = files
     copyfile([Cpath file{1}], '.', 'f');
 end
 
-% Delete old mxSlimCurve compiled binaries
-if exist(['mxSlimCurve.' mexext], 'file')
-    delete(['mxSlimCurve.' mexext]);
+% Delete old mxFLIMLib compiled binaries
+if exist(['mxFLIMLib.' mexext], 'file')
+    delete(['mxFLIMLib.' mexext]);
 end
 
-% Compile mxSlimCurve
+% Compile mxFLIMLib
 com = computer;
 switch com
     case {'GLNXA64', 'GLNX86', 'MACI64'}
-        fprintf('Compiling mxSlimCurve for %s architecture...\n', com);
-        mex -f ./mexopts.sh mxSlimCurve.c EcfUtil.c EcfSingle.c
+        fprintf('Compiling mxFLIMLib for %s architecture...\n', com);
+        mex -f ./mexopts.sh mxFLIMLib.c EcfUtil.c EcfSingle.c
     case {'PCWIN', 'PCWIN64'}
-        fprintf('Compiling mxSlimCurve for %s architecture...\n', com);
-        mex mxSlimCurve.c EcfUtil.c EcfSingle.c
+        fprintf('Compiling mxFLIMLib for %s architecture...\n', com);
+        mex mxFLIMLib.c EcfUtil.c EcfSingle.c
     otherwise
-        fprintf('Not sure how to compile mxSlimCurve on your computer ');
+        fprintf('Not sure how to compile mxFLIMLib on your computer ');
         fprintf('architecture: %s. Attempting...\n', com);
-        mex mxSlimCurve.c EcfUtil.c EcfSingle.c
+        mex mxFLIMLib.c EcfUtil.c EcfSingle.c
 end
 
-% Delete the temporary slimcurve source files
+% Delete the temporary FLIMLib source files
 for file = files
     delete(file{1});
 end
 
-fprintf('Finished compiling mxSlimCurve.\n');
+fprintf('Finished compiling mxFLIMLib.\n');

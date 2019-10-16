@@ -1,6 +1,6 @@
 /*
  * #%L
- * SLIM Curve package for exponential curve fitting of spectral lifetime data.
+ * FLIMLib package for exponential curve fitting of fluorescence lifetime data.
  * %%
  * Copyright (C) 2010 - 2015 University of Oxford and Board of Regents of the
  * University of Wisconsin-Madison.
@@ -28,7 +28,7 @@ extern "C" {
 /* Header file for functions defined in lsqnonneg.c */
 
 /** 
- * SLIM Curve - Non-negative Least Squares Header.
+ * FLIMLib - Non-negative Least Squares Header.
  *
  * \file GCI_Lsqnonneg.h
  */

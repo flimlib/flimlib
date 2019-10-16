@@ -1,4 +1,4 @@
-LIBRARY "slim-curve"
+LIBRARY "flimlib"
 EXPORTS
     GCI_EcfModelSelectionEngine
     GCI_triple_integral_fitting_engine

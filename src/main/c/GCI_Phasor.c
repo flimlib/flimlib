@@ -1,6 +1,6 @@
 /*
  * #%L
- * SLIM Curve package for exponential curve fitting of spectral lifetime data.
+ * FLIMLib package for exponential curve fitting of fluorescence lifetime data.
  * %%
  * Copyright (C) 2010 - 2015 University of Oxford and Board of Regents of the
  * University of Wisconsin-Madison.
@@ -22,7 +22,7 @@
  */
  
 /** 
- * SLIM Curve - Phasor analysis.
+ * FLIMLib - Phasor analysis.
  * Classic Phasor or Polar approach to FLIM.
  * See Clayton 2004 or Leray 2008.
  *

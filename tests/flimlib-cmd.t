@@ -1,6 +1,6 @@
-  $ cp "$TESTDIR/../target/build/bin/slim-curve-cmd" "$TESTDIR"/../test_files/* .
+  $ cp "$TESTDIR/../target/build/bin/flimlib-cmd" "$TESTDIR"/../test_files/* .
 
-  $ ./slim-curve-cmd settings1.ini data.dat
+  $ ./flimlib-cmd settings1.ini data.dat
   Settings: settings1.ini
   Transient Data: data.dat
   TRI2 TR Settings File
@@ -9,7 +9,7 @@
   LMA return value 19
   LMA fitted A 11807.464844 T 2.268578 Z 252.651108 X2 7.323193
 
-  $ ./slim-curve-cmd settings2.ini data.dat
+  $ ./flimlib-cmd settings2.ini data.dat
   Settings: settings2.ini
   Transient Data: data.dat
   TRI2 TR Settings File
@@ -18,7 +18,7 @@
   LMA return value 21
   LMA fitted A1 8786.699219 T1 2.841778 A2 5456.799316 T2 0.779751 Z 100.473969 X2 1.210896
 
-  $ ./slim-curve-cmd settings3.ini data.dat
+  $ ./flimlib-cmd settings3.ini data.dat
   Settings: settings3.ini
   Transient Data: data.dat
   TRI2 TR Settings File
@@ -27,7 +27,7 @@
   LMA return value 34
   LMA fitted A1 7850.844238 T1 3.024728 A2 5444.664551 T2 1.022018 A3 4237.820312 T3 0.162697 Z 71.399940 X2 1.133069
 
-  $ ./slim-curve-cmd settings4.ini data.dat
+  $ ./flimlib-cmd settings4.ini data.dat
   Settings: settings4.ini
   Transient Data: data.dat
   TRI2 TR Settings File
@@ -36,7 +36,7 @@
   LMA return value 10
   LMA fitted A 16494.* T 2.6487* H 1.3779* Z -2194.* X2 204.4* (glob)
 
-  $ ./slim-curve-cmd settings5.ini data.dat
+  $ ./flimlib-cmd settings5.ini data.dat
   Settings: settings5.ini
   Transient Data: data.dat
   TRI2 TR Settings File
