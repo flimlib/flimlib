@@ -1,5 +1,6 @@
 # FLIMLib
-[![](https://travis-ci.org/FLIMLib/flimlib.svg?branch=java-lib)](https://travis-ci.org/FLIMLib/flimlib "Travis")    [![](https://ci.appveyor.com/api/projects/status/github/flimlib/flimlib?svg=true)](https://ci.appveyor.com/project/scijava/flimlib "AppVeyor")
+[![](https://travis-ci.com/flimlib/flimlib.svg?branch=java-lib)](https://travis-ci.com/flimlib/flimlib "Travis")
+[![](https://ci.appveyor.com/api/projects/status/github/flimlib/flimlib?svg=true)](https://ci.appveyor.com/project/scijava/flimlib "AppVeyor")
 
 FLIMLib is a curve fitting library used for Fluorescent Lifetime Imaging or
 FLIM. It is developed by Paul Barber and the Advanced Technology Group at the
@@ -40,7 +41,7 @@ are generated automatically in Eclipse when the flimlib project is updated.
 
 ## See also
 
-* [FLIMLib wiki](https://github.com/FLIMLib/flimlib/wiki)
+* [FLIMLib wiki](https://github.com/flimlib/flimlib/wiki)
 * [FLIMLib web site](https://flimlib.github.io/)
 * [FLIMLib Doxygen docs](http://code.imagej.net/flimlib/html/)
 

@@ -67,18 +67,18 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/FLIMLib/flimlib</connection>
-		<developerConnection>scm:git:git@github.com:FLIMLib/flimlib</developerConnection>
+		<connection>scm:git:git://github.com/flimlib/flimlib</connection>
+		<developerConnection>scm:git:git@github.com:flimlib/flimlib</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://github.com/FLIMLib/flimlib</url>
+		<url>https://github.com/flimlib/flimlib</url>
 	</scm>
 	<issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/FLIMLib/flimlib/issues</url>
+		<url>https://github.com/flimlib/flimlib/issues</url>
 	</issueManagement>
 	<ciManagement>
 		<system>Travis CI</system>
-		<url>https://travis-ci.org/FLIMLib/flimlib</url>
+		<url>https://travis-ci.com/flimlib/flimlib</url>
 	</ciManagement>
 
 	<properties>
