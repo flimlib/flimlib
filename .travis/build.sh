@@ -1,7 +1,7 @@
 #!/bin/bash
 
 curl -fsLO https://raw.githubusercontent.com/scijava/scijava-scripts/master/travis-build.sh
-sh travis-build.sh $encrypted_58cee4862e74_key $encrypted_58cee4862e74_iv
+sh travis-build.sh $encrypted_4859d7efcdb9_key $encrypted_4859d7efcdb9_iv
 
 exit_code=$?
 
