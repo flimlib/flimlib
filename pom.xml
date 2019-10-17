@@ -95,13 +95,6 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		<exists-maven-plugin.version>0.0.6</exists-maven-plugin.version>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>scijava.public</id>
-			<url>https://maven.scijava.org/content/groups/public</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -119,28 +112,18 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		</dependency>
 	</dependencies>
 
-	<profiles>
-		<!-- Os name (for naming the artifact and the os-specific directory in it) -->
-		<profile>
-			<id>build-win</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-			<properties>
-				<!-- <cmake.generator>-GUnix Makefiles</cmake.generator> -->
-				<cmake.generator>-DCMAKE_GENERATOR_PLATFORM=x64</cmake.generator>
-				<cmake.flag.config>--config</cmake.flag.config>
-				<cmake.flag.release>Release</cmake.flag.release>
-			</properties>
-		</profile>
-	</profiles>
+	<repositories>
+		<repository>
+			<id>scijava.public</id>
+			<url>https://maven.scijava.org/content/groups/public</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<pluginManagement>
 			<plugins>
-				<plugin><!--
+				<plugin>
+					<!--
 					NB: Make Eclipse generate code in a full build; see:
 					https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html
 					-->
@@ -304,4 +287,22 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<!-- Os name (for naming the artifact and the os-specific directory in it) -->
+		<profile>
+			<id>build-win</id>
+			<activation>
+				<os>
+					<family>windows</family>
+				</os>
+			</activation>
+			<properties>
+				<!-- <cmake.generator>-GUnix Makefiles</cmake.generator> -->
+				<cmake.generator>-DCMAKE_GENERATOR_PLATFORM=x64</cmake.generator>
+				<cmake.flag.config>--config</cmake.flag.config>
+				<cmake.flag.release>Release</cmake.flag.release>
+			</properties>
+		</profile>
+	</profiles>
 </project>
