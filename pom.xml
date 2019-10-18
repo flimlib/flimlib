@@ -93,6 +93,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		<releaseProfiles>deploy-to-scijava</releaseProfiles>
 
 		<exists-maven-plugin.version>0.0.6</exists-maven-plugin.version>
+		<json-simple.version>1.1.1</json-simple.version>
 	</properties>
 
 	<dependencies>
@@ -104,7 +105,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
-			<version>1.1.1</version>
+			<version>${json-simple.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scijava</groupId>
