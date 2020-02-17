@@ -1,10 +1,10 @@
   $ cp "$TESTDIR/../target/build/bin/flimlib-test" "$TESTDIR"/../test_files/* .
 
   $ (./flimlib-test ./test.json) | grep "TESTS RUN"
-  84 TESTS RUN, 31 SUCCESSES, 53 FAILURES
+  84 TESTS RUN, 32 SUCCESSES, 52 FAILURES
 
   $ (./flimlib-test ./test.json) | grep "TESTS RUN"
-  84 TESTS RUN, 31 SUCCESSES, 53 FAILURES
+  84 TESTS RUN, 32 SUCCESSES, 52 FAILURES
 
 # greps changed json string from output as new reference
 #  $ (./flimlib-test ./original.json) | grep '^[\s\S]*{' > ref.json

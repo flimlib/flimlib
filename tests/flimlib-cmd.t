@@ -33,8 +33,8 @@
   TRI2 TR Settings File
   RLD return_value 2
   RLD estimate A 11515.900391 T 2.392674 Z 208.731979 X2 8.997931
-  LMA return value 10
-  LMA fitted A 16494.* T 2.6487* H 1.3779* Z -2194.* X2 204.4* (glob)
+  LMA return value * (glob)
+  LMA fitted A 15745.* T 1.6161* H 1.3704* Z 0.00* X2 1.145* (glob)
 
   $ ./flimlib-cmd settings5.ini data.dat
   Settings: settings5.ini
