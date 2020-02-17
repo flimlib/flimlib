@@ -49,7 +49,8 @@ MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 %apply BOLARRIN_LEN {
 	(int paramfree[], int nparam),
 	(int paramfree[], int nparamfree),
-	(int param_free[], int n_param)
+	(int param_free[], int n_param),
+	(int restrain[], int nparam)
 }
 %apply FLTARRIN_LEN {
 	(float params[], int nparam),

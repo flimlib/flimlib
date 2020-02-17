@@ -377,7 +377,7 @@ public:
 		int err = checkValues();
 		if (err < 0) return err;
 
-		if (restrain==ECF_RESTRAIN_USER) GCI_set_restrain_limits(nparam, _restrained, _restrained_min, _restrained_max);
+		if (restrain==ECF_RESTRAIN_USER) GCI_set_restrain_limits(_restrained, nparam, _restrained_min, _restrained_max);
 
 		iterations = GCI_marquardt_fitting_engine(time_incr, &transient[data_start], ndata - data_start, fit_start-data_start, fit_end-data_start,
 			instr, ninstr, noise_model, noise_sd, param, paramfree, nparam, restrain, fitfunc,

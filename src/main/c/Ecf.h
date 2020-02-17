@@ -666,7 +666,7 @@ int GCI_SPA_2D_marquardt_global_generic_instr(
  * \param[in] maxval Array of maximum values for each parameter (only those for the restrained parameters set by the restrain array are used).
  * \return An error code, 0 = success.
 */
-int GCI_set_restrain_limits(int nparam, int restrain[],
+int GCI_set_restrain_limits(int restrain[], int nparam,
 							float minval[], float maxval[]);
 
 /* Predefined fitting models */

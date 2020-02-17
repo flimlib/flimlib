@@ -104,7 +104,7 @@ int stretchedexp_array(float xincr, float param[],
 					   float *y, float **dy_dparam, int nx, int nparam);
 int check_ecf_params (float param[], int nparam,
                       void (*fitfunc)(float, float [], float *, float [], int));
-int GCI_set_restrain_limits(int nparam, int restrain[],
+int GCI_set_restrain_limits(int restrain[], int nparam,
 							float minval[], float maxval[]);
 int check_ecf_user_params (float param[], int nparam,
                            void (*fitfunc)(float, float [], float *, float [], int));

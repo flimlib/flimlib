@@ -784,7 +784,7 @@ int stretchedexp_array(float xincr, float param[],
 
 
 /* This is the default routine */
-#define MIN_Z -1e5f
+#define MIN_Z 0
 #define MIN_Z_FACTOR 0.4f
 #define MAX_Z 1e10f  /* Silly */
 #define MIN_A 0
@@ -863,12 +863,12 @@ int check_ecf_params (float param[], int nparam,
 /* For the user-specified version, we have some global variables to
    store the settings between invocations. */
 
-static int restrain_nparam=0;  /* How many parameters have we set up? */
-static int restrain_restraining[MAXFIT];  /* Do we check parameter i? */
+static int restrain_nparam = 0;  /* How many parameters have we set up? */
+static int restrain_restraining[MAXFIT] = {0};  /* Do we check parameter i? */
 static float restrain_minval[MAXFIT]; /* Minimum acceptable parameter value */
 static float restrain_maxval[MAXFIT]; /* Maximum acceptable parameter value */
 
-int GCI_set_restrain_limits(int nparam, int restrain[],
+int GCI_set_restrain_limits(int restrain[], int nparam,
 							float minval[], float maxval[])
 {
 	int i;
