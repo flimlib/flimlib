@@ -1337,7 +1337,7 @@ json_unescape (char *text)
 					}
 					else
 					{
-						fprintf (stderr, "JSON: unsupported unicode value: 0x%lX\n", unicode);
+						fprintf (stderr, "JSON: unsupported unicode value: 0x%llX\n", unicode);
 					}
 				}
 				break;

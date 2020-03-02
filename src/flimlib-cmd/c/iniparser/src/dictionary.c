@@ -86,7 +86,7 @@ unsigned dictionary_hash(const char * key)
     unsigned    hash ;
     int         i ;
 
-    len = strlen(key);
+    len = (int) strlen(key);
     for (hash=0, i=0 ; i<len ; i++) {
         hash += (unsigned)key[i] ;
         hash += (hash<<10);
