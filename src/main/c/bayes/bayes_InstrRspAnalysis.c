@@ -1298,13 +1298,13 @@ int bayes_InstrRspCoarseGuessValuesFromLoadedInstr(unsigned int *instr,
     return (0);
 }
 #else
-int bayes_InstrRspCoarseGuessValuesFromLoadedInstr(float *instr,
-                                                   float binwidth,
-                                                   int   nbins,
-                                                   float *delay,
-                                                   float *width)
+int bayes_InstrRspCoarseGuessValuesFromLoadedInstr(unsigned int *instr,
+                                                   float         binwidth,
+                                                   int           nbins,
+                                                   float        *delay,
+                                                   float        *width)
 {
-    double p1, p2, max = 0;
+    double p1, p2, max;
     int    i, maxi, quick=1;
 
     if ((!instr) || (binwidth<=0.0) || (nbins<=0))

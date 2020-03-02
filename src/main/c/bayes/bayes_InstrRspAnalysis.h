@@ -136,11 +136,17 @@ int bayes_DirectInstrRspAndMultiExpOptimization(/* Data in... */
                                                 double                    alpha);
 
 
-int bayes_InstrRspCoarseGuessValuesFromLoadedInstr(float *instr,
-                                                   float  binwidth,
-                                                   int    nbins,
-                                                   float *delay,
-                                                   float *width);
+int bayes_InstrRspCoarseGuessValuesFromLoadedInstr(unsigned int *instr,
+                                                   float         binwidth,
+                                                   int           nbins,
+                                                   float        *delay,
+                                                   float        *width);
+
+int bayes_InstrRspCoarseGuessWidthPriorValuesFromLoadedInstr(unsigned int *instr,
+                                                             float         binwidth,
+                                                             int           nbins,
+                                                             float        *width_ave,
+                                                             float        *width_sd);
 
 #if 0 //configurable prior - code needs finishing
 double MinusLogGaussianPrior(double  x, 

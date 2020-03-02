@@ -19,24 +19,6 @@
 #include "bayes_MultiExpRapidAnalysis.h"
 #include "bayes_ModelSelection.h"
 
-/* Instrument response... */
-typedef struct
-{
-	int bayesirnumcomponents;
-	double bayesirweight1;
-	double bayesircutoff1;
-	double bayesirsigma1;
-	double bayesiruc1;
-	double bayesirweight2;
-	double bayesircutoff2;
-	double bayesirsigma2;
-	double bayesiruc2;
-	double bayesirweight3;
-	double bayesircutoff3;
-	double bayesirsigma3;
-	double bayesiruc3;
-} BayesIrEstConfig_t;
-
 /*=================================================================================*/
 /*                                                                                 */
 /*                 MAIN FITTING FUNCTIONS                                          */
@@ -118,14 +100,14 @@ int bayes_DoBayesInstrRspEstimation(/* Data in... */
                                         int                       fitend,
                                         int                      *nphotons,
                                         /* Loaded prompt in... */
-                                        float                    *prompt,
+                                        unsigned int             *prompt,
                                         int                       nprompt,
                                         float                     promptbinwidth,
                                         /* Decay model... */
                                         int                       modeltype,
                                         /* Instrument... */
                                         BayesInstrRsp_t          *instr,
-	 BayesIrEstConfig_t* BayesIrEstConfig,
+                                        BayesIrEstConfig_t*       BayesIrEstConfig,
                                         float                     laser_period,
                                         /* Data out... */
 										float                    *param_mp, /* Parameters input using conventional model and values (i.e. Z,A1,tau1,A2,tau2...) */
@@ -316,7 +298,7 @@ int bayes_UpdateEstimatedInstrRspDetailsStore(/* Image/prompt data used... */
 float bayes_CalculateResidualsAndEquivalentChisq(float y[], float fitted[], float *residuals, int fit_start, int fit_end);
 
 /* Error management */
-char* bayes_GetBayesErrorDescription(int error);
+const char* bayes_GetBayesErrorDescription(int error);
 
 
 /* Model selection */

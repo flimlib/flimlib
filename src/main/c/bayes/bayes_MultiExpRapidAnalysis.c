@@ -505,9 +505,6 @@ int bayes_MultiExpDiscreteSpaceMinimisationExhaustiveSearch(double (*funk)(int *
     int    p1, terminate;
     BayesProbDistn_t *distn;
     
-    int    DebugTrace=0, d;
-    FILE   *fp = NULL;
-
     xmin  = ((MultiExpDiscreteGridSearchConfigParams_t *)config)->gridmins;
     xmax  = ((MultiExpDiscreteGridSearchConfigParams_t *)config)->gridmaxs;
     distn = ((MultiExpDiscreteGridSearchConfigParams_t *)config)->distn;
@@ -525,69 +522,6 @@ int bayes_MultiExpDiscreteSpaceMinimisationExhaustiveSearch(double (*funk)(int *
     }
 
     yb = y = funk(x,id,container);
-
-    /*if (DebugTrace)
-    {
-        if (0 != fopen_s(&fp, "MultiExpDiscreteSpaceMinimisationExhaustiveSearchDebugOutput.txt", "w"))
-        {
-            DebugTrace = 0;
-        }
-        else
-        {
-            fprintf(fp,"bayes_MultiExpDiscreteSpaceMinimisationExhaustiveSearch ==>\n");
-
-            fprintf(fp,"ndim: %d\n", ndim);
-
-            if (ggExtendedDebug)
-            {
-                ggExtendedDebugParamsContainer  = (PsuedoRapidMultiExpMinusLogProbParams_t *)(container);
-                ggExtendedDebugNumOfDecays      = ggExtendedDebugParamsContainer->paramfixing->nparams/2;
-
-                for (i=1, ggExtendedDebugNumOfTausAsParams=0; i<=ggExtendedDebugNumOfDecays; i++)
-                {
-                    if (ggExtendedDebugParamsContainer->paramfixing->tauuserfixed[i] != BAYES_PARAM_VALUE_USER_FIXED)
-                        ggExtendedDebugNumOfTausAsParams++;
-                }
-
-                ggExtendedDebugNumOfWeightsAsParams = ggExtendedDebugNumOfDecays-(ggExtendedDebugParamsContainer->paramfixing->nparamsuserfixed-(ggExtendedDebugNumOfDecays-ggExtendedDebugNumOfTausAsParams));
-
-                fprintf(fp,"\nExtended debugging trace output ==>\n");
-                fprintf(fp,"gExtendedDebugNumOfWeightsAsParams: %d, gExtendedDebugNumOfTausAsParams: %d\n", ggExtendedDebugNumOfWeightsAsParams, ggExtendedDebugNumOfTausAsParams);
-            }
-
-            fprintf(fp,"Starting location ==> \n");
-
-            for (i=1; i<=ndim; i++)
-                fprintf(fp,"%d\t", where[i]);
-
-            if (ggExtendedDebug)
-            {
-                fprintf(fp,"\t(");
-
-                for (i=1; i<=ggExtendedDebugNumOfWeightsAsParams; i++)
-                {
-                    fprintf(fp,"%g", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->weight[where[i]]);
-
-                    if (i!=ndim)
-                        fprintf(fp,"\t");
-                }
-
-                for (; i<=ndim; i++)
-                {
-                    fprintf(fp,"%g", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->tau[where[i]]);
-
-                    if (i!=ndim)
-                        fprintf(fp,"\t");
-                }
-
-                fprintf(fp,")\t");
-            }
-
-            fprintf(fp,"y: %g\n\n",y);
-
-            fprintf(fp,"Performing exhaustive search ==>\n");
-        }
-    }*/
 
     /* Start at the lowest desired parameter values... */
     for (k=1; k<=ndim; k++)
@@ -621,37 +555,6 @@ int bayes_MultiExpDiscreteSpaceMinimisationExhaustiveSearch(double (*funk)(int *
                 xb[k] = x[k];
         }
         
-        /*if (DebugTrace)
-        {
-            for (d=1; d<=ndim; d++)
-                fprintf(fp,"%d ",x[d]);
-
-            if (ggExtendedDebug)
-            {
-                fprintf(fp,"\t(");
-
-                for (i=1; i<=ggExtendedDebugNumOfWeightsAsParams; i++)
-                {
-                    fprintf(fp,"%g", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->weight[x[i]]);
-
-                    if (i!=ndim)
-                    fprintf(fp,"\t");
-                }
-
-                for (; i<=ndim; i++)
-                {
-                    fprintf(fp,"%g", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->tau[x[i]]);
-
-                    if (i!=ndim)
-                    fprintf(fp,"\t");
-                }
-
-                fprintf(fp,")\t");
-            }
-
-            fprintf(fp,"y: %g\n",y);
-        }*/
-
         if (x[ndim]<xmax[ndim])
         {
             x[ndim]++;
@@ -701,44 +604,6 @@ int bayes_MultiExpDiscreteSpaceMinimisationExhaustiveSearch(double (*funk)(int *
 
     free_Bayes_ivector(x,1,ndim);
     free_Bayes_ivector(xb,1,ndim);
-
-    /*if (DebugTrace)
-    {
-        fprintf(fp,"\n\n\n=============== Overall Results =================\n");
-        fprintf(fp,"Minimum (best) location ==>");
-
-        for (i=1; i<=ndim; i++)
-            fprintf(fp,"%d ", where[i]);
-
-        if (ggExtendedDebug)
-        {
-            fprintf(fp,"\t(");
-
-            for (i=1; i<=ggExtendedDebugNumOfWeightsAsParams; i++)
-            {
-                fprintf(fp,"%g", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->weight[where[i]]);
-
-                if (i!=ndim)
-                    fprintf(fp,"\t");
-            }
-
-            for (; i<=ndim; i++)
-            {
-                fprintf(fp,"%g", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->tau[where[i]]);
-
-                if (i!=ndim)
-                    fprintf(fp,"\t");
-            }
-
-            fprintf(fp,")\t");
-        }
-
-        fprintf(fp,"\nValue at minimum: %g\n", *value);
-        fprintf(fp,"=================================================");
-        fprintf(fp,"\nTotal iterations: %d\n", nit);
-        fprintf(fp,"=================================================");
-        fclose(fp);
-    }*/
 
     return (0);
 }
@@ -827,70 +692,16 @@ int bayes_MultiExpDiscreteSpaceMinimisationStochasticSearch(double (*funk)(int *
 {
     int    ret = MATH_MINIMISATION_RESULT_MAX_FCT_CALLS_REACHED;
 
-    int    i, j, nit;
+    int    j, nit;
     double y, ynew, yb, ybb, t, dt;
     int    *x, *xnew, *xb, *xbb, *grid_extents;
     int    initialisation, ninitialisations;
-
-    int    DebugTrace=0, d;
-    FILE   *fp = NULL;
 
     grid_extents  = ((MultiExpDiscreteGridSearchConfigParams_t *)config)->gridextents;
 	
     if ((ndim<=0) || (!where) || (!funk) || (!grid_extents))
         return (MATH_MINIMISATION_RESULT_ERROR_INVALID_INPUT);
 	
-	/*if (DebugTrace)
-    {
-        if (0 != fopen_s(&fp, "MultiExpDiscreteSpaceMinimisationStochasticSearchOutput.txt", "w"))
-        {
-            DebugTrace = 0;
-        }
-        else
-        {
-            fprintf(fp,"\nbayes_MultiExpDiscreteSpaceMinimisationStochasticSearch ==>\n");
-
-            fprintf(fp,"ndim: %d\n", ndim);
-
-            if (ggExtendedDebug)
-            {
-                ggExtendedDebugParamsContainer  = (PsuedoRapidMultiExpMinusLogProbParams_t *)(container);
-                ggExtendedDebugNumOfDecays      = ggExtendedDebugParamsContainer->paramfixing->nparams/2;
-
-                for (i=1, ggExtendedDebugNumOfTausAsParams=0; i<=ggExtendedDebugNumOfDecays; i++)
-                {
-                    if (ggExtendedDebugParamsContainer->paramfixing->tauuserfixed[i] != BAYES_PARAM_VALUE_USER_FIXED)
-                        ggExtendedDebugNumOfTausAsParams++;
-                }
-
-                ggExtendedDebugNumOfWeightsAsParams = ggExtendedDebugNumOfDecays-(ggExtendedDebugParamsContainer->paramfixing->nparamsuserfixed-(ggExtendedDebugNumOfDecays-ggExtendedDebugNumOfTausAsParams));
-
-                fprintf(fp,"\nExtended debugging trace output ==>\n");
-                fprintf(fp,"gExtendedDebugNumOfWeightsAsParams: %d, gExtendedDebugNumOfTausAsParams: %d\n", ggExtendedDebugNumOfWeightsAsParams, ggExtendedDebugNumOfTausAsParams);
-            }
-
-            fprintf(fp,"Starting location ==> \n");
-
-            for (i=1; i<=ndim; i++)
-                fprintf(fp,"%d\t", where[i]);
-
-            if (ggExtendedDebug)
-            {
-                fprintf(fp,"\t(");
-
-                for (i=1; i<=ggExtendedDebugNumOfWeightsAsParams; i++)
-                    fprintf(fp,"%g\t", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->weight[where[i]]);
-
-                for (; i<=ndim; i++)
-                    fprintf(fp,"%g\t", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->tau[where[i]]);
-
-                fprintf(fp,")");
-            }
-
-            fprintf(fp,"\n");
-        }
-    }*/
-
     /* Initialize routine... */	
     x    = Bayes_ivector(1,ndim);
     xb   = Bayes_ivector(1,ndim);
@@ -919,12 +730,6 @@ int bayes_MultiExpDiscreteSpaceMinimisationStochasticSearch(double (*funk)(int *
 
     for (initialisation=0; initialisation<ninitialisations; initialisation++)
     {
-        /*if (DebugTrace)
-        {
-            fprintf(fp,"\nNew random starting point ==> initialisation: %d\n", initialisation);
-        }*/
-
-
         for (j=1; j<=ndim; j++)//new starting point in outer iteration, easier to explore more space here
             x[j] = (int)(rand_RandomFloat()*(float)grid_extents[j]);
 
@@ -950,29 +755,6 @@ int bayes_MultiExpDiscreteSpaceMinimisationStochasticSearch(double (*funk)(int *
                     x[j] = xnew[j];
 
                 y = ynew;
-
-                /*if (DebugTrace)
-                {
-                    fprintf(fp,"Neighbour (better) state saved...\n");                
-
-                    for (i=1; i<=ndim; i++)
-                        fprintf(fp,"%d\t", xnew[i]);
-
-                    if (ggExtendedDebug)
-                    {
-                        fprintf(fp,"\t(");
-
-                        for (i=1; i<=ggExtendedDebugNumOfWeightsAsParams; i++)
-                            fprintf(fp,"%g\t", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->weight[xnew[i]]);
-
-                        for (; i<=ndim; i++)
-                            fprintf(fp,"%g\t", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->tau[xnew[i]]);
-
-                        fprintf(fp,")\t");
-                    }
-
-                    fprintf(fp,"ynew: %g\n", ynew);
-                }*/
 
                 if (y<yb)
                 {
@@ -1000,28 +782,6 @@ int bayes_MultiExpDiscreteSpaceMinimisationStochasticSearch(double (*funk)(int *
 
                 ybb = yb;
 
-                /*if (DebugTrace)
-                {
-                    fprintf(fp,"New (outer) best state saved\n");
-
-                    for (d=1; d<=ndim; d++)
-                        fprintf(fp,"%d ", xbb[d]);
-
-                    if (ggExtendedDebug)
-                    {
-                        fprintf(fp,"\t(");
-
-                        for (i=1; i<=ggExtendedDebugNumOfWeightsAsParams; i++)
-                            fprintf(fp,"%g\t", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->weight[xbb[i]]);
-
-                        for (; i<=ndim; i++)
-                            fprintf(fp,"%g\t", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->tau[xbb[i]]);
-
-                        fprintf(fp,")\t");
-                    }
-
-                    fprintf(fp,"ybb: %g\n", ybb);        
-                }  */      
             }
         /*}*/
     }
@@ -1035,33 +795,6 @@ int bayes_MultiExpDiscreteSpaceMinimisationStochasticSearch(double (*funk)(int *
     free_Bayes_ivector(xb,1,ndim);
     free_Bayes_ivector(xbb,1,ndim);
     free_Bayes_ivector(xnew,1,ndim);
-
- 	/*if (DebugTrace)
-    {
-        fprintf(fp,"\n\n\n=============== Overall Results =================\n");
-        fprintf(fp,"Minimum (best) location ==>");
-
-        for (i=1; i<=ndim; i++)
-            fprintf(fp,"%d ", where[i]);
-
-        if (ggExtendedDebug)
-        {
-            fprintf(fp,"\t(");
-
-            for (i=1; i<=ggExtendedDebugNumOfWeightsAsParams; i++)
-                fprintf(fp,"%g\t", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->weight[where[i]]);
-
-            for (; i<=ndim; i++)
-                fprintf(fp,"%g\t", ggExtendedDebugParamsContainer->rapidparamsandlikelihoods->likelihoodsvaluestore->settings->tau[where[i]]);
-
-            fprintf(fp,")\t");
-        }
-
-        fprintf(fp,"\nValue at minimum: %g\n", *value);
-
-        fprintf(fp,"=================================================");
-        fclose(fp);
-    }*/
 
     return (ret);
 }

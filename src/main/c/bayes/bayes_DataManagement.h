@@ -46,6 +46,12 @@
 /*                                                                                 */
 /***********************************************************************************/
 
+float data_ComputeBinnedDataAverageArrTime(int* data,
+                                           int    nbins,
+										   int    fitstart,
+                                           int    nphotons,
+                                           float  interval);
+
 int bayes_dm_CheckDoubleValueValid(double Value, int *Type);
 
 void bayes_dm_CorrectInvalidDoubleValue(double *Value, int Type);

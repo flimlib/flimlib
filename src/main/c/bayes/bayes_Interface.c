@@ -69,74 +69,6 @@ static const float bayesadvirfsaprec = 0.000010f;
 static const int bayesadvirfalgsel = 1;
 // static int bayesadvirfsearchres = 0;
 
-typedef struct
-{
-	int bayesrapidtaupts;
-	float bayesrapidtaulow;
-	float bayesrapidtauhigh;
-	int bayesrapidwpts;
-	float bayesrapidwlow;
-	float bayesrapidwhigh;
-	float bayesrapidbghigh;
-} BayesMonoRapidGridConfig_t;
-
-// Search constraints
-static const BayesMonoRapidGridConfig_t BayesMonoRapidGridConfig = {
-	.bayesrapidtaupts = 100,
-	.bayesrapidtaulow = 1e-6,
-	.bayesrapidtauhigh = 500.0f,
-	.bayesrapidwpts = 200,
-	.bayesrapidwlow = 0.0f,
-	.bayesrapidwhigh = 1.0f,
-	.bayesrapidbghigh = 10.0f
-};
-
-typedef struct
-{
-	int bayesrapidbitaupts;
-	float bayesrapidbitaulow;
-	float bayesrapidbitauhigh;
-	int bayesrapidbiweightpts;
-	float bayesrapidbiweightlow;
-	float bayesrapidbiweighthigh;
-	float bayesrapidbibgmin;
-	float bayesrapidbibgmax;
-
-	float bayesrapidbiw0low;
-	float bayesrapidbiw1low;
-	float bayesrapidbiw2low;
-	float bayesrapidbitau1low;
-	float bayesrapidbitau2low;
-
-	float bayesrapidbiw0high;
-	float bayesrapidbiw1high;
-	float bayesrapidbiw2high;
-	float bayesrapidbitau1high;
-	float bayesrapidbitau2high;
-} BayesBiRapidGridConfig_t;
-
-static const BayesBiRapidGridConfig_t BayesBiRapidGridConfig = {
-	.bayesrapidbitaupts = 100,
-	.bayesrapidbitaulow = 0.01f,
-	.bayesrapidbitauhigh = 4.0f,
-	.bayesrapidbiweightpts = 50,
-	.bayesrapidbiweightlow = 0.0f,
-	.bayesrapidbiweighthigh = 1.0f,
-	.bayesrapidbibgmin = 0.0f,
-	.bayesrapidbibgmax = 0.244898f,
-
-	.bayesrapidbiw0low = 0.0f,
-	.bayesrapidbiw1low = 0.489796f,
-	.bayesrapidbiw2low = 0.0f,
-	.bayesrapidbitau1low = 1.501212f,
-	.bayesrapidbitau2low = 0.050303f,
-
-	.bayesrapidbiw0high = 0.102041f,
-	.bayesrapidbiw1high = 1.0f,
-	.bayesrapidbiw2high = 0.489796f,
-	.bayesrapidbitau1high = 2.508788f,
-	.bayesrapidbitau2high = 1.017576f
-};
 /*	bayes_fitting_engine
 
 	The main entry point to the Bayes code 
@@ -149,20 +81,24 @@ int bayes_fitting_engine(float xincr, float laser_period, float *trans, int ndat
 {
 //	float         *param_ave;
 	BayesInstrRsp_t          instr;
-    // TODO make parameter
-    BayesIrEstConfig_t irEstConfig = bayes_GetIrEstConfig();
-	int           validgrid, needgrid;
 	int           ret, i;
 
 	int quick = 0;
 
+	float precision = bayes_MonoExpConfigGetDownhillSimplexPrecision();
+	float modulationperiod = laser_period;
+	bayes_SetConfigParameterValueModulationPeriod(modulationperiod);
+	BayesIrEstConfig_t defaultIREstConfig = bayes_GetIrEstConfig();
+	bayes_GetInstrRspParamValues(&instr, &defaultIREstConfig);
+
 	// Setup the Bayesian rapid grid to search
-	needgrid = bayes_RapidGetUseRapidBayesFlag();
-	validgrid = bayes_CheckForValidBayesDiscreteGrids(modeltype);
-	if (needgrid && !validgrid)
-	{
-		bayes_ConfigureBayesianRapidGrid(modeltype, xincr, fit_end, &irEstConfig);
-	}
+	// TRI2 code does a quick check (now commented) the configure fn checks more things, always do that.
+//	needgrid = bayes_RapidGetUseRapidBayesFlag();
+//	validgrid = bayes_CheckForValidBayesDiscreteGrids(modeltype);
+//	if (needgrid && !validgrid)
+//	{
+		bayes_ConfigureBayesianRapidGrid(modeltype, xincr, fit_end, &defaultIREstConfig);
+//	}
 
 	// Initialise parameters, and which are free to be optimised
 	for (i = 0; i<nparam; i++)
@@ -171,11 +107,6 @@ int bayes_fitting_engine(float xincr, float laser_period, float *trans, int ndat
 		error[i] = 0.0;
 		paramfree[i] = 1;
 	}
-
-	float precision = bayes_MonoExpConfigGetDownhillSimplexPrecision();
-	float modulationperiod = laser_period;
-	bayes_SetConfigParameterValueModulationPeriod(modulationperiod);
-	bayes_GetInstrRspParamValues(&instr, &irEstConfig);
 
 	// Perform the fit
 	ret = bayes_DoBayesFitting(trans, ndata, xincr, fit_start, fit_end, nphotons,
@@ -229,7 +160,7 @@ static const char * const bayes_ErrorDescription[] =
 };
 
 
-char* bayes_GetBayesErrorDescription(int error)
+const char* bayes_GetBayesErrorDescription(int error)
 {
 	if (error >= 0)
 		return ("");
@@ -1109,7 +1040,7 @@ int bayes_DoBayesFitting(/* Data in... */
         }
     }
 
-    if ((fitted) && (ret>=BAYES_ERR_NO_ERROR))
+    if ((fitted) && ((ret>=BAYES_ERR_NO_ERROR) || (ret == BAYES_AVE_ERR_RAPID_INSUFFICIENT_GRID)))
     {
         if (rebinning) /* Need to recompute binwalls... */
         {
@@ -1378,7 +1309,7 @@ float bayes_CalculateResidualsAndEquivalentChisq(float y[], float fitted[], floa
 		if (residuals != NULL)
 			residuals[i] = res;
 		// don't let variance drop below 1 
-		sigma2 = (fitted[i] > 1 ? 1.0 / fitted[i] : 1.0);
+		sigma2 = (fitted[i] > 1 ? 1.0f / fitted[i] : 1.0f);
 		chisq_local += res * res * sigma2;
 	}
 
@@ -1724,7 +1655,7 @@ int bayes_FitTypeToRapidGridUpdateType(int fittype)
 
 int bayes_ConfigureBayesianRapidGrid(int updatetype, float xincr, int fitend, BayesIrEstConfig_t *BayesIrEstConfig)
 {
-    int     i, nbins, fitstart, rebinfactor, update, ret;
+    int     i, nbins, fitstart, rebinfactor, update, ret=0;
     int     ntaus=100, nweights=200, ntaus_bi=0, nweights_bi=0, nw0s=0;
     float   taulow= 0.1f, tauhigh=4.0f, weightlow=0.0f, weighthigh=1.0f, w0low=0.0;
     float   taulow_bi=0.0, tauhigh_bi=0.0, weightlow_bi=0.0, weighthigh_bi=0.0, w0high=0.3f, bglow_bi=0.0, bghigh_bi=0.0, val;
@@ -1740,13 +1671,14 @@ int bayes_ConfigureBayesianRapidGrid(int updatetype, float xincr, int fitend, Ba
         if ((updatetype==BAYES_RAPID_GRID_MONO) ||
             (updatetype==BAYES_RAPID_GRID_MONO_AND_BI))
         {
-			ntaus = BayesMonoRapidGridConfig.bayesrapidtaupts;
-			taulow = BayesMonoRapidGridConfig.bayesrapidtaulow;
-			tauhigh = BayesMonoRapidGridConfig.bayesrapidtauhigh;
-			nweights = BayesMonoRapidGridConfig.bayesrapidwpts;
-			weightlow = BayesMonoRapidGridConfig.bayesrapidwlow;
-			weighthigh = BayesMonoRapidGridConfig.bayesrapidwhigh;
-			w0high = BayesMonoRapidGridConfig.bayesrapidbghigh;
+            BayesMonoRapidGridConfig_t *BayesMonoRapidGridConfig = bayes_GetMonoRapidGridConfigPtrSafe();
+			ntaus = BayesMonoRapidGridConfig->bayesrapidtaupts;
+			taulow = BayesMonoRapidGridConfig->bayesrapidtaulow;
+			tauhigh = BayesMonoRapidGridConfig->bayesrapidtauhigh;
+			nweights = BayesMonoRapidGridConfig->bayesrapidwpts;
+			weightlow = BayesMonoRapidGridConfig->bayesrapidwlow;
+			weighthigh = BayesMonoRapidGridConfig->bayesrapidwhigh;
+			w0high = BayesMonoRapidGridConfig->bayesrapidbghigh;
 
             w0low = weightlow;
             nw0s  = max((int)((double)nweights*w0high/(weighthigh-weightlow)), 1);
@@ -1764,14 +1696,15 @@ int bayes_ConfigureBayesianRapidGrid(int updatetype, float xincr, int fitend, Ba
         if ((updatetype==BAYES_RAPID_GRID_BI) ||
             (updatetype==BAYES_RAPID_GRID_MONO_AND_BI))
         {
-			ntaus_bi = BayesBiRapidGridConfig.bayesrapidbitaupts;
-			taulow_bi = BayesBiRapidGridConfig.bayesrapidbitaulow;
-			tauhigh_bi = BayesBiRapidGridConfig.bayesrapidbitauhigh;
-			nweights_bi = BayesBiRapidGridConfig.bayesrapidbiweightpts;
-			weightlow_bi = BayesBiRapidGridConfig.bayesrapidbiweightlow;
-			weighthigh_bi = BayesBiRapidGridConfig.bayesrapidbiweighthigh;
-			bglow_bi = BayesBiRapidGridConfig.bayesrapidbibgmin;
-			bghigh_bi = BayesBiRapidGridConfig.bayesrapidbibgmax;
+            BayesBiRapidGridConfig_t *BayesBiRapidGridConfig = bayes_GetBiRapidGridConfigPtrSafe();
+			ntaus_bi = BayesBiRapidGridConfig->bayesrapidbitaupts;
+			taulow_bi = BayesBiRapidGridConfig->bayesrapidbitaulow;
+			tauhigh_bi = BayesBiRapidGridConfig->bayesrapidbitauhigh;
+			nweights_bi = BayesBiRapidGridConfig->bayesrapidbiweightpts;
+			weightlow_bi = BayesBiRapidGridConfig->bayesrapidbiweightlow;
+			weighthigh_bi = BayesBiRapidGridConfig->bayesrapidbiweighthigh;
+			bglow_bi = BayesBiRapidGridConfig->bayesrapidbibgmin;
+			bghigh_bi = BayesBiRapidGridConfig->bayesrapidbibgmax;
 
             weights_bi = Bayes_dvector(0,nweights_bi-1);
             taus_bi    = Bayes_dvector(0,ntaus_bi-1);
@@ -1783,25 +1716,25 @@ int bayes_ConfigureBayesianRapidGrid(int updatetype, float xincr, int fitend, Ba
                 taus_bi[i]    = taulow_bi + dt*(double)i;
 
             //GetCtrlVal(BayesConfigPanel,BAYES_RAPID_BI_W0_PRE_L,&val);
-			val = BayesBiRapidGridConfig.bayesrapidbiw0low;
+			val = BayesBiRapidGridConfig->bayesrapidbiw0low;
             if (val<bglow_bi)  val = bglow_bi;
             if (val>bghigh_bi) val = bghigh_bi;
             low[0] = bayes_MapWeightValueToClosestRapidGridPoint(val,nweights_bi,weights_bi);
 
-            low[1] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbiw1low,nweights_bi,weights_bi);
-			low[2] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbiw2low,nweights_bi,weights_bi);
-			low[3] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbitau1low,ntaus_bi,taus_bi);
-			low[4] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbitau2low,ntaus_bi,taus_bi);
+            low[1] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbiw1low,nweights_bi,weights_bi);
+			low[2] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbiw2low,nweights_bi,weights_bi);
+			low[3] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbitau1low,ntaus_bi,taus_bi);
+			low[4] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbitau2low,ntaus_bi,taus_bi);
 
             //GetCtrlVal(BayesConfigPanel,BAYES_RAPID_BI_W0_PRE_H,&val);
-			val = BayesBiRapidGridConfig.bayesrapidbiw0high;
+			val = BayesBiRapidGridConfig->bayesrapidbiw0high;
             if (val<bglow_bi)  val = bglow_bi;
             if (val>bghigh_bi) val = bghigh_bi;
             high[0] = bayes_MapWeightValueToClosestRapidGridPoint(val,nweights_bi,weights_bi);
-			high[1] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbiw1high,nweights_bi,weights_bi);
-			high[2] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbiw2high,nweights_bi,weights_bi);
-			high[3] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbitau1high,ntaus_bi,taus_bi);
-			high[4] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbitau2high,ntaus_bi,taus_bi);
+			high[1] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbiw1high,nweights_bi,weights_bi);
+			high[2] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbiw2high,nweights_bi,weights_bi);
+			high[3] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbitau1high,ntaus_bi,taus_bi);
+			high[4] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbitau2high,ntaus_bi,taus_bi);
 
             high[0] = (high[0]>=nweights_bi) ? (nweights_bi) : (high[0]);
             high[1] = (high[1]>=nweights_bi) ? (nweights_bi) : (high[1]);
@@ -1869,12 +1802,12 @@ int bayes_RapidBiExpDetermineGridSize(int fitend)
     int     low[5], high[5];
 
     //* Bi-exponential grid settings... 
-	ntaus = BayesBiRapidGridConfig.bayesrapidbitaupts;
-	taulow = BayesBiRapidGridConfig.bayesrapidbitaulow;
-	tauhigh = BayesBiRapidGridConfig.bayesrapidbitauhigh;
-	nweights = BayesBiRapidGridConfig.bayesrapidbiweightpts;
-	weightlow = BayesBiRapidGridConfig.bayesrapidbiweightlow;
-	weighthigh = BayesBiRapidGridConfig.bayesrapidbiweighthigh;
+	ntaus = BayesBiRapidGridConfig->bayesrapidbitaupts;
+	taulow = BayesBiRapidGridConfig->bayesrapidbitaulow;
+	tauhigh = BayesBiRapidGridConfig->bayesrapidbitauhigh;
+	nweights = BayesBiRapidGridConfig->bayesrapidbiweightpts;
+	weightlow = BayesBiRapidGridConfig->bayesrapidbiweightlow;
+	weighthigh = BayesBiRapidGridConfig->bayesrapidbiweighthigh;
 
     weights = Bayes_dvector(0,nweights-1);
     taus    = Bayes_dvector(0,ntaus-1);
@@ -1886,38 +1819,38 @@ int bayes_RapidBiExpDetermineGridSize(int fitend)
         taus[i]    = taulow + dt*(double)i;
 
     //* 'Snap' the user defined background minimum and maximum to values on the weight vector... 
-	bglow = BayesBiRapidGridConfig.bayesrapidbibgmin;
+	bglow = BayesBiRapidGridConfig->bayesrapidbibgmin;
 	if (bglow<weightlow)  bglow = weightlow;
     if (bglow>weighthigh) bglow = weighthigh;
     bglow = (float)weights[bayes_MapWeightValueToClosestRapidGridPoint(bglow,nweights,weights)];
-	BayesBiRapidGridConfig.bayesrapidbibgmin = bglow;
+	BayesBiRapidGridConfig->bayesrapidbibgmin = bglow;
 
-	bghigh = BayesBiRapidGridConfig.bayesrapidbibgmax;
+	bghigh = BayesBiRapidGridConfig->bayesrapidbibgmax;
 	if (bghigh<weightlow)  bghigh = weightlow;
     if (bghigh>weighthigh) bghigh = weighthigh;
     bghigh = (float)weights[bayes_MapWeightValueToClosestRapidGridPoint(bghigh,nweights,weights)];
-	BayesBiRapidGridConfig.bayesrapidbibgmax = bghigh;
+	BayesBiRapidGridConfig->bayesrapidbibgmax = bghigh;
 
     //* Pre-computed bi-exponential log likelihoods... 
-	val = BayesBiRapidGridConfig.bayesrapidbiw0low;
+	val = BayesBiRapidGridConfig->bayesrapidbiw0low;
     if (val<bglow)  val = bglow;
     if (val>bghigh) val = bghigh;
     low[0] = bayes_MapWeightValueToClosestRapidGridPoint(val,nweights,weights);
 
-	low[1] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbiw1low,nweights,weights);
-	low[2] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbiw2low,nweights,weights);
-	low[3] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbitau1low,ntaus,taus);
-	low[4] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbitau2low,ntaus,taus);
+	low[1] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbiw1low,nweights,weights);
+	low[2] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbiw2low,nweights,weights);
+	low[3] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbitau1low,ntaus,taus);
+	low[4] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbitau2low,ntaus,taus);
 
     //GetCtrlVal(BayesConfigPanel,BAYES_RAPID_BI_W0_PRE_H,&val);
-	val = BayesBiRapidGridConfig.bayesrapidbiw0high;
+	val = BayesBiRapidGridConfig->bayesrapidbiw0high;
 	if (val<bglow)  val = bglow;
     if (val>bghigh) val = bghigh;
     high[0] = bayes_MapWeightValueToClosestRapidGridPoint(val,nweights,weights);
-	high[1] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbiw1high,nweights,weights);
-	high[2] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbiw2high,nweights,weights);
-	high[3] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbitau1high,ntaus,taus);
-	high[4] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig.bayesrapidbitau2high,ntaus,taus);
+	high[1] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbiw1high,nweights,weights);
+	high[2] = bayes_MapWeightValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbiw2high,nweights,weights);
+	high[3] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbitau1high,ntaus,taus);
+	high[4] = bayes_MapLifetimeValueToClosestRapidGridPoint(BayesBiRapidGridConfig->bayesrapidbitau2high,ntaus,taus);
 
     high[1] = (high[1]>=nweights) ? (nweights) : (high[1]);
     high[0] = (high[0]>=nweights) ? (nweights) : (high[0]);
@@ -1941,16 +1874,16 @@ int bayes_RapidBiExpDetermineGridSize(int fitend)
                                       &npts,&nptsvalid,&memoryreqd);
 
     //* Update, snap the pre-computed user selected values to grid co-ordinates
-	BayesBiRapidGridConfig.bayesrapidbiw0low = (float)weights[low[0]];
-	BayesBiRapidGridConfig.bayesrapidbiw1low = (float)weights[low[1]];
-	BayesBiRapidGridConfig.bayesrapidbiw2low = (float)weights[low[2]];
-	BayesBiRapidGridConfig.bayesrapidbitau1low = (float)taus[low[3]];
-	BayesBiRapidGridConfig.bayesrapidbitau2low = (float)taus[low[4]];
-	BayesBiRapidGridConfig.bayesrapidbiw0high = (float)weights[high[0]];
-	BayesBiRapidGridConfig.bayesrapidbiw1high = (float)weights[high[1]];
-	BayesBiRapidGridConfig.bayesrapidbiw2high = (float)weights[high[2]];
-	BayesBiRapidGridConfig.bayesrapidbitau1high = (float)taus[high[3]];
-	BayesBiRapidGridConfig.bayesrapidbitau2high = (float)taus[high[4]];
+	BayesBiRapidGridConfig->bayesrapidbiw0low = (float)weights[low[0]];
+	BayesBiRapidGridConfig->bayesrapidbiw1low = (float)weights[low[1]];
+	BayesBiRapidGridConfig->bayesrapidbiw2low = (float)weights[low[2]];
+	BayesBiRapidGridConfig->bayesrapidbitau1low = (float)taus[low[3]];
+	BayesBiRapidGridConfig->bayesrapidbitau2low = (float)taus[low[4]];
+	BayesBiRapidGridConfig->bayesrapidbiw0high = (float)weights[high[0]];
+	BayesBiRapidGridConfig->bayesrapidbiw1high = (float)weights[high[1]];
+	BayesBiRapidGridConfig->bayesrapidbiw2high = (float)weights[high[2]];
+	BayesBiRapidGridConfig->bayesrapidbitau1high = (float)taus[high[3]];
+	BayesBiRapidGridConfig->bayesrapidbitau2high = (float)taus[high[4]];
 
     free_Bayes_dvector(weights,0,nweights-1);
     free_Bayes_dvector(taus,0,ntaus-1);
@@ -2331,14 +2264,14 @@ int bayes_DoBayesInstrRspEstimation(/* Data in... */
                                         int                       fitend,
                                         int                      *nphotons,
                                         /* Loaded prompt in... */
-                                        float                    *prompt,
+                                        unsigned int             *prompt,
                                         int                       nprompt,
                                         float                     promptbinwidth,
                                         /* Decay model... */
                                         int                       modeltype,
                                         /* Instrument... */
                                         BayesInstrRsp_t          *instr,
-                                        BayesIrEstConfig_t          *BayesIrEstConfig,
+                                        BayesIrEstConfig_t       *BayesIrEstConfig,
                                         float                     modulationperiod,
                                         /* Data out... */
 										float                    *param_mp, /* Parameters input using conventional model and values (i.e. Z,A1,tau1,A2,tau2...) */
@@ -2578,8 +2511,8 @@ BayesIrEstConfig_t bayes_GetIrEstConfig(void)
         .bayesirnumcomponents = 1,
         .bayesirweight1 = 1.0,
         .bayesircutoff1 = 0.0,
-        .bayesirsigma1 = 0.0510,
-        .bayesiruc1 = 2.9331,
+        .bayesirsigma1 = 0.001,
+        .bayesiruc1 = 0.0,
         .bayesirweight2 = 0.0,
         .bayesircutoff2 = 0.0,
         .bayesirsigma2 = 0.0,

@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+static const float RANGE_FACTOR = 2;
+
 int Bayes_fitting_engine(/* Data in... */
 						 float xincr,
 						 float *trans,
@@ -29,9 +31,29 @@ int Bayes_fitting_engine(/* Data in... */
 	{
 	case 3:
 		modelType = instr == NULL ? FIT_MONOEXP : FIT_IRFANDMONOEXP;
+		BayesMonoRapidGridConfig_t *defaultMonoGridConfig = bayes_GetMonoRapidGridConfigPtrSafe();
+
+		defaultMonoGridConfig->bayesrapidwlow = param[1] / RANGE_FACTOR;
+		defaultMonoGridConfig->bayesrapidtaulow = param[2] / RANGE_FACTOR;
+
+		defaultMonoGridConfig->bayesrapidbghigh = param[0] * RANGE_FACTOR;
+		defaultMonoGridConfig->bayesrapidwhigh = param[1] * RANGE_FACTOR;
+		defaultMonoGridConfig->bayesrapidtauhigh = param[2] * RANGE_FACTOR;
 		break;
 	case 5:
 		modelType = instr == NULL ? FIT_BIEXP : FIT_IRFANDBIEXP;
+		BayesBiRapidGridConfig_t *defaultBiGridConfig = bayes_GetBiRapidGridConfigPtrSafe();
+		defaultBiGridConfig->bayesrapidbibgmin = param[0] / RANGE_FACTOR;
+		defaultBiGridConfig->bayesrapidbiw1low = param[1] / RANGE_FACTOR;
+		defaultBiGridConfig->bayesrapidbitau1low = param[2] / RANGE_FACTOR;
+		defaultBiGridConfig->bayesrapidbiw2low = param[3] / RANGE_FACTOR;
+		defaultBiGridConfig->bayesrapidbitau2low = param[4] / RANGE_FACTOR;
+
+		defaultBiGridConfig->bayesrapidbibgmax = param[0] * RANGE_FACTOR;
+		defaultBiGridConfig->bayesrapidbiw1high = param[1] * RANGE_FACTOR;
+		defaultBiGridConfig->bayesrapidbitau1high = param[2] * RANGE_FACTOR;
+		defaultBiGridConfig->bayesrapidbiw2high = param[3] * RANGE_FACTOR;
+		defaultBiGridConfig->bayesrapidbitau2high = param[4] * RANGE_FACTOR;
 		break;
 	default:
 		// assign unknown if not odd integer >= 7
@@ -81,6 +103,7 @@ int Bayes_fitting_engine(/* Data in... */
 	}
 	printf_s("\n");
 #endif
+
 	if (instr != NULL && ninstr != 0)
 	{
 		// Setup for fit
@@ -91,16 +114,9 @@ int Bayes_fitting_engine(/* Data in... */
 							   }};
 		BayesIrEstConfig_t IRF_Config = bayes_GetIrEstConfig();
 
-		// // type conversion
-		// unsigned* uinstr = malloc(ninstr * sizeof(unsigned));
-		// if (!uinstr)
-		// 	return BAYES_ERR_PARAM_ESTIMATION_FAILURE;
-		// for (int i = 0; i < ninstr; i++)
-		// 	uinstr[i] = instr[i];
-
 		int ret = bayes_DoBayesInstrRspEstimation(trans, ndata, xincr, fit_start, fit_end,
-											   &nphotons, instr, ninstr, xincr, modelType, &IRF, &IRF_Config,
-											   laser_period, param, fitted);
+												  nphotons, instr, ninstr, xincr, modelType, &IRF, &IRF_Config,
+												  laser_period, param, fitted);
 		return ret;
 	}
 	else

@@ -310,6 +310,13 @@ int bayes_RapidMonoExpAvgAndErrors( int                           *data,
             if (probdistr->z[i][j]>max)
                 max = probdistr->z[i][j];
 
+	//for (i = 0; i < probdistr->m; i++) {
+	//	printf("%d:\n", i);
+	//	for (j = 0; j < probdistr->n; j++)
+	//		printf("%11f ", probdistr->z[i][j]);
+	//	printf("\n\n");
+	//}
+
     /* Check for insufficient grid... */
 //    for (i=0,j=0; j<probdistr->n; j++)
 //        if (probdistr->z[i][j]>0.01*max)
@@ -330,9 +337,10 @@ int bayes_RapidMonoExpAvgAndErrors( int                           *data,
             if ((probdistr->z[i][j]>0.02*max) || (probdistr->z[i][j]==max))
                 ret = BAYES_AVE_ERR_RAPID_INSUFFICIENT_GRID;
 
-    for (i=0,j=probdistr->n-1; i<probdistr->m; i++)
-        if (probdistr->z[i][j]>0.02*max)
-            ret = BAYES_AVE_ERR_RAPID_INSUFFICIENT_GRID;
+	for (i = 0, j = probdistr->n - 1; i < probdistr->m; i++) {
+		if (probdistr->z[i][j] > 0.02 * max)
+			ret = BAYES_AVE_ERR_RAPID_INSUFFICIENT_GRID;
+	}
 
     /* Determine the average and error for 'w0'... */
     marginals = Bayes_vector(0,probdistr->m);

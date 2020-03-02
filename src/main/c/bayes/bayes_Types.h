@@ -26,7 +26,59 @@
 #define ALG_BAYES 	   2
 #define ALG_PHASOR 	   3
 
+/* Instrument response... */
+typedef struct
+{
+	int bayesirnumcomponents;
+	double bayesirweight1;
+	double bayesircutoff1;
+	double bayesirsigma1;
+	double bayesiruc1;
+	double bayesirweight2;
+	double bayesircutoff2;
+	double bayesirsigma2;
+	double bayesiruc2;
+	double bayesirweight3;
+	double bayesircutoff3;
+	double bayesirsigma3;
+	double bayesiruc3;
+} BayesIrEstConfig_t;
 
+/* Rapid grids */
+typedef struct
+{
+	int bayesrapidtaupts;
+	float bayesrapidtaulow;
+	float bayesrapidtauhigh;
+	int bayesrapidwpts;
+	float bayesrapidwlow;
+	float bayesrapidwhigh;
+	float bayesrapidbghigh;
+} BayesMonoRapidGridConfig_t;
+
+typedef struct
+{
+	int bayesrapidbitaupts;
+	float bayesrapidbitaulow;
+	float bayesrapidbitauhigh;
+	int bayesrapidbiweightpts;
+	float bayesrapidbiweightlow;
+	float bayesrapidbiweighthigh;
+	float bayesrapidbibgmin;
+	float bayesrapidbibgmax;
+
+	float bayesrapidbiw0low;
+	float bayesrapidbiw1low;
+	float bayesrapidbiw2low;
+	float bayesrapidbitau1low;
+	float bayesrapidbitau2low;
+
+	float bayesrapidbiw0high;
+	float bayesrapidbiw1high;
+	float bayesrapidbiw2high;
+	float bayesrapidbitau1high;
+	float bayesrapidbitau2high;
+} BayesBiRapidGridConfig_t;
 
 /*====================================================================*/
 /*    Generic multi-exponential probability distribution container    */

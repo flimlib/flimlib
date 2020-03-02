@@ -1771,12 +1771,9 @@ int bayes_PopulateRapidValueStore(BayesRapidValueStore_t   *store,
     int     nw0s, npts, nvalid, ninvalid;
     int     lowmono[3], highmono[3];
     double  w0low, w0high;
-    int     DebugTrace;
     FILE   *fp=NULL;
 	int single_low[2] = { 0, 0 };
 	int single_high[2] = { 0, ntaus - 1 };
-
-    DebugTrace = 0;
 
 
     /* Mono-exponential grid fluorescence likelihoods population... */
