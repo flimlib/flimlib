@@ -41,7 +41,7 @@
 
 #include "extmath.h"
 #include "matrices.h"
-#include "DTYPE.H"
+#include "DTYPE.h"
 #include "bayes_Sizes.h"
 #include "bayes_Types.h"
 #include "bayes_DataManagement.h"

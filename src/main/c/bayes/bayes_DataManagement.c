@@ -33,7 +33,7 @@
 #include "bayes_Sizes.h"
 
 #include "matrices.h"
-#include "DTYPE.H"
+#include "DTYPE.h"
 
 float data_ComputeBinnedDataAverageArrTime(int   *data,
                                            int    nbins,
