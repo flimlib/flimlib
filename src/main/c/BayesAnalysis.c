@@ -7,29 +7,34 @@ void Bayes_set_search_grid(float parammin[], float parammax[], int nparam)
 	switch (nparam)
 	{
 	case 3:
+	{
 		BayesMonoRapidGridConfig_t *defaultMonoGridConfig = bayes_GetMonoRapidGridConfigPtrSafe();
 
-		defaultMonoGridConfig->bayesrapidwlow   = parammin[1];
+		defaultMonoGridConfig->bayesrapidwlow = parammin[1];
 		defaultMonoGridConfig->bayesrapidtaulow = parammin[2];
 
-		defaultMonoGridConfig->bayesrapidbghigh  = parammax[0];
-		defaultMonoGridConfig->bayesrapidwhigh   = parammax[1];
+		defaultMonoGridConfig->bayesrapidbghigh = parammax[0];
+		defaultMonoGridConfig->bayesrapidwhigh = parammax[1];
 		defaultMonoGridConfig->bayesrapidtauhigh = parammax[2];
 		break;
+	}
+
 	case 5:
+	{
 		BayesBiRapidGridConfig_t *defaultBiGridConfig = bayes_GetBiRapidGridConfigPtrSafe();
-		defaultBiGridConfig->bayesrapidbibgmin   = parammin[0];
-		defaultBiGridConfig->bayesrapidbiw1low   = parammin[1];
+		defaultBiGridConfig->bayesrapidbibgmin = parammin[0];
+		defaultBiGridConfig->bayesrapidbiw1low = parammin[1];
 		defaultBiGridConfig->bayesrapidbitau1low = parammin[2];
-		defaultBiGridConfig->bayesrapidbiw2low   = parammin[3];
+		defaultBiGridConfig->bayesrapidbiw2low = parammin[3];
 		defaultBiGridConfig->bayesrapidbitau2low = parammin[4];
 
-		defaultBiGridConfig->bayesrapidbibgmax    = parammax[0];
-		defaultBiGridConfig->bayesrapidbiw1high   = parammax[1];
+		defaultBiGridConfig->bayesrapidbibgmax = parammax[0];
+		defaultBiGridConfig->bayesrapidbiw1high = parammax[1];
 		defaultBiGridConfig->bayesrapidbitau1high = parammax[2];
-		defaultBiGridConfig->bayesrapidbiw2high   = parammax[3];
+		defaultBiGridConfig->bayesrapidbiw2high = parammax[3];
 		defaultBiGridConfig->bayesrapidbitau2high = parammax[4];
 		break;
+	}
 	}
 }
 

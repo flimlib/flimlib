@@ -171,7 +171,7 @@ int bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTau(double          *
         {
             /*if (DebugTrace)
             {
-                if (0 == fopen_s(&fp, "bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
+                if (0 == fopen(&fp, "bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
                 {
                     fprintf(fp,"\nbayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTau ==>\n");
                     fprintf(fp,"Error (%d) in normalisation\n",ret);
@@ -199,7 +199,7 @@ int bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTau(double          *
 
     /*if (DebugTrace)
     {
-        if (0 != fopen_s(&fp, "bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
+        if (fp = fopen("bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
         {
             DebugTrace = 0;
         }
@@ -516,7 +516,7 @@ int bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTau(double          *
         {
             if (DebugTrace)
             {
-                if (0 == fopen_s(&fp, "bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
+                if (0 == fopen(&fp, "bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
                 {
                     fprintf(fp,"\nbayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTau ==>\n");
                     fprintf(fp,"Error (%d) in normalisation\n",ret);
@@ -544,7 +544,7 @@ int bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTau(double          *
 
     if (DebugTrace)
     {
-        if (0 != fopen_s(&fp, "bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
+        if (fp = fopen("bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
         {
             DebugTrace = 0;
         }
@@ -1383,7 +1383,7 @@ int  bayes_ArrBinLikelihoodsGivenTau(double *likelihoods,
     if (error)
     {
         /* Debug output */
-        if (0 != fopen_s(&fp, "BayesDistFctsDebugOutput.txt", "w"))
+        if (fp = fopen("BayesDistFctsDebugOutput.txt", "w"))
             return (-1);
 
         fprintf(fp,"Upsilon1\n\n");

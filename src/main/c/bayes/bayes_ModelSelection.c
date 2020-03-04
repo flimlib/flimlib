@@ -1575,17 +1575,17 @@ int bayes_DetemineDecayModelEvidence(int              ndecays,
     {
         if (nparams==2)
         {
-            if (0 != fopen_s(&fp,"hessian_mono.txt","w"))
+            if (fp = fopen("hessian_mono.txt","w"))
                 Debug=0;
         }
         else if (nparams==4)
         {
-            if (0 != fopen_s(&fp,"hessian_bi.txt","w"))
+            if (fp = fopen("hessian_bi.txt","w"))
                 Debug=0;
         }
         else
         {
-            if (0 != fopen_s(&fp,"hessian.txt","w"))
+            if (fp = fopen("hessian.txt","w"))
                 Debug=0;        
         }
 

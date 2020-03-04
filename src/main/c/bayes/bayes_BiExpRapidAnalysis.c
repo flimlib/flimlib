@@ -428,7 +428,7 @@ int bayes_BiExpDiscreteSpaceMinimisationExhaustiveSearch(double (*funk)(int *, i
 
     if (DebugTrace)
     {
-        if (0 != fopen_s(&fp, "BiExpDiscreteSpaceMinimisationExhaustiveSearchDebugOutput.txt", "w"))
+        if (fp = fopen("BiExpDiscreteSpaceMinimisationExhaustiveSearchDebugOutput.txt", "w"))
         {
             DebugTrace = 0;
         }
@@ -926,7 +926,7 @@ int bayes_BiExpDiscreteSpaceMinimisationStochasticSearch(double (*funk)(int *, i
 
 	if (DebugTrace)
     {
-        if (0 != fopen_s(&fp, "BiExpDiscreteSpaceMinimisationStochasticSearchOutput.txt", "w"))
+        if (fp = fopen("BiExpDiscreteSpaceMinimisationStochasticSearchOutput.txt", "w"))
         {
             DebugTrace = 0;
         }

@@ -344,7 +344,7 @@ int bayes_MultiExpDetermineMostProbParamValues(int                      *data,
     value = BAYES_SIZE_DOUBLE_HUGE;
 
     minimizer = &math_MinimiseFctDoubleWithGenericContainer;
-    (AmoebaConfigParams_t*)config = (AmoebaConfigParams_t*)malloc(sizeof(AmoebaConfigParams_t));
+    config = malloc(sizeof(AmoebaConfigParams_t));
     ((AmoebaConfigParams_t*)config)->monitor   = 0;
     ((AmoebaConfigParams_t*)config)->tolerance = bayes_MonoExpConfigGetDownhillSimplexPrecision();
 

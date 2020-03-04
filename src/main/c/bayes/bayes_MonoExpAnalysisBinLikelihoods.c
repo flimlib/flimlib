@@ -201,7 +201,7 @@ void bayes_DirectMonoExpMostProbW0W1BinLikelihood(int             *data,
     x[2] = (double)(*w1);
 
 	minimizer = &math_MinimiseFctDoubleWithGenericContainer;
-    (AmoebaConfigParams_t*)config = (AmoebaConfigParams_t*)malloc(sizeof(AmoebaConfigParams_t));
+    config = malloc(sizeof(AmoebaConfigParams_t));
     ((AmoebaConfigParams_t*)config)->monitor   = 0;
     ((AmoebaConfigParams_t*)config)->tolerance = bayes_MonoExpConfigGetDownhillSimplexPrecision();
     ((AmoebaConfigParams_t*)config)->deltas    = deltas;
@@ -420,7 +420,7 @@ int  bayes_IndirectMostProbableW0W1BinLikelihood(int             *data,
     x    = Bayes_dvector(1,1);
     x[1] = (double)(*w1);
 
-    (AmoebaConfigParams_t*)config = (AmoebaConfigParams_t*)malloc(sizeof(AmoebaConfigParams_t));
+    config = malloc(sizeof(AmoebaConfigParams_t));
     ((AmoebaConfigParams_t*)config)->monitor   = 0;
     ((AmoebaConfigParams_t*)config)->tolerance = precision;
 

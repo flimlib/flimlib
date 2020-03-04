@@ -855,7 +855,7 @@ int bayes_DirectInstrRspAndMonoExpOptimization(/* Data in... */
     }
 
     minimizer = &math_MinimiseFctDoubleWithGenericContainer;
-    (AmoebaConfigParams_t*)config = (AmoebaConfigParams_t*)malloc(sizeof(AmoebaConfigParams_t));
+    config = malloc(sizeof(AmoebaConfigParams_t));
     ((AmoebaConfigParams_t*)config)->monitor   = 0;
     ((AmoebaConfigParams_t*)config)->tolerance = bayes_InstrConfigGetDownhillSimplexPrecision();
     ((AmoebaConfigParams_t*)config)->deltas    = deltas;
@@ -1067,7 +1067,7 @@ int bayes_DirectInstrRspAndMultiExpOptimization(/* Data in... */
     }
 
     minimizer = &math_MinimiseFctDoubleWithGenericContainer;
-    (AmoebaConfigParams_t*)config = (AmoebaConfigParams_t*)malloc(sizeof(AmoebaConfigParams_t));
+    config = malloc(sizeof(AmoebaConfigParams_t));
     ((AmoebaConfigParams_t*)config)->monitor   = 0;
     ((AmoebaConfigParams_t*)config)->tolerance = bayes_InstrConfigGetDownhillSimplexPrecision();
     ((AmoebaConfigParams_t*)config)->deltas    = deltas;

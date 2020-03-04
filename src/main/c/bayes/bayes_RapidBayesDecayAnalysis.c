@@ -2008,7 +2008,7 @@ int bayes_OutputGridToFile(char                   *filename,
 	FILE *fp;
 	int i, j, k, ell, bin;
         
-    if (0 != fopen_s(&fp,filename,"w"))
+    if (fp = fopen(filename,"w"))
         return (-1);
     
     fprintf(fp,"#==========================================================#\n");
