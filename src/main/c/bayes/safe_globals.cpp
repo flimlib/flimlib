@@ -1,6 +1,6 @@
 #include "safe_globals.h"
 
-#ifdef BAYES_MULTI_THREAD
+#ifndef BAYES_SINGLE_THREAD
 #define SAFE_GLOBAL thread_local
 #else
 #define SAFE_GLOBAL
@@ -13,7 +13,7 @@ static SAFE_GLOBAL BayesMonoRapidGridConfig_t bayes_MonoRapidGridConfig = {
     // c++(<20) doesn't accept designated initializer list
     100,    // bayesrapidtaupts
     1e-6f,  // bayesrapidtaulow
-    500.0f, // bayesrapidtauhigh
+    5.0f, // bayesrapidtauhigh
     200,    // bayesrapidwpts
     0.0f,   // bayesrapidwlow
     1.0f,   // bayesrapidwhigh
