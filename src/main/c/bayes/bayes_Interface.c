@@ -1656,11 +1656,11 @@ int bayes_FitTypeToRapidGridUpdateType(int fittype)
 int bayes_ConfigureBayesianRapidGrid(int updatetype, float xincr, int fitend, BayesIrEstConfig_t *BayesIrEstConfig)
 {
     int     i, nbins, fitstart, rebinfactor, update, ret=0;
-    int     ntaus=100, nweights=200, ntaus_bi=0, nweights_bi=0, nw0s=0;
-    float   taulow= 0.1f, tauhigh=4.0f, weightlow=0.0f, weighthigh=1.0f, w0low=0.0;
-    float   taulow_bi=0.0, tauhigh_bi=0.0, weightlow_bi=0.0, weighthigh_bi=0.0, w0high=0.3f, bglow_bi=0.0, bghigh_bi=0.0, val;
+    int     ntaus_mono=100, nweights_mono=200, ntaus_bi=0, nweights_bi=0;
+    float   taulow_mono= 0.1f, tauhigh_mono=4.0f, weightlow_mono=0.0f, weighthigh_mono=1.0f, bglow_mono=0.0;
+    float   taulow_bi=0.0, tauhigh_bi=0.0, weightlow_bi=0.0, weighthigh_bi=0.0, bghigh_mono=0.3f, bglow_bi=0.0, bghigh_bi=0.0, val;
     float   interval, modulationperiod;
-    double *w0s=NULL, *taus=NULL, *weights_bi=NULL, *taus_bi=NULL, *binwalls=NULL, dw, dt;
+    double *weights_mono=NULL, *taus_ono=NULL, *weights_bi=NULL, *taus_bi=NULL, *binwalls=NULL, dw, dt;
     int     low[5], high[5];
 
     BayesInstrRsp_t instr;
@@ -1672,24 +1672,22 @@ int bayes_ConfigureBayesianRapidGrid(int updatetype, float xincr, int fitend, Ba
             (updatetype==BAYES_RAPID_GRID_MONO_AND_BI))
         {
             BayesMonoRapidGridConfig_t *BayesMonoRapidGridConfig = bayes_GetMonoRapidGridConfigPtrSafe();
-			ntaus = BayesMonoRapidGridConfig->bayesrapidtaupts;
-			taulow = BayesMonoRapidGridConfig->bayesrapidtaulow;
-			tauhigh = BayesMonoRapidGridConfig->bayesrapidtauhigh;
-			nweights = BayesMonoRapidGridConfig->bayesrapidwpts;
-			weightlow = BayesMonoRapidGridConfig->bayesrapidwlow;
-			weighthigh = BayesMonoRapidGridConfig->bayesrapidwhigh;
-			w0high = BayesMonoRapidGridConfig->bayesrapidbghigh;
+			ntaus_mono = BayesMonoRapidGridConfig->bayesrapidtaupts;
+			taulow_mono = BayesMonoRapidGridConfig->bayesrapidtaulow;
+			tauhigh_mono = BayesMonoRapidGridConfig->bayesrapidtauhigh;
+			nweights_mono = BayesMonoRapidGridConfig->bayesrapidwpts;
+			weightlow_mono = BayesMonoRapidGridConfig->bayesrapidwlow;
+			weighthigh_mono = BayesMonoRapidGridConfig->bayesrapidwhigh;
+			bghigh_mono = BayesMonoRapidGridConfig->bayesrapidbghigh;
 
-            w0low = weightlow;
-            nw0s  = max((int)((double)nweights*w0high/(weighthigh-weightlow)), 1);
-            w0s   = Bayes_dvector(0,nw0s-1);
-            taus  = Bayes_dvector(0,ntaus-1);
+            weights_mono   = Bayes_dvector(0,nweights_mono-1);
+            taus_ono  = Bayes_dvector(0,ntaus_mono-1);
 
-            for (i=0,dw=(w0high-w0low)/(double)(nw0s-1); i<nw0s; i++)
-                w0s[i] = w0low + dw*(double)i;
+            for (i=0,dw=(weighthigh_mono-weightlow_mono)/(double)(nweights_mono-1); i<nweights_mono; i++)
+                weights_mono[i] = weightlow_mono + dw*(double)i;
 
-            for (i=0,dt=(tauhigh-taulow)/(double)(ntaus-1); i<ntaus; i++)
-                taus[i] = taulow + dt*(double)i;
+            for (i=0,dt=(tauhigh_mono-taulow_mono)/(double)(ntaus_mono-1); i<ntaus_mono; i++)
+                taus_ono[i] = taulow_mono + dt*(double)i;
         }
 
         //* Bi-exponential grid settings... 
@@ -1760,7 +1758,9 @@ int bayes_ConfigureBayesianRapidGrid(int updatetype, float xincr, int fitend, Ba
 
         update   = bayes_DetermineIfBayesGridUpdateReqd(bayes_GetRapidValueStorePtr(),updatetype,
                                                         //* Mono-exp... 
-                                                        ntaus,taus,nw0s,w0s,w0low,w0high,
+                                                        ntaus_mono,taus_ono,
+                                                        nweights_mono,weights_mono,
+                                                        bglow_mono,bghigh_mono,
                                                         //* Bi-exp... 
                                                         ntaus_bi,taus_bi,
                                                         nweights_bi,weights_bi,bglow_bi,bghigh_bi,
@@ -1776,16 +1776,17 @@ int bayes_ConfigureBayesianRapidGrid(int updatetype, float xincr, int fitend, Ba
             bayes_PopulateBinWallsVectorUniformIntervals(binwalls,nbins,interval);
 
             ret = bayes_CreateRapidValueStore(bayes_GetRapidValueStorePtr(),update,
-                                              ntaus,taus,
-                                              nw0s,w0s,w0low,w0high,
+                                              ntaus_mono,taus_ono,
+                                              nweights_mono,weights_mono,
+                                              bglow_mono,bghigh_mono,
                                               ntaus_bi,taus_bi,
                                               nweights_bi,weights_bi,bglow_bi,bghigh_bi,low,high,
                                               nbins,binwalls,&instr,interval,modulationperiod);
         }
     }
     
-    if (w0s)        free_Bayes_dvector(w0s,0,nw0s-1);
-    if (taus)       free_Bayes_dvector(taus,0,ntaus-1);
+    if (weights_mono)        free_Bayes_dvector(weights_mono,0,nweights_mono-1);
+    if (taus_ono)       free_Bayes_dvector(taus_ono,0,ntaus_mono-1);
     if (weights_bi) free_Bayes_dvector(weights_bi,0,nweights_bi-1);
     if (taus_bi)    free_Bayes_dvector(taus_bi,0,ntaus_bi-1);
     if (binwalls)   free_Bayes_dvector(binwalls,0,nbins);
