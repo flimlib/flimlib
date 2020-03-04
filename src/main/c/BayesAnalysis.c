@@ -2,7 +2,36 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static const float RANGE_FACTOR = 2;
+void Bayes_set_search_grid(float parammin[], float parammax[], int nparam)
+{
+	switch (nparam)
+	{
+	case 3:
+		BayesMonoRapidGridConfig_t *defaultMonoGridConfig = bayes_GetMonoRapidGridConfigPtrSafe();
+
+		defaultMonoGridConfig->bayesrapidwlow   = parammin[1];
+		defaultMonoGridConfig->bayesrapidtaulow = parammin[2];
+
+		defaultMonoGridConfig->bayesrapidbghigh  = parammax[0];
+		defaultMonoGridConfig->bayesrapidwhigh   = parammax[1];
+		defaultMonoGridConfig->bayesrapidtauhigh = parammax[2];
+		break;
+	case 5:
+		BayesBiRapidGridConfig_t *defaultBiGridConfig = bayes_GetBiRapidGridConfigPtrSafe();
+		defaultBiGridConfig->bayesrapidbibgmin   = parammin[0];
+		defaultBiGridConfig->bayesrapidbiw1low   = parammin[1];
+		defaultBiGridConfig->bayesrapidbitau1low = parammin[2];
+		defaultBiGridConfig->bayesrapidbiw2low   = parammin[3];
+		defaultBiGridConfig->bayesrapidbitau2low = parammin[4];
+
+		defaultBiGridConfig->bayesrapidbibgmax    = parammax[0];
+		defaultBiGridConfig->bayesrapidbiw1high   = parammax[1];
+		defaultBiGridConfig->bayesrapidbitau1high = parammax[2];
+		defaultBiGridConfig->bayesrapidbiw2high   = parammax[3];
+		defaultBiGridConfig->bayesrapidbitau2high = parammax[4];
+		break;
+	}
+}
 
 int Bayes_fitting_engine(/* Data in... */
 						 float xincr,
@@ -31,29 +60,9 @@ int Bayes_fitting_engine(/* Data in... */
 	{
 	case 3:
 		modelType = instr == NULL ? FIT_MONOEXP : FIT_IRFANDMONOEXP;
-		BayesMonoRapidGridConfig_t *defaultMonoGridConfig = bayes_GetMonoRapidGridConfigPtrSafe();
-
-		defaultMonoGridConfig->bayesrapidwlow = param[1] / RANGE_FACTOR;
-		defaultMonoGridConfig->bayesrapidtaulow = param[2] / RANGE_FACTOR;
-
-		defaultMonoGridConfig->bayesrapidbghigh = param[0] * RANGE_FACTOR;
-		defaultMonoGridConfig->bayesrapidwhigh = param[1] * RANGE_FACTOR;
-		defaultMonoGridConfig->bayesrapidtauhigh = param[2] * RANGE_FACTOR;
 		break;
 	case 5:
 		modelType = instr == NULL ? FIT_BIEXP : FIT_IRFANDBIEXP;
-		BayesBiRapidGridConfig_t *defaultBiGridConfig = bayes_GetBiRapidGridConfigPtrSafe();
-		defaultBiGridConfig->bayesrapidbibgmin = param[0] / RANGE_FACTOR;
-		defaultBiGridConfig->bayesrapidbiw1low = param[1] / RANGE_FACTOR;
-		defaultBiGridConfig->bayesrapidbitau1low = param[2] / RANGE_FACTOR;
-		defaultBiGridConfig->bayesrapidbiw2low = param[3] / RANGE_FACTOR;
-		defaultBiGridConfig->bayesrapidbitau2low = param[4] / RANGE_FACTOR;
-
-		defaultBiGridConfig->bayesrapidbibgmax = param[0] * RANGE_FACTOR;
-		defaultBiGridConfig->bayesrapidbiw1high = param[1] * RANGE_FACTOR;
-		defaultBiGridConfig->bayesrapidbitau1high = param[2] * RANGE_FACTOR;
-		defaultBiGridConfig->bayesrapidbiw2high = param[3] * RANGE_FACTOR;
-		defaultBiGridConfig->bayesrapidbitau2high = param[4] * RANGE_FACTOR;
 		break;
 	default:
 		// assign unknown if not odd integer >= 7

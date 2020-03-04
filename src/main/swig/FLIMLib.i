@@ -66,7 +66,8 @@ MATMAP(I2D_in, int, Int, I, Int2DMatrix)
 }
 %apply FLTARRIN_LEN {
 	(float params[], int nparam),
-	(float y[], int ndata)
+	(float y[], int ndata),
+	(float parammax[], int nparam)
 }
 %apply FLTPTRIN_LEN {
 	(float *trans, int ndata)

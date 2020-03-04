@@ -8,13 +8,26 @@ extern "C"
 {
 #endif
 
-	/*=================================================================================*/
-	/*                                                                                 */
-	/*                 MAIN FITTING FUNCTIONS                                          */
-	/*                                                                                 */
-	/*=================================================================================*/
+/**
+ * This function configure the search grid for Bayes_fitting_engine() by
+ * specifying the lower and upper bound for each parameters (z, A, tau, ...).
+ * The configuration takes effect only if nparam is 3 or 5 while the mode of
+ * fitting is single or double exponential. The behavior is undefined if any of
+ * the bounds are less than 0 or if parammax < parrammin.
+ * 
+ * \param[in] parammin The minimum of Bayesian search grid.
+ * \param[in] parammax The maximum of Bayesian search grid.
+ * \param[in] nparam The number of parameters (length of parammin and parammax).
+ */
+void Bayes_set_search_grid(float parammin[], float parammax[], int nparam);
 
-	/**
+/*=================================================================================*/
+/*                                                                                 */
+/*                 MAIN FITTING FUNCTIONS                                          */
+/*                                                                                 */
+/*=================================================================================*/
+
+/**
 * The main/convinient entry point for Bayesian parameter estimation. Wraps bayes_DoBayesFitting().
 * This is designed to look similar to the entry point to other alogorithms (RLD, LMA), using similar var names and types.
 * The Bayes algorithm does not accept the IRF (instr) here as othe alogorithms do, it must be loaded seperately.
@@ -37,27 +50,27 @@ extern "C"
 * \param[out] chisq The resulting raw chi squared value of the fit. To get the reduced chisq, divide by the degrees of freedom (fit_end - fit_start - nparam). Requires residuals array. Can be NULL if not required.
 * \return An error code, 0 = success.
 */
-	int Bayes_fitting_engine(/* Data in... */
-							 float xincr,
-							 float *trans,
-							 int ndata,
-							 int fit_start,
-							 int fit_end,
-							 float laser_period,
-							 float instr[],
-							 int ninstr,
-							 /* Model... */
-							 float param[],
-							 int paramfree[],
-							 int nparam,
-							 /* Data out... */
-							 float *fitted,
-							 float *residuals,
-							 float *error,
-							 /* Metadata output */
-							 float *minuslogprob,
-							 int *nphotons,
-							 float *chisq);
+int Bayes_fitting_engine(/* Data in... */
+                        float xincr,
+                        float *trans,
+                        int ndata,
+                        int fit_start,
+                        int fit_end,
+                        float laser_period,
+                        float instr[],
+                        int ninstr,
+                        /* Model... */
+                        float param[],
+                        int paramfree[],
+                        int nparam,
+                        /* Data out... */
+                        float *fitted,
+                        float *residuals,
+                        float *error,
+                        /* Metadata output */
+                        float *minuslogprob,
+                        int *nphotons,
+                        float *chisq);
 
 #ifdef __cplusplus
 }

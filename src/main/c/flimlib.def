@@ -31,3 +31,4 @@ EXPORTS
     RLD_fit
     LMA_fit
     Bayes_fitting_engine
+    Bayes_set_search_grid
