@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "stdio.h"
 #include "matrices.h"
 #include "extmath.h"
 #include "DTYPE.h"
@@ -199,7 +199,7 @@ int bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTau(double          *
 
     /*if (DebugTrace)
     {
-        if (fp = fopen("bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
+        if fp = fopen(("bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))))
         {
             DebugTrace = 0;
         }
@@ -544,7 +544,7 @@ int bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTau(double          *
 
     if (DebugTrace)
     {
-        if (fp = fopen("bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))
+        if fp = fopen(("bayes_ComputeFluorescenceDecayPhotonBinLikelihoodsGivenTauDebugOutput.txt", "w"))))
         {
             DebugTrace = 0;
         }
@@ -1383,7 +1383,7 @@ int  bayes_ArrBinLikelihoodsGivenTau(double *likelihoods,
     if (error)
     {
         /* Debug output */
-        if (fp = fopen("BayesDistFctsDebugOutput.txt", "w"))
+        if fp = fopen(("BayesDistFctsDebugOutput.txt", "w"))))
             return (-1);
 
         fprintf(fp,"Upsilon1\n\n");

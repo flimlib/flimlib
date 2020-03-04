@@ -2,7 +2,6 @@
 /* mrowley - creation 070904 */
 
 #include "stdio.h"
-//#include "malloc.h"
 #include "stdlib.h"
 #include "matrices.h"
 

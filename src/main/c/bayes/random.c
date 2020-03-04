@@ -6,9 +6,9 @@
 // P Barber, March 2017
 // Wichmann, Brian; Hill, David (1982). "Algorithm AS 183: An Efficient and Portable Pseudo-Random Number Generator". Journal of the Royal Statistical Society. Series C (Applied Statistics), Vol. 31, No. 2 (1982), pp. 188-190.
 
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
+#include "stdlib.h"
+#include "math.h"
+#include "time.h"
 
 static unsigned int wh_IX, wh_IY, wh_IZ;  
 

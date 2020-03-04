@@ -14,7 +14,7 @@
 /*                                                                                 */
 /***********************************************************************************/
 
-#include <stdio.h>
+#include "stdio.h"
 #include "stdlib.h"
 #include "bayes_Interface.h"
 
@@ -428,7 +428,7 @@ int bayes_BiExpDiscreteSpaceMinimisationExhaustiveSearch(double (*funk)(int *, i
 
     if (DebugTrace)
     {
-        if (fp = fopen("BiExpDiscreteSpaceMinimisationExhaustiveSearchDebugOutput.txt", "w"))
+        if ((fp = fopen("BiExpDiscreteSpaceMinimisationExhaustiveSearchDebugOutput.txt", "w")))
         {
             DebugTrace = 0;
         }
@@ -926,7 +926,7 @@ int bayes_BiExpDiscreteSpaceMinimisationStochasticSearch(double (*funk)(int *, i
 
 	if (DebugTrace)
     {
-        if (fp = fopen("BiExpDiscreteSpaceMinimisationStochasticSearchOutput.txt", "w"))
+        if ((fp = fopen("BiExpDiscreteSpaceMinimisationStochasticSearchOutput.txt", "w")))
         {
             DebugTrace = 0;
         }

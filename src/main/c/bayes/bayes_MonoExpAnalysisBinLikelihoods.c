@@ -36,8 +36,8 @@
 /*                                                                                 */
 /***********************************************************************************/
 
-#include <stdio.h>
-#include "malloc.h"
+#include "stdio.h"
+#include "stdlib.h"
 #include "math.h"
 #include "float.h"
 
