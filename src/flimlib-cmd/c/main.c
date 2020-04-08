@@ -506,9 +506,9 @@ int parse_and_fit(dictionary *ini, const char *dat_filename) {
     }
 
     // massage values
-    transient_start_index = my_roundf(transient_start / x_inc);
-    data_start_index = my_roundf(data_start / x_inc);
-    transient_end_index = my_roundf(transient_end / x_inc);
+    transient_start_index = (int) my_roundf(transient_start / x_inc);
+    data_start_index = (int) my_roundf(data_start / x_inc);
+    transient_end_index = (int) my_roundf(transient_end / x_inc);
     transient_values = adjust_transient(transient_values, transient_start_index, transient_end_index);
     transient_size = transient_end_index - transient_start_index + 1;
 	fit_start = data_start_index - transient_start_index;

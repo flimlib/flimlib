@@ -1241,7 +1241,7 @@ json_unescape (char *text)
 			case 'u':
 				{
 					char buf[5];
-					int64_t unicode;
+					uint64_t unicode;
 
 					buf[0] = text[++r];
 					buf[1] = text[++r];
@@ -1298,11 +1298,11 @@ json_unescape (char *text)
 							char three = 0x80;	/* 10 000000 */
 							char four = 0x80;	/* 10 000000 */
 
-							if (!text[++r] == '\\')
+							if (text[++r] != '\\')
 							{
 								break;
 							}
-							if (!text[++r] == 'u')
+							if (text[++r] != 'u')
 							{
 								break;
 							}
@@ -1337,7 +1337,7 @@ json_unescape (char *text)
 					}
 					else
 					{
-						fprintf (stderr, "JSON: unsupported unicode value: 0x%lX\n", unicode);
+						fprintf (stderr, "JSON: unsupported unicode value: 0x%llX\n", unicode);
 					}
 				}
 				break;
