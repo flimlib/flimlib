@@ -89,7 +89,7 @@ To depend on FLIMLib from Maven, simply copy the following to appropriate places
 
 ```xml
 <properties>
-  <flimlib.version>1.1.0</flimlib.version>
+  <flimlib.version>2.1.0</flimlib.version>
 </properties>
 
 <!-- FLIMLib Java interface -->
