@@ -41,6 +41,7 @@
 				<include>**/*.dylib</include>
 				<include>**/*.jnilib</include>
 				<include>**/*.dll</include>
+				<include>**/*.pdb</include>
 			</includes>
 		</fileSet>
 	</fileSets>
