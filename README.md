@@ -3,7 +3,7 @@
 [![](https://ci.appveyor.com/api/projects/status/github/flimlib/flimlib?svg=true)](https://ci.appveyor.com/project/scijava/flimlib "AppVeyor")
 
 FLIMLib is a curve fitting library used for Fluorescent Lifetime Imaging or
-FLIM. It is developed by Paul Barber and the Advanced Technology Group at the
+FLIM. It is developed by Paul Barber (UCL and KCL, London) and the Advanced Technology Group at the
 [Oxford Institute for Radiation Oncology](https://www.oncology.ox.ac.uk/),
 University of Oxford, as well as the [Laboratory for Optical and Computational
 Instrumentation](https://loci.wisc.edu/) at the University of
