@@ -11,7 +11,7 @@ Wisconsin-Madison. FLIMLib is used for FLIM functionality in the [Time Resolved
 Imaging](https://www.assembla.com/spaces/ATD_TRI/wiki) (TRI2) software, as well
 as in the [FLIMJ plugin for ImageJ](https://imagej.net/FLIMJ).
 
-For exponential lifetime fitting there are two core algorithms within FLIMLib:
+For exponential lifetime fitting there are three core algorithms within FLIMLib:
 
 1. A triple integral method that does a very fast estimate of a single
    exponential lifetime component.
@@ -19,6 +19,8 @@ For exponential lifetime fitting there are two core algorithms within FLIMLib:
    least-squares-minimization approach to generate a fit. This works with
    single, double and triple exponential models, as well as stretched
    exponential.
+3. A Bayesian algorithm that combines evidence from each single photon to 
+   estimate lifetimes etc. It offers better performance with low photon counts.
 
 There is also code to perform 'global' analysis over a number of signals
 simultaneously (e.g. over an image), where the lifetimes can be considered
