@@ -94,6 +94,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 
 		<exists-maven-plugin.version>0.0.6</exists-maven-plugin.version>
 		<json-simple.version>1.1.1</json-simple.version>
+		<cmake.build.option>Release</cmake.build.option>
 	</properties>
 
 	<dependencies>
@@ -197,7 +198,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 								<argument>${project.basedir}</argument>
 								<argument>${cmake.generator}</argument>
 								<!-- CMAKE_BUILD_TYPE specifies build option for Linux/MacOS -->
-								<argument>-DCMAKE_BUILD_TYPE=Release</argument>
+								<argument>-DCMAKE_BUILD_TYPE=${cmake.build.option}</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -215,7 +216,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 								<argument>.</argument>
 								<!-- But on windows, only "- -config Release" sets the option -->
 								<argument>${cmake.flag.config}</argument>
-								<argument>${cmake.flag.release}</argument>
+								<argument>${cmake.flag.configOption}</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -302,7 +303,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				<!-- <cmake.generator>-GUnix Makefiles</cmake.generator> -->
 				<cmake.generator>-DCMAKE_GENERATOR_PLATFORM=x64</cmake.generator>
 				<cmake.flag.config>--config</cmake.flag.config>
-				<cmake.flag.release>Release</cmake.flag.release>
+				<cmake.flag.configOption>${cmake.build.option}</cmake.flag.configOption>
 			</properties>
 		</profile>
 	</profiles>
