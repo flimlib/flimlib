@@ -8,3 +8,6 @@ src/main/c/doxygen.exe
 *.log
 /bin/
 /Debug/
+dist/
+venv/
+*.egg-info
