@@ -31,7 +31,7 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
     """
     
     try:
-        photonCount = np.asarray(photonCount)
+        photonCount = np.asarray(photonCount,dtype=np.float32)
     except ValueError:
         print("photonCount must be numpy array or array-like")
         raise
@@ -45,7 +45,7 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
     ninstr = 0
     if instr is not None:
         try:
-            instr = np.asarray(instr)
+            instr = np.asarray(instr,dtype=np.float32)
         except ValueError:
             print("photonCount must be numpy array or array-like")
             raise
@@ -60,14 +60,14 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
     
     if noise_type == 'NOISE_GIVEN':
         try:
-            sig = np.asarray(sig)
-        except ValueError:
+            sig = np.asarray(sig,dtype=np.float32)
+        except TypeError:
             print("sig must be array like for type NOISE_GIVEN")
             raise
         sig = np.ctypeslib.as_ctypes(sig)
     elif noise_type == 'NOISE_CONST':
         try:
-            sig = np.float(np.asarray(sig)) # convert to float
+            sig = np.float(np.asarray(sig,dtype=np.float32)) # convert to float
         except(TypeError, ValueError):
             print("sig must be float or length 1 float array for noise type NOISE_CONST")
             raise
