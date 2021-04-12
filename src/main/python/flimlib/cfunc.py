@@ -49,7 +49,7 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
         except ValueError:
             print("instr must be numpy array or array-like")
             raise
-        ninstr = len(instr)
+        ninstr = instr.size
         instr = np.ctypeslib.as_ctypes(instr) #presumably shorter than photonCount
         
     
