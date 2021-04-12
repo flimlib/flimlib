@@ -49,8 +49,9 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
         except ValueError:
             print("instr must be numpy array or array-like")
             raise
-        instr = np.ctypeslib.as_ctypes(instr) #presumably shorter than photonCount
         ninstr = len(instr)
+        instr = np.ctypeslib.as_ctypes(instr) #presumably shorter than photonCount
+        
     
     if noise_type in _noise_types.keys():
         if noise_type == 'NOISE_GAUSSIAN_FIT' or noise_type == 'NOISE_MLE':
