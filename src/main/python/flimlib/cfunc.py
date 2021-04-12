@@ -74,7 +74,7 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
             raise
         sig = ctypes.c_float(sig)
     elif sig is not None:
-        warnings.warn("Expected sig=None for noise type", noise_type, ". Value passed will be ignored")
+        warnings.warn("Expected sig=None for noise type " + str(noise_type) + ". Value passed will be ignored")
         sig = None
     
     samples = fit_end-fit_start #exclusive? the fitted and residuals had strange final values if included last index
