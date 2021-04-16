@@ -23,7 +23,7 @@ _GCI_triple_integral_fitting_engine.argtypes = [ctypes.c_float,ctypes.POINTER(ct
                                                 ctypes.POINTER(ctypes.c_float),ctypes.c_float]
 
 
-def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end=None, 
+def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=0, fit_end=None, 
                                        instr=None, noise_type='NOISE_CONST', sig=1.0, 
                                        chisq_target=1.1, output_fitted_and_residuals=False):
     """
@@ -31,12 +31,12 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
     """
     
 
-    photonCount = np.asarray(photonCount,dtype=np.float32)
-    if photonCount.ndim != 1:
-        raise ValueError("photonCount must be a 1 dimensional")
+    photon_count = np.asarray(photon_count,dtype=np.float32)
+    if photon_count.ndim != 1:
+        raise ValueError("photon_count must be a 1 dimensional")
     
     if fit_end is None:
-        fit_end = photonCount.shape[0]-1
+        fit_end = photon_count.shape[0]-1
     
     ninstr = 0
     if instr is not None:
@@ -44,7 +44,7 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
         if instr.ndim != 1:
             raise ValueError("instr must be 1 dimensional")
         ninstr = instr.shape[0]
-        instr = np.ctypeslib.as_ctypes(instr) #presumably shorter than photonCount
+        instr = np.ctypeslib.as_ctypes(instr) #presumably shorter than photon_count
         
     
     if noise_type in _noise_types.keys():
@@ -68,7 +68,7 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
     samples = fit_end-fit_start #exclusive? the fitted and residuals had strange final values if included last index
     
     period = ctypes.c_float(period)
-    photonCount = np.ctypeslib.as_ctypes(photonCount)
+    photon_count = np.ctypeslib.as_ctypes(photon_count)
     fit_start = ctypes.c_int(fit_start)
     fit_end = ctypes.c_int(fit_end)
     chisq_target = ctypes.c_float(chisq_target)
@@ -79,7 +79,7 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
     fitted = np.empty(samples,dtype=np.float32)
     residuals = np.empty(samples,dtype=np.float32)
     
-    tries = _GCI_triple_integral_fitting_engine(period,photonCount,fit_start,fit_end,
+    tries = _GCI_triple_integral_fitting_engine(period,photon_count,fit_start,fit_end,
                                                  instr,ninstr,_noise_types[noise_type],sig,
                                                  Z,A,tau,np.ctypeslib.as_ctypes(fitted),np.ctypeslib.as_ctypes(residuals),
                                                  chisq,chisq_target)
