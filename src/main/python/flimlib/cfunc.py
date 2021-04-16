@@ -30,26 +30,20 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
     put documentation here
     """
     
-    try:
-        photonCount = np.asarray(photonCount,dtype=np.float32)
-    except(ValueError, TypeError):
-        print("photonCount must be numpy array or array-like")
-        raise
-    else:
-        if photonCount.ndim != 1:
-            raise ValueError("photonCount must be a 1D array")
+
+    photonCount = np.asarray(photonCount,dtype=np.float32)
+    if photonCount.ndim != 1:
+        raise ValueError("photonCount must be a 1 dimensional")
     
     if fit_end is None:
         fit_end = photonCount.shape[0]-1
     
     ninstr = 0
     if instr is not None:
-        try:
-            instr = np.asarray(instr,dtype=np.float32)
-        except(ValueError, TypeError):
-            print("instr must be numpy array or array-like")
-            raise
-        ninstr = instr.size
+        instr = np.asarray(instr,dtype=np.float32)
+        if instr.ndim != 1:
+            raise ValueError("instr must be 1 dimensional")
+        ninstr = instr.shape[0]
         instr = np.ctypeslib.as_ctypes(instr) #presumably shorter than photonCount
         
     
@@ -57,24 +51,18 @@ def GCI_triple_integral_fitting_engine(period, photonCount, fit_start=0, fit_end
         if noise_type == 'NOISE_GAUSSIAN_FIT' or noise_type == 'NOISE_MLE':
             raise ValueError("Noise types 'NOISE_GAUSSIAN_FIT' and 'NOISE_MLE' are currently unimplemented")
     else:
-        raise ValueError("invalid noise type. The valid types are:", _noise_types.keys)
+        raise ValueError("invalid noise type. The valid types are: ", _noise_types.keys)
     
     if noise_type == 'NOISE_GIVEN':
-        try:
-            sig = np.asarray(sig,dtype=np.float32)
-        except(TypeError, ValueError):
-            print("sig must be array like for type NOISE_GIVEN")
-            raise
+        sig = np.asarray(sig,dtype=np.float32)
+        if sig.ndim != 1:
+            raise ValueError("sig must be 1 dimensional")
         sig = np.ctypeslib.as_ctypes(sig)
     elif noise_type == 'NOISE_CONST':
-        try:
-            sig = float(np.asarray(sig,dtype=np.float32)) # convert to float
-        except(TypeError, ValueError):
-            print("sig must be float or length 1 float array for noise type NOISE_CONST")
-            raise
+        sig = float(np.asarray(sig)) # convert to float
         sig = ctypes.c_float(sig)
     elif sig is not None:
-        warnings.warn("Expected sig=None for noise type " + str(noise_type) + ". Value passed will be ignored")
+        warnings.warn("Expected sig=None for noise type " + str(noise_type) + ". The given value of sig will be ignored")
         sig = None
     
     samples = fit_end-fit_start #exclusive? the fitted and residuals had strange final values if included last index
