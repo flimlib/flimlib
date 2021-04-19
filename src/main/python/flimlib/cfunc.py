@@ -53,6 +53,9 @@ def _prep_common_fit_params(photon_count, fit_start, fit_end):
     fit_length = fit_end-fit_start
     fitted = np.empty(fit_length, dtype=np.float32)
     residuals = np.empty(fit_length, dtype=np.float32)
+    # Note: It is very strange that despite fitted and residuals being the length of
+    # fitted data, their values don't line up with the interval. They always begin
+    # at time = 0
 
     photon_count = np.ctypeslib.as_ctypes(photon_count)
     fit_start = ctypes.c_int(fit_start)
@@ -107,7 +110,44 @@ def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=0, fit_en
         period, photon_count, fit_start, fit_end, instr, ninstr, 
         _noise_types[noise_type], sig, Z, A, tau, fitted, 
         residuals, chisq, chisq_target)
+    
     if(output_fitted_and_residuals):
-        return (tries, Z.value, A.value, tau.value, chisq.value, fitted, residuals)
+        return (tries, Z.value, A.value, tau.value, chisq.value, 
+                np.asarray(fitted), np.asarray(residuals))
+    return tries, Z.value, A.value, tau.value, chisq.value
 
-    return (tries, Z.value, A.value, tau.value, chisq.value)
+
+_GCI_Phasor = _flimlib.GCI_Phasor
+
+# C header
+#int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
+#							  float *Z, float *u, float *v, float *taup, float *taum, 
+#                             float *tau, float *fitted, float *residuals, float *chisq);
+
+_GCI_Phasor.argtypes = [
+    ctypes.c_float,ctypes.POINTER(ctypes.c_float), ctypes.c_int, ctypes.c_int,
+    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), 
+    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), 
+    ctypes.POINTER(ctypes.c_float),ctypes.POINTER(ctypes.c_float), 
+    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), 
+    ctypes.POINTER(ctypes.c_float)]
+
+def GCI_Phasor(period, photon_count, fit_start=0, fit_end=None, output_fitted_and_residuals=False):
+    """
+    put documentation here
+    """
+    period = ctypes.c_float(period)
+
+    photon_count, fit_start, fit_end, fitted, residuals = _prep_common_fit_params(
+        photon_count, fit_start, fit_end)
+    
+    Z, u, v, taup, taum, tau, chisq = (ctypes.c_float(), 
+    ctypes.c_float(), ctypes.c_float(), ctypes.c_float(), ctypes.c_float(), 
+    ctypes.c_float(), ctypes.c_float())  # output values
+
+    error_code = _GCI_Phasor(period, photon_count, fit_start, fit_end, Z, u, v, taup, taum, tau, fitted, residuals, chisq)
+
+    if(output_fitted_and_residuals):
+        return (error_code, Z.value, u.value, v.value, taup.value, taum.value, 
+                tau.value, chisq.value, np.asarray(fitted), np.asarray(residuals))
+    return error_code, Z.value, u.value, v.value, taup.value, taum.value, tau.value, chisq.value
