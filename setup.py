@@ -29,10 +29,20 @@ class build_clib(distutils.cmd.Command):
             maven = distutils.spawn.find_executable('mvn')
             if maven is None:
                 raise FileNotFoundError("unable to find mvn")
-        distutils.spawn.spawn([maven])
+        old_dir = os.getcwd()
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
+        try:
+            distutils.spawn.spawn([maven])
+        finally:
+            os.chdir(old_dir)
+    def should_run_mvn(self):
+        return True
 
+distutils.command.build.build.sub_commands.append(('build_clib',build_clib.should_run_mvn))
 
 setuptools.setup(
     install_requires=["numpy>=1.12.0"],
     cmdclass={'build_clib': build_clib},
-    data_files=[(os.path.dirname(os.path.realpath(__file__)), [os.path.join('target', 'natives', 'flimlib.dll')])])
+    # Empty string means target directory
+    data_files=[("", [os.path.join('target', 'natives', 'flimlib.dll')])],
+    )
