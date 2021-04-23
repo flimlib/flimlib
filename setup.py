@@ -6,7 +6,7 @@ import distutils.command.build
 import distutils.spawn
 
 
-class build_clib(distutils.cmd.Command):
+class build_mvn(distutils.cmd.Command):
     user_options = []
 
     def initialize_options(self):
@@ -38,11 +38,11 @@ class build_clib(distutils.cmd.Command):
     def should_run_mvn(self):
         return True
 
-distutils.command.build.build.sub_commands.append(('build_clib',build_clib.should_run_mvn))
+distutils.command.build.build.sub_commands.append(('build_mvn',build_mvn.should_run_mvn))
 
 setuptools.setup(
     install_requires=["numpy>=1.12.0"],
-    cmdclass={'build_clib': build_clib},
+    cmdclass={'build_mvn': build_mvn},
     # Empty string means target directory
-    data_files=[("", [os.path.join('target', 'natives', 'flimlib.dll')])],
+    data_files=[(os.path.join('lib', 'site-packages', 'flimlib'), [os.path.join('target', 'natives', 'flimlib.dll')])],
     )
