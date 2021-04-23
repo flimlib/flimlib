@@ -42,26 +42,17 @@ def _prep_instr_ninstr(instr):
         instr = np.ctypeslib.as_ctypes(instr)
     return instr, ninstr
 
-def _prep_common_fit_params(photon_count, fit_start, fit_end):
+def _prep_common_fit_params(photon_count):
     photon_count = np.asarray(photon_count, dtype=np.float32)
     if photon_count.ndim != 1:
         raise ValueError("photon_count must be a 1 dimensional")
     
-    if fit_end is None:
-        fit_end = photon_count.shape[0]-1
-
-    fit_length = fit_end-fit_start
-    fitted = np.empty(fit_length, dtype=np.float32)
-    residuals = np.empty(fit_length, dtype=np.float32)
-    # Note: It is very strange that despite fitted and residuals being the length of
-    # fitted data, their values don't line up with the interval. They always begin
-    # at time = 0
+    fit_start = 0
+    fit_end = photon_count.shape[0]-1
 
     photon_count = np.ctypeslib.as_ctypes(photon_count)
-    fit_start = ctypes.c_int(fit_start)
-    fit_end = ctypes.c_int(fit_end)
-    fitted = np.ctypeslib.as_ctypes(fitted)
-    residuals = np.ctypeslib.as_ctypes(residuals)
+    fitted = np.ctypeslib.as_ctypes(np.empty(fit_end, dtype=np.float32))
+    residuals = np.ctypeslib.as_ctypes(np.empty(fit_end, dtype=np.float32))
 
     return photon_count, fit_start, fit_end, fitted, residuals
 
@@ -81,7 +72,7 @@ _GCI_triple_integral_fitting_engine.argtypes = [
     ctypes.POINTER(ctypes.c_float), ctypes.c_float]
 
 
-def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=0, fit_end=None,
+def GCI_triple_integral_fitting_engine(period, photon_count,
                                        instr=None, noise_type='NOISE_CONST', sig=1.0,
                                        chisq_target=1.1, output_fitted_and_residuals=False):
     """
@@ -89,8 +80,7 @@ def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=0, fit_en
     """
     period = ctypes.c_float(period)
 
-    photon_count, fit_start, fit_end, fitted, residuals = _prep_common_fit_params(
-        photon_count, fit_start, fit_end)
+    photon_count, fit_start, fit_end, fitted, residuals = _prep_common_fit_params(photon_count)
 
     instr, ninstr = _prep_instr_ninstr(instr)
 
@@ -132,14 +122,13 @@ _GCI_Phasor.argtypes = [
     ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), 
     ctypes.POINTER(ctypes.c_float)]
 
-def GCI_Phasor(period, photon_count, fit_start=0, fit_end=None, output_fitted_and_residuals=False):
+def GCI_Phasor(period, photon_count, output_fitted_and_residuals=False):
     """
     put documentation here
     """
     period = ctypes.c_float(period)
 
-    photon_count, fit_start, fit_end, fitted, residuals = _prep_common_fit_params(
-        photon_count, fit_start, fit_end)
+    photon_count, fit_start, fit_end, fitted, residuals = _prep_common_fit_params(photon_count)
     
     Z, u, v, taup, taum, tau, chisq = (ctypes.c_float(), 
     ctypes.c_float(), ctypes.c_float(), ctypes.c_float(), ctypes.c_float(), 
@@ -151,3 +140,4 @@ def GCI_Phasor(period, photon_count, fit_start=0, fit_end=None, output_fitted_an
         return (error_code, Z.value, u.value, v.value, taup.value, taum.value, 
                 tau.value, chisq.value, np.asarray(fitted), np.asarray(residuals))
     return error_code, Z.value, u.value, v.value, taup.value, taum.value, tau.value, chisq.value
+
