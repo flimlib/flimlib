@@ -2,6 +2,7 @@ import ctypes
 import numpy as np
 import math
 import warnings
+from collections import namedtuple
 
 _flimlib = ctypes.cdll.flimlib
 
@@ -63,6 +64,8 @@ def _prep_common_fit_params(photon_count):
 #                                        float *Z, float *A, float *tau, float *fitted, float *residuals,
 #                                        float *chisq, float chisq_target);
 
+TripleIntegralResult = namedtuple('TripleIntegralResult', 'tries Z A tau fitted residuals chisq')
+
 _GCI_triple_integral_fitting_engine.argtypes = [
     ctypes.c_float, ctypes.POINTER(ctypes.c_float), ctypes.c_int, ctypes.c_int,
     ctypes.POINTER(ctypes.c_float), ctypes.c_int, ctypes.c_int,
@@ -74,7 +77,7 @@ _GCI_triple_integral_fitting_engine.argtypes = [
 
 def GCI_triple_integral_fitting_engine(period, photon_count,
                                        instr=None, noise_type='NOISE_CONST', sig=1.0,
-                                       chisq_target=1.1, output_fitted_and_residuals=False):
+                                       chisq_target=1.1):
     """
     put documentation here
     """
@@ -101,10 +104,8 @@ def GCI_triple_integral_fitting_engine(period, photon_count,
         _noise_types[noise_type], sig, Z, A, tau, fitted, 
         residuals, chisq, chisq_target)
     
-    if(output_fitted_and_residuals):
-        return (tries, Z.value, A.value, tau.value, chisq.value, 
-                np.asarray(fitted), np.asarray(residuals))
-    return tries, Z.value, A.value, tau.value, chisq.value
+    return TripleIntegralResult(tries, Z.value, A.value, tau.value, 
+        np.asarray(fitted), np.asarray(residuals), chisq.value)
 
 
 _GCI_Phasor = _flimlib.GCI_Phasor
@@ -114,6 +115,8 @@ _GCI_Phasor = _flimlib.GCI_Phasor
 #							  float *Z, float *u, float *v, float *taup, float *taum, 
 #                             float *tau, float *fitted, float *residuals, float *chisq);
 
+PhasorResult = namedtuple('PhasorResult', 'error_code Z u v taup taum tau fitted residuals chisq')
+
 _GCI_Phasor.argtypes = [
     ctypes.c_float,ctypes.POINTER(ctypes.c_float), ctypes.c_int, ctypes.c_int,
     ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), 
@@ -122,7 +125,7 @@ _GCI_Phasor.argtypes = [
     ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), 
     ctypes.POINTER(ctypes.c_float)]
 
-def GCI_Phasor(period, photon_count, output_fitted_and_residuals=False):
+def GCI_Phasor(period, photon_count):
     """
     put documentation here
     """
@@ -136,8 +139,8 @@ def GCI_Phasor(period, photon_count, output_fitted_and_residuals=False):
 
     error_code = _GCI_Phasor(period, photon_count, fit_start, fit_end, Z, u, v, taup, taum, tau, fitted, residuals, chisq)
 
-    if(output_fitted_and_residuals):
-        return (error_code, Z.value, u.value, v.value, taup.value, taum.value, 
-                tau.value, chisq.value, np.asarray(fitted), np.asarray(residuals))
-    return error_code, Z.value, u.value, v.value, taup.value, taum.value, tau.value, chisq.value
+
+        
+    return PhasorResult(error_code, Z.value, u.value, v.value, taup.value, taum.value, 
+        tau.value, np.asarray(fitted), np.asarray(residuals), chisq.value)
 
