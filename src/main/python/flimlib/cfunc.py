@@ -1,15 +1,15 @@
 import ctypes
-import numpy as np
 import math
+import os
 import warnings
 from collections import namedtuple
 
+import numpy as np
+
+#folder = os.path.dirname(os.path.abspath(__file__))
+#dll_path = os.path.join(folder, "flimlib.dll")
+#_flimlib = ctypes.CDLL(dll_path) # uncomment this section and delete the line below when ready to package
 _flimlib = ctypes.cdll.flimlib
-
-_GCI_triple_integral_fitting_engine = _flimlib.GCI_triple_integral_fitting_engine
-
-_noise_types = {'NOISE_CONST': 0, 'NOISE_GIVEN': 1, 'NOISE_POISSON_DATA': 2,
-                'NOISE_POISSON_FIT': 3, 'NOISE_GAUSSIAN_FIT': 4, 'NOISE_MLE': 5}  # 4 and 5 should be an error
 
 def _prep_sig(noise_type, sig):
     """
@@ -57,23 +57,74 @@ def _prep_common_fit_params(photon_count):
 
     return photon_count, fit_start, fit_end, fitted, residuals
 
-# C header
+_GCI_ecf_matrix = _flimlib.GCI_ecf_matrix
+_GCI_ecf_matrix.argtypes = [ctypes.c_int, ctypes.c_int]
+_GCI_ecf_matrix.restype = ctypes.POINTER(ctypes.POINTER(ctypes.c_float))
 
-# int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, int fit_end,
-#                                        float instr[], int ninstr, noise_type noise, float sig[],
-#                                        float *Z, float *A, float *tau, float *fitted, float *residuals,
-#                                        float *chisq, float chisq_target);
+_GCI_ecf_free_matrix = _flimlib.GCI_ecf_free_matrix
+_GCI_ecf_free_matrix.argtypes = [ctypes.POINTER(ctypes.POINTER(ctypes.c_float))]
 
+
+class _EcfMatrix:
+    def __init__(self, nrows, ncols):
+        self.matrix = _GCI_ecf_matrix(nrows, ncols)
+        self.nrows = nrows
+        self.ncols = ncols
+
+    def __del__(self):
+        _GCI_ecf_free_matrix(self.matrix)
+
+    def asarray(self):
+        # find the address of the start of the pointers at the beginning of the matrix
+        # the first pointer can be found by indexing
+        ptr_addr = ctypes.addressof(self.matrix[0])
+        # perform pointer arithmatic to skip the pointers at the beginning
+        # this gives us the address of the beginning of the data we are interested in
+        data_addr = ptr_addr + self.nrows*ctypes.sizeof(ctypes.c_void_p)
+        # apparently we must first cast to c_void_p to properly access the address that we calculated
+        data_void_ptr = ctypes.c_void_p(data_addr)
+        # cast the void pointer into the desired type (a normal 2d float array)
+        data_ptr = ctypes.cast(data_void_ptr, ctypes.POINTER(ctypes.c_float))
+
+        return np.ctypeslib.as_array(data_ptr, shape=(self.nrows, self.ncols)).copy()
+
+        # the code below does the same thing but perhaps less efficiently
+
+        # result = np.empty((self.nrows,self.ncols),dtype=np.float32)
+        # for row in range(self.nrows):
+        #     result[row,:] = np.ctypeslib.as_array(self.matrix[row],shape=(self.ncols,))
+        # return(result)
+    
+    def fill(self):
+        """for debug purposes only"""
+        for r in range(self.nrows):
+            for c in range(self.ncols):
+                self.matrix[r][c] = r*self.ncols+c # enumerate
+
+# Noise types used by flimlib
+# 4 and 5 should raise an error for GCI_triple_integral_fitting_engine
+_noise_types = {'NOISE_CONST': 0, 'NOISE_GIVEN': 1, 'NOISE_POISSON_DATA': 2,
+                'NOISE_POISSON_FIT': 3, 'NOISE_GAUSSIAN_FIT': 4, 'NOISE_MLE': 5}
+
+_GCI_triple_integral_fitting_engine = _flimlib.GCI_triple_integral_fitting_engine
 TripleIntegralResult = namedtuple('TripleIntegralResult', 'tries Z A tau fitted residuals chisq')
-
 _GCI_triple_integral_fitting_engine.argtypes = [
-    ctypes.c_float, ctypes.POINTER(ctypes.c_float), ctypes.c_int, ctypes.c_int,
-    ctypes.POINTER(ctypes.c_float), ctypes.c_int, ctypes.c_int,
-    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float),
-    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float),
-    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float),
-    ctypes.POINTER(ctypes.c_float), ctypes.c_float]
-
+    ctypes.c_float,                 # float xincr
+    ctypes.POINTER(ctypes.c_float), # float y[]
+    ctypes.c_int,                   # int fit_start
+    ctypes.c_int,                   # int fit_end
+    ctypes.POINTER(ctypes.c_float), # float instr[]
+    ctypes.c_int,                   # int ninstr
+    ctypes.c_int,                   # noise_type noise
+    ctypes.POINTER(ctypes.c_float), # float sig[]
+    ctypes.POINTER(ctypes.c_float), # float *Z
+    ctypes.POINTER(ctypes.c_float), # float *A
+    ctypes.POINTER(ctypes.c_float), # float *tau
+    ctypes.POINTER(ctypes.c_float), # float *fitted
+    ctypes.POINTER(ctypes.c_float), # float *residuals
+    ctypes.POINTER(ctypes.c_float), # float *chisq
+    ctypes.c_float                  # float chisq_target
+    ]
 
 def GCI_triple_integral_fitting_engine(period, photon_count,
                                        instr=None, noise_type='NOISE_CONST', sig=1.0,
@@ -108,22 +159,23 @@ def GCI_triple_integral_fitting_engine(period, photon_count,
         np.asarray(fitted), np.asarray(residuals), chisq.value)
 
 
-_GCI_Phasor = _flimlib.GCI_Phasor
-
-# C header
-#int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
-#							  float *Z, float *u, float *v, float *taup, float *taum, 
-#                             float *tau, float *fitted, float *residuals, float *chisq);
-
+_GCI_Phasor = _flimlib.GCI_Phasor # C function
 PhasorResult = namedtuple('PhasorResult', 'error_code Z u v taup taum tau fitted residuals chisq')
-
 _GCI_Phasor.argtypes = [
-    ctypes.c_float,ctypes.POINTER(ctypes.c_float), ctypes.c_int, ctypes.c_int,
-    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), 
-    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), 
-    ctypes.POINTER(ctypes.c_float),ctypes.POINTER(ctypes.c_float), 
-    ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), 
-    ctypes.POINTER(ctypes.c_float)]
+    ctypes.c_float,                 # float xincr
+    ctypes.POINTER(ctypes.c_float), # float y[]
+    ctypes.c_int,                   # int fit_start
+    ctypes.c_int,                   # int fit_end
+    ctypes.POINTER(ctypes.c_float), # float *Z
+    ctypes.POINTER(ctypes.c_float), # float *u
+    ctypes.POINTER(ctypes.c_float), # float *v
+    ctypes.POINTER(ctypes.c_float), # float *taup
+    ctypes.POINTER(ctypes.c_float), # float *taum
+    ctypes.POINTER(ctypes.c_float), # float *tau
+    ctypes.POINTER(ctypes.c_float), # float *fitted
+    ctypes.POINTER(ctypes.c_float), # float *residuals
+    ctypes.POINTER(ctypes.c_float)  # float *chisq
+    ]
 
 def GCI_Phasor(period, photon_count):
     """
@@ -138,9 +190,90 @@ def GCI_Phasor(period, photon_count):
     ctypes.c_float(), ctypes.c_float())  # output values
 
     error_code = _GCI_Phasor(period, photon_count, fit_start, fit_end, Z, u, v, taup, taum, tau, fitted, residuals, chisq)
-
-
-        
     return PhasorResult(error_code, Z.value, u.value, v.value, taup.value, taum.value, 
         tau.value, np.asarray(fitted), np.asarray(residuals), chisq.value)
+
+
+# make predefined fitting models from flimlib available to python user
+GCI_multiexp_tau = _flimlib.GCI_multiexp_tau
+GCI_multiexp_lambda = _flimlib.GCI_multiexp_lambda
+GCI_stretchedexp = _flimlib.GCI_stretchedexp
+
+# restrain types used by GCI_marquardt_fitting_engine
+_restrain_types = {'ECF_RESTRAIN_DEFAULT': 0, 'ECF_RESTRAIN_USER': 1}
+
+_GCI_marquardt_fitting_engine = _flimlib.GCI_marquardt_fitting_engine # C function
+MarquardtResult = namedtuple('MarquardtResult', 'error_code param fitted residuals chisq covar alpha erraxes')
+_GCI_marquardt_fitting_engine.argtypes= [
+    ctypes.c_float,                                 # float xincr
+    ctypes.POINTER(ctypes.c_float),                 # float *trans
+    ctypes.c_int,                                   # int ndata
+    ctypes.c_int,                                   # int fit_start
+    ctypes.c_int,                                   # int fit_end
+    ctypes.POINTER(ctypes.c_float),                 # float instr[]
+    ctypes.c_int,                                   # int ninstr
+    ctypes.c_int,                                   # noise_type noise
+    ctypes.POINTER(ctypes.c_float),                 # float sig[]
+    ctypes.POINTER(ctypes.c_float),                 # float param[]
+    ctypes.POINTER(ctypes.c_int),                   # int paramfree[]
+    ctypes.c_int,                                   # int nparam 
+    ctypes.c_int,                                   # restrain_type restrain
+    ctypes.c_void_p,                                # void (*fitfunc)(float, float [], float *, float [], int)
+    ctypes.POINTER(ctypes.c_float),                 # float *fitted
+    ctypes.POINTER(ctypes.c_float),                 # float *residuals
+    ctypes.POINTER(ctypes.c_float),                 # float *chisq
+    ctypes.POINTER(ctypes.POINTER(ctypes.c_float)), # float **covar
+    ctypes.POINTER(ctypes.POINTER(ctypes.c_float)), # float **alpha
+    ctypes.POINTER(ctypes.POINTER(ctypes.c_float)), # float **erraxes
+    ctypes.c_float,                                 # float chisq_target
+    ctypes.c_float,                                 # float chisq_delta
+    ctypes.c_int,                                   # int chisq_percent
+    ]
+
+def GCI_marquardt_fitting_engine(period, photon_count, param, paramfree=None, restrain_type='ECF_RESTRAIN_DEFAULT',
+                                       fitfunc=GCI_multiexp_tau, instr=None, noise_type='NOISE_CONST', sig=1.0,
+                                       chisq_target=1.1, chisq_delta=1E-5, chisq_percent=95,):
+    """
+    put documentation here
+    """
+    period = ctypes.c_float(period)
+
+    photon_count, fit_start, fit_end, fitted, residuals = _prep_common_fit_params(photon_count)
+
+    ndata = np.asarray(photon_count).shape[0]
+
+    instr, ninstr = _prep_instr_ninstr(instr)
+
+    sig = _prep_sig(noise_type, sig)
+
+    param = np.asarray(param,dtype=np.float32)
+    nparam = param.shape[0]
+    param = np.ctypeslib.as_ctypes(param)
+
+    if paramfree is None:
+        paramfree = np.ones(nparam,dtype=np.int_) # default all parameters are free
+    else:
+        paramfree = np.asarray(paramfree,dtype=np.int_)
+    paramfree = np.ctypeslib.as_ctypes(paramfree)
+
+    # TODO allow for wrapping of python functions for fitfunc (callback?)
+
+    chisq = ctypes.c_float()
+
+    chisq_target = ctypes.c_float(chisq_target)
+    chisq_delta = ctypes.c_float(chisq_delta)
+    chisq_percent = ctypes.c_int(chisq_percent)
+
+    # allocate the specific style of 2d array used by flimlib using EcfMatrix class
+    covar = _EcfMatrix(nparam, nparam)
+    alpha = _EcfMatrix(nparam, nparam)
+    erraxes = _EcfMatrix(nparam, nparam)
+
+    print(np.asarray(param))
+    error_code = _GCI_marquardt_fitting_engine(period, photon_count, ndata, fit_start, fit_end, 
+        instr, ninstr, _noise_types[noise_type], sig, param, paramfree, nparam, _restrain_types[restrain_type],
+        fitfunc, fitted, residuals, chisq,
+        covar.matrix, alpha.matrix, erraxes.matrix, chisq_target, chisq_delta, chisq_percent)
+    return MarquardtResult(error_code, np.asarray(param), np.asarray(fitted), 
+        np.asarray(residuals), chisq.value, covar.asarray(), alpha.asarray(), erraxes.asarray())
 
