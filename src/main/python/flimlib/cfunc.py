@@ -6,10 +6,9 @@ from collections import namedtuple
 
 import numpy as np
 
-#folder = os.path.dirname(os.path.abspath(__file__))
-#dll_path = os.path.join(folder, "flimlib.dll")
-#_flimlib = ctypes.CDLL(dll_path) # uncomment this section and delete the line below when ready to package
-_flimlib = ctypes.cdll.flimlib
+folder = os.path.dirname(os.path.abspath(__file__))
+dll_path = os.path.join(folder, "flimlib.dll")
+_flimlib = ctypes.CDLL(dll_path)
 
 def _prep_sig(noise_type, sig):
     """
@@ -28,8 +27,8 @@ def _prep_sig(noise_type, sig):
         sig = float(np.asarray(sig))  # convert to float
         sig = ctypes.c_float(sig)
     elif sig is not None:
-        warnings.warn("Expected sig=None for noise type " +
-                      str(noise_type) + ". The given value of sig will be ignored")
+        message = "Expected sig=None for noise type " + str(noise_type) + ". The given value of sig will be ignored"
+        warnings.warn(message)
         return None
     return sig
 
@@ -87,13 +86,6 @@ class _EcfMatrix:
         data_ptr = ctypes.cast(data_void_ptr, ctypes.POINTER(ctypes.c_float))
 
         return np.ctypeslib.as_array(data_ptr, shape=(self.nrows, self.ncols)).copy()
-
-        # the code below does the same thing but perhaps less efficiently
-
-        # result = np.empty((self.nrows,self.ncols),dtype=np.float32)
-        # for row in range(self.nrows):
-        #     result[row,:] = np.ctypeslib.as_array(self.matrix[row],shape=(self.ncols,))
-        # return(result)
     
     def fill(self):
         """for debug purposes only"""
@@ -212,7 +204,6 @@ class FitFunc:
         y.contents.value = ctypes.c_float(y_out).value
         dy_dparam = np.ctypeslib.as_array(dy_dparam,shape=(nparam,))
         dy_dparam[:] = np.asarray(dy_dparam_out, dtype=np.float32)
-        print("y: ",y_out, "dy_dparam: ", dy_dparam_out)
 
     def get_c_func(self, nparam_in):
         if self.nparam_predicate is None or self.nparam_predicate(nparam_in):
@@ -248,10 +239,18 @@ def _GCI_multiexp_tau_wrapped(x, param_in):
     dy_dparam[0] = np.float32(1)
     return y.value, dy_dparam
 
-GCI_multiexp_tau_wrapped = FitFunc(_GCI_multiexp_tau_wrapped)
+GCI_multiexp_tau_wrapped = FitFunc(_GCI_multiexp_tau_wrapped, nparam_predicate=_multiexp_predicate)
 
 # restrain types used by GCI_marquardt_fitting_engine
 _restrain_types = {'ECF_RESTRAIN_DEFAULT': 0, 'ECF_RESTRAIN_USER': 1}
+
+_GCI_set_restrain_limits = _flimlib.GCI_set_restrain_limits
+_GCI_set_restrain_limits.argtypes= [
+    ctypes.POINTER(ctypes.c_int),   # int restrain[]
+    ctypes.c_int,                   # int nparam
+    ctypes.POINTER(ctypes.c_float), # float minval[]
+    ctypes.POINTER(ctypes.c_float)  # float maxval[]
+]
 
 _GCI_marquardt_fitting_engine = _flimlib.GCI_marquardt_fitting_engine # C function
 MarquardtResult = namedtuple('MarquardtResult', 'error_code param fitted residuals chisq covar alpha erraxes')
@@ -304,10 +303,8 @@ def GCI_marquardt_fitting_engine(period, photon_count, param, paramfree=None, re
     if paramfree is None:
         paramfree = np.ones(nparam,dtype=np.int_) # default all parameters are free
     else:
-        paramfree = np.asarray(paramfree,dtype=np.int_)
+        paramfree = np.asarray(paramfree,dtype=np.int_) # TODO should I check to make sure it's ones and zeros?
     paramfree = np.ctypeslib.as_ctypes(paramfree)
-
-    # TODO allow for wrapping of python functions for fitfunc (callback?)
 
     chisq = ctypes.c_float()
 
@@ -320,7 +317,6 @@ def GCI_marquardt_fitting_engine(period, photon_count, param, paramfree=None, re
     alpha = _EcfMatrix(nparam, nparam)
     erraxes = _EcfMatrix(nparam, nparam)
 
-    print(np.asarray(param))
     error_code = _GCI_marquardt_fitting_engine(period, photon_count, ndata, fit_start, fit_end, 
         instr, ninstr, _noise_types[noise_type], sig, param, paramfree, nparam, _restrain_types[restrain_type],
         fitfunc.get_c_func(nparam), fitted, residuals, chisq,
