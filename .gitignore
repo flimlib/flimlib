@@ -11,3 +11,5 @@ src/main/c/doxygen.exe
 dist/
 venv/
 *.egg-info
+__pycache__/
+.vscode/

@@ -194,10 +194,61 @@ def GCI_Phasor(period, photon_count):
         tau.value, np.asarray(fitted), np.asarray(residuals), chisq.value)
 
 
-# make predefined fitting models from flimlib available to python user
-GCI_multiexp_tau = _flimlib.GCI_multiexp_tau
-GCI_multiexp_lambda = _flimlib.GCI_multiexp_lambda
-GCI_stretchedexp = _flimlib.GCI_stretchedexp
+class FitFunc:
+    def __init__(self, python_func, nparam_predicate=None):
+        if isinstance(python_func, ctypes._CFuncPtr):
+            # a ctypes c function was passed instead of a python function. We just use it directly
+            self.c_func = python_func
+        else:
+            self.python_func = python_func
+            CFUNC = ctypes.CFUNCTYPE(None, ctypes.c_float, ctypes.POINTER(ctypes.c_float), 
+                ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), ctypes.c_int)
+            self.c_func = CFUNC(self.wrapped_python_func)
+        self.nparam_predicate=nparam_predicate
+
+    def wrapped_python_func(self, x, param, y, dy_dparam, nparam):
+        param_in = np.ctypeslib.as_array(param, shape=(nparam,))
+        y_out, dy_dparam_out = self.python_func(x, param_in)
+        y.contents.value = ctypes.c_float(y_out).value
+        dy_dparam = np.ctypeslib.as_array(dy_dparam,shape=(nparam,))
+        dy_dparam[:] = np.asarray(dy_dparam_out, dtype=np.float32)
+        print("y: ",y_out, "dy_dparam: ", dy_dparam_out)
+
+    def get_c_func(self, nparam_in):
+        if self.nparam_predicate is None or self.nparam_predicate(nparam_in):
+            return ctypes.cast(self.c_func, ctypes.c_void_p)
+        else:
+            raise TypeError("Incorrect size of param")
+
+
+def _multiexp_predicate(n_param):
+    # 3 or greater and odd
+    return n_param >= 3 and n_param % 2 == 1
+
+def _stretchedexp_predicate(n_param):
+    return n_param == 4
+
+GCI_multiexp_tau = FitFunc(_flimlib.GCI_multiexp_tau, nparam_predicate=_multiexp_predicate)
+GCI_multiexp_lambda = FitFunc(_flimlib.GCI_multiexp_lambda, nparam_predicate=_multiexp_predicate)
+GCI_stretchedexp = FitFunc(_flimlib.GCI_stretchedexp, nparam_predicate=_stretchedexp_predicate)
+
+# We can wrap the c functions into python functions later to be used as c functions
+# I think this is a little silly
+_GCI_multiexp_tau = _flimlib.GCI_multiexp_tau
+_GCI_multiexp_tau.argtypes = [ctypes.c_float, ctypes.POINTER(ctypes.c_float), 
+            ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), ctypes.c_int]
+
+def _GCI_multiexp_tau_wrapped(x, param_in):
+    param = np.ctypeslib.as_ctypes(param_in)
+    y = ctypes.c_float()
+    x = ctypes.c_float(x)
+    dy_dparam = np.empty(3,dtype=np.float32)
+    nparam = 3
+    _GCI_multiexp_tau(x, param, y, np.ctypeslib.as_ctypes(dy_dparam), nparam)
+    dy_dparam[0] = np.float32(1)
+    return y.value, dy_dparam
+
+GCI_multiexp_tau_wrapped = FitFunc(_GCI_multiexp_tau_wrapped)
 
 # restrain types used by GCI_marquardt_fitting_engine
 _restrain_types = {'ECF_RESTRAIN_DEFAULT': 0, 'ECF_RESTRAIN_USER': 1}
@@ -272,7 +323,7 @@ def GCI_marquardt_fitting_engine(period, photon_count, param, paramfree=None, re
     print(np.asarray(param))
     error_code = _GCI_marquardt_fitting_engine(period, photon_count, ndata, fit_start, fit_end, 
         instr, ninstr, _noise_types[noise_type], sig, param, paramfree, nparam, _restrain_types[restrain_type],
-        fitfunc, fitted, residuals, chisq,
+        fitfunc.get_c_func(nparam), fitted, residuals, chisq,
         covar.matrix, alpha.matrix, erraxes.matrix, chisq_target, chisq_delta, chisq_percent)
     return MarquardtResult(error_code, np.asarray(param), np.asarray(fitted), 
         np.asarray(residuals), chisq.value, covar.asarray(), alpha.asarray(), erraxes.asarray())
