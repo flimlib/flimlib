@@ -252,6 +252,24 @@ _GCI_set_restrain_limits.argtypes= [
     ctypes.POINTER(ctypes.c_float)  # float maxval[]
 ]
 
+def GCI_set_restrain_limits(restrain, minval, maxval):
+    if not(restrain.ndim == minval.ndim == maxval.ndim == 1):
+        raise ValueError("restrain, minval and maxval must be 1 dimentional!")
+    if not(restrain.shape == minval.shape == maxval.shape):
+        raise ValueError("restrain, minval and maxval must have the same shape!")
+
+    nparam = restrain.shape[0]
+    minval = np.ctypeslib.as_array(np.asarray(minval,dtype=np.float32))
+    maxval = np.ctypeslib.as_array(np.asarray(maxval,dtype=np.float32))
+    restrain = np.ctypeslib.as_array(np.asarray(restrain,dtype=np.int_))
+
+    error_code = _GCI_set_restrain_limits(restrain, nparam, minval, maxval)
+
+    if(error_code == -1):
+        raise ValueError("invalid size of restrain")
+    if(error_code == -2):
+        raise ValueError('maxval must be element-wise greater than minval')
+
 _GCI_marquardt_fitting_engine = _flimlib.GCI_marquardt_fitting_engine # C function
 MarquardtResult = namedtuple('MarquardtResult', 'error_code param fitted residuals chisq covar alpha erraxes')
 _GCI_marquardt_fitting_engine.argtypes= [
