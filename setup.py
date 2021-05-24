@@ -1,12 +1,13 @@
-import distutils.command.build
-import distutils.spawn
-import glob
 import os
 import sys
 
 import setuptools
 import setuptools.command.build_py
 import setuptools.command.build_ext
+
+# Setuptools says it should be imported before anything from distutils.
+import distutils.command.build
+import distutils.spawn
 
 
 class build_mvn(distutils.cmd.Command):
