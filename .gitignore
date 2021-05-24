@@ -10,6 +10,8 @@ src/main/c/doxygen.exe
 /Debug/
 dist/
 venv/
-*.egg-info
 __pycache__/
+*.egg-info
+_flimlib.*.pyd
+_flimlib.*.so
 .vscode/

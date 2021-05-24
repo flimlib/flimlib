@@ -1,71 +1,33 @@
-import os
+import glob
+import os.path
+import setuptools
 import sys
 
-import setuptools
-import setuptools.command.build_py
-import setuptools.command.build_ext
 
-# Setuptools says it should be imported before anything from distutils.
-import distutils.command.build
-import distutils.spawn
+# normpath cleans up slashes on Windows
+flimlib_c_sources = [os.path.normpath(p) for p in
+                     glob.glob('src/main/c/**/*.c', recursive=True)]
+flimlib_cpp_sources = [os.path.normpath(p) for p in
+                       glob.glob('src/main/c/**/*.cpp', recursive=True)]
+
+flimlib_msvc_def = 'src/main/c/flimlib.def'
+
+module_source = 'src/main/python/flimlib/flimlib_dummy.c'
+
+c_sources = flimlib_c_sources + flimlib_cpp_sources + [module_source]
+
+# Technically we should make conditional on compiler, not OS, but we only
+# support MSVC for now.
+link_args = ['/DEF:' + flimlib_msvc_def] if sys.platform == 'win32' else []
 
 
-class build_mvn(distutils.cmd.Command):
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        if sys.platform == 'win32':
-            try:
-                mvn_home = os.environ['MAVEN_HOME']
-            except KeyError:
-                raise Exception('MAVEN_HOME not set')
-            if not mvn_home:
-                raise Exception('MAVEN_HOME not set')
-            maven = os.path.join(mvn_home, 'mvn.cmd')
-
-        else:
-            maven = distutils.spawn.find_executable('mvn')
-            if maven is None:
-                raise FileNotFoundError("unable to find mvn")
-        old_dir = os.getcwd()
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        try:
-            distutils.spawn.spawn([maven])
-        finally:
-            os.chdir(old_dir)
-
-    def should_run_mvn(self):
-        return True
-
-class build_ext(setuptools.command.build_ext.build_ext):
-    def run(self):
-        self.run_command('build_mvn')
-        return super().run()
-
-_flimlib_dummy = setuptools.Extension(
-    'flimlib._flimlib_dummy',
-    sources=[
-        'src/main/python/flimlib/flimlib_dummy.c',
-    ]
+flimlib_ext = setuptools.Extension(
+    'flimlib._flimlib',
+    sources=c_sources,
+    extra_link_args=link_args,
 )
-
-distutils.command.build.build.sub_commands.append(
-    ('build_mvn', build_mvn.should_run_mvn))
 
 setuptools.setup(
     install_requires=["numpy>=1.12.0"],
-    cmdclass={'build_mvn': build_mvn, 'build_ext': build_ext},
-    # Empty string means target directory
-    #data_files=[(os.path.join('lib', 'site-packages', 'flimlib'),
-    #             [os.path.join('target', 'natives', 'flimlib.dll')])],
-    data_files=[('flimlib',
-                 [os.path.join('target', 'natives', 'flimlib.dll')])],
-    include_package_data=True,
-    ext_modules=[_flimlib_dummy]
+    ext_modules=[flimlib_ext],
 )

@@ -1,4 +1,5 @@
 import ctypes
+import glob
 import os
 import warnings
 from collections import namedtuple
@@ -6,8 +7,16 @@ from collections import namedtuple
 import numpy as np
 
 folder = os.path.dirname(os.path.abspath(__file__))
-dll_path = os.path.join(folder, "flimlib.dll")
-_flimlib = ctypes.CDLL(dll_path)
+dll_candidates = (glob.glob(os.path.join(folder, '_flimlib.*.pyd')) +
+                  glob.glob(os.path.join(folder, '_flimlib.*.so')))
+if len(dll_candidates) > 1:
+    raise RuntimeError("More than one flimlib extension found???")
+if not dll_candidates:
+    raise RuntimeError("flimlib extension missing")
+dll_path = dll_candidates[0]
+
+# 0x8 = LOAD_WITH_ALTERED_SEARCH_PATH, allowing absolute path loading
+_flimlib = ctypes.CDLL(dll_path, winmode=0x8)
 
 def _prep_sig(noise_type, sig):
     """
