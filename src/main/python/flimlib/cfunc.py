@@ -1,5 +1,4 @@
 import ctypes
-import math
 import os
 import warnings
 from collections import namedtuple
@@ -253,15 +252,20 @@ _GCI_set_restrain_limits.argtypes= [
 ]
 
 def GCI_set_restrain_limits(restrain, minval, maxval):
+
+    minval = np.asarray(minval,dtype=np.float32)
+    maxval = np.asarray(maxval,dtype=np.float32)
+    restrain = np.asarray(restrain,dtype=np.int_)
+
     if not(restrain.ndim == minval.ndim == maxval.ndim == 1):
         raise ValueError("restrain, minval and maxval must be 1 dimentional!")
     if not(restrain.shape == minval.shape == maxval.shape):
         raise ValueError("restrain, minval and maxval must have the same shape!")
 
     nparam = restrain.shape[0]
-    minval = np.ctypeslib.as_array(np.asarray(minval,dtype=np.float32))
-    maxval = np.ctypeslib.as_array(np.asarray(maxval,dtype=np.float32))
-    restrain = np.ctypeslib.as_array(np.asarray(restrain,dtype=np.int_))
+    minval = np.ctypeslib.as_ctypes(minval)
+    maxval = np.ctypeslib.as_ctypes(maxval)
+    restrain = np.ctypeslib.as_ctypes(restrain)
 
     error_code = _GCI_set_restrain_limits(restrain, nparam, minval, maxval)
 

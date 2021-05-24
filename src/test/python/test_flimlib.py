@@ -2,9 +2,6 @@
 import unittest
 import flimlib.cfunc
 import numpy as np
-import matplotlib.pyplot as plt
-import sys
-import ctypes
 import math
 
 samples = 256
@@ -26,10 +23,6 @@ class Test3Integral(unittest.TestCase):
         self.assertTrue(math.isclose(result.tau, tau_in, abs_tol=0.5))
         self.assertTrue(math.isclose(result.Z, 0.0, abs_tol=0.5))
         self.assertTrue(result.tries>0)
-        #fig = plt.figure()
-        #plt.scatter(range(len(fitted)),fitted)
-        #plt.scatter(range(len(residuals)),residuals)
-        #plt.show()
         self.assertTrue(math.isclose(result.fitted[0], 10, abs_tol=0.5))
         self.assertTrue(math.isclose(result.residuals[0], 0.0, abs_tol=0.5))
 
@@ -52,14 +45,6 @@ class Test3Integral(unittest.TestCase):
             flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, instr="foo")
         with self.assertRaises(TypeError):
             flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, instr={"foo": "bar"})
-
-
-    #def test_fit_start_end(self):
-    #    _, _, _, _, _, fitted, residuals = flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, fit_start=0, fit_end=100, 
-    #                                                                      output_fitted_and_residuals=True)
-    #    self.assertEqual(type(fitted), np.ndarray)
-    #    self.assertEqual(type(residuals), np.ndarray)
-
 
     def test_noise_type_input(self):
         with self.assertRaises(ValueError):
@@ -148,8 +133,14 @@ class TestGCIMarquardt(unittest.TestCase):
         self.assertTrue(math.isclose(a_in+1, result.param[1],abs_tol=0.5))
 
     def test_restraintype(self):
-        # can't do this yet since i haven't wrapped set restrain limits
-        pass
+        with self.assertRaises(ValueError):
+            flimlib.cfunc.GCI_set_restrain_limits([0,0],[0],[0])
+        with self.assertRaises(ValueError):
+            flimlib.cfunc.GCI_set_restrain_limits([[0,0],[0,0]],[0,0],[0,0])
+        param_in = [0,a_in+1,tau_in+1]
+        flimlib.cfunc.GCI_set_restrain_limits([0,1,0],[0,0,0],[0,a_in-1,0])
+        result = flimlib.cfunc.GCI_marquardt_fitting_engine(period, photon_count32, param_in, restrain_type='ECF_RESTRAIN_USER')
+        self.assertTrue(result.param[1] <= a_in-1)
     
     def test_multiexp_lambda(self):
         lambda_in = 1/tau_in # lambda is the decay rate!
@@ -183,8 +174,6 @@ class TestGCIMarquardt(unittest.TestCase):
         param_in = [0, a_in+1,tau_in+1, 1, 1] # pass 5 parameters
         flimlib.cfunc.GCI_marquardt_fitting_engine(period, photon_count_linear, param_in)
         
-
-
 
 if __name__ == '__main__':
     unittest.main()
