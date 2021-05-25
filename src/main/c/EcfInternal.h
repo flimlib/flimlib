@@ -127,8 +127,8 @@ void ecf_ExportParams_CloseFile (void);
 void ecf_ExportParams (float param[], int nparam, float chisq);
 
 // Vars for the export of params at each iteration
-int ecf_exportParams;
-char ecf_exportParams_path[256];
+extern int ecf_exportParams;
+extern char ecf_exportParams_path[256];
 
 void ecf_ExportParams_OpenFile (void);
 void ecf_ExportParams_CloseFile (void);

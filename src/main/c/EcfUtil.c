@@ -1537,6 +1537,9 @@ int main(int ac, char **av)
 
 //***************************************** ExportParams ***********************************************/
 
+int ecf_exportParams;
+char ecf_exportParams_path[256];
+
 void ECF_ExportParams_start (char path[])
 {
 	ecf_exportParams = 1;
