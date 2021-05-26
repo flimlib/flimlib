@@ -3,7 +3,6 @@ jdk: openjdk8
 matrix:
   include:
     - os: linux
-      jdk: openjdk8
     - os: osx
       osx_image: xcode11.3
 
@@ -24,10 +23,6 @@ branches:
   - "/.*-[0-9]+\\..*/"
 install:
   - pip install --user cram
-  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
-  - chmod +x $TRAVIS_BUILD_DIR/install-jdk.sh
-  - export JAVA_HOME=$HOME/openjdk8
-  - $TRAVIS_BUILD_DIR/install-jdk.sh -F 8 --target $JAVA_HOME
 script: ".travis/build.sh"
 cache:
   directories:
