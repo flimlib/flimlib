@@ -264,7 +264,7 @@ def GCI_set_restrain_limits(restrain, minval, maxval):
 
     minval = np.asarray(minval,dtype=np.float32)
     maxval = np.asarray(maxval,dtype=np.float32)
-    restrain = np.asarray(restrain,dtype=np.int_)
+    restrain = np.asarray(restrain,dtype=np.intc)
 
     if not(restrain.ndim == minval.ndim == maxval.ndim == 1):
         raise ValueError("restrain, minval and maxval must be 1 dimentional!")
@@ -332,9 +332,9 @@ def GCI_marquardt_fitting_engine(period, photon_count, param, paramfree=None, re
     param = np.ctypeslib.as_ctypes(param)
 
     if paramfree is None:
-        paramfree = np.ones(nparam,dtype=np.int_) # default all parameters are free
+        paramfree = np.ones(nparam,dtype=np.intc) # default all parameters are free
     else:
-        paramfree = np.asarray(paramfree,dtype=np.int_) # TODO should I check to make sure it's ones and zeros?
+        paramfree = np.asarray(paramfree,dtype=np.intc) # TODO should I check to make sure it's ones and zeros?
     paramfree = np.ctypeslib.as_ctypes(paramfree)
 
     chisq = ctypes.c_float()
