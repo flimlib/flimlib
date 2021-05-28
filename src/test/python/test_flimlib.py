@@ -161,7 +161,7 @@ class TestGCIMarquardt(unittest.TestCase):
         # linear fit!
         param_in = [a_in+1, tau_in+1]
         fitfunc_in = flimlib.cfunc.FitFunc(dummy_linear, nparam_predicate=dummy_linear_predicate)
-        result = flimlib.cfunc.GCI_marquardt_fitting_engine(period, photon_count_linear, param_in, fitfunc=fitfunc_in)
+        result = flimlib.cfunc.GCI_marquardt_fitting_engine(period, photon_count_linear, param_in, fitfunc=fitfunc_in, noise_type='NOISE_CONST',sig=1.0)
         self.assertTrue(math.isclose(a_in,result.param[0],abs_tol=0.5))
         self.assertTrue(math.isclose(tau_in,result.param[1],abs_tol=0.5))
 

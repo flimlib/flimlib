@@ -127,7 +127,7 @@ _GCI_triple_integral_fitting_engine.argtypes = [
     ]
 
 def GCI_triple_integral_fitting_engine(period, photon_count,
-                                       instr=None, noise_type='NOISE_CONST', sig=1.0,
+                                       instr=None, noise_type='NOISE_POISSON_FIT', sig=None,
                                        chisq_target=1.1):
     """
     put documentation here
@@ -312,7 +312,7 @@ _GCI_marquardt_fitting_engine.argtypes= [
     ]
 
 def GCI_marquardt_fitting_engine(period, photon_count, param, paramfree=None, restrain_type='ECF_RESTRAIN_DEFAULT',
-                                       fitfunc=GCI_multiexp_tau, instr=None, noise_type='NOISE_CONST', sig=1.0,
+                                       fitfunc=GCI_multiexp_tau, instr=None, noise_type='NOISE_POISSON_FIT', sig=None,
                                        chisq_target=1.1, chisq_delta=1E-5, chisq_percent=95,):
     """
     put documentation here
