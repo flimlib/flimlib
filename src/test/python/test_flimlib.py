@@ -67,16 +67,25 @@ class Test3Integral(unittest.TestCase):
             flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_CONST',sig='foo')
     
     def test_noise_given(self):
-        flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_GIVEN',sig=[5])
-        flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_GIVEN',sig=[1,2,3,4,5])
-        flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_GIVEN',sig=list(range(300))) # no errors??? ask mark/jenu
+        flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_GIVEN',sig=list(range(samples)))
         with self.assertRaises(ValueError):
             flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_GIVEN',sig=2)
         with self.assertRaises(TypeError):
             flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_GIVEN',sig={"foo": "bar"})
         with self.assertRaises(ValueError):
             flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_GIVEN',sig='foo')
+        with self.assertRaises(ValueError):
+            flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_GIVEN',sig=[1,2,3,4,5])
         
+    def test_noise_const_and_given(self):
+        #the result should be the same if noise given is constant
+        result_const = flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_CONST',sig=1.0)
+        result_noise_given = flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_GIVEN',sig=np.ones(samples))
+        self.assertAlmostEqual(result_const.chisq,result_noise_given.chisq)
+        self.assertAlmostEqual(result_const.A,result_noise_given.A)
+        self.assertAlmostEqual(result_const.Z,result_noise_given.Z)
+        self.assertAlmostEqual(result_const.tau,result_noise_given.tau)
+
     def test_noise_poisson_data(self):
         flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_POISSON_DATA')
         flimlib.cfunc.GCI_triple_integral_fitting_engine(period, photon_count32, noise_type='NOISE_POISSON_DATA',sig=2)

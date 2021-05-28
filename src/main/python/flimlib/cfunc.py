@@ -18,7 +18,7 @@ dll_path = dll_candidates[0]
 # 0x8 = LOAD_WITH_ALTERED_SEARCH_PATH, allowing absolute path loading
 _flimlib = ctypes.CDLL(dll_path, winmode=0x8)
 
-def _prep_sig(noise_type, sig):
+def _prep_sig(noise_type, sig, len):
     """
     Helper function to make sure noise_type is valid and sig is the correct type 
     for the noise_type given
@@ -28,8 +28,8 @@ def _prep_sig(noise_type, sig):
             "invalid noise type. The valid types are: ", _noise_types.keys)
     elif noise_type == 'NOISE_GIVEN':
         sig = np.asarray(sig, dtype=np.float32)
-        if sig.ndim != 1:
-            raise ValueError("sig must be 1 dimensional")
+        if sig.shape != (len,):
+            raise ValueError("incorrect shape of sig")
         sig = np.ctypeslib.as_ctypes(sig)
     elif noise_type == 'NOISE_CONST':
         sig = float(np.asarray(sig))  # convert to float
@@ -56,7 +56,7 @@ def _prep_common_fit_params(photon_count):
         raise ValueError("photon_count must be a 1 dimensional")
     
     fit_start = 0
-    fit_end = photon_count.shape[0]-1
+    fit_end = photon_count.shape[0]-1 # do we actaully want to do this? shouldn't be 255
 
     photon_count = np.ctypeslib.as_ctypes(photon_count)
     fitted = np.ctypeslib.as_ctypes(np.empty(fit_end, dtype=np.float32))
@@ -143,7 +143,7 @@ def GCI_triple_integral_fitting_engine(period, photon_count,
         raise ValueError(
             "Noise types 'NOISE_GAUSSIAN_FIT' and 'NOISE_MLE' are currently unimplemented")
 
-    sig = _prep_sig(noise_type, sig)
+    sig = _prep_sig(noise_type, sig, np.asarray(photon_count).shape[0])
 
     chisq_target = ctypes.c_float(chisq_target)
 
@@ -325,7 +325,7 @@ def GCI_marquardt_fitting_engine(period, photon_count, param, paramfree=None, re
 
     instr, ninstr = _prep_instr_ninstr(instr)
 
-    sig = _prep_sig(noise_type, sig)
+    sig = _prep_sig(noise_type, sig, np.asarray(photon_count).shape[0])
 
     param = np.asarray(param,dtype=np.float32)
     nparam = param.shape[0]
