@@ -56,7 +56,7 @@ def _prep_common_fit_params(photon_count):
         raise ValueError("photon_count must be a 1 dimensional")
     
     fit_start = 0
-    fit_end = photon_count.shape[0]-1 # do we actaully want to do this? shouldn't be 255
+    fit_end = photon_count.shape[0] # should it be len or len-1?
 
     photon_count = np.ctypeslib.as_ctypes(photon_count)
     fitted = np.ctypeslib.as_ctypes(np.empty(fit_end, dtype=np.float32))
