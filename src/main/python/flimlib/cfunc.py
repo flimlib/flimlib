@@ -331,24 +331,6 @@ GCI_multiexp_tau = FitFunc(_flimlib.GCI_multiexp_tau, nparam_predicate=_multiexp
 GCI_multiexp_lambda = FitFunc(_flimlib.GCI_multiexp_lambda, nparam_predicate=_multiexp_predicate)
 GCI_stretchedexp = FitFunc(_flimlib.GCI_stretchedexp, nparam_predicate=_stretchedexp_predicate)
 
-# We can wrap the c functions into python functions later to be used as c functions
-# I think this is a little silly
-_GCI_multiexp_tau = _flimlib.GCI_multiexp_tau
-_GCI_multiexp_tau.argtypes = [ctypes.c_float, ctypes.POINTER(ctypes.c_float), 
-            ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), ctypes.c_int]
-
-def _GCI_multiexp_tau_wrapped(x, param_in):
-    param = np.ctypeslib.as_ctypes(param_in)
-    y = ctypes.c_float()
-    x = ctypes.c_float(x)
-    dy_dparam = np.empty(3,dtype=np.float32)
-    nparam = 3
-    _GCI_multiexp_tau(x, param, y, np.ctypeslib.as_ctypes(dy_dparam), nparam)
-    dy_dparam[0] = np.float32(1)
-    return y.value, dy_dparam
-
-GCI_multiexp_tau_wrapped = FitFunc(_GCI_multiexp_tau_wrapped, nparam_predicate=_multiexp_predicate)
-
 _GCI_set_restrain_limits = _flimlib.GCI_set_restrain_limits
 _GCI_set_restrain_limits.argtypes= [
     ctypes.POINTER(ctypes.c_int),   # int restrain[]

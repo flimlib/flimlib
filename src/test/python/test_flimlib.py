@@ -145,7 +145,7 @@ class TestGCIMarquardt(unittest.TestCase):
     def test_paramfree(self):
         param_in = [0,a_in+1,tau_in+1] # slight offset to detect if the fitting works!
         result = flimlib.cfunc.GCI_marquardt_fitting_engine(period, photon_count32, 
-            param_in, fitfunc=flimlib.cfunc.GCI_multiexp_tau_wrapped, paramfree=[1,0,1])
+            param_in, paramfree=[1,0,1])
         # second parameter should have been held fixed!
         self.assertAlmostEqual(a_in+1, result.param[1],1)
 
