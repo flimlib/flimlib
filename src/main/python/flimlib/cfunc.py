@@ -41,6 +41,9 @@ def _prep_sig(noise_type, sig, len):
     return sig
 
 def _prep_instr_ninstr(instr):
+    """
+    Helper function to handle instr input and generate a value for ninstr
+    """
     ninstr = 0
     if instr is not None:
         instr = np.asarray(instr, dtype=np.float32)
@@ -51,6 +54,9 @@ def _prep_instr_ninstr(instr):
     return instr, ninstr
 
 def _prep_common_fit_params(photon_count):
+    """
+    Helper function to generate common flimlib inputs given the shape of photon_count
+    """
     photon_count = np.asarray(photon_count, dtype=np.float32)
     if photon_count.ndim != 1:
         raise ValueError("photon_count must be a 1 dimensional")
@@ -73,6 +79,25 @@ _GCI_ecf_free_matrix.argtypes = [ctypes.POINTER(ctypes.POINTER(ctypes.c_float))]
 
 
 class _EcfMatrix:
+    """
+    A class used to represent an allocated matrix used by flimlib
+
+    ...
+
+    Attributes
+    ----------
+    matrix : LP_LP_c_float
+        a ctypes object representing a float** matrix
+    nrows : int
+        the number of rows
+    ncols : int
+        the number of columns
+
+    Methods
+    -------
+    asarray()
+        Returns a numpy.ndarray copy of the matrix
+    """
     def __init__(self, nrows, ncols):
         self.matrix = _GCI_ecf_matrix(nrows, ncols)
         self.nrows = nrows
@@ -82,6 +107,7 @@ class _EcfMatrix:
         _GCI_ecf_free_matrix(self.matrix)
 
     def asarray(self):
+        """Returns a numpy.ndarray copy of the matrix"""
         # find the address of the start of the pointers at the beginning of the matrix
         # the first pointer can be found by indexing
         ptr_addr = ctypes.addressof(self.matrix[0])
@@ -105,6 +131,9 @@ class _EcfMatrix:
 # 4 and 5 should raise an error for GCI_triple_integral_fitting_engine
 _noise_types = {'NOISE_CONST': 0, 'NOISE_GIVEN': 1, 'NOISE_POISSON_DATA': 2,
                 'NOISE_POISSON_FIT': 3, 'NOISE_GAUSSIAN_FIT': 4, 'NOISE_MLE': 5}
+
+# restrain types used by flimlib
+_restrain_types = {'ECF_RESTRAIN_DEFAULT': 0, 'ECF_RESTRAIN_USER': 1}
 
 _GCI_triple_integral_fitting_engine = _flimlib.GCI_triple_integral_fitting_engine
 TripleIntegralResult = namedtuple('TripleIntegralResult', 'tries Z A tau fitted residuals chisq')
@@ -130,7 +159,36 @@ def GCI_triple_integral_fitting_engine(period, photon_count,
                                        instr=None, noise_type='NOISE_POISSON_FIT', sig=None,
                                        chisq_target=1.1):
     """
-    put documentation here
+    Performs an exponential fit on the data using Rapid Lifetime Determination
+
+    Parameters
+    ----------
+    period : float
+        The time between samples in `photon_count`
+    photon_count : array_like
+        The data to be fit. the length of this array determines the length of the fit
+    instr : {None, array_like}, optional
+        The instrument response. If `instr` is None, no instrument response will be used
+        (default is None)
+    noise_type : str, optional
+        The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN', 
+        'NOISE_POISSON_DATA', 'NOISE_POISSON_FIT' (default is 'NOISE_POISSON_FIT')
+    sig : {None, float, array_like}, optional
+        The noise. A float array the same length as `photon_count` if `noise_type` 
+        is 'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None otherwise 
+        (default is None)
+    chisq_target : float, optional
+        The target chi squared value for the fit (default is 1.1)
+
+    Returns
+    -------
+    TripleIntegralResult
+        A namedtuple containing values in order: tries, Z, A, tau, fitted, residuals, chisq
+
+    Raises
+    ------
+    ValueError
+        If noise type passed is not implemented yet
     """
     period = ctypes.c_float(period)
 
@@ -179,7 +237,19 @@ _GCI_Phasor.argtypes = [
 
 def GCI_Phasor(period, photon_count):
     """
-    put documentation here
+    Performs an exponential fit on the data using Phasors
+
+    Parameters
+    ----------
+    period : float
+        The time between samples in `photon_count`
+    photon_count : array_like
+        The data to be fit. the length of this array determines the length of the fit
+
+    Returns
+    -------
+    TripleIntegralResult
+        A namedtuple containing values in order: error_code, Z, u, v, taup, taum, tau, fitted, residuals, chisq
     """
     period = ctypes.c_float(period)
 
@@ -195,7 +265,37 @@ def GCI_Phasor(period, photon_count):
 
 
 class FitFunc:
+    """
+    A class used to represent a fitfunc used by flimlib
+
+    ...
+
+    Attributes
+    ----------
+    python_func : function
+        A python function passed by the user to wrap as a ctypes function pointer
+    c_func : ctypes._CFuncPtr
+        A ctypes function pointer for the fitfunc for flimlib to use
+    nparam_predicate : function
+        A python function that returns True if the correct number of parameters
+        has been passed for the given fitfunc
+
+    Methods
+    -------
+    get_c_func(nparam_in)
+        Returns ctypes function pointer if `nparam_in` is valid
+    """
     def __init__(self, python_func, nparam_predicate=None):
+        """
+        Parameters
+        ----------
+        python_func : {function, ctypes._CFuncPtr)
+            A python function passed by the user to wrap as a ctypes function pointer. 
+            If a ctypes function pointer is passed, it will be used directly instead
+        nparam_predicate : {None, function}, optional
+            A python function that returns True if the correct number of parameters
+            has been passed for the given fitfunc (default is None)
+        """
         if isinstance(python_func, ctypes._CFuncPtr):
             # a ctypes c function was passed instead of a python function. We just use it directly
             self.c_func = python_func
@@ -203,10 +303,10 @@ class FitFunc:
             self.python_func = python_func
             CFUNC = ctypes.CFUNCTYPE(None, ctypes.c_float, ctypes.POINTER(ctypes.c_float), 
                 ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), ctypes.c_int)
-            self.c_func = CFUNC(self.wrapped_python_func)
+            self.c_func = CFUNC(self._wrapped_python_func)
         self.nparam_predicate=nparam_predicate
 
-    def wrapped_python_func(self, x, param, y, dy_dparam, nparam):
+    def _wrapped_python_func(self, x, param, y, dy_dparam, nparam):
         param_in = np.ctypeslib.as_array(param, shape=(nparam,))
         y_out, dy_dparam_out = self.python_func(x, param_in)
         y.contents.value = ctypes.c_float(y_out).value
@@ -215,7 +315,7 @@ class FitFunc:
 
     def get_c_func(self, nparam_in):
         if self.nparam_predicate is None or self.nparam_predicate(nparam_in):
-            return ctypes.cast(self.c_func, ctypes.c_void_p)
+            return self.c_func
         else:
             raise TypeError("Incorrect size of param")
 
@@ -249,9 +349,6 @@ def _GCI_multiexp_tau_wrapped(x, param_in):
 
 GCI_multiexp_tau_wrapped = FitFunc(_GCI_multiexp_tau_wrapped, nparam_predicate=_multiexp_predicate)
 
-# restrain types used by GCI_marquardt_fitting_engine
-_restrain_types = {'ECF_RESTRAIN_DEFAULT': 0, 'ECF_RESTRAIN_USER': 1}
-
 _GCI_set_restrain_limits = _flimlib.GCI_set_restrain_limits
 _GCI_set_restrain_limits.argtypes= [
     ctypes.POINTER(ctypes.c_int),   # int restrain[]
@@ -261,7 +358,23 @@ _GCI_set_restrain_limits.argtypes= [
 ]
 
 def GCI_set_restrain_limits(restrain, minval, maxval):
+    """
+    Sets global constraints on fit parameters
 
+    Parameters
+    ----------
+    restrain : array_like
+        Array of 1s and 0s. 1 indicates that the parameter will be constrained, 
+        0 indicates it will not be constrained
+    minval : array_like
+        The minimum acceptable value of each parameter
+    maxval : array_like
+        The maximum acceptable value of each parameter
+
+    Returns
+    -------
+    None
+    """
     minval = np.asarray(minval,dtype=np.float32)
     maxval = np.asarray(maxval,dtype=np.float32)
     restrain = np.asarray(restrain,dtype=np.intc)
@@ -313,9 +426,46 @@ _GCI_marquardt_fitting_engine.argtypes= [
 
 def GCI_marquardt_fitting_engine(period, photon_count, param, paramfree=None, restrain_type='ECF_RESTRAIN_DEFAULT',
                                        fitfunc=GCI_multiexp_tau, instr=None, noise_type='NOISE_POISSON_FIT', sig=None,
-                                       chisq_target=1.1, chisq_delta=1E-5, chisq_percent=95,):
+                                       chisq_target=1.1, chisq_delta=1E-5, chisq_percent=95):
     """
-    put documentation here
+    Performs an exponential fit on the data using the Levenberg–Marquardt Algorithm
+
+    Parameters
+    ----------
+    period : float
+        The time between samples in `photon_count`
+    photon_count : array_like
+        The data to be fit. the length of this array determines the length of the fit
+    param : array_like
+        The initial parameters for the fit. The "guess"
+    paramfree : array_like, optional
+        Array of 1s and 0s. 1 indicates that the parameter is free, 0 indicates it is fixed.
+        If None is passed, all parameters will be free. (default is None)
+    restrain_type : str, optional
+        restrain type to use. Valid values are 'ECF_RESTRAIN_DEFAULT' and 'ECF_RESTRAIN_USER' (default is 'ECF_RESTRAIN_DEFAULT')
+    fitfunc : FitFunc, optional
+        A FitFunc object that contains the fit function to be used in the fit. (default is GCI_multiexp_tau)
+    instr : {None, array_like}, optional
+        The instrument response. If `instr` is None, no instrument response will be used
+        (default is None)
+    noise_type : str, optional
+        The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN', 
+        'NOISE_POISSON_DATA', 'NOISE_POISSON_FIT' (default is 'NOISE_POISSON_FIT')
+    sig : {None, float, array_like}, optional
+        The noise. A float array the same length as `photon_count` if `noise_type` 
+        is 'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None otherwise 
+        (default is None)
+    chisq_target : float, optional
+        The target chi squared value for the fit (default is 1.1)
+    chisq_delta : float, optional
+        An individual fit will continue if the chisq value changes by more then this amount (default is 1E-5)
+    chisq_percent : int, optional
+        Defines the confidence interval when calculating the error axes (default is 95)
+
+    Returns
+    -------
+    MarquardtResult
+        A namedtuple containing values in order: error_code, param, fitted, residuals, chisq, covar, alpha, erraxes
     """
     period = ctypes.c_float(period)
 
@@ -348,9 +498,12 @@ def GCI_marquardt_fitting_engine(period, photon_count, param, paramfree=None, re
     alpha = _EcfMatrix(nparam, nparam)
     erraxes = _EcfMatrix(nparam, nparam)
 
+    # cast ctypes function pointer to c_void_p
+    fitfunc = ctypes.cast(fitfunc.get_c_func(nparam), ctypes.c_void_p)
+
     error_code = _GCI_marquardt_fitting_engine(period, photon_count, ndata, fit_start, fit_end, 
         instr, ninstr, _noise_types[noise_type], sig, param, paramfree, nparam, _restrain_types[restrain_type],
-        fitfunc.get_c_func(nparam), fitted, residuals, chisq,
+        fitfunc, fitted, residuals, chisq,
         covar.matrix, alpha.matrix, erraxes.matrix, chisq_target, chisq_delta, chisq_percent)
     return MarquardtResult(error_code, np.asarray(param), np.asarray(fitted), 
         np.asarray(residuals), chisq.value, covar.asarray(), alpha.asarray(), erraxes.asarray())
