@@ -716,6 +716,33 @@ void ECF_ExportParams_start (char path[]);
 /** Stop exporting fit details to a file for each fit. */
 void ECF_ExportParams_stop (void);
 
+/** multidimentional LMA fitting
+* TODO write doc
+*/
+int GCI_marquardt_fitting_engine_many(float xincr, struct array2d trans, int fit_start, int fit_end,
+	float instr[], int ninstr,
+	noise_type noise, float sig[],
+	struct array2d param, int paramfree[],
+	int nparam, restrain_type restrain,
+	void (*fitfunc)(float, float[], float*, float[], int),
+	struct array2d fitted, struct array2d residuals, float chisq[],
+	struct array3d covar, struct array3d alpha, struct array3d erraxes,
+	float chisq_target, float chisq_delta, int chisq_percent);
+
+struct array2d {
+	float* data;
+	size_t x_size;
+	size_t y_size;
+	size_t x_stride_bytes;
+};
+
+struct array3d {
+	float* data;
+	size_t x_size;
+	size_t y_size;
+	size_t z_size;
+};
+
 #ifdef __cplusplus
 }
 #endif

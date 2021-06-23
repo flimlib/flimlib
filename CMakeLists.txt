@@ -114,6 +114,8 @@ add_executable(flimlib-cmd-cpp ${FLIMLIB_COMMON} ${FLIMLIB_CPP})
 # Build a test program
 add_executable(flimlib-test ${FLIMLIB_COMMON} ${FLIMLIB_TEST})
 
+add_executable(test-many ${FLIMLIB_COMMON} src/test-many/c/test-many.c)
+
 if(UNIX)
   # Link the math library
   target_link_libraries(flimlib m)

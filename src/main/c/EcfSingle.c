@@ -2000,6 +2000,49 @@ void GCI_marquardt_cleanup(void)
 */
 }
 
+// TODO return negative ints to report any errors
+// TODO set all output values to be nan in the event of a failed fit
+int GCI_marquardt_fitting_engine_many(float xincr, struct array2d trans, int fit_start, int fit_end, 
+	float instr[], int ninstr,
+	noise_type noise, float sig[],
+	struct array2d param, int paramfree[],
+	int nparam, restrain_type restrain,
+	void (*fitfunc)(float, float[], float*, float[], int),
+	struct array2d fitted, struct array2d residuals, float chisq[],
+	struct array3d covar, struct array3d alpha, struct array3d erraxes,
+	float chisq_target, float chisq_delta, int chisq_percent) {
+
+	int ndata = trans.x_size;
+	float** temp_covar = GCI_ecf_matrix(nparam, nparam);
+	float** temp_alpha = GCI_ecf_matrix(nparam, nparam);
+	float** temp_erraxes = GCI_ecf_matrix(nparam, nparam);
+
+	for (int i = 0; i < trans.y_size; i++) {
+		//start of each row. cast to char* to add individual bytes (this could result in misaligned floats!!!)
+		float* trans_in = (char*)trans.data + i * trans.x_stride_bytes; 
+		float* param_in = (char*)param.data + i * param.x_stride_bytes;
+
+		// able to save memory if the data for these array2d are NULL. Pass this NULL into the fit algorithm
+		float* fitted_in = fitted.data == NULL ? NULL : (char*)fitted.data + i * fitted.x_stride_bytes;
+		float* residuals_in = residuals.data == NULL ? NULL : (char*)residuals.data + i * residuals.x_stride_bytes;
+
+		GCI_marquardt_fitting_engine(xincr, trans_in, ndata, fit_start, fit_end, instr, ninstr, noise, sig, 
+			param_in, paramfree, nparam, restrain, fitfunc, fitted_in, residuals_in, &chisq[i], 
+			temp_covar, temp_alpha, temp_erraxes, chisq_target, chisq_delta, chisq_percent);
+
+		// able to save memory if the data for these array3d are NULL. This prevents copying over the results
+		if (covar.data != NULL) {
+			memcpy(covar.data + i * covar.x_size * covar.y_size, temp_covar[0], covar.x_size * covar.y_size * sizeof(float));
+		}
+		if (alpha.data != NULL) {
+			memcpy(alpha.data + i * alpha.x_size * alpha.y_size, temp_alpha[0], alpha.x_size * alpha.y_size * sizeof(float));
+		}
+		if (erraxes.data != NULL) {
+			memcpy(erraxes.data + i * erraxes.x_size * erraxes.y_size, temp_erraxes[0], erraxes.x_size * erraxes.y_size * sizeof(float));
+		}
+	}
+	return 0;
+}
 
 // Emacs settings:
 // Local variables:
