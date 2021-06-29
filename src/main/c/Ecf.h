@@ -28,6 +28,8 @@
 /* This is Ecf.h, the public header file for the 2003 version of the
    ECF library. */
 
+#include <stddef.h> // need this for ptrdiff_t
+
 #ifndef _GCI_ECF
 #define _GCI_ECF
 
@@ -716,32 +718,37 @@ void ECF_ExportParams_start (char path[]);
 /** Stop exporting fit details to a file for each fit. */
 void ECF_ExportParams_stop (void);
 
-/** multidimentional LMA fitting
-* TODO write doc
-*/
-int GCI_marquardt_fitting_engine_many(float xincr, struct array2d trans, int fit_start, int fit_end,
-	float instr[], int ninstr,
-	noise_type noise, float sig[],
-	struct array2d param, int paramfree[],
-	int nparam, restrain_type restrain,
-	void (*fitfunc)(float, float[], float*, float[], int),
-	struct array2d fitted, struct array2d residuals, float chisq[],
-	struct array3d covar, struct array3d alpha, struct array3d erraxes,
-	float chisq_target, float chisq_delta, int chisq_percent);
-
 struct array2d {
 	float* data;
-	size_t x_size;
-	size_t y_size;
-	size_t x_stride_bytes;
+	size_t sizes[2]; // [num_rows, num_cols]
+	ptrdiff_t strides[2]; // [bytes_between_rows, bytes_between_cols]
 };
 
 struct array3d {
 	float* data;
-	size_t x_size;
-	size_t y_size;
-	size_t z_size;
+	size_t sizes[3]; // [num_layers, num_rows, num_cols]
+	ptrdiff_t strides[3]; // [bytes_between_layers, bytes_between_rows, bytes_between_cols]
 };
+
+/*helper for creating unstrided copy with strided data*/
+float* read_strided_row(struct array2d* source, float* destination, int row);
+
+void write_strided_row(float* source, struct array2d* destination, int row);
+
+void write_strided_layer(float* source, struct array3d* destination, int layer);
+
+/** multidimentional LMA fitting
+* TODO write doc
+*/
+int GCI_marquardt_fitting_engine_many(float xincr, struct array2d* trans, int fit_start, int fit_end,
+	float instr[], int ninstr,
+	noise_type noise, float sig[],
+	struct array2d* param, int paramfree[],
+	restrain_type restrain,
+	void (*fitfunc)(float, float[], float*, float[], int),
+	struct array2d* fitted, struct array2d* residuals, float chisq[],
+	struct array3d* covar, struct array3d* alpha, struct array3d* erraxes,
+	float chisq_target, float chisq_delta, int chisq_percent, unsigned char fit_mask[]);
 
 #ifdef __cplusplus
 }

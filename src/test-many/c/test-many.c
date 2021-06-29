@@ -19,7 +19,7 @@ int main() {
 	float covar_data[NPARAM * NPARAM * NROWS] = { 0 };
 	float alpha_data[NPARAM * NPARAM * NROWS] = { 0 };
 	float erraxes_data[NPARAM * NPARAM * NROWS] = { 0 };
-	struct array3d covar = { covar_data, NPARAM, NPARAM, NROWS };
+	struct array3d covar = { covar_data, {NPARAM, NPARAM, NROWS}, {NPARAM * NPARAM * sizeof(float), NPARAM * sizeof(float), sizeof(float)} };
 	struct array3d alpha = { NULL }; // passing null should be fine. skips copying step
 	struct array3d erraxes = { NULL };
 
