@@ -753,6 +753,15 @@ struct background_params { // TODO come up with a better name
 	struct array1d *sig;
 };
 
+
+void print_array1d(struct array1d* arr, int max_print);
+
+void print_array2d(struct array2d* arr, int max_print);
+
+void print_array3d(struct array3d* arr, int max_print);
+
+void print_fit(struct fit_params fit);
+
 /** multidimentional LMA fitting
 * TODO write doc
 */

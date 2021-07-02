@@ -2073,6 +2073,53 @@ void write_strided_matrix(float **source, struct array3d *destination, int layer
 			memcpy(ARRAY3D_ELEM_PTR(destination, layer, row, col), source[0] + row * destination->sizes[2] + col, sizeof(float));
 }
 
+void print_array1d(struct array1d* arr, int max_print) {
+	if (arr == NULL) return;
+	for (int col = 0; col < arr->size && col <= max_print; col++) {
+		printf("%f\t", *(float*)ARRAY1D_ELEM_PTR(arr, col));
+	}
+	printf("\n");
+}
+
+void print_array2d(struct array2d *arr, int max_print) {
+	if (arr == NULL) return;
+	for (int row = 0; row < arr->sizes[0] && row <= max_print; row++){
+		for (int col = 0; col < arr->sizes[1] && col <= max_print; col++){
+			printf("%f\t", *(float*)ARRAY2D_ELEM_PTR(arr, row, col));
+		}
+		printf("\n");
+	}
+}
+
+void print_array3d(struct array3d* arr, int max_print) {
+	if (arr == NULL) return;
+	for (int layer = 0; layer < arr->sizes[0] && layer <= max_print; layer++) {
+		printf("Layer %d\n", layer);
+		for (int row = 0; row < arr->sizes[1] && row <= max_print; row++) {
+			for (int col = 0; col < arr->sizes[2] && col <= max_print; col++) {
+				printf("%f\t", *(float*)ARRAY3D_ELEM_PTR(arr, layer, row, col));
+			}
+			printf("\n");
+		}
+	}
+}
+
+void print_fit(struct fit_params fit) {
+	printf("xincr: %f\n", fit.xincr);
+	printf("fit start: %d\n", fit.fit_start);
+	printf("fit end: %d\n", fit.fit_end);
+	printf("trans:\n");
+	print_array2d(fit.trans, 5);
+	printf("fitted:\n");
+	print_array2d(fit.fitted, 5);
+	printf("residuals:\n");
+	print_array2d(fit.residuals, 5);
+	printf("chisq:\n");
+	print_array1d(fit.chisq, 5);
+	printf("fit mask:\n");
+	print_array1d(fit.fit_mask, 5);
+}
+
 // TODO return negative ints to report any errors
 // TODO set all output values to be nan in the event of a failed fit
 int GCI_marquardt_fitting_engine_many(struct fit_params *fit, struct background_params *background,
