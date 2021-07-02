@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #include "EcfInternal.h"
 
+#define ARRAY1D_ELEM_PTR(arr, i) ((char *)(arr)->data + (i) * (arr)->stride)
 #define ARRAY2D_ELEM_PTR(arr, i, j) ((char *)(arr)->data + (i) * (arr)->strides[0] + (j) * (arr)->strides[1])
 #define ARRAY3D_ELEM_PTR(arr, i, j, k) ((char *)(arr)->data + (i) * (arr)->strides[0] + (j) * (arr)->strides[1] + (k) * (arr)->strides[2])
 
@@ -2020,91 +2021,191 @@ float* write_strided(float* unstrided_src, float* strided_dest, size_t size, ptr
 }
 */
 
+// TODO should these headers show up in Ecf.h? or should they remain just here since they are only meant to be referenced from this file
+
+float* allocate_temp_row(struct array2d* source) {
+	if (source == NULL || source->strides[1] == sizeof(float)) // we don't need this, don't allocate anything.
+		return NULL;
+	return (float*)malloc(source->sizes[1] * sizeof(float));
+}
+
+float* read_strided(struct array1d* source, float* destination) {
+	if (source->stride == sizeof(float))
+		return source->data; // strided source is actually unstrided! it will be modified in-place
+	for (size_t col = 0; col < source->size; col++) // iterate over columns
+		memcpy(destination + col, ARRAY1D_ELEM_PTR(source, col), sizeof(float));
+	return destination;
+}
+
 float* read_strided_row(struct array2d *source, float* destination, int row) {
 	if (source->strides[1] == sizeof(float))
-		return source->data; // strided source is actually unstrided!
+		return ARRAY2D_ELEM_PTR(source, row, 0); // strided source is actually unstrided! it will be modified in-place
 	for (size_t col = 0; col < source->sizes[1]; col++) // iterate over columns
 		memcpy(destination + col, ARRAY2D_ELEM_PTR(source,row,col), sizeof(float));
 	return destination;
 }
 
+float* prep_unstrided_output(struct array2d *strided_output, float* unstrided_output, int row) {
+	if (strided_output == NULL) // the caller doesn't want this output so we pass the NULL onward
+		return NULL;
+	if (strided_output->strides[1] == sizeof(float)) // strided output is actually unstrided! it will be modified in-place
+		return ARRAY2D_ELEM_PTR(strided_output, row, 0);
+	return unstrided_output;
+}
+
 void write_strided_row(float* source, struct array2d *destination, int row) {
+	if (destination == NULL || destination->strides[1] == sizeof(float)) // if the output was NULL the user didn't want. If it was unstrided, it was already modified in-place
+		return;
 	for (size_t col = 0; col < destination->sizes[1]; col++) // iterate over columns
 		memcpy(ARRAY2D_ELEM_PTR(destination, row, col), source + col, sizeof(float));
 }
 
-void write_strided_layer(float* source, struct array3d* destination, int layer) {
+/* write a matrix allocated by GCI_ecf_matrix into an array3d */
+void write_strided_matrix(float **source, struct array3d *destination, int layer) {
+	if (destination == NULL) // even if the destination isn't strided, the data still needs to be copied since GCI_ecf_matrix has a pointer header
+		return;
 	for (size_t row = 0; row < destination->sizes[1]; row++) // iterate over columns
 		for (size_t col = 0; col < destination->sizes[2]; col++) // iterate over columns
-			memcpy(ARRAY3D_ELEM_PTR(destination, layer, row, col), source + row * destination->sizes[2] + col, sizeof(float));
+			memcpy(ARRAY3D_ELEM_PTR(destination, layer, row, col), source[0] + row * destination->sizes[2] + col, sizeof(float));
 }
 
 // TODO return negative ints to report any errors
 // TODO set all output values to be nan in the event of a failed fit
-int GCI_marquardt_fitting_engine_many(float xincr, struct array2d *trans, int fit_start, int fit_end, 
-	float instr[], int ninstr,
-	noise_type noise, float sig[],
-	struct array2d *param, int paramfree[],
-	restrain_type restrain,
+int GCI_marquardt_fitting_engine_many(struct fit_params *fit, struct background_params *background,
+	struct array2d *param, struct array1d *paramfree, restrain_type restrain,
 	void (*fitfunc)(float, float[], float*, float[], int),
-	struct array2d *fitted, struct array2d *residuals, float chisq[],
 	struct array3d *covar, struct array3d *alpha, struct array3d *erraxes,
-	float chisq_target, float chisq_delta, int chisq_percent, unsigned char fit_mask[]) {
+	float chisq_target, float chisq_delta, int chisq_percent) {
 
 	// ndata is the length of data to fit. will be sliced further using fit_start and fit_end
 	// fit_start and fit_end are not redundant with the stride characteristics of trans since
 	// on occasion data outside of the fit range is used for convolution with the "prompt" whatever that means
-	size_t ndata = trans->sizes[1]; 
+	size_t ndata = fit->trans->sizes[1]; 
 	size_t nparam = param->sizes[1];
-	float *temp_trans = (float*)malloc(ndata * sizeof(float));
-	float *temp_param = (float*)malloc(nparam * sizeof(float));
+	int ninstr = background->instr == NULL ? 0 : background->instr->size;
 
-	// only allocate if the caller wants it!
-	float *temp_fitted = fitted->data == NULL ? NULL : (float*)malloc(ndata * sizeof(float));
-	float *temp_residuals = residuals->data == NULL ? NULL : (float*)malloc(ndata * sizeof(float));
+	float* unstrided_trans, * unstrided_instr, * unstrided_sig, * unstrided_param, * unstrided_fitted, * unstrided_residuals;
 
+	// allocate inputs and outputs. they can be NULL if not needed
+	float *temp_trans = allocate_temp_row(fit->trans);
+	float *temp_instr = allocate_temp_row(background->instr);
+	float *temp_sig = allocate_temp_row(background->sig);
+	float *temp_param = allocate_temp_row(param);
+	float *temp_fitted = allocate_temp_row(fit->fitted);
+	float *temp_residuals = allocate_temp_row(fit->residuals);
+
+	// allocate the matrices. we will need these no matter what
 	float **temp_covar = GCI_ecf_matrix(nparam, nparam);
 	float **temp_alpha = GCI_ecf_matrix(nparam, nparam);
 	float **temp_erraxes = GCI_ecf_matrix(nparam, nparam);
 
-	for (int i = 0; i < trans->sizes[0]; i++) if (fit_mask == NULL || fit_mask[i]) { // iterate over rows of trans
-		// strides not multiples of 4 will result in misaligned floats!!!
-		// get trans and param inputs in a non-strided format
-		float *unstrided_trans = read_strided_row(trans, temp_trans, i);
-		float *unstrided_param = read_strided_row(param, temp_param, i);
-		// if fitted and residuals aren't strided, they can be modified in-place, if they are NULL they should be passed as NULL
-		float *unstrided_fitted = temp_fitted != NULL && fitted->strides[1] == sizeof(float) ? ARRAY2D_ELEM_PTR(fitted, i, 0) : temp_fitted;
-		float *unstrided_residuals = temp_residuals != NULL && residuals->strides[1] == sizeof(float) ? ARRAY2D_ELEM_PTR(residuals, i, 0) : temp_residuals;
+	for (int i = 0; i < fit->trans->sizes[0]; i++) if (fit->fit_mask == NULL || *ARRAY1D_ELEM_PTR(fit->fit_mask, i)) { // iterate over rows of trans
+		// get input parameters trans and param in an unstrided format
+		unstrided_trans = read_strided_row(fit->trans, temp_trans, i);
+		unstrided_instr = read_strided_row(background->instr, temp_instr, i);
+		unstrided_sig = read_strided_row(background->sig, temp_sig, i);
+		unstrided_param = read_strided_row(param, temp_param, i);
+		// get the outputs in unstrided format
+		unstrided_fitted = prep_unstrided_output(fit->fitted, temp_fitted, i);
+		unstrided_residuals = prep_unstrided_output(fit->residuals, temp_residuals, i);
 
-		GCI_marquardt_fitting_engine(xincr, unstrided_trans, ndata, fit_start, fit_end, instr, ninstr, noise, sig, 
-			unstrided_param, paramfree, nparam, restrain, fitfunc, unstrided_fitted, unstrided_residuals, &chisq[i], 
+		GCI_marquardt_fitting_engine(fit->xincr, unstrided_trans, ndata, fit->fit_start, fit->fit_end, unstrided_instr, ninstr, background->noise, unstrided_sig, 
+			unstrided_param, paramfree, nparam, restrain, fitfunc, unstrided_fitted, unstrided_residuals, ARRAY1D_ELEM_PTR(fit->chisq, i), 
 			temp_covar, temp_alpha, temp_erraxes, chisq_target, chisq_delta, chisq_percent);
 
-		if(param->strides[1] != sizeof(float))
-			write_strided_row(unstrided_param, param, i);
+		// time to handle outputs!
 
-		// if fitted and residuals aren't strided, they were modified in-place, if they were NULL they were ignored
-		if (fitted->data != NULL && fitted->strides[1] != sizeof(float))
-			write_strided_row(unstrided_fitted, fitted, i);
-		if (residuals->data != NULL && residuals->strides[1] != sizeof(float))
-			write_strided_row(unstrided_residuals, residuals, i);
+		write_strided_row(unstrided_param, param, i);
+		write_strided_row(unstrided_fitted, fit->fitted, i);
+		write_strided_row(unstrided_residuals, fit->residuals, i);
 
 		// able to save memory if the data for these array3d are NULL. This prevents copying over the results
-		// we cannot modify these in-place since the function requires the ecf matrix format
-		if (covar->data != NULL)
-			write_strided_layer(temp_covar[0], covar, i); // pointer to first element in the data in ecf matrix using [0]
-		if (alpha->data != NULL)
-			write_strided_layer(temp_alpha[0], alpha, i);
-		if (erraxes->data != NULL)
-			write_strided_layer(temp_erraxes[0], erraxes, i);
+		// it was not an option to modify these in-place since the function requires the ecf matrix format
+		write_strided_matrix(temp_covar, covar, i);
+		write_strided_matrix(temp_alpha, alpha, i);
+		write_strided_matrix(temp_erraxes, erraxes, i);
 	}
+
+	// free anything with temp_ in its name
 	free(temp_trans);
+	free(temp_instr);
+	free(temp_sig);
 	free(temp_param);
 	free(temp_fitted);
 	free(temp_residuals);
+	GCI_ecf_free_matrix(temp_covar);
+	GCI_ecf_free_matrix(temp_alpha);
+	GCI_ecf_free_matrix(temp_erraxes);
 
 	return 0;
 }
+
+int GCI_triple_integral_fitting_engine_many(struct fit_params *fit, struct background_params *background,
+	struct array1d *Z, struct array1d *A, struct array1d *tau, float chisq_target) {
+
+	int ninstr = background->instr->size;
+
+	float *unstrided_trans, *unstrided_instr, *unstrided_sig, *unstrided_fitted, *unstrided_residuals;
+
+	float *temp_trans = allocate_temp_row(fit->trans);
+	float *temp_instr = allocate_temp_row(background->instr);
+	float *temp_sig = allocate_temp_row(background->sig);
+	float *temp_fitted = allocate_temp_row(fit->fitted);
+	float *temp_residuals = allocate_temp_row(fit->residuals);
+
+	for (int i = 0; i < fit->trans->sizes[0]; i++) if (fit->fit_mask == NULL || *ARRAY1D_ELEM_PTR(fit->fit_mask, i)) {
+
+		unstrided_trans = read_strided_row(fit->trans, temp_trans, i);
+		unstrided_instr = read_strided_row(background->instr, temp_instr, i);
+		unstrided_sig = read_strided_row(background->sig, temp_sig, i);
+		unstrided_fitted = prep_unstrided_output(fit->fitted, temp_fitted, i);
+		unstrided_residuals = prep_unstrided_output(fit->residuals, temp_residuals, i);
+
+		GCI_triple_integral_fitting_engine(fit->xincr, unstrided_trans, fit->fit_start, fit->fit_end,
+			unstrided_instr, ninstr, background->noise, unstrided_sig,
+			ARRAY1D_ELEM_PTR(Z, i), ARRAY1D_ELEM_PTR(A, i), ARRAY1D_ELEM_PTR(tau, i), unstrided_fitted, unstrided_residuals,
+			ARRAY1D_ELEM_PTR(fit->chisq, i), chisq_target);
+
+		write_strided_row(unstrided_fitted, fit->fitted, i);
+		write_strided_row(unstrided_residuals, fit->residuals, i);
+	}
+
+	free(temp_trans);
+	free(temp_instr);
+	free(temp_sig);
+	free(temp_fitted);
+	free(temp_residuals);
+}
+
+int GCI_Phasor_many(struct fit_params *fit,
+	struct array1d *Z, struct array1d *u, struct array1d *v, 
+	struct array1d *taup, struct array1d *taum, struct array1d *tau) {
+
+	float *unstrided_trans, *unstrided_fitted, *unstrided_residuals;
+
+	float *temp_trans = allocate_temp_row(fit->trans);
+	float *temp_fitted = allocate_temp_row(fit->fitted);
+	float *temp_residuals = allocate_temp_row(fit->residuals);
+
+	for (int i = 0; i < fit->trans->sizes[0]; i++) if (fit->fit_mask == NULL || *ARRAY1D_ELEM_PTR(fit->fit_mask, i)) {
+
+		unstrided_trans = read_strided_row(fit->trans, temp_trans, i);
+		unstrided_fitted = prep_unstrided_output(fit->fitted, temp_fitted, i);
+		unstrided_residuals = prep_unstrided_output(fit->residuals, temp_residuals, i);
+		
+		GCI_Phasor(fit->xincr, unstrided_trans, fit->fit_start, fit->fit_end,
+			ARRAY1D_ELEM_PTR(Z, i), ARRAY1D_ELEM_PTR(u, i), ARRAY1D_ELEM_PTR(v, i), 
+			ARRAY1D_ELEM_PTR(taup, i), ARRAY1D_ELEM_PTR(taum, i), ARRAY1D_ELEM_PTR(tau, i), 
+			unstrided_fitted, unstrided_residuals, ARRAY1D_ELEM_PTR(fit->chisq, i));
+
+		write_strided_row(unstrided_fitted, fit->fitted, i);
+		write_strided_row(unstrided_residuals, fit->residuals, i);
+	}
+	free(temp_trans);
+	free(temp_fitted);
+	free(temp_residuals);
+}
+
 
 // Emacs settings:
 // Local variables:

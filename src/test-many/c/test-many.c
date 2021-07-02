@@ -38,13 +38,19 @@ int main() {
 	float residuals2d_data[NDATA * NROWS];
 	struct array2d residuals2d = { residuals2d_data, {NROWS, NDATA}, {NDATA * sizeof(float) , sizeof(float)} };
 
+	float one_arr[] = { 1.0 };
+	struct array1d paramfree = {one_arr, 1, 0};
 
-	float paramfree[NPARAM] = { 1, 1, 1 };
+	float *chisq_data[NDATA];
+	struct array1d chisq = {chisq_data, NDATA, sizeof(float)};
 
-	float chisq[NROWS];
+	struct array1d fit_mask = { one_arr, 1, 0 };
 
+	struct fit_params fit_in = {period, &photonCount2d, 0, NDATA, &fitted2d, &residuals2d, &chisq, &fit_mask};
 
-	GCI_marquardt_fitting_engine_many(period, &photonCount2d, 0, NDATA, NULL, NULL, NOISE_POISSON_FIT, NULL, &param2d, paramfree, ECF_RESTRAIN_DEFAULT, GCI_multiexp_tau, &fitted2d, &residuals2d, chisq, &covar, &alpha, &erraxes, 1.1, 1E-5, 95, NULL);
+	struct background_params background_in = {NULL, NOISE_POISSON_FIT, NULL};
+
+	GCI_marquardt_fitting_engine_many(&fit_in, &background_in, &param2d, &paramfree, ECF_RESTRAIN_DEFAULT, GCI_multiexp_tau, &covar, &alpha, &erraxes, 1.1, 1E-5, 95);
 
 	printf("params\n");
 	for (int i = 0; i < NPARAM * NROWS; i++)
@@ -64,7 +70,7 @@ int main() {
 	param2d.strides[1] = -sizeof(float);
 	param2d.data = param2d_data_rev + 2;
 
-	GCI_marquardt_fitting_engine_many(period, &photonCount2d, 0, NDATA/2, NULL, NULL, NOISE_POISSON_FIT, NULL, &param2d, paramfree, ECF_RESTRAIN_DEFAULT, GCI_multiexp_tau, &fitted2d, &residuals2d, chisq, &covar, &alpha, &erraxes, 1.1, 1E-5, 95, NULL);
+	//GCI_marquardt_fitting_engine_many(period, &photonCount2d, 0, NDATA/2, NULL, NULL, NOISE_POISSON_FIT, NULL, &param2d, paramfree, ECF_RESTRAIN_DEFAULT, GCI_multiexp_tau, &fitted2d, &residuals2d, chisq, &covar, &alpha, &erraxes, 1.1, 1E-5, 95, NULL);
 
 	printf("params\n");
 	for (int i = 0; i < NPARAM * NROWS; i++)

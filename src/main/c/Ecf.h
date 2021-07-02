@@ -718,6 +718,12 @@ void ECF_ExportParams_start (char path[]);
 /** Stop exporting fit details to a file for each fit. */
 void ECF_ExportParams_stop (void);
 
+struct array1d {
+	float* data;
+	size_t size;
+	ptrdiff_t stride;
+};
+
 struct array2d {
 	float* data;
 	size_t sizes[2]; // [num_rows, num_cols]
@@ -730,25 +736,38 @@ struct array3d {
 	ptrdiff_t strides[3]; // [bytes_between_layers, bytes_between_rows, bytes_between_cols]
 };
 
-/*helper for creating unstrided copy with strided data*/
-float* read_strided_row(struct array2d* source, float* destination, int row);
+struct fit_params {
+	float xincr;
+	struct array2d *trans;
+	int fit_start;
+	int fit_end;
+	struct array2d *fitted;
+	struct array2d *residuals;
+	struct array1d *chisq;
+	struct array1d *fit_mask;
+};
 
-void write_strided_row(float* source, struct array2d* destination, int row);
-
-void write_strided_layer(float* source, struct array3d* destination, int layer);
+struct background_params { // TODO come up with a better name
+	struct array1d *instr;
+	noise_type noise;
+	struct array1d *sig;
+};
 
 /** multidimentional LMA fitting
 * TODO write doc
 */
-int GCI_marquardt_fitting_engine_many(float xincr, struct array2d* trans, int fit_start, int fit_end,
-	float instr[], int ninstr,
-	noise_type noise, float sig[],
-	struct array2d* param, int paramfree[],
-	restrain_type restrain,
+int GCI_marquardt_fitting_engine_many(struct fit_params* fit, struct background_params* background,
+	struct array2d* param, struct array1d* paramfree, restrain_type restrain,
 	void (*fitfunc)(float, float[], float*, float[], int),
-	struct array2d* fitted, struct array2d* residuals, float chisq[],
 	struct array3d* covar, struct array3d* alpha, struct array3d* erraxes,
-	float chisq_target, float chisq_delta, int chisq_percent, unsigned char fit_mask[]);
+	float chisq_target, float chisq_delta, int chisq_percent);
+
+int GCI_triple_integral_fitting_engine_many(struct fit_params* fit, struct background_params* background,
+	struct array1d* Z, struct array1d* A, struct array1d* tau, float chisq_target);
+
+int GCI_Phasor_many(struct fit_params* fit,
+	struct array1d* Z, struct array1d* u, struct array1d* v,
+	struct array1d* taup, struct array1d* taum, struct array1d* tau);
 
 #ifdef __cplusplus
 }
