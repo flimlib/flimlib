@@ -46,7 +46,7 @@ int main() {
 
 	struct array1d fit_mask = { one_arr, 1, 0 };
 
-	struct fit_params fit_in = {period, &photonCount2d, 0, NDATA, &fitted2d, &residuals2d, &chisq, &fit_mask};
+	struct fit_params fit_in = {period, &photonCount2d, 0, NDATA, &fitted2d, &residuals2d, &chisq, NULL};
 
 	struct background_params background_in = {NULL, NOISE_POISSON_FIT, NULL};
 

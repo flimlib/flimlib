@@ -2030,6 +2030,8 @@ float* allocate_temp_row(struct array2d* source) {
 }
 
 float* read_strided(struct array1d* source, float* destination) {
+	if (source == NULL)
+		return NULL;
 	if (source->stride == sizeof(float))
 		return source->data; // strided source is actually unstrided! it will be modified in-place
 	for (size_t col = 0; col < source->size; col++) // iterate over columns
@@ -2038,6 +2040,8 @@ float* read_strided(struct array1d* source, float* destination) {
 }
 
 float* read_strided_row(struct array2d *source, float* destination, int row) {
+	if (source == NULL)
+		return NULL;
 	if (source->strides[1] == sizeof(float))
 		return ARRAY2D_ELEM_PTR(source, row, 0); // strided source is actually unstrided! it will be modified in-place
 	for (size_t col = 0; col < source->sizes[1]; col++) // iterate over columns

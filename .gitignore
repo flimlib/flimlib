@@ -16,3 +16,4 @@ _flimlib.*.pyd
 _flimlib.*.so
 .tox/
 .vscode/
+.vs/
