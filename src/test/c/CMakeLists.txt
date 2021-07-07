@@ -16,6 +16,7 @@ set(FLIMLIB_COMMON   ../flimlib/src/main/c/EcfGlobal.c
                      ../flimlib/src/main/c/EcfWrapper.c
                      ../flimlib/src/main/c/GCI_Lsqnonneg.c
                      ../flimlib/src/main/c/GCI_Phasor.c
+                     ../flimlib/src/main/c/EcfMultiple.c
 )
 
 

@@ -46,6 +46,7 @@ set(FLIMLIB_COMMON   src/main/c/EcfGlobal.c
                      src/main/c/EcfWrapper.c
                      src/main/c/GCI_Lsqnonneg.c
                      src/main/c/GCI_Phasor.c
+                     src/main/c/EcfMultiple.c
 )
 
 # Additional files for the stand alone program

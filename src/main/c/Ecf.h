@@ -28,8 +28,6 @@
 /* This is Ecf.h, the public header file for the 2003 version of the
    ECF library. */
 
-#include <stddef.h> // need this for ptrdiff_t
-
 #ifndef _GCI_ECF
 #define _GCI_ECF
 
@@ -717,66 +715,6 @@ void GCI_ecf_free_matrix(float **m);
 void ECF_ExportParams_start (char path[]);
 /** Stop exporting fit details to a file for each fit. */
 void ECF_ExportParams_stop (void);
-
-struct array1d {
-	float* data;
-	size_t size;
-	ptrdiff_t stride;
-};
-
-struct array2d {
-	float* data;
-	size_t sizes[2]; // [num_rows, num_cols]
-	ptrdiff_t strides[2]; // [bytes_between_rows, bytes_between_cols]
-};
-
-struct array3d {
-	float* data;
-	size_t sizes[3]; // [num_layers, num_rows, num_cols]
-	ptrdiff_t strides[3]; // [bytes_between_layers, bytes_between_rows, bytes_between_cols]
-};
-
-struct fit_params {
-	float xincr;
-	struct array2d *trans;
-	int fit_start;
-	int fit_end;
-	struct array2d *fitted;
-	struct array2d *residuals;
-	struct array1d *chisq;
-	struct array1d *fit_mask;
-};
-
-struct background_params { // TODO come up with a better name
-	struct array1d *instr;
-	noise_type noise;
-	struct array1d *sig;
-};
-
-
-void print_array1d(struct array1d* arr, int max_print);
-
-void print_array2d(struct array2d* arr, int max_print);
-
-void print_array3d(struct array3d* arr, int max_print);
-
-void print_fit(struct fit_params fit);
-
-/** multidimentional LMA fitting
-* TODO write doc
-*/
-int GCI_marquardt_fitting_engine_many(struct fit_params* fit, struct background_params* background,
-	struct array2d* param, struct array1d* paramfree, restrain_type restrain,
-	void (*fitfunc)(float, float[], float*, float[], int),
-	struct array3d* covar, struct array3d* alpha, struct array3d* erraxes,
-	float chisq_target, float chisq_delta, int chisq_percent);
-
-int GCI_triple_integral_fitting_engine_many(struct fit_params* fit, struct background_params* background,
-	struct array1d* Z, struct array1d* A, struct array1d* tau, float chisq_target);
-
-int GCI_Phasor_many(struct fit_params* fit,
-	struct array1d* Z, struct array1d* u, struct array1d* v,
-	struct array1d* taup, struct array1d* taum, struct array1d* tau);
 
 #ifdef __cplusplus
 }

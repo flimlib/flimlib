@@ -1,12 +1,11 @@
 #include <stdio.h>
-#include "Ecf.h"
+#include "EcfMultiple.h"
 #include <math.h>
 #define NDATA 256
 #define NPARAM 3
 #define NROWS 2
 
 void createExponential(float* time, float* photonCount, float a, float tau, float period, size_t count);
-void print_fit(struct fit_params fit);
 
 int main() {
 	float a = 10.0;
@@ -47,11 +46,14 @@ int main() {
 
 	struct array1d fit_mask = { one_arr, 1, 0 };
 
-	struct fit_params fit_in = {period, &photonCount2d, 0, NDATA, &fitted2d, &residuals2d, &chisq, NULL};
+	struct common_params common_in = {period, &photonCount2d, 0, NDATA, &fitted2d, &residuals2d, &chisq, NULL};
 
-	struct background_params background_in = {NULL, NOISE_POISSON_FIT, NULL};
+	struct marquardt_params marquardt_in = {.instr=NULL, .noise=NOISE_POISSON_FIT, .sig=NULL, .param=&param2d, .paramfree=&paramfree, 
+		.restrain=ECF_RESTRAIN_DEFAULT, .fitfunc=GCI_multiexp_tau, .covar=&covar, .alpha=&alpha, .erraxes=&erraxes, .chisq_target=1.1, .chisq_delta=1E-5, .chisq_percent=95 };
 
-	GCI_marquardt_fitting_engine_many(&fit_in, &background_in, &param2d, &paramfree, ECF_RESTRAIN_DEFAULT, GCI_multiexp_tau, &covar, &alpha, &erraxes, 1.1, 1E-5, 95);
+	struct flim_params flim_in = { &common_in, &marquardt_in };
+
+	GCI_marquardt_fitting_engine_many(&flim_in);
 
 	printf("params\n");
 	for (int i = 0; i < NPARAM * NROWS; i++)
@@ -65,22 +67,22 @@ int main() {
 	// what happens if we only look at every other element in photonCount?
 	photonCount2d.sizes[1] = NDATA/2;
 	photonCount2d.strides[1] = 2 * sizeof(float);
-	fit_in.xincr = period * 2;
+	common_in.xincr = period * 2;
 
 	// also lets reverse the order of param
 	float param2d_data_rev[NPARAM * NROWS] = { tauIn + 0.1, a + 0.1, 0.1, tauIn + 0.1, a + 0.1, 0.1 };
 	param2d.strides[1] = -sizeof(float);
 	param2d.data = param2d_data_rev + 2;
 
-	fit_in.fit_end /= 2;
+	common_in.fit_end /= 2;
 
-	GCI_marquardt_fitting_engine_many(&fit_in, &background_in, &param2d, &paramfree, ECF_RESTRAIN_DEFAULT, GCI_multiexp_tau, &covar, &alpha, &erraxes, 1.1, 1E-5, 95);
+	GCI_marquardt_fitting_engine_many(&flim_in);
 
 	printf("params\n");
 	for (int i = 0; i < NPARAM * NROWS; i++)
 		printf("%f\n", param2d_data_rev[i]);
 
-	print_fit(fit_in);
+	print_common(&common_in);
 }
 
 void createExponential(float* time, float* photonCount, float a, float tau, float period, size_t count) {
