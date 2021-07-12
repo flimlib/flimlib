@@ -30,9 +30,10 @@
 #include "EcfMultiple.h" // header file
 #include "Ecf.h" // need for noisetypes
 #include <stdlib.h> // don't know why, but need this too
+#include <math.h> // need NAN
 
 
-#define ARRAY1D_ELEM_PTR(arr, i) ((char *)(arr)->data + (i) * (arr)->stride)
+#define ARRAY1D_ELEM_PTR(arr, i) ((char *)(arr)->data + (i) * (arr)->strides[0])
 #define ARRAY2D_ELEM_PTR(arr, i, j) ((char *)(arr)->data + (i) * (arr)->strides[0] + (j) * (arr)->strides[1])
 #define ARRAY3D_ELEM_PTR(arr, i, j, k) ((char *)(arr)->data + (i) * (arr)->strides[0] + (j) * (arr)->strides[1] + (k) * (arr)->strides[2])
 
@@ -45,9 +46,9 @@ float* allocate_temp_row(struct array2d* source) {
 float* read_strided(struct array1d* source, float* destination) {
 	if (source == NULL)
 		return NULL;
-	if (source->stride == sizeof(float))
+	if (source->strides[0] == sizeof(float))
 		return source->data; // strided source is actually unstrided! it will be modified in-place
-	for (size_t col = 0; col < source->size; col++) // iterate over columns
+	for (size_t col = 0; col < source->sizes[0]; col++) // iterate over columns
 		*(destination + col) = *(float*)ARRAY1D_ELEM_PTR(source, col);
 	return destination;
 }
@@ -88,7 +89,7 @@ void write_strided_matrix(float** source, struct array3d* destination, int layer
 
 void print_array1d(struct array1d* arr, int max_print) {
 	if (arr == NULL) return;
-	for (int col = 0; col < arr->size && col <= max_print; col++) {
+	for (int col = 0; col < arr->sizes[0] && col <= max_print; col++) {
 		printf("%f\t", *(float*)ARRAY1D_ELEM_PTR(arr, col));
 	}
 	printf("\n");
@@ -142,7 +143,7 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 	// on occasion data outside of the fit range is used for convolution with the "prompt" whatever that means
 	size_t ndata = flim->common->trans->sizes[1];
 	size_t nparam = flim->marquardt->param->sizes[1];
-	int ninstr = flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->size;
+	int ninstr = flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0];
 
 	float* unstrided_trans, * unstrided_instr, * unstrided_sig, * unstrided_param, * unstrided_fitted, * unstrided_residuals;
 
@@ -204,7 +205,9 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 
 int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 
-	int ninstr = flim->triple_integral->instr->size;
+	int ninstr = flim->triple_integral->instr->sizes[0];
+	// set the target to be NAN since this will cause the algorithm to iterate only once
+	float chisq_target_in = flim->triple_integral->chisq_target < 0 ? NAN : flim->triple_integral->chisq_target;
 
 	float* unstrided_trans, * unstrided_instr, * unstrided_sig, * unstrided_fitted, * unstrided_residuals;
 
@@ -227,7 +230,7 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 			unstrided_instr, ninstr, flim->triple_integral->noise, unstrided_sig,
 			ARRAY1D_ELEM_PTR(flim->triple_integral->Z, i), ARRAY1D_ELEM_PTR(flim->triple_integral->A, i), 
 			ARRAY1D_ELEM_PTR(flim->triple_integral->tau, i), unstrided_fitted, unstrided_residuals,
-			ARRAY1D_ELEM_PTR(flim->common->chisq, i), flim->triple_integral->chisq_target);
+			ARRAY1D_ELEM_PTR(flim->common->chisq, i), chisq_target_in);
 
 		write_strided_row(unstrided_fitted, flim->common->fitted, i);
 		write_strided_row(unstrided_residuals, flim->common->residuals, i);

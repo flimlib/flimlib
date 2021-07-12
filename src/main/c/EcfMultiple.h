@@ -37,8 +37,8 @@ extern "C" {
 /** A structure to represent strided 1D arrays */
 struct array1d {
 	float* data; /**<The pointer to the first element*/
-	size_t size; /**<The size of the array*/
-	ptrdiff_t stride; /**<the byte stride between elements*/
+	size_t sizes[1]; /**<The size of the array*/
+	ptrdiff_t strides[1]; /**<the byte stride between elements*/
 };
 
 /** A structure to represent strided 2D arrays */
@@ -103,7 +103,6 @@ struct triple_integral_params {
 	struct array1d* A; /**<[out] A The returned amplitude value from the fit.*/
 	struct array1d* tau; /**<[out] tau The returned lifetime value from the fit.*/
 	float chisq_target; /**<[in] A raw chi squared value to aim for. If this value is reached fitting will stop. If you want to aim for a reduced chisq (say 1.1 or 1.0) you must multiply by the degree of freedom. (TRI2: "Try refits")*/
-
 };
 
 /** A structure to containing parameters used in flim */
@@ -118,11 +117,11 @@ struct flim_params {
 
 /** Print a 1D array with a maximum number of elements in each dimension to be printed */
 void print_array1d(struct array1d* arr, int max_print);
-
+/** Print a 2D array with a maximum number of elements in each dimension to be printed */
 void print_array2d(struct array2d* arr, int max_print);
-
+/** Print a 3D array with a maximum number of elements in each dimension to be printed */
 void print_array3d(struct array3d* arr, int max_print);
-
+/** Prints common flim parameters */
 void print_common(struct common_params *fit);
 
 /** multidimentional LMA fitting
