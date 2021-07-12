@@ -753,6 +753,7 @@ INPUT                  = ../c/Ecf.h \
                          README.txt \
                          ../c/GCI_Phasor.h \
                          ../c/GCI_Lsqnonneg.h \
+                         ../c/EcfMultiple.h \
 #                        ../c/EcfSingle.c \
 #                        ../c/EcfGlobal.c \
 #                        ../c/EcfSPA.c \
