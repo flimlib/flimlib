@@ -55,7 +55,7 @@ struct array3d {
 	ptrdiff_t strides[3]; /**<The bytes between layers, rows, columns*/
 };
 
-/** A structure to containing common flim parameters */
+/** A structure containing common flim parameters */
 struct common_params {
 	float xincr; /**<[in] The time between samples*/
 	struct array2d* trans; /**<[in] The data to fit. The first axis is spatial and the second is temporal*/
@@ -67,7 +67,7 @@ struct common_params {
 	struct array1d* chisq; /**<[out] The resulting raw chi squared value of the fit*/
 };
 
-/** A structure to containing parameters used in LMA */
+/** A structure containing parameters used in LMA */
 struct marquardt_params {
 	struct array1d* instr; /**<[in] instr The instrument reponse(IRF) or prompt signal to be used(optional, can pass NULL).*/
 	noise_type noise; /**<[in] The noise_type to be used*/
@@ -84,7 +84,7 @@ struct marquardt_params {
 	int chisq_percent; /**<[in] Defines the confidence interval when calculating the error axes, e.g. 95 %.*/
 };
 
-/** A structure to containing parameters used in Phasor */
+/** A structure containing parameters used in Phasor */
 struct phasor_params {
 	struct array1d* Z; /**<[out] Z must have been estimated previously so that it can be subtracted from the data here.*/
 	struct array1d* u; /**<[out] u The 'horizontal' phasor coordinate.*/
@@ -94,7 +94,7 @@ struct phasor_params {
 	struct array1d* tau; /**<[out] tau The average of the other taus.*/
 };
 
-/** A structure to containing parameters used in RLD */
+/** A structure containing parameters used in RLD */
 struct triple_integral_params {
 	struct array1d* instr; /**<[in] instr The instrument reponse(IRF) or prompt signal to be used(optional, can pass NULL).*/
 	noise_type noise; /**<[in] The noise_type to be used*/
@@ -105,7 +105,7 @@ struct triple_integral_params {
 	float chisq_target; /**<[in] A raw chi squared value to aim for. If this value is reached fitting will stop. If you want to aim for a reduced chisq (say 1.1 or 1.0) you must multiply by the degree of freedom. (TRI2: "Try refits")*/
 };
 
-/** A structure to containing parameters used in flim */
+/** A structure containing parameters used in flim */
 struct flim_params {
 	struct common_params* common; /**<[in,out] A structure to containing common flim parameters */
 	union {
@@ -124,11 +124,24 @@ void print_array3d(struct array3d* arr, int max_print);
 /** Prints common flim parameters */
 void print_common(struct common_params *fit);
 
-/** multidimentional LMA fitting
-* TODO write doc
+/** 
+* multi-pixel LMA fitting using strided arrays.
+* will access parameters in-place when possible. Otherwise temporary copies will be made
+* \param[in,out] flim A flim_params structure containing parameters used in flim (must contain a marquardt_params structure)
 */
 int GCI_marquardt_fitting_engine_many(struct flim_params* flim);
 
+/**
+* multi-pixel RLD fitting using strided arrays.
+* will access parameters in-place when possible. Otherwise temporary copies will be made
+* if chisq_target is negative, only one iteration of the algorithm will occur per pixel
+* \param[in,out] flim A flim_params structure containing parameters used in flim (must contain a triple_integral_params structure)
+*/
 int GCI_triple_integral_fitting_engine_many(struct flim_params* flim);
 
+/**
+* multi-pixel Phasor analysis using strided arrays.
+* will access parameters in-place when possible. Otherwise temporary copies will be made
+* \param[in,out] flim A flim_params structure containing parameters used in flim (must contain a phasor_params structure)
+*/
 int GCI_Phasor_many(struct flim_params* flim);

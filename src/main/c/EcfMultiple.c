@@ -147,13 +147,17 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 
 	float* unstrided_trans, * unstrided_instr, * unstrided_sig, * unstrided_param, * unstrided_fitted, * unstrided_residuals;
 
-	// allocate inputs and outputs. they can be NULL if not needed
+	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
 	float* temp_trans = allocate_temp_row(flim->common->trans);
 	float* temp_instr = allocate_temp_row(flim->marquardt->instr);
 	float* temp_sig = allocate_temp_row(flim->marquardt->sig);
 	float* temp_param = allocate_temp_row(flim->marquardt->param);
 	float* temp_fitted = allocate_temp_row(flim->common->fitted);
 	float* temp_residuals = allocate_temp_row(flim->common->residuals);
+
+	// these two don't get modified by the algorithm and are constant for all pixels
+	unstrided_instr = read_strided(flim->marquardt->instr, temp_instr);
+	unstrided_sig = read_strided(flim->marquardt->sig, temp_sig);
 
 	// allocate the matrices. we will need these no matter what
 	float** temp_covar = GCI_ecf_matrix(nparam, nparam);
@@ -164,8 +168,7 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 	if (flim->common->fit_mask == NULL || *ARRAY1D_ELEM_PTR(flim->common->fit_mask, i)) { // iterate over rows of trans
 		// get input parameters trans and param in an unstrided format
 		unstrided_trans = read_strided_row(flim->common->trans, temp_trans, i);
-		unstrided_instr = read_strided_row(flim->marquardt->instr, temp_instr, i);
-		unstrided_sig = read_strided_row(flim->marquardt->sig, temp_sig, i);
+		
 		unstrided_param = read_strided_row(flim->marquardt->param, temp_param, i);
 		// get the outputs in unstrided format
 		unstrided_fitted = prep_unstrided_output(flim->common->fitted, temp_fitted, i);
@@ -211,18 +214,21 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 
 	float* unstrided_trans, * unstrided_instr, * unstrided_sig, * unstrided_fitted, * unstrided_residuals;
 
+	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
 	float* temp_trans = allocate_temp_row(flim->common->trans);
 	float* temp_instr = allocate_temp_row(flim->triple_integral->instr);
 	float* temp_sig = allocate_temp_row(flim->triple_integral->sig);
 	float* temp_fitted = allocate_temp_row(flim->common->fitted);
 	float* temp_residuals = allocate_temp_row(flim->common->residuals);
 
+	// these two don't get modified by the algorithm and are constant for all pixels
+	unstrided_instr = read_strided(flim->triple_integral->instr, temp_instr);
+	unstrided_sig = read_strided(flim->triple_integral->sig, temp_sig);
+
 	for (int i = 0; i < flim->common->trans->sizes[0]; i++) 
 	if (flim->common->fit_mask == NULL || *ARRAY1D_ELEM_PTR(flim->common->fit_mask, i)) {
 
 		unstrided_trans = read_strided_row(flim->common->trans, temp_trans, i);
-		unstrided_instr = read_strided_row(flim->triple_integral->instr, temp_instr, i);
-		unstrided_sig = read_strided_row(flim->triple_integral->sig, temp_sig, i);
 		unstrided_fitted = prep_unstrided_output(flim->common->fitted, temp_fitted, i);
 		unstrided_residuals = prep_unstrided_output(flim->common->residuals, temp_residuals, i);
 
