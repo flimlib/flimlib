@@ -84,7 +84,7 @@ double GCI_Phasor_getPeriod()
 */
 
 int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
-							  float *Z, float *U, float *V, float *taup, float *taum, float *tau, float *fitted, float *residuals,
+							  const float *Z, float *U, float *V, float *taup, float *taum, float *tau, float *fitted, float *residuals,
 							  float *chisq)
 {
     // Z must contain a bg estimate
