@@ -1,34 +1,53 @@
 #unit tests
 import unittest
 import flimlib
+from flimlib.cfunc import GCI_marquardt_fitting_engine_many, TripleIntegralResult
 import numpy as np
 import math
+import time
 
-samples = 256
+samples = 128
 a_in = 10.0
-tau_in = 2.0
+tau_in = 1.0
 period = 0.04
-time = np.linspace(0,(samples-1)*period,samples,dtype=np.float32)
-photon_count32 = a_in * np.exp(-time/tau_in)
+
+# The error factor by using a plain exponential instead of integrating it over the time bin (assuming Z = 0)
+error_factor = period / (tau_in * (1 - np.exp(-period/tau_in)))
+
+tt = np.linspace(0,(samples-1)*period,samples,dtype=np.float32)
+photon_count32 = a_in * np.exp(-tt/tau_in)
 photon_count64 = np.asarray(photon_count32,dtype=np.float64)
-photon_count2d = np.zeros([256,256])
+photon_count2d = []
+a_in1d = []
+tau_in1d = []
+photon_count2d_flip = []
+error_factor1d = []
+for i in range(samples*samples):
+    a = a_in + i * .001
+    tau = tau_in + i * .0001
+    a_in1d += [a]
+    tau_in1d += [tau]
+    photon_count2d += [a * np.exp(-tt/tau)]
+    photon_count2d_flip += [a * np.exp((tt-(samples-1)*period)/tau)]
+    error_factor1d += [period / (tau * (1 - np.exp(-period/tau)))]
+
+photon_count2d_flip = np.asarray(photon_count2d_flip)
+trans_strided = np.flip(photon_count2d_flip[0:2])[:,0:-1:2]
 
 linear_const = 1
-photon_count_linear = linear_const * time
+photon_count_linear = linear_const * tt
+    
 
 class Test3Integral(unittest.TestCase):
     def test_output_margin(self):
         result = flimlib.GCI_triple_integral_fitting_engine(
             period, photon_count32)
         
-        # test to an integer precision since the triple integral fit isn't as rigorous
-        self.assertAlmostEqual(result.A, a_in, 0)
-        self.assertAlmostEqual(result.tau, tau_in, 0)
-        self.assertAlmostEqual(result.Z, 0.0, 0)
-        self.assertTrue(result.tries>0)
-        self.assertAlmostEqual(result.fitted[0], a_in, 0)
-        self.assertAlmostEqual(result.residuals[0], 0.0, 0)
-        self.assertAlmostEqual(result.residuals[-1], 0.0, 0)
+        self.assertAlmostEqual(result.A, a_in * error_factor, 1)
+        self.assertAlmostEqual(result.tau, tau_in, 1)
+        self.assertAlmostEqual(result.Z, 0.0, 1)
+        self.assertTrue(result.error_code>0)
+        self.assertAlmostEqual(result.fitted[0], a_in * error_factor, 1)
 
 
     def test_photon_count(self):
@@ -102,9 +121,9 @@ class Test3Integral(unittest.TestCase):
     
     def test_chisq_target(self):
         result = flimlib.GCI_triple_integral_fitting_engine(period, photon_count32, chisq_target=0.0) #impossible target causes it to run more than once and give up
-        self.assertTrue(result.tries>1)
+        self.assertTrue(result.error_code>1)
 
-class TestGCIPhasor(unittest.TestCase):
+class TestPhasor(unittest.TestCase):
     def test_output_margin(self):
         result = flimlib.GCI_Phasor(period, photon_count32)
         self.assertEqual(result.error_code, 0)
@@ -134,16 +153,16 @@ def dummy_linear(x, param):
 def dummy_linear_predicate(n_param):
     return n_param == 2
 
-class TestGCIMarquardt(unittest.TestCase):
+class TestMarquardt(unittest.TestCase):
     def test_output_margin(self):
-        param_in = [0,a_in+1,tau_in+1] # slight offset to detect if the fitting works!
+        param_in = np.asarray([0,a_in+1,tau_in+1], dtype=np.float32) # slight offset to detect if the fitting works!
         result = flimlib.GCI_marquardt_fitting_engine(period, photon_count32, param_in)
         self.assertAlmostEqual(0.0,result.param[0],1)
         self.assertAlmostEqual(a_in,result.param[1],1)
         self.assertAlmostEqual(tau_in,result.param[2],1)
 
     def test_paramfree(self):
-        param_in = [0,a_in+1,tau_in+1] # slight offset to detect if the fitting works!
+        param_in = np.asarray([0,a_in+1,tau_in+1], dtype=np.float32) # slight offset to detect if the fitting works!
         result = flimlib.GCI_marquardt_fitting_engine(period, photon_count32, 
             param_in, paramfree=[1,0,1])
         # second parameter should have been held fixed!
@@ -154,21 +173,21 @@ class TestGCIMarquardt(unittest.TestCase):
             flimlib.GCI_set_restrain_limits([0,0],[0],[0])
         with self.assertRaises(ValueError):
             flimlib.GCI_set_restrain_limits([[0,0],[0,0]],[0,0],[0,0])
-        param_in = [0,a_in+1,tau_in+1]
+        param_in = np.asarray([0,a_in+1,tau_in+1], dtype=np.float32)
         flimlib.GCI_set_restrain_limits([0,1,0],[0,0,0],[0,a_in-1,0])
         result = flimlib.GCI_marquardt_fitting_engine(period, photon_count32, param_in, restrain_type='ECF_RESTRAIN_USER')
         self.assertTrue(result.param[1] <= a_in-1)
     
     def test_multiexp_lambda(self):
         lambda_in = 1/tau_in # lambda is the decay rate!
-        param_in = [0,a_in+1,lambda_in+1] # slight offset to detect if the fitting works!
+        param_in = np.asarray([0,a_in+1,lambda_in+1], dtype=np.float32) # slight offset to detect if the fitting works!
         result = flimlib.GCI_marquardt_fitting_engine(period, photon_count32, param_in, fitfunc=flimlib.GCI_multiexp_lambda)
 
         self.assertAlmostEqual(a_in, result.param[1], 1)
         self.assertAlmostEqual(lambda_in, result.param[2],1)
     
     def test_user_defined_fitfunc(self):
-        param_in = [0.0,a_in+1,tau_in+1] # slight offset to detect if the fitting works!
+        param_in = np.asarray([0,a_in+1,tau_in+1], dtype=np.float32) # slight offset to detect if the fitting works!
         fitfunc_in = flimlib.FitFunc(dummy_exp_tau, nparam_predicate=dummy_exp_tau_predicate)
         result = flimlib.GCI_marquardt_fitting_engine(period, photon_count32, param_in, fitfunc=fitfunc_in)
         self.assertAlmostEqual(0.0,result.param[0],1)
@@ -176,7 +195,7 @@ class TestGCIMarquardt(unittest.TestCase):
         self.assertAlmostEqual(tau_in,result.param[2],1)
 
         # linear fit! (did not work with the first param being nonzero)
-        param_in = [0, linear_const+1]
+        param_in = np.asarray([0, linear_const+1], dtype=np.float32)
         fitfunc_in = flimlib.FitFunc(dummy_linear, nparam_predicate=dummy_linear_predicate)
         result = flimlib.GCI_marquardt_fitting_engine(period, photon_count_linear, param_in, fitfunc=fitfunc_in, noise_type='NOISE_CONST',sig=1.0)
         self.assertAlmostEqual(0.0,result.param[0],1)
@@ -184,13 +203,225 @@ class TestGCIMarquardt(unittest.TestCase):
 
     def test_nparam(self):
         with self.assertRaises(TypeError):
-            param_in = [a_in+1,tau_in+1] # forgot the first parameter!
+            param_in = np.asarray([a_in+1,tau_in+1], dtype=np.float32) # forgot the first parameter!
             flimlib.GCI_marquardt_fitting_engine(period, photon_count_linear, param_in)
 
         # any odd number of parameters greater or equal to 3 should work!
-        param_in = [0, a_in+1,tau_in+1, 1, 1] # pass 5 parameters
+        param_in = np.asarray([0, a_in+1,tau_in+1, 1, 1], dtype=np.float32) # pass 5 parameters
         flimlib.GCI_marquardt_fitting_engine(period, photon_count_linear, param_in)
+
+    def test_param_modified(self):
+        param_in = np.asarray([0,a_in+1,tau_in+1], dtype=np.float32) # slight offset to detect if the fitting works!
+        result = flimlib.GCI_marquardt_fitting_engine(period, photon_count32, param_in)
+        self.assertEqual(param_in.data, result.param.data) # make sure that the values are modified in-place. We want to save memory!
+    
+class TestMarquardtMany(unittest.TestCase):
+    def test_output_margin(self):
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(samples*samples)], dtype=np.float32) # slight offset to detect if the fitting works!
+        start = time.time_ns()
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d, param_in)
+        end = time.time_ns()
+        print("GCI_marquardt_fitting_engine_many ran on ", samples*samples, "pixels, took", (end-start)/1000000, "milliseconds")
+        for i in range(samples*samples):
+            self.assertAlmostEqual(result.param[i][1], a_in1d[i], 1)
+            self.assertAlmostEqual(result.param[i][2], tau_in1d[i], 1)
+    
+    def test_outputs_modified(self):
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
+        fitted_in = np.empty((2,samples), dtype=np.float32)
+        residuals_in = np.empty((2,samples), dtype=np.float32)
+        chisq_in = np.empty((2,), dtype=np.float32)
+        covar_in = np.empty((2,3,3), dtype=np.float32)
+        alpha_in = np.empty((2,3,3), dtype=np.float32)
+        erraxes_in = np.empty((2,3,3), dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, 
+            fitted=fitted_in, residuals=residuals_in, chisq=chisq_in, covar=covar_in, alpha=alpha_in, erraxes=erraxes_in)
+        self.assertTrue(np.all(result.fitted == fitted_in))
+        self.assertTrue(np.all(result.residuals == residuals_in))
+        self.assertTrue(all(result.chisq == chisq_in))
+        self.assertTrue(np.all(result.covar == covar_in))
+        self.assertTrue(np.all(result.alpha == alpha_in))
+        self.assertTrue(np.all(result.erraxes == erraxes_in))
+    
+    def test_wrong_output_type(self):
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
+        fitted_in = np.empty((2,samples), dtype=np.float64) # float64 is compatible
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, fitted=fitted_in)
+        self.assertTrue(np.all(result.fitted == fitted_in))
+        with self.assertRaises(TypeError):
+            fitted_in = np.empty((2,samples), dtype=int) # not compatible
+            result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, fitted=fitted_in)
+        with self.assertRaises(ValueError):
+            fitted_in = np.empty((2,samples+3), dtype=np.float32) # too large
+            result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, fitted=fitted_in)
+        with self.assertRaises(ValueError):
+            fitted_in = np.empty((2,samples-3), dtype=np.float32) # too small
+            result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, fitted=fitted_in)
+
+    def test_fit_start_end(self):
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
+        start = samples // 10
+        end = samples // 10 * 9
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, fit_start=start, fit_end=end)
+        self.assertTrue(result.fitted.shape == (2, samples))
+        self.assertTrue(np.all(np.diff(result.fitted) < 0)) # monotonic decrease
+        self.assertAlmostEqual(result.fitted[0][0], result.param[0][1], 1)
+
+    def test_compute_flags(self):
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, 
+            compute_fitted=False, compute_residuals=False, compute_chisq=False, compute_covar=False, compute_alpha=False, compute_erraxes=False)
+        self.assertTrue(result.fitted == result.residuals == result.chisq == result.covar == result.alpha == result.erraxes == None)
+
+    def test_strided(self):
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
+        fitted_strided = np.flip(np.empty((2,samples), dtype=np.float32)[:,0:-1:2])
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, trans_strided, param_in, fitted=fitted_strided)
+        self.assertEqual(result.fitted.strides, (samples * -4, -8))
+
+    def test_fitmask(self):
+        fitted_in = np.ones((2,samples), dtype=np.float32)
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, fit_mask=[1,0], fitted=fitted_in)
+        self.assertTrue(all(result.fitted[1] == 1))
+    
+    def test_paramfree(self):
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, paramfree=[1,0,1])
+        self.assertEqual(result.param[0][1], a_in+1)
+
+    def test_size_zero_input(self):
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, [[]], [[]])
         
+    def test_chisq_target(self):
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
+        with self.assertRaises(TypeError):
+            result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, chisq_target="foo")
+
+class Test3IntegralMany(unittest.TestCase):
+    def test_output_margin(self):
+        start = time.time_ns()
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d)
+        end = time.time_ns()
+        print("GCI_triple_integral_fitting_engine_many ran on ", samples*samples, "pixels, took", (end-start)/1000000, "milliseconds")
+        for i in range(samples*samples):
+            self.assertAlmostEqual(result.tau[i], tau_in1d[i], 1)
+            self.assertAlmostEqual(result.A[i], a_in1d[i] * error_factor1d[i], 1)
+    
+    def test_outputs_modified(self):
+        fitted_in = np.empty((2,samples), dtype=np.float32)
+        residuals_in = np.empty((2,samples), dtype=np.float32)
+        chisq_in = np.empty((2,), dtype=np.float32)
+        Z_in = np.empty((2,), dtype=np.float32)
+        A_in = np.empty((2,), dtype=np.float32)
+        tau_in = np.empty((2,), dtype=np.float32)
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2],
+            fitted=fitted_in, residuals=residuals_in, chisq=chisq_in, Z=Z_in, A=A_in, tau=tau_in)
+        self.assertTrue(np.all(result.fitted == fitted_in))
+        self.assertTrue(np.all(result.residuals == residuals_in))
+        self.assertTrue(all(result.chisq == chisq_in)) 
+        self.assertTrue(np.all(result.Z == Z_in))
+        self.assertTrue(np.all(result.A == A_in))
+        self.assertTrue(np.all(result.tau == tau_in))
+
+    def test_wrong_output_type(self):
+        fitted_in = np.empty((2,samples), dtype=np.float64) # float64 is compatible
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], fitted=fitted_in)
+        self.assertTrue(np.all(result.fitted == fitted_in))
+        with self.assertRaises(TypeError):
+            fitted_in = np.empty((2,samples), dtype=int) # not compatible
+            result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], fitted=fitted_in)
+        with self.assertRaises(ValueError):
+            fitted_in = np.empty((2,samples+3), dtype=np.float32) # too large
+            result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], fitted=fitted_in)
+        with self.assertRaises(ValueError):
+            fitted_in = np.empty((2,samples-3), dtype=np.float32) # too small
+            result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], fitted=fitted_in)
+    
+    def test_fit_start_end(self):
+        start = samples // 10
+        end = samples // 10 * 9
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], fit_start=start, fit_end=end)
+        self.assertTrue(result.fitted.shape == (2, end))
+        self.assertTrue(np.all(np.diff(result.fitted) < 0)) # monotonic decrease
+        self.assertAlmostEqual(result.fitted[0][0], result.A[0], 1)
+
+    def test_compute_flags(self):
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2],
+            compute_fitted=False, compute_residuals=False, compute_chisq=False)
+        self.assertTrue(result.fitted == result.residuals == result.chisq)
+
+    def test_strided(self):
+        fitted_strided = np.flip(np.empty((2,samples), dtype=np.float32)[:,0:-1:2])
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period * 2, trans_strided, fitted=fitted_strided)
+        self.assertEqual(result.fitted.strides, (samples * -4, -8))
+
+    def test_size_zero_input(self):
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, [[]])
+
+class TestPhasorMany(unittest.TestCase):
+    def test_output_margin(self):
+        start = time.time_ns()
+        result = flimlib.GCI_Phasor_many(period, photon_count2d)
+        end = time.time_ns()
+        print("GCI_Phasor_many ran on ", samples*samples, "pixels, took", (end-start)/1000000, "milliseconds")
+        self.assertFalse(any(result.chisq > 1)) # for this I assume that the reduced chi squared is a reliable metric
+    
+    def test_outputs_modified(self):
+        u_in = np.empty((2,), dtype=np.float32)
+        v_in = np.empty((2,), dtype=np.float32)
+        taup_in = np.empty((2,), dtype=np.float32)
+        taum_in = np.empty((2,), dtype=np.float32)
+        tau_in = np.empty((2,), dtype=np.float32)
+        fitted_in = np.empty((2,samples), dtype=np.float32)
+        residuals_in = np.empty((2,samples), dtype=np.float32)
+        chisq_in = np.empty((2,), dtype=np.float32)
+        result = flimlib.GCI_Phasor_many(period, photon_count2d[0:2],
+            fitted=fitted_in, residuals=residuals_in, chisq=chisq_in, u=u_in, v=v_in, taup=taup_in, taum=taum_in, tau=tau_in)
+        self.assertTrue(np.all(result.v == v_in))
+        self.assertTrue(np.all(result.u == u_in))
+        self.assertTrue(np.all(result.taup == taup_in))
+        self.assertTrue(np.all(result.taum == taum_in))
+        self.assertTrue(np.all(result.tau == tau_in))
+        self.assertTrue(np.all(result.fitted == fitted_in))
+        self.assertTrue(np.all(result.residuals == residuals_in))
+        self.assertTrue(all(result.chisq == chisq_in)) 
+
+    def test_wrong_output_type(self):
+        fitted_in = np.empty((2,samples), dtype=np.float64) # float64 is compatible
+        result = flimlib.GCI_Phasor_many(period, photon_count2d[0:2], fitted=fitted_in)
+        self.assertTrue(np.all(result.fitted == fitted_in))
+        with self.assertRaises(TypeError):
+            fitted_in = np.empty((2,samples), dtype=int) # not compatible
+            result = flimlib.GCI_Phasor_many(period, photon_count2d[0:2], fitted=fitted_in)
+        with self.assertRaises(ValueError):
+            fitted_in = np.empty((2,samples+3), dtype=np.float32) # too large
+            result = flimlib.GCI_Phasor_many(period, photon_count2d[0:2], fitted=fitted_in)
+        with self.assertRaises(ValueError):
+            fitted_in = np.empty((2,samples-3), dtype=np.float32) # too small
+            result = flimlib.GCI_Phasor_many(period, photon_count2d[0:2], fitted=fitted_in)
+
+    def test_fit_start_end(self):
+        start = samples // 10
+        end = samples // 10 * 9
+        result = flimlib.GCI_Phasor_many(period, photon_count2d[0:2], fit_start=start, fit_end=end)
+        self.assertTrue(np.all(np.diff(result.fitted[:,start:end]) < 0)) # monotonic decrease
+        self.assertTrue(result.fitted.shape == (2, end))
+
+    def test_compute_flags(self):
+        result = flimlib.GCI_Phasor_many(period, photon_count2d[0:2],
+            compute_fitted=False, compute_residuals=False, compute_chisq=False)
+        self.assertTrue(result.fitted == result.residuals == result.chisq)
+
+    def test_strided(self):
+        fitted_strided = np.flip(np.empty((2,samples), dtype=np.float32)[:,0:-1:2])
+        result = flimlib.GCI_Phasor_many(period, trans_strided, fitted=fitted_strided)
+        self.assertEqual(result.fitted.strides, (samples * -4, -8))
+
+    def test_size_zero_input(self):
+        result = flimlib.GCI_Phasor_many(period, [[]])
+        
+# TODO find fixes made to the many implementation that ought to go into single
 
 if __name__ == '__main__':
     unittest.main()
