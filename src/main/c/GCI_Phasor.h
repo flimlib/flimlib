@@ -50,7 +50,7 @@ extern "C" {
  * \param[in] y The transient (time resolved) signal to be analysed, the 'data'.
  * \param[in] fit_start The index into the y array marking the start to the data to be used in the fit.
  * \param[in] fit_end The index into the y array marking the end of the data to be used in the fit.
- * \param[out] Z must have been estimated previously so that it can be subtracted from the data here.
+ * \param[in] Z must have been estimated previously so that it can be subtracted from the data here.
  * \param[out] u The 'horizontal' phasor coordinate.
  * \param[out] v The 'vertical' phasor coordinate.
  * \param[out] taup The lifetime calculated from the phase change.
@@ -62,7 +62,7 @@ extern "C" {
  * \return An error code, 0 = success.
  */
 int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
-							  float *Z, float *u, float *v, float *taup, float *taum, float *tau, float *fitted, float *residuals,
+							  const float *Z, float *u, float *v, float *taup, float *taum, float *tau, float *fitted, float *residuals,
 							  float *chisq);
 
 /**
