@@ -26,21 +26,35 @@
  * \file EcfMultiple.c
  */
 
-#include <stdio.h> // need for printf
+#include <stdio.h>
 #include "EcfMultiple.h" // header file
-#include "Ecf.h" // need for noisetypes
-#include <stdlib.h> // don't know why, but need this too
-#include <math.h> // need NAN
+#include "Ecf.h" 
+#include "GCI_Phasor.h"
+#include <stdlib.h> 
+#include <math.h> 
 
 
 #define ARRAY1D_ELEM_PTR(arr, i) ((char *)(arr)->data + (i) * (arr)->strides[0])
 #define ARRAY2D_ELEM_PTR(arr, i, j) ((char *)(arr)->data + (i) * (arr)->strides[0] + (j) * (arr)->strides[1])
 #define ARRAY3D_ELEM_PTR(arr, i, j, k) ((char *)(arr)->data + (i) * (arr)->strides[0] + (j) * (arr)->strides[1] + (k) * (arr)->strides[2])
 
+float* allocate_temp(struct array1d* source) {
+	if (source == NULL || source->strides[0] == sizeof(float)) // we don't need this, don't allocate anything.
+		return NULL;
+	return (float*)malloc(source->sizes[0] * sizeof(float));
+}
+
 float* allocate_temp_row(struct array2d* source) {
 	if (source == NULL || source->strides[1] == sizeof(float)) // we don't need this, don't allocate anything.
 		return NULL;
 	return (float*)malloc(source->sizes[1] * sizeof(float));
+}
+
+// marquardt fitting engine requires that fitted and residuals are not NULL
+float* allocate_required_temp_row(struct array2d* source, size_t size) {
+	if (source != NULL && source->strides[1] == sizeof(float)) // we don't need this, don't allocate anything.
+		return NULL;
+	return (float*)malloc(size * sizeof(float));
 }
 
 float* read_strided(struct array1d* source, float* destination) {
@@ -67,6 +81,13 @@ float* prep_unstrided_output(struct array2d* strided_output, float* unstrided_ou
 	if (strided_output == NULL) // the caller doesn't want this output so we pass the NULL onward
 		return NULL;
 	if (strided_output->strides[1] == sizeof(float)) // strided output is actually unstrided! it will be modified in-place
+		return ARRAY2D_ELEM_PTR(strided_output, row, 0);
+	return unstrided_output;
+}
+
+// marquardt fitting engine requires that fitted and residuals are not NULL
+float* prep_required_unstrided_output(struct array2d* strided_output, float* unstrided_output, int row) {
+	if (strided_output != NULL && strided_output->strides[1] == sizeof(float)) // strided output is actually unstrided! it will be modified in-place
 		return ARRAY2D_ELEM_PTR(strided_output, row, 0);
 	return unstrided_output;
 }
@@ -118,10 +139,18 @@ void print_array3d(struct array3d* arr, int max_print) {
 	}
 }
 
+void print_array1d_int8(struct array1d_int8* arr, int max_print) {
+	if (arr == NULL) return;
+	for (int col = 0; col < arr->sizes[0] && col <= max_print; col++) {
+		printf("%d\t", *(int8_t*)ARRAY1D_ELEM_PTR(arr, col));
+	}
+	printf("\n");
+}
+
 void print_common(struct common_params *common) {
 	printf("xincr: %f\n", common->xincr);
 	printf("fit start: %d\n", common->fit_start);
-	printf("fit end: %d\n", common->fit_start);
+	printf("fit end: %d\n", common->fit_end);
 	printf("trans:\n");
 	print_array2d(common->trans, 5);
 	printf("fitted:\n");
@@ -131,7 +160,7 @@ void print_common(struct common_params *common) {
 	printf("chisq:\n");
 	print_array1d(common->chisq, 5);
 	printf("fit mask:\n");
-	print_array1d(common->fit_mask, 5);
+	print_array1d_int8(common->fit_mask, 5);
 }
 
 // TODO return negative ints to report any errors
@@ -145,51 +174,63 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 	size_t nparam = flim->marquardt->param->sizes[1];
 	int ninstr = flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0];
 
-	float* unstrided_trans, * unstrided_instr, * unstrided_sig, * unstrided_param, * unstrided_fitted, * unstrided_residuals;
-
 	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
 	float* temp_trans = allocate_temp_row(flim->common->trans);
-	float* temp_instr = allocate_temp_row(flim->marquardt->instr);
-	float* temp_sig = allocate_temp_row(flim->marquardt->sig);
+	float* temp_instr = allocate_temp(flim->marquardt->instr);
+	float* temp_sig = allocate_temp(flim->marquardt->sig);
 	float* temp_param = allocate_temp_row(flim->marquardt->param);
-	float* temp_fitted = allocate_temp_row(flim->common->fitted);
-	float* temp_residuals = allocate_temp_row(flim->common->residuals);
+	float* temp_fitted = allocate_required_temp_row(flim->common->fitted, ndata);
+	float* temp_residuals = allocate_required_temp_row(flim->common->residuals, ndata);
+	float local_chisq;
 
 	// these two don't get modified by the algorithm and are constant for all pixels
-	unstrided_instr = read_strided(flim->marquardt->instr, temp_instr);
-	unstrided_sig = read_strided(flim->marquardt->sig, temp_sig);
+	float* unstrided_instr = read_strided(flim->marquardt->instr, temp_instr);
+	float* unstrided_sig = read_strided(flim->marquardt->sig, temp_sig);
+
+	//paramfree must not be NULL! if NULL we want to leave all parameters free
+	int* temp_paramfree = malloc(nparam * sizeof(int));
+	if (flim->marquardt->paramfree == NULL) {
+		for (int i = 0; i < nparam; i++)
+			temp_paramfree[i] = 1;
+	}
+	else
+		for (int i = 0; i < nparam; i++) {
+			int8_t pf = *ARRAY1D_ELEM_PTR(flim->marquardt->paramfree, i);
+			temp_paramfree[i] = pf;
+		}
 
 	// allocate the matrices. we will need these no matter what
 	float** temp_covar = GCI_ecf_matrix(nparam, nparam);
 	float** temp_alpha = GCI_ecf_matrix(nparam, nparam);
 	float** temp_erraxes = GCI_ecf_matrix(nparam, nparam);
 
-	for (int i = 0; i < flim->common->trans->sizes[0]; i++) 
-	if (flim->common->fit_mask == NULL || *ARRAY1D_ELEM_PTR(flim->common->fit_mask, i)) { // iterate over rows of trans
-		// get input parameters trans and param in an unstrided format
-		unstrided_trans = read_strided_row(flim->common->trans, temp_trans, i);
-		
-		unstrided_param = read_strided_row(flim->marquardt->param, temp_param, i);
-		// get the outputs in unstrided format
-		unstrided_fitted = prep_unstrided_output(flim->common->fitted, temp_fitted, i);
-		unstrided_residuals = prep_unstrided_output(flim->common->residuals, temp_residuals, i);
+	for (int i = 0; i < flim->common->trans->sizes[0]; i++) { // iterate over rows of trans
+		if (flim->common->fit_mask == NULL || *ARRAY1D_ELEM_PTR(flim->common->fit_mask, i)) { 
+			// get input parameters trans and param in an unstrided format
+			float* unstrided_trans = read_strided_row(flim->common->trans, temp_trans, i);
+			float* unstrided_param = read_strided_row(flim->marquardt->param, temp_param, i);
 
-		GCI_marquardt_fitting_engine(flim->common->xincr, unstrided_trans, ndata, flim->common->fit_start, flim->common->fit_end, 
-			unstrided_instr, ninstr, flim->marquardt->noise, unstrided_sig, unstrided_param, flim->marquardt->paramfree, nparam, 
-			flim->marquardt->restrain, flim->marquardt->fitfunc, unstrided_fitted, unstrided_residuals, ARRAY1D_ELEM_PTR(flim->common->chisq, i),
-			temp_covar, temp_alpha, temp_erraxes, flim->marquardt->chisq_target, flim->marquardt->chisq_delta, flim->marquardt->chisq_percent);
+			// get the outputs in unstrided format
+			float* unstrided_fitted = prep_required_unstrided_output(flim->common->fitted, temp_fitted, i);
+			float* unstrided_residuals = prep_required_unstrided_output(flim->common->residuals, temp_residuals, i);
+			float* unstrided_chisq = flim->common->chisq == NULL ? &local_chisq : ARRAY1D_ELEM_PTR(flim->common->chisq, i);
 
-		// time to handle outputs!
+			GCI_marquardt_fitting_engine(flim->common->xincr, unstrided_trans, ndata, flim->common->fit_start, flim->common->fit_end,
+				unstrided_instr, ninstr, flim->marquardt->noise, unstrided_sig, unstrided_param, temp_paramfree, nparam,
+				flim->marquardt->restrain, flim->marquardt->fitfunc, unstrided_fitted, unstrided_residuals, unstrided_chisq,
+				temp_covar, temp_alpha, temp_erraxes, flim->marquardt->chisq_target, flim->marquardt->chisq_delta, flim->marquardt->chisq_percent);
+			
+			// time to handle outputs!
+			write_strided_row(unstrided_param, flim->marquardt->param, i);
+			write_strided_row(unstrided_fitted, flim->common->fitted, i);
+			write_strided_row(unstrided_residuals, flim->common->residuals, i);
 
-		write_strided_row(unstrided_param, flim->marquardt->param, i);
-		write_strided_row(unstrided_fitted, flim->common->fitted, i);
-		write_strided_row(unstrided_residuals, flim->common->residuals, i);
-
-		// able to save memory if the data for these array3d are NULL. This prevents copying over the results
-		// it was not an option to modify these in-place since the function requires the ecf matrix format
-		write_strided_matrix(temp_covar, flim->marquardt->covar, i);
-		write_strided_matrix(temp_alpha, flim->marquardt->alpha, i);
-		write_strided_matrix(temp_erraxes, flim->marquardt->erraxes, i);
+			// able to save memory if these array3d are NULL. This prevents copying over the results
+			// it was not an option to modify these in-place since the function requires the ecf matrix format
+			write_strided_matrix(temp_covar, flim->marquardt->covar, i);
+			write_strided_matrix(temp_alpha, flim->marquardt->alpha, i);
+			write_strided_matrix(temp_erraxes, flim->marquardt->erraxes, i);
+		}
 	}
 
 	// free anything with temp_ in its name
@@ -197,6 +238,7 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 	free(temp_instr);
 	free(temp_sig);
 	free(temp_param);
+	free(temp_paramfree);
 	free(temp_fitted);
 	free(temp_residuals);
 	GCI_ecf_free_matrix(temp_covar);
@@ -207,39 +249,38 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 }
 
 int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
-
-	int ninstr = flim->triple_integral->instr->sizes[0];
+	int ninstr = flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0];
 	// set the target to be NAN since this will cause the algorithm to iterate only once
 	float chisq_target_in = flim->triple_integral->chisq_target < 0 ? NAN : flim->triple_integral->chisq_target;
-
-	float* unstrided_trans, * unstrided_instr, * unstrided_sig, * unstrided_fitted, * unstrided_residuals;
-
+	
 	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
 	float* temp_trans = allocate_temp_row(flim->common->trans);
 	float* temp_instr = allocate_temp_row(flim->triple_integral->instr);
 	float* temp_sig = allocate_temp_row(flim->triple_integral->sig);
 	float* temp_fitted = allocate_temp_row(flim->common->fitted);
 	float* temp_residuals = allocate_temp_row(flim->common->residuals);
-
+	
 	// these two don't get modified by the algorithm and are constant for all pixels
-	unstrided_instr = read_strided(flim->triple_integral->instr, temp_instr);
-	unstrided_sig = read_strided(flim->triple_integral->sig, temp_sig);
+	float* unstrided_instr = read_strided(flim->triple_integral->instr, temp_instr);
+	float* unstrided_sig = read_strided(flim->triple_integral->sig, temp_sig);
 
-	for (int i = 0; i < flim->common->trans->sizes[0]; i++) 
-	if (flim->common->fit_mask == NULL || *ARRAY1D_ELEM_PTR(flim->common->fit_mask, i)) {
+	for (int i = 0; i < flim->common->trans->sizes[0]; i++) {
+		if (flim->common->fit_mask == NULL || *ARRAY1D_ELEM_PTR(flim->common->fit_mask, i)) {
 
-		unstrided_trans = read_strided_row(flim->common->trans, temp_trans, i);
-		unstrided_fitted = prep_unstrided_output(flim->common->fitted, temp_fitted, i);
-		unstrided_residuals = prep_unstrided_output(flim->common->residuals, temp_residuals, i);
+			float* unstrided_trans = read_strided_row(flim->common->trans, temp_trans, i);
+			float* unstrided_fitted = prep_unstrided_output(flim->common->fitted, temp_fitted, i);
+			float* unstrided_residuals = prep_unstrided_output(flim->common->residuals, temp_residuals, i);
+			float* unstrided_chisq = flim->common->chisq == NULL ? NULL : ARRAY1D_ELEM_PTR(flim->common->chisq, i);
 
-		GCI_triple_integral_fitting_engine(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
-			unstrided_instr, ninstr, flim->triple_integral->noise, unstrided_sig,
-			ARRAY1D_ELEM_PTR(flim->triple_integral->Z, i), ARRAY1D_ELEM_PTR(flim->triple_integral->A, i), 
-			ARRAY1D_ELEM_PTR(flim->triple_integral->tau, i), unstrided_fitted, unstrided_residuals,
-			ARRAY1D_ELEM_PTR(flim->common->chisq, i), chisq_target_in);
+			GCI_triple_integral_fitting_engine(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
+				unstrided_instr, ninstr, flim->triple_integral->noise, unstrided_sig,
+				ARRAY1D_ELEM_PTR(flim->triple_integral->Z, i), ARRAY1D_ELEM_PTR(flim->triple_integral->A, i),
+				ARRAY1D_ELEM_PTR(flim->triple_integral->tau, i), unstrided_fitted, unstrided_residuals,
+				unstrided_chisq, chisq_target_in);
 
-		write_strided_row(unstrided_fitted, flim->common->fitted, i);
-		write_strided_row(unstrided_residuals, flim->common->residuals, i);
+			write_strided_row(unstrided_fitted, flim->common->fitted, i);
+			write_strided_row(unstrided_residuals, flim->common->residuals, i);
+		}
 	}
 
 	free(temp_trans);
@@ -251,26 +292,26 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 
 int GCI_Phasor_many(struct flim_params* flim) {
 
-	float* unstrided_trans, * unstrided_fitted, * unstrided_residuals;
-
 	float* temp_trans = allocate_temp_row(flim->common->trans);
 	float* temp_fitted = allocate_temp_row(flim->common->fitted);
 	float* temp_residuals = allocate_temp_row(flim->common->residuals);
 
-	for (int i = 0; i < flim->common->trans->sizes[0]; i++) 
-	if (flim->common->fit_mask == NULL || *ARRAY1D_ELEM_PTR(flim->common->fit_mask, i)) {
+	for (int i = 0; i < flim->common->trans->sizes[0]; i++) {
+		if (flim->common->fit_mask == NULL || *ARRAY1D_ELEM_PTR(flim->common->fit_mask, i)) {
 
-		unstrided_trans = read_strided_row(flim->common->trans, temp_trans, i);
-		unstrided_fitted = prep_unstrided_output(flim->common->fitted, temp_fitted, i);
-		unstrided_residuals = prep_unstrided_output(flim->common->residuals, temp_residuals, i);
+			float* unstrided_trans = read_strided_row(flim->common->trans, temp_trans, i);
+			float* unstrided_fitted = prep_unstrided_output(flim->common->fitted, temp_fitted, i);
+			float* unstrided_residuals = prep_unstrided_output(flim->common->residuals, temp_residuals, i);
+			float* unstrided_chisq = flim->common->chisq == NULL ? NULL : ARRAY1D_ELEM_PTR(flim->common->chisq, i);
 
-		GCI_Phasor(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
-			ARRAY1D_ELEM_PTR(flim->phasor->Z, i), ARRAY1D_ELEM_PTR(flim->phasor->u, i), ARRAY1D_ELEM_PTR(flim->phasor->v, i),
-			ARRAY1D_ELEM_PTR(flim->phasor->taup, i), ARRAY1D_ELEM_PTR(flim->phasor->taum, i), ARRAY1D_ELEM_PTR(flim->phasor->tau, i),
-			unstrided_fitted, unstrided_residuals, ARRAY1D_ELEM_PTR(flim->common->chisq, i));
+			GCI_Phasor(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
+				ARRAY1D_ELEM_PTR(flim->phasor->Z, i), ARRAY1D_ELEM_PTR(flim->phasor->u, i), ARRAY1D_ELEM_PTR(flim->phasor->v, i),
+				ARRAY1D_ELEM_PTR(flim->phasor->taup, i), ARRAY1D_ELEM_PTR(flim->phasor->taum, i), ARRAY1D_ELEM_PTR(flim->phasor->tau, i),
+				unstrided_fitted, unstrided_residuals, unstrided_chisq);
 
-		write_strided_row(unstrided_fitted, flim->common->fitted, i);
-		write_strided_row(unstrided_residuals, flim->common->residuals, i);
+			write_strided_row(unstrided_fitted, flim->common->fitted, i);
+			write_strided_row(unstrided_residuals, flim->common->residuals, i);
+		}
 	}
 	free(temp_trans);
 	free(temp_fitted);

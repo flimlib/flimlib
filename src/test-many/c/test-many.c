@@ -9,12 +9,19 @@ void createExponential(float* time, float* photonCount, float a, float tau, floa
 
 int main() {
 	float a = 10.0;
-	float tauIn = 2.5;
-	float period = 0.039;
+	float tauIn = 1;
+	float period = 0.04;
 	float time[NDATA];
 	float photonCount[NDATA];
 	float scaledPhotonCount[NDATA];
-	
+
+	float Z_out;
+	float A_out;
+	float tau_out;
+	createExponential(time, photonCount, a, tauIn, period, NDATA);
+	GCI_triple_integral_fitting_engine(period, photonCount, 0, NDATA, NULL, 0, 3, NULL, &Z_out, &A_out, &tau_out, NULL, NULL, NULL, NAN);
+
+	printf("%f\n", A_out);
 
 	float covar_data[NPARAM * NPARAM * NROWS] = { 0 };
 	float alpha_data[NPARAM * NPARAM * NROWS] = { 0 };
@@ -38,17 +45,12 @@ int main() {
 	float residuals2d_data[NDATA * NROWS];
 	struct array2d residuals2d = { residuals2d_data, {NROWS, NDATA}, {NDATA * sizeof(float) , sizeof(float)} };
 
-	float one_arr[] = { 1.0 };
-	struct array1d paramfree = {one_arr, 1, 0};
-
 	float *chisq_data[NROWS];
 	struct array1d chisq = {chisq_data, NROWS, sizeof(float)};
 
-	struct array1d fit_mask = { one_arr, 1, 0 };
+	struct common_params common_in = {.xincr=period, .trans=&photonCount2d, .fit_start=0, .fit_end=NDATA, .fitted=&fitted2d, .residuals=&residuals2d, .chisq=&chisq, .fit_mask=NULL};
 
-	struct common_params common_in = {period, &photonCount2d, 0, NDATA, &fitted2d, &residuals2d, &chisq, NULL};
-
-	struct marquardt_params marquardt_in = {.instr=NULL, .noise=NOISE_POISSON_FIT, .sig=NULL, .param=&param2d, .paramfree=&paramfree, 
+	struct marquardt_params marquardt_in = {.instr=NULL, .noise=NOISE_POISSON_FIT, .sig=NULL, .param=&param2d, .paramfree=NULL, 
 		.restrain=ECF_RESTRAIN_DEFAULT, .fitfunc=GCI_multiexp_tau, .covar=&covar, .alpha=&alpha, .erraxes=&erraxes, .chisq_target=1.1, .chisq_delta=1E-5, .chisq_percent=95 };
 
 	struct flim_params flim_in = { &common_in, &marquardt_in };
@@ -63,6 +65,9 @@ int main() {
 	//for (int i = 0; i < NPARAM * NPARAM * NROWS; i++)
 	//	printf("%f\n", covar.data[i]);
 	print_array3d(&covar, 5);
+
+	common_in.chisq = NULL;
+	common_in.residuals = NULL;
 
 	// what happens if we only look at every other element in photonCount?
 	photonCount2d.sizes[1] = NDATA/2;
@@ -83,6 +88,34 @@ int main() {
 		printf("%f\n", param2d_data_rev[i]);
 
 	print_common(&common_in);
+
+	float Z_data[NROWS] = { 0 };
+	struct array1d Z = { .data = Z_data, .sizes = {NROWS}, .strides = {sizeof(float) } };
+	float u_data[NROWS];
+	struct array1d u = { .data = u_data, .sizes = {NROWS}, .strides = {sizeof(float) } };
+	float v_data[NROWS];
+	struct array1d v = { .data = v_data, .sizes = {NROWS}, .strides = {sizeof(float) } };
+	float taup_data[NROWS];
+	struct array1d taup = { .data = taup_data, .sizes = {NROWS}, .strides = {sizeof(float) } };
+	float taum_data[NROWS];
+	struct array1d taum = { .data = taum_data, .sizes = {NROWS}, .strides = {sizeof(float) } };
+	float tau_data[NROWS];
+	struct array1d tau = { .data = tau_data, .sizes = {NROWS}, .strides = {sizeof(float) } };
+
+	
+	struct phasor_params phasor_in = { .Z=&Z, .u=&u, .v=&v, .taup=&taup, .taum=&taum, .tau=&tau };
+
+	flim_in.phasor = &phasor_in;
+
+	print_common(&common_in);
+
+	GCI_Phasor_many(&flim_in);
+
+	print_common(&common_in);
+
+	print_array1d(&tau, 5);
+
+
 }
 
 void createExponential(float* time, float* photonCount, float a, float tau, float period, size_t count) {
