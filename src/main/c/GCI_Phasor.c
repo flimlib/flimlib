@@ -133,7 +133,8 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 		return 0;
 
 	memset(fitted, 0, (size_t)fit_end * sizeof(float));
-	memset(residuals, 0, (size_t)fit_end * sizeof(float));
+	if (residuals != NULL)
+		memset(residuals, 0, (size_t)fit_end * sizeof(float));
 	// Madison report some "memory issue", and replaced the 2 line above with new arrays.
 	// Not sure what that was but I breaks the filling of the fitted array, probably not allocating the arrays before calling
 
