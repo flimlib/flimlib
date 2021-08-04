@@ -1,3 +1,32 @@
+/*
+ * #%L
+ * FLIMLib package for exponential curve fitting of fluorescence lifetime data.
+ * %%
+ * Copyright (C) 2010 - 2015 University of Oxford and Board of Regents of the
+ * University of Wisconsin-Madison.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
+/** 
+ * This is a program to excersise the functions in EcfMultiple.h
+ * Meant to be replaced with proper unit tests later
+ * \file test-many.c
+ */
+
 #include <stdio.h>
 #include "EcfMultiple.h"
 #include <math.h>
@@ -87,7 +116,7 @@ int main() {
 	for (int i = 0; i < NPARAM * NROWS; i++)
 		printf("%f\n", param2d_data_rev[i]);
 
-	print_common(&common_in);
+	print_common_params(&common_in);
 
 	float Z_data[NROWS] = { 0 };
 	struct array1d Z = { .data = Z_data, .sizes = {NROWS}, .strides = {sizeof(float) } };
@@ -107,11 +136,11 @@ int main() {
 
 	flim_in.phasor = &phasor_in;
 
-	print_common(&common_in);
+	print_common_params(&common_in);
 
 	GCI_Phasor_many(&flim_in);
 
-	print_common(&common_in);
+	print_common_params(&common_in);
 
 	print_array1d(&tau, 5);
 
