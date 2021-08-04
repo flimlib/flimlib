@@ -872,7 +872,8 @@ def GCI_marquardt_fitting_engine_many(  period, photon_count, param, fit_start=N
     marquardt_in.instr, referenced_instr = _as_strided_array([1.0], (...,)) if instr is None else _as_strided_array(instr, (...,)) # must pass unit instr because of a bug with flimlib
     marquardt_in.sig, referenced_sig = _prep_strided_sig(noise_type, sig, (data_shape[1],)) # same size as second axis of fitted and residuals
     marquardt_in.noise = _noise_types[noise_type]
-    marquardt_in.param, param_out = _as_strided_array(param, (data_shape[0], ...)) # Does it make sense to pass None and start all guesses at 0 or something?
+    param_in = np.asarray(param).copy() # make a copy of param. this is less than ideal performance-wise but in python it is expected that inputs are not modified
+    marquardt_in.param, param_out = _as_strided_array(param_in, (data_shape[0], ...)) # Does it make sense to pass None and start all guesses at 0 or something?
     marquardt_in.paramfree, referenced_paramfree = (None, None) if paramfree is None else _as_strided_array(paramfree, (param_out.shape[1],), ctypes_type=ctypes.c_int8)
     marquardt_in.restrain = _restrain_types[restrain_type]
     if all(data_shape): # zero data case

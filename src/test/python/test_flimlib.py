@@ -236,6 +236,24 @@ class TestMarquardtMany(unittest.TestCase):
         erraxes_in = np.empty((2,3,3), dtype=np.float32)
         result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, 
             fitted=fitted_in, residuals=residuals_in, chisq=chisq_in, covar=covar_in, alpha=alpha_in, erraxes=erraxes_in)
+        self.assertTrue(np.all(result.param != param_in)) # param must NOT be equal
+        self.assertTrue(np.all(result.fitted == fitted_in))
+        self.assertTrue(np.all(result.residuals == residuals_in))
+        self.assertTrue(all(result.chisq == chisq_in))
+        self.assertTrue(np.all(result.covar == covar_in))
+        self.assertTrue(np.all(result.alpha == alpha_in))
+        self.assertTrue(np.all(result.erraxes == erraxes_in))
+        # if not float 32 the inputs are still modified but a copy is made
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float64)
+        fitted_in = np.empty((2,samples), dtype=np.float64)
+        residuals_in = np.empty((2,samples), dtype=np.float64)
+        chisq_in = np.empty((2,), dtype=np.float64)
+        covar_in = np.empty((2,3,3), dtype=np.float64)
+        alpha_in = np.empty((2,3,3), dtype=np.float64)
+        erraxes_in = np.empty((2,3,3), dtype=np.float64)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, 
+            fitted=fitted_in, residuals=residuals_in, chisq=chisq_in, covar=covar_in, alpha=alpha_in, erraxes=erraxes_in)
+        self.assertTrue(np.all(result.param != param_in)) # param must NOT be equal
         self.assertTrue(np.all(result.fitted == fitted_in))
         self.assertTrue(np.all(result.residuals == residuals_in))
         self.assertTrue(all(result.chisq == chisq_in))
@@ -245,9 +263,6 @@ class TestMarquardtMany(unittest.TestCase):
     
     def test_wrong_output_type(self):
         param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
-        fitted_in = np.empty((2,samples), dtype=np.float64) # float64 is compatible
-        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, fitted=fitted_in)
-        self.assertTrue(np.all(result.fitted == fitted_in))
         with self.assertRaises(TypeError):
             fitted_in = np.empty((2,samples), dtype=int) # not compatible
             result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, fitted=fitted_in)
@@ -323,6 +338,21 @@ class Test3IntegralMany(unittest.TestCase):
         self.assertTrue(np.all(result.Z == Z_in))
         self.assertTrue(np.all(result.A == A_in))
         self.assertTrue(np.all(result.tau == tau_in))
+        # if not float 32 the inputs are still modified but a copy is made
+        fitted_in = np.empty((2,samples), dtype=np.float64)
+        residuals_in = np.empty((2,samples), dtype=np.float64)
+        chisq_in = np.empty((2,), dtype=np.float64)
+        Z_in = np.empty((2,), dtype=np.float64)
+        A_in = np.empty((2,), dtype=np.float64)
+        tau_in = np.empty((2,), dtype=np.float64)
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2],
+            fitted=fitted_in, residuals=residuals_in, chisq=chisq_in, Z=Z_in, A=A_in, tau=tau_in)
+        self.assertTrue(np.all(result.fitted == fitted_in))
+        self.assertTrue(np.all(result.residuals == residuals_in))
+        self.assertTrue(all(result.chisq == chisq_in)) 
+        self.assertTrue(np.all(result.Z == Z_in))
+        self.assertTrue(np.all(result.A == A_in))
+        self.assertTrue(np.all(result.tau == tau_in))
 
     def test_wrong_output_type(self):
         fitted_in = np.empty((2,samples), dtype=np.float64) # float64 is compatible
@@ -376,6 +406,25 @@ class TestPhasorMany(unittest.TestCase):
         fitted_in = np.empty((2,samples), dtype=np.float32)
         residuals_in = np.empty((2,samples), dtype=np.float32)
         chisq_in = np.empty((2,), dtype=np.float32)
+        result = flimlib.GCI_Phasor_many(period, photon_count2d[0:2],
+            fitted=fitted_in, residuals=residuals_in, chisq=chisq_in, u=u_in, v=v_in, taup=taup_in, taum=taum_in, tau=tau_in)
+        self.assertTrue(np.all(result.v == v_in))
+        self.assertTrue(np.all(result.u == u_in))
+        self.assertTrue(np.all(result.taup == taup_in))
+        self.assertTrue(np.all(result.taum == taum_in))
+        self.assertTrue(np.all(result.tau == tau_in))
+        self.assertTrue(np.all(result.fitted == fitted_in))
+        self.assertTrue(np.all(result.residuals == residuals_in))
+        self.assertTrue(all(result.chisq == chisq_in)) 
+        # if not float 32 the inputs are still modified but a copy is made
+        u_in = np.empty((2,), dtype=np.float64)
+        v_in = np.empty((2,), dtype=np.float64)
+        taup_in = np.empty((2,), dtype=np.float64)
+        taum_in = np.empty((2,), dtype=np.float64)
+        tau_in = np.empty((2,), dtype=np.float64)
+        fitted_in = np.empty((2,samples), dtype=np.float64)
+        residuals_in = np.empty((2,samples), dtype=np.float64)
+        chisq_in = np.empty((2,), dtype=np.float64)
         result = flimlib.GCI_Phasor_many(period, photon_count2d[0:2],
             fitted=fitted_in, residuals=residuals_in, chisq=chisq_in, u=u_in, v=v_in, taup=taup_in, taum=taum_in, tau=tau_in)
         self.assertTrue(np.all(result.v == v_in))
