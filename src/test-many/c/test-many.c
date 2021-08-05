@@ -27,9 +27,12 @@
  * \file test-many.c
  */
 
-#include <stdio.h>
 #include "EcfMultiple.h"
+
 #include <math.h>
+#include <stdio.h>
+
+
 #define NDATA 256
 #define NPARAM 3
 #define NROWS 2

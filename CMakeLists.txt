@@ -40,13 +40,13 @@ include_directories("src/main/c" "src/main/cpp" "src/flimlib-cmd/c/iniparser/src
 
 # Common files we always need
 set(FLIMLIB_COMMON   src/main/c/EcfGlobal.c
-                     src/main/c/EcfSingle.c
+                     src/main/c/EcfMultiple.c
                      src/main/c/EcfSPA.c
+                     src/main/c/EcfSingle.c
                      src/main/c/EcfUtil.c
                      src/main/c/EcfWrapper.c
                      src/main/c/GCI_Lsqnonneg.c
                      src/main/c/GCI_Phasor.c
-                     src/main/c/EcfMultiple.c
 )
 
 # Additional files for the stand alone program

@@ -25,12 +25,14 @@
  * \file EcfMultiple.c
  */
 
-#include <stdio.h>
-#include "EcfMultiple.h" // header file
-#include "Ecf.h" 
+#include "EcfMultiple.h"
+
+#include "Ecf.h"
 #include "GCI_Phasor.h"
-#include <stdlib.h> 
-#include <math.h> 
+
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 static inline float *array1d_float_ptr(struct array1d *arr, size_t i) {
 	return (float *)((char *)arr->data + i * arr->strides[0]);
