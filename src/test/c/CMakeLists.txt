@@ -10,8 +10,9 @@ include_directories("../flimlib/src/main/c", ".")
 
 # The current library
 set(FLIMLIB_COMMON   ../flimlib/src/main/c/EcfGlobal.c
-                     ../flimlib/src/main/c/EcfSingle.c
+                     ../flimlib/src/main/c/EcfMultiple.c
                      ../flimlib/src/main/c/EcfSPA.c
+                     ../flimlib/src/main/c/EcfSingle.c
                      ../flimlib/src/main/c/EcfUtil.c
                      ../flimlib/src/main/c/EcfWrapper.c
                      ../flimlib/src/main/c/GCI_Lsqnonneg.c

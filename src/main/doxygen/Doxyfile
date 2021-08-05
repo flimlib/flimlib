@@ -749,15 +749,11 @@ WARN_LOGFILE           =
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../c/Ecf.h \
-                         README.txt \
-                         ../c/GCI_Phasor.h \
+INPUT                  = README.txt \
+                         ../c/Ecf.h \
+                         ../c/EcfMultiple.h \
                          ../c/GCI_Lsqnonneg.h \
-#                        ../c/EcfSingle.c \
-#                        ../c/EcfGlobal.c \
-#                        ../c/EcfSPA.c \
-#                        ../c/GCI_Phasor.c \
-#                        ../c/GCI_Lsqnonneg.c
+                         ../c/GCI_Phasor.h
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

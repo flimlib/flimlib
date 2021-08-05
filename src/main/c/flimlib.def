@@ -32,3 +32,6 @@ EXPORTS
     LMA_fit
     Bayes_fitting_engine
     Bayes_set_search_grid
+    GCI_marquardt_fitting_engine_many
+    GCI_triple_integral_fitting_engine_many
+    GCI_Phasor_many

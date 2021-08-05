@@ -40,8 +40,9 @@ include_directories("src/main/c" "src/main/cpp" "src/flimlib-cmd/c/iniparser/src
 
 # Common files we always need
 set(FLIMLIB_COMMON   src/main/c/EcfGlobal.c
-                     src/main/c/EcfSingle.c
+                     src/main/c/EcfMultiple.c
                      src/main/c/EcfSPA.c
+                     src/main/c/EcfSingle.c
                      src/main/c/EcfUtil.c
                      src/main/c/EcfWrapper.c
                      src/main/c/GCI_Lsqnonneg.c
@@ -113,6 +114,8 @@ add_executable(flimlib-cmd-cpp ${FLIMLIB_COMMON} ${FLIMLIB_CPP})
 
 # Build a test program
 add_executable(flimlib-test ${FLIMLIB_COMMON} ${FLIMLIB_TEST})
+
+add_executable(test-many ${FLIMLIB_COMMON} src/test-many/c/test-many.c)
 
 if(UNIX)
   # Link the math library
