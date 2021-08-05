@@ -342,3 +342,8 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim);
  * flim (must contain a phasor_params structure)
  */
 int GCI_Phasor_many(struct flim_params* flim);
+
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
