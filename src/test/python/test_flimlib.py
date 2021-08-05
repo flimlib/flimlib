@@ -225,6 +225,10 @@ class TestMarquardtMany(unittest.TestCase):
         for i in range(samples*samples):
             self.assertAlmostEqual(result.param[i][1], a_in1d[i], 1)
             self.assertAlmostEqual(result.param[i][2], tau_in1d[i], 1)
+
+    def test_integer_input(self):
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.int16)
+        flimlib.GCI_marquardt_fitting_engine_many(period, np.asarray(photon_count2d[0:2],dtype=int), param_in)
     
     def test_outputs_modified(self):
         param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
