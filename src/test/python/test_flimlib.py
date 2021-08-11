@@ -376,7 +376,7 @@ class Test3IntegralMany(unittest.TestCase):
         start = samples // 10
         end = samples // 10 * 9
         result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], fit_start=start, fit_end=end)
-        self.assertTrue(result.fitted.shape == (2, end))
+        self.assertEqual(result.fitted.shape, (2, end))
         self.assertTrue(np.all(np.diff(result.fitted) < 0)) # monotonic decrease
         self.assertAlmostEqual(result.fitted[0][0], result.A[0], 1)
 
@@ -475,6 +475,10 @@ class TestPhasorMany(unittest.TestCase):
         result = flimlib.GCI_Phasor_many(period, [[]])
         
 # TODO find fixes made to the many implementation that ought to go into single
+# TODO test all raises
+# TODO test 1d photon count
+# TODO test 3d+ photon count
+# TODO test jenu's bug
 
 if __name__ == '__main__':
     unittest.main()
