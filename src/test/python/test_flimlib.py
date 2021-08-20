@@ -316,6 +316,54 @@ class TestMarquardtMany(unittest.TestCase):
         param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
         with self.assertRaises(TypeError):
             result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, chisq_target="foo")
+        
+    def test_different_shapes(self):
+        param_in = np.asarray([[[0,a_in+1,tau_in+1] for i in range(2)] for i in range(2)], dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, [photon_count2d[0:2], photon_count2d[0:2]], param_in)
+        self.assertEqual(result.fitted.shape, (2, 2, samples))
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count32, [0,a_in+1,tau_in+1])
+        self.assertEqual(result.fitted.shape, (samples,))
+
+    def test_restraintype(self):
+        with self.assertRaises(ValueError):
+            flimlib.GCI_set_restrain_limits([0,0],[0],[0])
+        with self.assertRaises(ValueError):
+            flimlib.GCI_set_restrain_limits([[0,0],[0,0]],[0,0],[0,0])
+        param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
+        flimlib.GCI_set_restrain_limits([0,1,0],[0,0,0],[0,a_in-1,0])
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, restrain_type='ECF_RESTRAIN_USER')
+        self.assertTrue(all(result.param[1] <= a_in-1))
+    
+    def test_multiexp_lambda(self):
+        lambda_in = 1/tau_in # lambda is the decay rate!
+        param_in = np.asarray([0,a_in+1,lambda_in+1], dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count32, param_in, fitfunc=flimlib.GCI_multiexp_lambda)
+        self.assertAlmostEqual(a_in, result.param[1], 1)
+        self.assertAlmostEqual(lambda_in, result.param[2],1)
+    
+    def test_user_defined_fitfunc(self):
+        param_in = np.asarray([0,a_in+1,tau_in+1], dtype=np.float32)
+        fitfunc_in = flimlib.FitFunc(dummy_exp_tau, nparam_predicate=dummy_exp_tau_predicate)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count32, param_in, fitfunc=fitfunc_in)
+        self.assertAlmostEqual(0.0,result.param[0],1)
+        self.assertAlmostEqual(a_in,result.param[1],1)
+        self.assertAlmostEqual(tau_in,result.param[2],1)
+
+        # linear fit! (did not work with the first param being nonzero)
+        param_in = np.asarray([0, linear_const+1], dtype=np.float32)
+        fitfunc_in = flimlib.FitFunc(dummy_linear, nparam_predicate=dummy_linear_predicate)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count_linear, param_in, fitfunc=fitfunc_in, noise_type='NOISE_CONST',sig=1.0)
+        self.assertAlmostEqual(0.0,result.param[0],1)
+        self.assertAlmostEqual(linear_const,result.param[1],1)
+
+    def test_nparam(self):
+        with self.assertRaises(TypeError):
+            param_in = np.asarray([a_in+1,tau_in+1], dtype=np.float32) # forgot the first parameter!
+            flimlib.GCI_marquardt_fitting_engine(period, photon_count32, param_in)
+
+        # any odd number of parameters greater or equal to 3 should work!
+        param_in = np.asarray([0, a_in+1,tau_in+1, 1, 1], dtype=np.float32) # pass 5 parameters
+        flimlib.GCI_marquardt_fitting_engine(period, photon_count32, param_in)
 
 class Test3IntegralMany(unittest.TestCase):
     def test_output_margin(self):
@@ -392,6 +440,73 @@ class Test3IntegralMany(unittest.TestCase):
 
     def test_size_zero_input(self):
         result = flimlib.GCI_triple_integral_fitting_engine_many(period, [[]])
+
+    def test_different_shapes(self):
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, [photon_count2d[0:2], photon_count2d[0:2]])
+        self.assertEqual(result.fitted.shape, (2, 2, samples))
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count32)
+        self.assertEqual(result.fitted.shape, (samples,))
+
+    def test_instr(self):
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], instr=[1,2,3,4,5])
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], instr=["42"])
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], instr=list(range(300))) # no errors??? ask mark/jenu. ok we should actually just check that it's the right length
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], instr=5)
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], instr="foo")
+        with self.assertRaises(TypeError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], instr={"foo": "bar"})
+
+    def test_noise_type_input(self):
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='foo')
+        with self.assertRaises(TypeError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type={"foo": "bar"})
+
+    def test_unused_noise_types(self):
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_GAUSSIAN_FIT')
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_MLE')
+
+    def test_noise_const(self):
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_CONST',sig=2)
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_CONST',sig=[5])
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_CONST',sig=[1,2,3,4,5])
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_CONST',sig='foo')
+    
+    def test_noise_given(self):
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_GIVEN',sig=list(range(samples)))
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_GIVEN',sig=2)
+        with self.assertRaises(TypeError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_GIVEN',sig={"foo": "bar"})
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_GIVEN',sig='foo')
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_GIVEN',sig=[1,2,3,4,5])
+        
+    def test_noise_const_and_given(self):
+        #the result should be the same if noise given is constant
+        result_const = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_CONST',sig=1.0)
+        result_noise_given = flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_GIVEN',sig=np.ones(samples))
+        self.assertTrue(all(result_const.chisq == result_noise_given.chisq))
+        self.assertTrue(all(result_const.A == result_noise_given.A))
+        self.assertTrue(all(result_const.Z == result_noise_given.Z))
+        self.assertTrue(all(result_const.tau == result_noise_given.tau))
+
+    def test_noise_poisson_data(self):
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_POISSON_DATA')
+        # this should print a warning
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_POISSON_DATA',sig=2)
+
+    def test_noise_poisson_fit(self):
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_POISSON_FIT')
+        # this should print a warning
+        flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_POISSON_FIT',sig=2)
 
 class TestPhasorMany(unittest.TestCase):
     def test_output_margin(self):
@@ -473,12 +588,17 @@ class TestPhasorMany(unittest.TestCase):
 
     def test_size_zero_input(self):
         result = flimlib.GCI_Phasor_many(period, [[]])
+        result = flimlib.GCI_Phasor_many(period, [])
+    
+    def test_different_shapes(self):
+        result = flimlib.GCI_Phasor_many(period, [photon_count2d[0:2], photon_count2d[0:2]])
+        self.assertEqual(result.fitted.shape, (2, 2, samples))
+        result = flimlib.GCI_Phasor_many(period, photon_count32)
+        self.assertEqual(result.fitted.shape, (samples,))
         
 # TODO find fixes made to the many implementation that ought to go into single
-# TODO test all raises
-# TODO test 1d photon count
-# TODO test 3d+ photon count
 # TODO test jenu's bug
+# TODO set outputs to nan on failed fit
 
 if __name__ == '__main__':
     unittest.main()

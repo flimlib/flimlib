@@ -376,7 +376,7 @@ class FitFunc:
         if self.nparam_predicate is None or self.nparam_predicate(nparam_in):
             return self.c_func
         else:
-            raise TypeError("Incorrect size of param")
+            raise TypeError("Incorrect size of param: " + str(nparam_in))
 
 
 def _multiexp_predicate(n_param):
@@ -768,7 +768,7 @@ def _prep_common_params(period, photon_count, fit_start, fit_end, fit_mask,
     common.fit_start = fstart
     common.fit_end = fend
     data_shape = dshape if ndata_known else (*dshape[0:-1], fend) # triple_integral and phasor use fit_end as the size of the data
-    npixels = np.prod(data_shape[0:-1])
+    npixels = np.prod(data_shape[0:-1], dtype=int)
 
     common.xincr = period
     common.trans, referenced_trans = _as_strided_array(photon_count, ..., (npixels, dshape[-1])) # the shape of trans is wildcard
@@ -926,12 +926,14 @@ def GCI_marquardt_fitting_engine_many(  period, photon_count, param, fit_start=N
     referenced_paramfree
     referenced_objects
 
-    _copy_to_provided_output(fitted, fitted_out, data_shape)
-    _copy_to_provided_output(residuals, residuals_out, data_shape)
-    _copy_to_provided_output(chisq, chisq_out, data_shape[0:-1])
-    _copy_to_provided_output(covar, covar_out, (*data_shape[0:-1], nparam, nparam))
-    _copy_to_provided_output(alpha, alpha_out, (*data_shape[0:-1], nparam, nparam))
-    _copy_to_provided_output(erraxes, erraxes_out, (*data_shape[0:-1], nparam, nparam))
+    #print(data_shape)
+    param_out = _copy_to_provided_output(None, param_out, param_in.shape) # DO NOT copy to provided param since it is also an input
+    fitted_out = _copy_to_provided_output(fitted, fitted_out, data_shape)
+    residuals_out = _copy_to_provided_output(residuals, residuals_out, data_shape)
+    chisq_out = _copy_to_provided_output(chisq, chisq_out, data_shape[0:-1])
+    covar_out = _copy_to_provided_output(covar, covar_out, (*data_shape[0:-1], nparam, nparam))
+    alpha_out = _copy_to_provided_output(alpha, alpha_out, (*data_shape[0:-1], nparam, nparam))
+    erraxes_out = _copy_to_provided_output(erraxes, erraxes_out, (*data_shape[0:-1], nparam, nparam))
 
     return MarquardtManyResult( error_code, param_out, fitted_out, 
                             residuals_out, chisq_out, covar_out, alpha_out, erraxes_out)
