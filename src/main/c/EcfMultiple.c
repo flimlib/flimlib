@@ -277,8 +277,8 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 
 int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 	int ninstr = flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0];
-	// set the target to be NAN since this will cause the algorithm to iterate only once
-	float chisq_target_in = flim->triple_integral->chisq_target < 0 ? NAN : flim->triple_integral->chisq_target;
+	// set the target to be INFINITY since this will cause the algorithm to iterate only once
+	float chisq_target_in = flim->triple_integral->chisq_target < 0 ? INFINITY : flim->triple_integral->chisq_target;
 	
 	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
 	float* temp_trans = allocate_temp_2d_row(flim->common->trans);
