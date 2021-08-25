@@ -303,6 +303,11 @@ class TestMarquardtMany(unittest.TestCase):
         param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)
         result = flimlib.GCI_marquardt_fitting_engine_many(period, photon_count2d[0:2], param_in, fit_mask=[1,0], fitted=fitted_in)
         self.assertTrue(all(result.fitted[1] == 1))
+        # 3-dimensional photon_count
+        fitted_in = np.ones((2,2,samples), dtype=np.float32)
+        param_in = np.asarray([[[0,a_in+1,tau_in+1] for i in range(2)] for i in range(2)], dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine_many(period, [photon_count2d[0:2], photon_count2d[0:2]], param_in, fit_mask=[[0,1],[1,0]], fitted=fitted_in)
+        self.assertTrue(all(result.fitted[0][0] == 1) and all(result.fitted[1][1] == 1))
     
     def test_paramfree(self):
         param_in = np.asarray([[0,a_in+1,tau_in+1] for i in range(2)], dtype=np.float32)

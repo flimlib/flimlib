@@ -776,7 +776,7 @@ def _prep_common_params(period, photon_count, fit_start, fit_end, fit_mask,
     common.residuals, residuals_out = _prep_optional_output(residuals, data_shape, (npixels, data_shape[-1]), flag=compute_residuals)
     common.chisq, chisq_out = _prep_optional_output(chisq, data_shape[0:-1], (npixels,), flag=compute_chisq)
     common.fit_mask, referenced_fit_mask = (None, None) if fit_mask is None else _as_strided_array(
-        fit_mask, (data_shape[0],), (npixels,), ctypes_type=ctypes.c_int8, numpy_type=np.int8)
+        fit_mask, data_shape[0:-1], (npixels,), ctypes_type=ctypes.c_int8, numpy_type=np.int8)
     referenced_objects = (referenced_trans, referenced_fit_mask) # stuff we want to prevent from getting garbage collected
     return common, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects
 
