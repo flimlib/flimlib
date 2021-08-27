@@ -1909,16 +1909,22 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 		oldChisq = local_chisq;
 		tries++;
 		// All of the work is done by the ECF module
-		ret += GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
+		ret = GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
 							  instr, ninstr, noise, sig,
 							  param, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, covar, alpha, &local_chisq,
 							  chisq_delta, chisq_percent_float, erraxes);
+
+		if (ret < 0)
+			break;
 	} while (local_chisq>chisq_target && (local_chisq<oldChisq) && tries<MAXREFITS);
 
 	if (chisq!=NULL) *chisq = local_chisq;
 
 	if (ecf_exportParams) ecf_ExportParams_CloseFile ();
+
+	if (tries >= MAXREFITS && local_chisq > chisq_target) // maxrefits reached and target not reached
+		return -6;
 
 	return ret;		// summed number of iterations
 }
