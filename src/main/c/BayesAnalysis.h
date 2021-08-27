@@ -48,7 +48,7 @@ void Bayes_set_search_grid(float parammin[], float parammax[], int nparam);
 * \param[out] minuslogprob The resulting negated log probability (-log(P)) of the estimate.
 * \param[out] nphotons The total number of photons included in the fit.
 * \param[out] chisq The resulting raw chi squared value of the fit. To get the reduced chisq, divide by the degrees of freedom (fit_end - fit_start - nparam). Requires residuals array. Can be NULL if not required.
-* \return An error code, 0 = success.
+* \return A negative error code on failure, non-negative on success.
 */
 int Bayes_fitting_engine(/* Data in... */
                         float xincr,
