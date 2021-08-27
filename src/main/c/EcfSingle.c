@@ -446,7 +446,7 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 		free (validFittedArray);
 	}
 
-	if (tries >= MAXREFITS)
+	if (tries >= MAXREFITS && local_chisq > chisq_target) // maxrefits reached and target not reached
 		return -5;
 	if (result < 0)
 		return result;
