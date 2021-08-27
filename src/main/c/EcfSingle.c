@@ -274,7 +274,7 @@ int GCI_triple_integral_instr(float xincr, float y[],
 //			free(fitted_preconv);
 		if ((fitted_preconv = (float *) malloc((long unsigned int) fit_end * sizeof(float)))
 			== NULL)
-			return -3;
+			return -4;
 //		else
 //			fitted_preconv_size = fit_end;
 //	}
@@ -385,6 +385,7 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 {
 	int tries=1, division=3;		 // the data
 	float local_chisq=3.0e38f, oldChisq=3.0e38f, oldZ, oldA, oldTau, *validFittedArray; // local_chisq a very high float but below oldChisq
+	int result = 0;
 
 	if (fitted==NULL)   // we require chisq but have not supplied a "fitted" array so must malloc one
 	{
@@ -394,8 +395,8 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 
 	if (instr==NULL)           // no instrument/prompt has been supplied
 	{
-		GCI_triple_integral(xincr, y, fit_start, fit_end, noise, sig,
-								Z, A, tau, validFittedArray, residuals, &local_chisq, division);
+		result = GCI_triple_integral(xincr, y, fit_start, fit_end, noise, sig,
+				Z, A, tau, validFittedArray, residuals, &local_chisq, division);
 
 		while (local_chisq>chisq_target && (local_chisq<=oldChisq) && tries<MAXREFITS)
 		{
@@ -406,14 +407,14 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 //			division++;
 			division+=division/3;
 			tries++;
-			GCI_triple_integral(xincr, y, fit_start, fit_end, noise, sig,
-								Z, A, tau, validFittedArray, residuals, &local_chisq, division);
+			result = GCI_triple_integral(xincr, y, fit_start, fit_end, noise, sig,
+					Z, A, tau, validFittedArray, residuals, &local_chisq, division);
 		}
 	}
 	else
 	{
-		GCI_triple_integral_instr(xincr, y, fit_start, fit_end, instr, ninstr, noise, sig,
-								Z, A, tau, validFittedArray, residuals, &local_chisq, division);
+		result = GCI_triple_integral_instr(xincr, y, fit_start, fit_end, instr, ninstr, noise, sig,
+				Z, A, tau, validFittedArray, residuals, &local_chisq, division);
 
 		while (local_chisq>chisq_target && (local_chisq<=oldChisq) && tries<MAXREFITS)
 		{
@@ -424,8 +425,8 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 //			division++;
 			division+=division/3;
 			tries++;
-			GCI_triple_integral_instr(xincr, y, fit_start, fit_end, instr, ninstr, noise, sig,
-								Z, A, tau, validFittedArray, residuals, &local_chisq, division);
+			result = GCI_triple_integral_instr(xincr, y, fit_start, fit_end, instr, ninstr, noise, sig,
+					Z, A, tau, validFittedArray, residuals, &local_chisq, division);
 
 		}
 	}
@@ -445,7 +446,11 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 		free (validFittedArray);
 	}
 
-	return(tries);
+	if (tries >= MAXREFITS)
+		return -5;
+	if (result < 0)
+		return result;
+	return tries;
 }
 
 /********************************************************************

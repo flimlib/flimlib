@@ -108,7 +108,7 @@ typedef struct _DMSPVAF {
  * \param[out] residuals An array containing the difference between the data and the fit.
  * \param[out] chisq The resulting raw chi squared value of the fit. To get the reduced chisq, divide by the degrees of freedom (fit_start - fit_end - nparam)
  * \param[in] chisq_target A raw chi squared value to aim for. If this value is reached fitting will stop. If you want to aim for a reduced chisq (say 1.1 or 1.0) you must multiply by the degree of freedom. (TRI2: "Try refits")
- * \return An error code, 0 = success.
+ * \return A negative error code on failure; non-negative on success.
  */
 int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, int fit_end,
 							  float instr[], int ninstr, noise_type noise, float sig[],
@@ -144,7 +144,7 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
  * \param[in] chisq_target A raw chi squared value to aim for. If this value is reached fitting will stop. If you want to aim for a reduced chisq (say 1.1 or 1.0) you must multiply by the degree of freedom. (TRI2: "Try refits")
  * \param[in] chisq_delta An individual fit will continue if the chisq value changes by more then this amount. Try 1E-5. (TRI2: "Stopping Criterion")
  * \param[in] chisq_percent Defines the confidence interval when calculating the error axes, e.g. 95 %.
- * \return An error code, 0 = success.
+ * \return A negative error code on failure; non-negative on success.
  */
 int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_start, int fit_end, 
 						float instr[], int ninstr,
