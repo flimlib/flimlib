@@ -443,6 +443,7 @@ def GCI_marquardt_fitting_engine(  period, photon_count, param, fit_start=None, 
     -------
     MarquardtResult
         A namedtuple containing values in order: error_code, param, fitted, residuals, chisq, covar, alpha, erraxes
+        For each fit that fails, its corresponding outputs are filled with `NaN`
     """
     
     common_in, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects = _prep_common_params(
@@ -582,6 +583,7 @@ def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=None, fit
     -------
     TripleIntegralResult
         A namedtuple containing values in order: error_code, Z, A, tau, fitted, residuals, chisq
+        For each fit that fails, its corresponding outputs are filled with `NaN`
     """
     common_in, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects = _prep_common_params(
         period, photon_count, fit_start, fit_end, fit_mask, fitted, residuals, chisq, compute_fitted, compute_residuals, compute_chisq, False)
@@ -708,6 +710,7 @@ def GCI_Phasor(period, photon_count, fit_start=None, fit_end=None,
     -------
     PhasorResult
         A namedtuple containing values in order: error_code, u, v, taup, taum, tau, fitted, residuals, chisq
+        For each fit that fails, its corresponding outputs are filled with `NaN`
     """
 
     common_in, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects = _prep_common_params(

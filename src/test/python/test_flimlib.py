@@ -513,6 +513,14 @@ class Test3IntegralMany(unittest.TestCase):
         self.assertTrue(np.all(np.isnan(result.fitted)))
         self.assertTrue(np.all(np.isnan(result.residuals)))
 
+    def test_fit_fail(self):
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, np.flip(photon_count2d[0:2]))
+        self.assertTrue(np.all(np.isnan(result.Z)))
+        self.assertTrue(np.all(np.isnan(result.A)))
+        self.assertTrue(np.all(np.isnan(result.tau)))
+        self.assertTrue(np.all(np.isnan(result.fitted)))
+        self.assertTrue(np.all(np.isnan(result.residuals)))
+
 class TestPhasorMany(unittest.TestCase):
     def test_output_margin(self):
         start = time.time_ns()

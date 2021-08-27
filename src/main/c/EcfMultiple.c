@@ -135,6 +135,24 @@ static void write_matrix(float** source, struct array3d* dest, int layer) {
 			*array3d_float_ptr(dest, layer, row, col) = *(source[0] + row * dest->sizes[2] + col);
 }
 
+// fill a specified row in an array2d with NaNs
+static void write_2d_row_nan(struct array2d* dest, int row) {
+	if (dest == NULL)
+		return;
+	for (size_t col = 0; col < dest->sizes[1]; col++)
+		*array2d_float_ptr(dest, row, col) = NAN;
+}
+
+
+// fill a specified matrix in an array3d with NaNs
+static void write_matrix_nan(struct array3d* dest, int layer) {
+	if (dest == NULL)
+		return;
+	for (size_t row = 0; row < dest->sizes[1]; row++)
+		for (size_t col = 0; col < dest->sizes[2]; col++)
+			*array3d_float_ptr(dest, layer, row, col) = NAN;
+}
+
 void print_array1d(struct array1d* arr, int max_print) {
 	if (arr == NULL) return;
 	for (int col = 0; col < arr->sizes[0] && col <= max_print; col++) {
@@ -241,22 +259,33 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 			float* unstrided_residuals = get_required_unstrided_2d_row_output(flim->common->residuals, temp_residuals, i);
 			float* unstrided_chisq = flim->common->chisq == NULL ? &local_chisq : array1d_float_ptr(flim->common->chisq, i);
 
-			GCI_marquardt_fitting_engine(flim->common->xincr, unstrided_trans, ndata, flim->common->fit_start, 
+			int error_code = GCI_marquardt_fitting_engine(flim->common->xincr, unstrided_trans, ndata, flim->common->fit_start, 
 				flim->common->fit_end, unstrided_instr, ninstr, flim->marquardt->noise, unstrided_sig, unstrided_param, 
 				temp_paramfree, nparam, flim->marquardt->restrain, flim->marquardt->fitfunc, unstrided_fitted, 
 				unstrided_residuals, unstrided_chisq, temp_covar, temp_alpha, temp_erraxes, flim->marquardt->chisq_target, 
 				flim->marquardt->chisq_delta, flim->marquardt->chisq_percent);
 			
-			// time to handle outputs!
-			write_2d_row_output(unstrided_param, flim->marquardt->param, i);
-			write_2d_row_output(unstrided_fitted, flim->common->fitted, i);
-			write_2d_row_output(unstrided_residuals, flim->common->residuals, i);
+			if (error_code < 0){ // fit has failed
+				// fill all outputs with NaN
+				write_2d_row_nan(flim->marquardt->param, i);
+				write_2d_row_nan(flim->common->fitted, i);
+				write_2d_row_nan(flim->common->residuals, i);
+				write_matrix_nan(flim->marquardt->covar, i);
+				write_matrix_nan(flim->marquardt->alpha, i);
+				write_matrix_nan(flim->marquardt->erraxes, i);
+			}
+			else{
+				// time to handle outputs!
+				write_2d_row_output(unstrided_param, flim->marquardt->param, i);
+				write_2d_row_output(unstrided_fitted, flim->common->fitted, i);
+				write_2d_row_output(unstrided_residuals, flim->common->residuals, i);
 
-			// able to save memory if these array3d are NULL. This prevents copying over the results
-			// it was not an option to modify these in-place since the function requires the ecf matrix format
-			write_matrix(temp_covar, flim->marquardt->covar, i);
-			write_matrix(temp_alpha, flim->marquardt->alpha, i);
-			write_matrix(temp_erraxes, flim->marquardt->erraxes, i);
+				// able to save memory if these array3d are NULL. This prevents copying over the results
+				// it was not an option to modify these in-place since the function requires the ecf matrix format
+				write_matrix(temp_covar, flim->marquardt->covar, i);
+				write_matrix(temp_alpha, flim->marquardt->alpha, i);
+				write_matrix(temp_erraxes, flim->marquardt->erraxes, i);
+			}
 		}
 	}
 
@@ -299,14 +328,23 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 			float* unstrided_residuals = get_unstrided_2d_row_output(flim->common->residuals, temp_residuals, i);
 			float* unstrided_chisq = flim->common->chisq == NULL ? NULL : array1d_float_ptr(flim->common->chisq, i);
 
-			GCI_triple_integral_fitting_engine(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
+			int error_code = GCI_triple_integral_fitting_engine(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
 				unstrided_instr, ninstr, flim->triple_integral->noise, unstrided_sig,
 				array1d_float_ptr(flim->triple_integral->Z, i), array1d_float_ptr(flim->triple_integral->A, i),
 				array1d_float_ptr(flim->triple_integral->tau, i), unstrided_fitted, unstrided_residuals,
 				unstrided_chisq, chisq_target_in);
 
-			write_2d_row_output(unstrided_fitted, flim->common->fitted, i);
-			write_2d_row_output(unstrided_residuals, flim->common->residuals, i);
+			if(error_code < 0){
+				*array1d_float_ptr(flim->triple_integral->Z, i) = NAN;
+				*array1d_float_ptr(flim->triple_integral->A, i) = NAN;
+				*array1d_float_ptr(flim->triple_integral->tau, i) = NAN;
+				write_2d_row_nan(flim->common->fitted, i);
+				write_2d_row_nan(flim->common->residuals, i);
+			}
+			else{
+				write_2d_row_output(unstrided_fitted, flim->common->fitted, i);
+				write_2d_row_output(unstrided_residuals, flim->common->residuals, i);
+			}
 		}
 	}
 
@@ -333,14 +371,25 @@ int GCI_Phasor_many(struct flim_params* flim) {
 			float* unstrided_residuals = get_unstrided_2d_row_output(flim->common->residuals, temp_residuals, i);
 			float* unstrided_chisq = flim->common->chisq == NULL ? NULL : array1d_float_ptr(flim->common->chisq, i);
 
-			GCI_Phasor(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
+			int error_code = GCI_Phasor(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
 				array1d_float_ptr(flim->phasor->Z, i), array1d_float_ptr(flim->phasor->u, i), 
 				array1d_float_ptr(flim->phasor->v, i), array1d_float_ptr(flim->phasor->taup, i), 
 				array1d_float_ptr(flim->phasor->taum, i), array1d_float_ptr(flim->phasor->tau, i),
 				unstrided_fitted, unstrided_residuals, unstrided_chisq);
-
-			write_2d_row_output(unstrided_fitted, flim->common->fitted, i);
-			write_2d_row_output(unstrided_residuals, flim->common->residuals, i);
+			
+			if (error_code < 0){
+				*array1d_float_ptr(flim->phasor->u, i) = NAN;
+				*array1d_float_ptr(flim->phasor->v, i) = NAN;
+				*array1d_float_ptr(flim->phasor->taup, i) = NAN;
+				*array1d_float_ptr(flim->phasor->taum, i) = NAN;
+				*array1d_float_ptr(flim->phasor->tau, i) = NAN;
+				write_2d_row_nan(flim->common->fitted, i);
+				write_2d_row_nan(flim->common->residuals, i);
+			}
+			else{
+				write_2d_row_output(unstrided_fitted, flim->common->fitted, i);
+				write_2d_row_output(unstrided_residuals, flim->common->residuals, i);
+			}
 		}
 	}
 	free(temp_trans);
