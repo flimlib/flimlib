@@ -1,7 +1,7 @@
 #unit tests
 import unittest
 import flimlib
-from flimlib.cfunc import GCI_marquardt_fitting_engine_many, TripleIntegralResult
+from flimlib.cfunc import GCI_marquardt_fitting_engine_many, GCI_triple_integral_fitting_engine, GCI_triple_integral_fitting_engine_many, TripleIntegralResult
 import numpy as np
 import math
 import time
@@ -512,6 +512,14 @@ class Test3IntegralMany(unittest.TestCase):
         flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_POISSON_FIT')
         # this should print a warning
         flimlib.GCI_triple_integral_fitting_engine_many(period, photon_count2d[0:2], noise_type='NOISE_POISSON_FIT',sig=2)
+
+    def test_failed_fit(self):
+        result = flimlib.GCI_triple_integral_fitting_engine_many(period, np.flip(photon_count2d[0:2]))
+        self.assertTrue(np.all(np.isnan(result.Z)))
+        self.assertTrue(np.all(np.isnan(result.A)))
+        self.assertTrue(np.all(np.isnan(result.tau)))
+        self.assertTrue(np.all(np.isnan(result.fitted)))
+        self.assertTrue(np.all(np.isnan(result.residuals)))
 
 class TestPhasorMany(unittest.TestCase):
     def test_output_margin(self):
