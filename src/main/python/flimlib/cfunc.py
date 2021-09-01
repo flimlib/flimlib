@@ -2,7 +2,7 @@ import ctypes
 import glob
 import os
 import warnings
-from typing import NamedTuple
+from dataclasses import dataclass
 
 import numpy as np
 
@@ -78,7 +78,6 @@ class FitFunc:
             return self.c_func
         else:
             raise TypeError("Incorrect size of param: " + str(nparam_in))
-
 
 def _multiexp_predicate(n_param):
     # 3 or greater and odd
@@ -239,7 +238,7 @@ def _as_strided_array(array_in, check_shape, ctypes_shape, ctypes_type=ctypes.c_
     elif arr.ndim == 3:
         result = _Array3D()
     else:
-        raise ValueError("Invalid ndim. This is a bug with the flimlib python wrapper")
+        raise ValueError("Invalid ndim. This is an internal bug with the flimlib python wrapper")
     result.data = arr.ctypes.data_as(ctypes.POINTER(ctypes_type))
     result.sizes = (ctypes.c_size_t * arr.ndim)(*arr.shape) if shape_override is None else (ctypes.c_size_t * arr.ndim)(*shape_override) # must be unsigned
     result.strides = arr.ctypes.strides if strides_override is None else (ctypes.c_ssize_t * arr.ndim)(*strides_override)
@@ -336,14 +335,13 @@ def _prep_common_params(period, photon_count, fit_start, fit_end, fit_mask,
     referenced_objects = (referenced_trans, referenced_fit_mask) # stuff we want to prevent from getting garbage collected
     return common, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects
 
-class MarquardtResult(NamedTuple):
+@dataclass
+class MarquardtResult:
     """
-    A NamedTuple containing the outputs of GCI_marquardt_fitting_engine
+    A dataclass containing the outputs of GCI_marquardt_fitting_engine
 
     Attributes
     ----------
-    error_code : int
-        the number of iterations or negative if an error occurred
     param : numpy.ndarray
         An array containing arrays of parameters, if the input `param` was dtype=float32, the input is modified and returned.
     fitted : {None, numpy.ndarray}
@@ -359,7 +357,6 @@ class MarquardtResult(NamedTuple):
     erraxes : numpy.ndarray
         An array containing the dimensions of the confidence ellipsoid of the chisq from each fit.
     """
-    error_code: int
     param : np.ndarray
     fitted : np.ndarray
     residuals : np.ndarray
@@ -442,7 +439,7 @@ def GCI_marquardt_fitting_engine(  period, photon_count, param, fit_start=None, 
     Returns
     -------
     MarquardtResult
-        A namedtuple containing values in order: error_code, param, fitted, residuals, chisq, covar, alpha, erraxes
+        A dataclass containing fields to be acessed using dot (.) notation: param, fitted, residuals, chisq, covar, alpha, erraxes
         For each fit that fails, its corresponding outputs are filled with `NaN`
     """
     
@@ -473,9 +470,8 @@ def GCI_marquardt_fitting_engine(  period, photon_count, param, fit_start=None, 
 
     flim_in.common = ctypes.pointer(common_in)
     flim_in.marquardt = ctypes.pointer(marquardt_in)
-    # TODO resolve how error code should be handled in many functions. NaNs?
 
-    error_code = _GCI_marquardt_fitting_engine(flim_in) # ctypes automatically gets the pointer
+    _GCI_marquardt_fitting_engine(flim_in) # ctypes automatically gets the pointer
 
     # Verify that reference was held until after above call
     referenced_instr
@@ -492,17 +488,16 @@ def GCI_marquardt_fitting_engine(  period, photon_count, param, fit_start=None, 
     alpha_out = _copy_to_provided_output(alpha, alpha_out, (*data_shape[0:-1], nparam, nparam))
     erraxes_out = _copy_to_provided_output(erraxes, erraxes_out, (*data_shape[0:-1], nparam, nparam))
 
-    return MarquardtResult( error_code, param_out, fitted_out, 
+    return MarquardtResult( param_out, fitted_out, 
                             residuals_out, chisq_out, covar_out, alpha_out, erraxes_out)
 
-class TripleIntegralResult(NamedTuple):
+@dataclass
+class TripleIntegralResult:
     """
-    A NamedTuple containing the outputs of GCI_triple_integral_fitting_engine
+    A dataclass containing the outputs of GCI_triple_integral_fitting_engine
 
     Attributes
     ----------
-    error_code : int
-        An error code, 0 = success.
     Z : np.ndarray
         An array containing the returned background value from each fit.
     A : np.ndarray
@@ -516,7 +511,6 @@ class TripleIntegralResult(NamedTuple):
     chisq : np.ndarray
         An array containing the resulting raw chi squared value of each fit. To get the reduced chisq, divide by the degrees of freedom (fit_start - fit_end - nparam)
     """
-    error_code: int
     Z : np.ndarray
     A : np.ndarray
     tau : np.ndarray
@@ -582,7 +576,7 @@ def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=None, fit
     Returns
     -------
     TripleIntegralResult
-        A namedtuple containing values in order: error_code, Z, A, tau, fitted, residuals, chisq
+        A dataclass containing fields to be acessed using dot (.) notation: Z, A, tau, fitted, residuals, chisq
         For each fit that fails, its corresponding outputs are filled with `NaN`
     """
     common_in, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects = _prep_common_params(
@@ -604,9 +598,8 @@ def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=None, fit
 
     flim_in.common = ctypes.pointer(common_in) 
     flim_in.triple_integral = ctypes.pointer(triple_integral_in)
-    # TODO resolve how error code should be handled in many functions. NaNs?
 
-    error_code = _GCI_triple_integral_fitting_engine(flim_in)
+    _GCI_triple_integral_fitting_engine(flim_in)
     
     # Verify that reference was held until after above call
     referenced_instr
@@ -620,17 +613,16 @@ def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=None, fit
     A_out = _copy_to_provided_output(A, A_out, data_shape[0:-1])
     tau_out = _copy_to_provided_output(tau, tau_out, data_shape[0:-1])
 
-    return TripleIntegralResult( error_code, Z_out, A_out, tau_out, fitted_out, 
+    return TripleIntegralResult( Z_out, A_out, tau_out, fitted_out, 
                             residuals_out, chisq_out)
 
-class PhasorResult(NamedTuple):
+@dataclass
+class PhasorResult:
     """
-    A NamedTuple containing the outputs of GCI_Phasor
+    A dataclass containing the outputs of GCI_Phasor
 
     Attributes
     ----------
-    error_code : int
-        An error code, 0 = success.
     u : numpy.ndarray
         An array containing the 'horizontal' phasor coordinate for each fit.
     v : numpy.ndarray
@@ -648,7 +640,6 @@ class PhasorResult(NamedTuple):
     chisq : np.ndarray
         An array containing the resulting reduced chi squared value of each fit. To get the reduced chisq, divide by the degrees of freedom (fit_start - fit_end - nparam)
     """
-    error_code: int
     u : np.ndarray
     v : np.ndarray
     taup : np.ndarray
@@ -709,7 +700,7 @@ def GCI_Phasor(period, photon_count, fit_start=None, fit_end=None,
     Returns
     -------
     PhasorResult
-        A namedtuple containing values in order: error_code, u, v, taup, taum, tau, fitted, residuals, chisq
+        A dataclass containing fields to be acessed using dot (.) notation: u, v, taup, taum, tau, fitted, residuals, chisq
         For each fit that fails, its corresponding outputs are filled with `NaN`
     """
 
@@ -732,9 +723,8 @@ def GCI_Phasor(period, photon_count, fit_start=None, fit_end=None,
 
     flim_in.common = ctypes.pointer(common_in) 
     flim_in.phasor = ctypes.pointer(phasor_in)
-    # TODO resolve how error code should be handled in many functions. NaNs?
 
-    error_code = _GCI_Phasor(flim_in)
+    _GCI_Phasor(flim_in)
 
     # Verify that reference was held until after above call
     referenced_Z  
@@ -749,5 +739,5 @@ def GCI_Phasor(period, photon_count, fit_start=None, fit_end=None,
     taum_out = _copy_to_provided_output(taum, taum_out, data_shape[0:-1])
     tau_out = _copy_to_provided_output(tau, tau_out, data_shape[0:-1])
 
-    return PhasorResult( error_code, u_out, v_out, taup_out, taum_out, tau_out, fitted_out, 
+    return PhasorResult( u_out, v_out, taup_out, taum_out, tau_out, fitted_out, 
                             residuals_out, chisq_out)
