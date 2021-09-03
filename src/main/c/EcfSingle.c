@@ -446,7 +446,7 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 		free (validFittedArray);
 	}
 
-	if (tries >= MAXREFITS)
+	if (tries >= MAXREFITS && local_chisq > chisq_target) // maxrefits reached and target not reached
 		return -5;
 	if (result < 0)
 		return result;
@@ -1885,7 +1885,7 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 {
 	float oldChisq, local_chisq;
 	float chisq_percent_float = (float) chisq_percent;
-	int ret, tries=0;
+	int total_iters=0, error=0, tries=0;
 
 	if (ecf_exportParams) ecf_ExportParams_OpenFile ();
 
@@ -1902,32 +1902,33 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 		fit_start = 0;
 	}
 
-	// All of the work is done by the ECF module
-	ret = GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
+	// changed this for version 2, did a quick test with 2150ps_200ps_50cts_450cts.ics to see that the results are the same
+	// NB this is also in GCI_SPA_1D_marquardt_instr() and GCI_SPA_2D_marquardt_instr()
+	local_chisq = 3.0e38f;
+	do {
+		oldChisq = local_chisq;
+		tries++;
+		int iters_or_error = GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
 							  instr, ninstr, noise, sig,
 							  param, paramfree, nparam, restrain, fitfunc,
 							  fitted, residuals, covar, alpha, &local_chisq,
 							  chisq_delta, chisq_percent_float, erraxes);
 
-	// changed this for version 2, did a quick test with 2150ps_200ps_50cts_450cts.ics to see that the results are the same
-	// NB this is also in GCI_SPA_1D_marquardt_instr() and GCI_SPA_2D_marquardt_instr()
-	oldChisq = 3.0e38f;
-	while (local_chisq>chisq_target && (local_chisq<oldChisq) && tries<MAXREFITS)
-	{
-		oldChisq = local_chisq;
-		tries++;
-		ret += GCI_marquardt_instr(xincr, trans, ndata, fit_start, fit_end,
-							  instr, ninstr, noise, sig,
-							  param, paramfree, nparam, restrain, fitfunc,
-							  fitted, residuals, covar, alpha, &local_chisq,
-							  chisq_delta, chisq_percent_float, erraxes);
-	}
+		if (iters_or_error < 0) {
+			error = iters_or_error;
+			break;
+		}
+		total_iters += iters_or_error;
+	} while (local_chisq>chisq_target && (local_chisq<oldChisq) && tries<MAXREFITS);
 
 	if (chisq!=NULL) *chisq = local_chisq;
 
 	if (ecf_exportParams) ecf_ExportParams_CloseFile ();
 
-	return ret;		// summed number of iterations
+	if (tries >= MAXREFITS && local_chisq > chisq_target) // maxrefits reached and target not reached
+		return -6;
+
+	return error == 0 ? total_iters : error;
 }
 
 /** GCI_EcfModelSelectionEngine
