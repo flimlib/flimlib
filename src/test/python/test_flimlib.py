@@ -10,7 +10,8 @@ a_in = 10.0
 tau_in = 1.0
 period = 0.04
 
-# The error factor by using a plain exponential instead of integrating it over the time bin (assuming Z = 0)
+# The error factor by using a plain exponential instead of integrating it over
+# the time bin (assuming Z = 0)
 error_factor = period / (tau_in * (1 - np.exp(-period / tau_in)))
 
 tt = np.linspace(0, (samples - 1) * period, samples, dtype=np.float32)
@@ -46,7 +47,8 @@ class Test3Integral(unittest.TestCase):
         self.assertAlmostEqual(result.A, a_in * error_factor, 1)
         self.assertAlmostEqual(result.tau, tau_in, 1)
         self.assertAlmostEqual(result.Z, 0.0, 1)
-        # self.assertTrue(result.error_code>0) error code no longer says anything about the fit
+        # self.assertTrue(result.error_code>0) error code no longer says
+        # anything about the fit
         self.assertAlmostEqual(result.fitted[0], a_in * error_factor, 1)
 
     def test_photon_count(self):
@@ -68,7 +70,7 @@ class Test3Integral(unittest.TestCase):
         )
         flimlib.GCI_triple_integral_fitting_engine(
             period, photon_count32, instr=list(range(300))
-        )  # no errors??? ask mark/jenu. ok we should actually just check that it's the right length
+        )
         with self.assertRaises(ValueError):
             flimlib.GCI_triple_integral_fitting_engine(
                 period, photon_count32, instr=5
@@ -186,9 +188,10 @@ class Test3Integral(unittest.TestCase):
         )
 
     def test_chisq_target(self):
+        # impossible target causes it to run more than once and give up
         result = flimlib.GCI_triple_integral_fitting_engine(
             period, np.flip(photon_count32), chisq_target=0.0
-        )  # impossible target causes it to run more than once and give up
+        )
         # self.assertTrue(result.error_code>1)
 
     def test_output_margin(self):
@@ -338,7 +341,7 @@ class Test3Integral(unittest.TestCase):
         )
         flimlib.GCI_triple_integral_fitting_engine(
             period, photon_count2d[0:2], instr=list(range(300))
-        )  # no errors??? ask mark/jenu. ok we should actually just check that it's the right length
+        )
         with self.assertRaises(ValueError):
             flimlib.GCI_triple_integral_fitting_engine(
                 period, photon_count2d[0:2], instr=5
@@ -490,9 +493,8 @@ class TestPhasor(unittest.TestCase):
             (end - start) / 1000000,
             "milliseconds",
         )
-        self.assertFalse(
-            any(result.chisq > 1)
-        )  # for this I assume that the reduced chi squared is a reliable metric
+        # for this I assume that the reduced chi squared is a reliable metric
+        self.assertFalse(any(result.chisq > 1))
 
     def test_outputs_modified(self):
         u_in = np.empty((2,), dtype=np.float32)
@@ -554,9 +556,8 @@ class TestPhasor(unittest.TestCase):
         self.assertTrue(all(result.chisq == chisq_in))
 
     def test_wrong_output_type(self):
-        fitted_in = np.empty(
-            (2, samples), dtype=np.float64
-        )  # float64 is compatible
+        # float64 is compatible
+        fitted_in = np.empty((2, samples), dtype=np.float64)
         result = flimlib.GCI_Phasor(
             period, photon_count2d[0:2], fitted=fitted_in
         )
@@ -567,16 +568,14 @@ class TestPhasor(unittest.TestCase):
                 period, photon_count2d[0:2], fitted=fitted_in
             )
         with self.assertRaises(ValueError):
-            fitted_in = np.empty(
-                (2, samples + 3), dtype=np.float32
-            )  # too large
+            # too large
+            fitted_in = np.empty((2, samples + 3), dtype=np.float32)
             result = flimlib.GCI_Phasor(
                 period, photon_count2d[0:2], fitted=fitted_in
             )
         with self.assertRaises(ValueError):
-            fitted_in = np.empty(
-                (2, samples - 3), dtype=np.float32
-            )  # too small
+            # too small
+            fitted_in = np.empty((2, samples - 3), dtype=np.float32)
             result = flimlib.GCI_Phasor(
                 period, photon_count2d[0:2], fitted=fitted_in
             )
@@ -587,9 +586,8 @@ class TestPhasor(unittest.TestCase):
         result = flimlib.GCI_Phasor(
             period, photon_count2d[0:2], fit_start=start, fit_end=end
         )
-        self.assertTrue(
-            np.all(np.diff(result.fitted[:, start:end]) < 0)
-        )  # monotonic decrease
+        # monotonic decrease
+        self.assertTrue(np.all(np.diff(result.fitted[:, start:end]) < 0))
         self.assertTrue(result.fitted.shape == (2, end))
 
     def test_compute_flags(self):
@@ -652,9 +650,8 @@ def dummy_linear_predicate(n_param):
 
 class TestMarquardt(unittest.TestCase):
     def test_output_margin(self):
-        param_in = np.asarray(
-            [0, a_in + 1, tau_in + 1], dtype=np.float32
-        )  # slight offset to detect if the fitting works!
+        # slight offset to detect if the fitting works!
+        param_in = np.asarray([0, a_in + 1, tau_in + 1], dtype=np.float32)
         result = flimlib.GCI_marquardt_fitting_engine(
             period, photon_count32, param_in
         )
@@ -663,9 +660,8 @@ class TestMarquardt(unittest.TestCase):
         self.assertAlmostEqual(tau_in, result.param[2], 1)
 
     def test_paramfree(self):
-        param_in = np.asarray(
-            [0, a_in + 1, tau_in + 1], dtype=np.float32
-        )  # slight offset to detect if the fitting works!
+        # slight offset to detect if the fitting works!
+        param_in = np.asarray([0, a_in + 1, tau_in + 1], dtype=np.float32)
         result = flimlib.GCI_marquardt_fitting_engine(
             period, photon_count32, param_in, paramfree=[1, 0, 1]
         )
@@ -686,9 +682,8 @@ class TestMarquardt(unittest.TestCase):
 
     def test_multiexp_lambda(self):
         lambda_in = 1 / tau_in  # lambda is the decay rate!
-        param_in = np.asarray(
-            [0, a_in + 1, lambda_in + 1], dtype=np.float32
-        )  # slight offset to detect if the fitting works!
+        # slight offset to detect if the fitting works!
+        param_in = np.asarray([0, a_in + 1, lambda_in + 1], dtype=np.float32)
         result = flimlib.GCI_marquardt_fitting_engine(
             period,
             photon_count32,
@@ -700,9 +695,8 @@ class TestMarquardt(unittest.TestCase):
         self.assertAlmostEqual(lambda_in, result.param[2], 1)
 
     def test_user_defined_fitfunc(self):
-        param_in = np.asarray(
-            [0, a_in + 1, tau_in + 1], dtype=np.float32
-        )  # slight offset to detect if the fitting works!
+        # slight offset to detect if the fitting works!
+        param_in = np.asarray([0, a_in + 1, tau_in + 1], dtype=np.float32)
         fitfunc_in = flimlib.FitFunc(
             dummy_exp_tau, nparam_predicate=dummy_exp_tau_predicate
         )
@@ -731,26 +725,27 @@ class TestMarquardt(unittest.TestCase):
 
     def test_nparam(self):
         with self.assertRaises(TypeError):
-            param_in = np.asarray(
-                [a_in + 1, tau_in + 1], dtype=np.float32
-            )  # forgot the first parameter!
+            # forgot the first parameter!
+            param_in = np.asarray([a_in + 1, tau_in + 1], dtype=np.float32)
             flimlib.GCI_marquardt_fitting_engine(
                 period, photon_count_linear, param_in
             )
 
         # any odd number of parameters greater or equal to 3 should work!
+        # pass 5 parameters
         param_in = np.asarray(
             [0, a_in + 1, tau_in + 1, 1, 1], dtype=np.float32
-        )  # pass 5 parameters
+        )
         flimlib.GCI_marquardt_fitting_engine(
             period, photon_count_linear, param_in
         )
 
     def test_output_margin(self):
+        # slight offset to detect if the fitting works!
         param_in = np.asarray(
             [[0, a_in + 1, tau_in + 1] for i in range(samples * samples)],
             dtype=np.float32,
-        )  # slight offset to detect if the fitting works!
+        )
         start = time.time_ns()
         result = flimlib.GCI_marquardt_fitting_engine(
             period, photon_count2d, param_in
@@ -796,9 +791,8 @@ class TestMarquardt(unittest.TestCase):
             alpha=alpha_in,
             erraxes=erraxes_in,
         )
-        self.assertTrue(
-            np.all(result.param != param_in)
-        )  # param must NOT be equal
+        # param must NOT be equal
+        self.assertTrue(np.all(result.param != param_in))
         self.assertTrue(np.all(result.fitted == fitted_in))
         self.assertTrue(np.all(result.residuals == residuals_in))
         self.assertTrue(all(result.chisq == chisq_in))
@@ -826,9 +820,8 @@ class TestMarquardt(unittest.TestCase):
             alpha=alpha_in,
             erraxes=erraxes_in,
         )
-        self.assertTrue(
-            np.all(result.param != param_in)
-        )  # param must NOT be equal
+        # param must NOT be equal
+        self.assertTrue(np.all(result.param != param_in))
         self.assertTrue(np.all(result.fitted == fitted_in))
         self.assertTrue(np.all(result.residuals == residuals_in))
         self.assertTrue(all(result.chisq == chisq_in))
@@ -846,16 +839,14 @@ class TestMarquardt(unittest.TestCase):
                 period, photon_count2d[0:2], param_in, fitted=fitted_in
             )
         with self.assertRaises(ValueError):
-            fitted_in = np.empty(
-                (2, samples + 3), dtype=np.float32
-            )  # too large
+            # too large
+            fitted_in = np.empty((2, samples + 3), dtype=np.float32)
             result = flimlib.GCI_marquardt_fitting_engine(
                 period, photon_count2d[0:2], param_in, fitted=fitted_in
             )
         with self.assertRaises(ValueError):
-            fitted_in = np.empty(
-                (2, samples - 3), dtype=np.float32
-            )  # too small
+            # too small
+            fitted_in = np.empty((2, samples - 3), dtype=np.float32)
             result = flimlib.GCI_marquardt_fitting_engine(
                 period, photon_count2d[0:2], param_in, fitted=fitted_in
             )
@@ -870,9 +861,8 @@ class TestMarquardt(unittest.TestCase):
             period, photon_count2d[0:2], param_in, fit_start=start, fit_end=end
         )
         self.assertTrue(result.fitted.shape == (2, samples))
-        self.assertTrue(
-            np.all(np.diff(result.fitted) < 0)
-        )  # monotonic decrease
+        # monotonic decrease
+        self.assertTrue(np.all(np.diff(result.fitted) < 0))
         self.assertAlmostEqual(result.fitted[0][0], result.param[0][1], 1)
 
     def test_compute_flags(self):
@@ -1036,17 +1026,17 @@ class TestMarquardt(unittest.TestCase):
 
     def test_nparam(self):
         with self.assertRaises(TypeError):
-            param_in = np.asarray(
-                [a_in + 1, tau_in + 1], dtype=np.float32
-            )  # forgot the first parameter!
+            # forgot the first parameter!
+            param_in = np.asarray([a_in + 1, tau_in + 1], dtype=np.float32)
             flimlib.GCI_marquardt_fitting_engine(
                 period, photon_count32, param_in
             )
 
         # any odd number of parameters greater or equal to 3 should work!
+        # pass 5 parameters
         param_in = np.asarray(
             [0, a_in + 1, tau_in + 1, 1, 1], dtype=np.float32
-        )  # pass 5 parameters
+        )
         flimlib.GCI_marquardt_fitting_engine(period, photon_count32, param_in)
 
 
