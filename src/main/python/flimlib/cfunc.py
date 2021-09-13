@@ -7,8 +7,9 @@ from dataclasses import dataclass
 import numpy as np
 
 folder = os.path.dirname(os.path.abspath(__file__))
-dll_candidates = (glob.glob(os.path.join(folder, '_flimlib.*.pyd')) +
-                  glob.glob(os.path.join(folder, '_flimlib.*.so')))
+dll_candidates = glob.glob(os.path.join(folder, "_flimlib.*.pyd")) + glob.glob(
+    os.path.join(folder, "_flimlib.*.so")
+)
 if len(dll_candidates) > 1:
     raise RuntimeError("More than one flimlib extension found???")
 if not dll_candidates:
@@ -20,11 +21,18 @@ _flimlib = ctypes.CDLL(dll_path, winmode=0x8)
 
 # Noise types used by flimlib
 # 4 and 5 should raise an error for GCI_triple_integral_fitting_engine
-_noise_types = {'NOISE_CONST': 0, 'NOISE_GIVEN': 1, 'NOISE_POISSON_DATA': 2,
-                'NOISE_POISSON_FIT': 3, 'NOISE_GAUSSIAN_FIT': 4, 'NOISE_MLE': 5}
+_noise_types = {
+    "NOISE_CONST": 0,
+    "NOISE_GIVEN": 1,
+    "NOISE_POISSON_DATA": 2,
+    "NOISE_POISSON_FIT": 3,
+    "NOISE_GAUSSIAN_FIT": 4,
+    "NOISE_MLE": 5,
+}
 
 # restrain types used by flimlib
-_restrain_types = {'ECF_RESTRAIN_DEFAULT': 0, 'ECF_RESTRAIN_USER': 1}
+_restrain_types = {"ECF_RESTRAIN_DEFAULT": 0, "ECF_RESTRAIN_USER": 1}
+
 
 class FitFunc:
     """
@@ -45,12 +53,13 @@ class FitFunc:
     get_c_func(nparam_in)
         Returns ctypes function pointer if `nparam_in` is valid
     """
+
     def __init__(self, python_func, nparam_predicate=None):
         """
         Parameters
         ----------
         python_func : {function, ctypes._CFuncPtr}
-            A python function passed by the user to wrap as a ctypes function pointer. 
+            A python function passed by the user to wrap as a ctypes function pointer.
             If a ctypes function pointer is passed, it will be used directly instead
         nparam_predicate : {None, function}, optional
             A python function that returns True if the correct number of parameters
@@ -61,16 +70,22 @@ class FitFunc:
             self.c_func = python_func
         else:
             self.python_func = python_func
-            CFUNC = ctypes.CFUNCTYPE(None, ctypes.c_float, ctypes.POINTER(ctypes.c_float), 
-                ctypes.POINTER(ctypes.c_float), ctypes.POINTER(ctypes.c_float), ctypes.c_int)
+            CFUNC = ctypes.CFUNCTYPE(
+                None,
+                ctypes.c_float,
+                ctypes.POINTER(ctypes.c_float),
+                ctypes.POINTER(ctypes.c_float),
+                ctypes.POINTER(ctypes.c_float),
+                ctypes.c_int,
+            )
             self.c_func = CFUNC(self._wrapped_python_func)
-        self.nparam_predicate=nparam_predicate
+        self.nparam_predicate = nparam_predicate
 
     def _wrapped_python_func(self, x, param, y, dy_dparam, nparam):
         param_in = np.ctypeslib.as_array(param, shape=(nparam,))
         y_out, dy_dparam_out = self.python_func(x, param_in)
         y.contents.value = ctypes.c_float(y_out).value
-        dy_dparam = np.ctypeslib.as_array(dy_dparam,shape=(nparam,))
+        dy_dparam = np.ctypeslib.as_array(dy_dparam, shape=(nparam,))
         dy_dparam[:] = np.asarray(dy_dparam_out, dtype=np.float32)
 
     def get_c_func(self, nparam_in):
@@ -79,24 +94,34 @@ class FitFunc:
         else:
             raise TypeError("Incorrect size of param: " + str(nparam_in))
 
+
 def _multiexp_predicate(n_param):
     # 3 or greater and odd
     return n_param >= 3 and n_param % 2 == 1
 
+
 def _stretchedexp_predicate(n_param):
     return n_param == 4
 
-GCI_multiexp_tau = FitFunc(_flimlib.GCI_multiexp_tau, nparam_predicate=_multiexp_predicate)
-GCI_multiexp_lambda = FitFunc(_flimlib.GCI_multiexp_lambda, nparam_predicate=_multiexp_predicate)
-GCI_stretchedexp = FitFunc(_flimlib.GCI_stretchedexp, nparam_predicate=_stretchedexp_predicate)
+
+GCI_multiexp_tau = FitFunc(
+    _flimlib.GCI_multiexp_tau, nparam_predicate=_multiexp_predicate
+)
+GCI_multiexp_lambda = FitFunc(
+    _flimlib.GCI_multiexp_lambda, nparam_predicate=_multiexp_predicate
+)
+GCI_stretchedexp = FitFunc(
+    _flimlib.GCI_stretchedexp, nparam_predicate=_stretchedexp_predicate
+)
 
 _GCI_set_restrain_limits = _flimlib.GCI_set_restrain_limits
-_GCI_set_restrain_limits.argtypes= [
-    ctypes.POINTER(ctypes.c_int),   # int restrain[]
-    ctypes.c_int,                   # int nparam
-    ctypes.POINTER(ctypes.c_float), # float minval[]
-    ctypes.POINTER(ctypes.c_float)  # float maxval[]
+_GCI_set_restrain_limits.argtypes = [
+    ctypes.POINTER(ctypes.c_int),  # int restrain[]
+    ctypes.c_int,  # int nparam
+    ctypes.POINTER(ctypes.c_float),  # float minval[]
+    ctypes.POINTER(ctypes.c_float),  # float maxval[]
 ]
+
 
 def GCI_set_restrain_limits(restrain, minval, maxval):
     """
@@ -105,7 +130,7 @@ def GCI_set_restrain_limits(restrain, minval, maxval):
     Parameters
     ----------
     restrain : array_like
-        Array of 1s and 0s. 1 indicates that the parameter will be constrained, 
+        Array of 1s and 0s. 1 indicates that the parameter will be constrained,
         0 indicates it will not be constrained
     minval : array_like
         The minimum acceptable value of each parameter
@@ -116,14 +141,16 @@ def GCI_set_restrain_limits(restrain, minval, maxval):
     -------
     None
     """
-    minval = np.asarray(minval,dtype=np.float32)
-    maxval = np.asarray(maxval,dtype=np.float32)
-    restrain = np.asarray(restrain,dtype=np.intc)
+    minval = np.asarray(minval, dtype=np.float32)
+    maxval = np.asarray(maxval, dtype=np.float32)
+    restrain = np.asarray(restrain, dtype=np.intc)
 
-    if not(restrain.ndim == minval.ndim == maxval.ndim == 1):
+    if not (restrain.ndim == minval.ndim == maxval.ndim == 1):
         raise ValueError("restrain, minval and maxval must be 1 dimentional!")
-    if not(restrain.shape == minval.shape == maxval.shape):
-        raise ValueError("restrain, minval and maxval must have the same shape!")
+    if not (restrain.shape == minval.shape == maxval.shape):
+        raise ValueError(
+            "restrain, minval and maxval must have the same shape!"
+        )
 
     nparam = restrain.shape[0]
     minval = np.ctypeslib.as_ctypes(minval)
@@ -132,102 +159,151 @@ def GCI_set_restrain_limits(restrain, minval, maxval):
 
     error_code = _GCI_set_restrain_limits(restrain, nparam, minval, maxval)
 
-    if(error_code == -1):
+    if error_code == -1:
         raise ValueError("invalid size of restrain")
-    if(error_code == -2):
-        raise ValueError('maxval must be element-wise greater than minval')
+    if error_code == -2:
+        raise ValueError("maxval must be element-wise greater than minval")
+
 
 # wrappers for C structs
 class _Array1D(ctypes.Structure):
-    _fields_ = [("data", ctypes.POINTER(ctypes.c_float)), 
-                ("sizes", ctypes.c_size_t * 1), 
-                ("strides", ctypes.c_ssize_t * 1)]
+    _fields_ = [
+        ("data", ctypes.POINTER(ctypes.c_float)),
+        ("sizes", ctypes.c_size_t * 1),
+        ("strides", ctypes.c_ssize_t * 1),
+    ]
+
 
 class _Array2D(ctypes.Structure):
-    _fields_ = [("data", ctypes.POINTER(ctypes.c_float)), 
-                ("sizes", ctypes.c_size_t * 2), 
-                ("strides", ctypes.c_ssize_t * 2)]
+    _fields_ = [
+        ("data", ctypes.POINTER(ctypes.c_float)),
+        ("sizes", ctypes.c_size_t * 2),
+        ("strides", ctypes.c_ssize_t * 2),
+    ]
+
 
 class _Array3D(ctypes.Structure):
-    _fields_ = [("data", ctypes.POINTER(ctypes.c_float)), 
-                ("sizes", ctypes.c_size_t * 3), 
-                ("strides", ctypes.c_ssize_t * 3)]
+    _fields_ = [
+        ("data", ctypes.POINTER(ctypes.c_float)),
+        ("sizes", ctypes.c_size_t * 3),
+        ("strides", ctypes.c_ssize_t * 3),
+    ]
+
 
 class _Array1DInt8(ctypes.Structure):
-    _fields_ = [("data", ctypes.POINTER(ctypes.c_int8)), 
-                ("sizes", ctypes.c_size_t * 1), 
-                ("strides", ctypes.c_ssize_t * 1)]
+    _fields_ = [
+        ("data", ctypes.POINTER(ctypes.c_int8)),
+        ("sizes", ctypes.c_size_t * 1),
+        ("strides", ctypes.c_ssize_t * 1),
+    ]
+
 
 class _CommonParams(ctypes.Structure):
-    _fields_ = [("xincr", ctypes.c_float),
-                ("trans", ctypes.POINTER(_Array2D)),
-                ("fit_start", ctypes.c_int),
-                ("fit_end", ctypes.c_int),
-                ("fitted", ctypes.POINTER(_Array2D)),
-                ("residuals", ctypes.POINTER(_Array2D)),
-                ("chisq", ctypes.POINTER(_Array1D)),
-                ("fit_mask", ctypes.POINTER(_Array1DInt8))]
+    _fields_ = [
+        ("xincr", ctypes.c_float),
+        ("trans", ctypes.POINTER(_Array2D)),
+        ("fit_start", ctypes.c_int),
+        ("fit_end", ctypes.c_int),
+        ("fitted", ctypes.POINTER(_Array2D)),
+        ("residuals", ctypes.POINTER(_Array2D)),
+        ("chisq", ctypes.POINTER(_Array1D)),
+        ("fit_mask", ctypes.POINTER(_Array1DInt8)),
+    ]
+
 
 class _MarquardtParams(ctypes.Structure):
-    _fields_ = [("instr", ctypes.POINTER(_Array1D)),
-                ("noise", ctypes.c_int),
-                ("sig", ctypes.POINTER(_Array1D)),
-                ("param", ctypes.POINTER(_Array2D)),
-                ("paramfree", ctypes.POINTER(_Array1DInt8)),
-                ("restrain", ctypes.c_int),
-                ("fitfunc", ctypes.c_void_p),
-                ("covar", ctypes.POINTER(_Array3D)),
-                ("alpha", ctypes.POINTER(_Array3D)),
-                ("erraxes", ctypes.POINTER(_Array3D)),
-                ("chisq_target", ctypes.c_float),
-                ("chisq_delta", ctypes.c_float),
-                ("chisq_percent", ctypes.c_int)]
+    _fields_ = [
+        ("instr", ctypes.POINTER(_Array1D)),
+        ("noise", ctypes.c_int),
+        ("sig", ctypes.POINTER(_Array1D)),
+        ("param", ctypes.POINTER(_Array2D)),
+        ("paramfree", ctypes.POINTER(_Array1DInt8)),
+        ("restrain", ctypes.c_int),
+        ("fitfunc", ctypes.c_void_p),
+        ("covar", ctypes.POINTER(_Array3D)),
+        ("alpha", ctypes.POINTER(_Array3D)),
+        ("erraxes", ctypes.POINTER(_Array3D)),
+        ("chisq_target", ctypes.c_float),
+        ("chisq_delta", ctypes.c_float),
+        ("chisq_percent", ctypes.c_int),
+    ]
+
 
 class _TripleIntegralParams(ctypes.Structure):
-    _fields_ = [("instr", ctypes.POINTER(_Array1D)),
-                ("noise", ctypes.c_int),
-                ("sig", ctypes.POINTER(_Array1D)),
-                ("Z", ctypes.POINTER(_Array1D)),
-                ("A", ctypes.POINTER(_Array1D)),
-                ("tau", ctypes.POINTER(_Array1D)),
-                ("chisq_target", ctypes.c_float)]
+    _fields_ = [
+        ("instr", ctypes.POINTER(_Array1D)),
+        ("noise", ctypes.c_int),
+        ("sig", ctypes.POINTER(_Array1D)),
+        ("Z", ctypes.POINTER(_Array1D)),
+        ("A", ctypes.POINTER(_Array1D)),
+        ("tau", ctypes.POINTER(_Array1D)),
+        ("chisq_target", ctypes.c_float),
+    ]
+
 
 class _PhasorParams(ctypes.Structure):
-    _fields_ = [("Z", ctypes.POINTER(_Array1D)),
-                ("u", ctypes.POINTER(_Array1D)),
-                ("v", ctypes.POINTER(_Array1D)),
-                ("taup", ctypes.POINTER(_Array1D)),
-                ("taum", ctypes.POINTER(_Array1D)),
-                ("tau", ctypes.POINTER(_Array1D)),]
+    _fields_ = [
+        ("Z", ctypes.POINTER(_Array1D)),
+        ("u", ctypes.POINTER(_Array1D)),
+        ("v", ctypes.POINTER(_Array1D)),
+        ("taup", ctypes.POINTER(_Array1D)),
+        ("taum", ctypes.POINTER(_Array1D)),
+        ("tau", ctypes.POINTER(_Array1D)),
+    ]
+
 
 class _SpecificParams(ctypes.Union):
-    _fields_ = [("marquardt", ctypes.POINTER(_MarquardtParams)), 
-                ("triple_integral", ctypes.POINTER(_TripleIntegralParams)), 
-                ("phasor", ctypes.POINTER(_PhasorParams))]
+    _fields_ = [
+        ("marquardt", ctypes.POINTER(_MarquardtParams)),
+        ("triple_integral", ctypes.POINTER(_TripleIntegralParams)),
+        ("phasor", ctypes.POINTER(_PhasorParams)),
+    ]
+
 
 class _FlimParams(ctypes.Structure):
-    _anonymous_ = ["specific",]
-    _fields_ = [("common", ctypes.POINTER(_CommonParams)), 
-                ("specific", _SpecificParams)]
+    _anonymous_ = [
+        "specific",
+    ]
+    _fields_ = [
+        ("common", ctypes.POINTER(_CommonParams)),
+        ("specific", _SpecificParams),
+    ]
 
-def _equal_shapes(shape1 : tuple, shape2 : tuple):
+
+def _equal_shapes(shape1: tuple, shape2: tuple):
     """shape comparison with wildcard is Ellipses"""
-    if shape1 is Ellipsis or shape2 is Ellipsis: # any shape
+    if shape1 is Ellipsis or shape2 is Ellipsis:  # any shape
         return True
-    if len(shape1) != len(shape2): # different ndims
+    if len(shape1) != len(shape2):  # different ndims
         return False
     else:
         for i in range(len(shape1)):
-            if shape1[i] != shape2[i] and not (shape1[i] is Ellipsis or shape2[i] is Ellipsis):
+            if shape1[i] != shape2[i] and not (
+                shape1[i] is Ellipsis or shape2[i] is Ellipsis
+            ):
                 return False
     return True
 
-def _as_strided_array(array_in, check_shape, ctypes_shape, ctypes_type=ctypes.c_float, numpy_type=np.float32, shape_override=None, strides_override=None):
+
+def _as_strided_array(
+    array_in,
+    check_shape,
+    ctypes_shape,
+    ctypes_type=ctypes.c_float,
+    numpy_type=np.float32,
+    shape_override=None,
+    strides_override=None,
+):
     arr_in = np.asarray(array_in, dtype=numpy_type)
     if not _equal_shapes(arr_in.shape, check_shape):
-        raise ValueError("expected array with shape=" + str(check_shape) + ", got shape=" + str(arr_in.shape))
+        raise ValueError(
+            "expected array with shape="
+            + str(check_shape)
+            + ", got shape="
+            + str(arr_in.shape)
+        )
     arr = arr_in.reshape(ctypes_shape)
-    
+
     if arr.ndim == 1:
         if ctypes_type == ctypes.c_int8:
             result = _Array1DInt8()
@@ -238,32 +314,54 @@ def _as_strided_array(array_in, check_shape, ctypes_shape, ctypes_type=ctypes.c_
     elif arr.ndim == 3:
         result = _Array3D()
     else:
-        raise ValueError("Invalid ndim. This is an internal bug with the flimlib python wrapper")
+        raise ValueError(
+            "Invalid ndim. This is an internal bug with the flimlib python wrapper"
+        )
     result.data = arr.ctypes.data_as(ctypes.POINTER(ctypes_type))
-    result.sizes = (ctypes.c_size_t * arr.ndim)(*arr.shape) if shape_override is None else (ctypes.c_size_t * arr.ndim)(*shape_override) # must be unsigned
-    result.strides = arr.ctypes.strides if strides_override is None else (ctypes.c_ssize_t * arr.ndim)(*strides_override)
+    result.sizes = (
+        (ctypes.c_size_t * arr.ndim)(*arr.shape)
+        if shape_override is None
+        else (ctypes.c_size_t * arr.ndim)(*shape_override)
+    )  # must be unsigned
+    result.strides = (
+        arr.ctypes.strides
+        if strides_override is None
+        else (ctypes.c_ssize_t * arr.ndim)(*strides_override)
+    )
 
     return ctypes.pointer(result), arr
+
 
 def _prep_optional_output(input, check_shape, ctypes_shape, flag=True):
     if input is None:
         if flag:
-            return _as_strided_array(np.empty(check_shape, dtype=np.float32), check_shape, ctypes_shape)
+            return _as_strided_array(
+                np.empty(check_shape, dtype=np.float32),
+                check_shape,
+                ctypes_shape,
+            )
         else:
             return None, None
     elif type(input) is np.ndarray:
         if input.dtype == np.float32:
             return _as_strided_array(input, check_shape, ctypes_shape)
         elif np.issubdtype(input.dtype, np.floating):
-            return _as_strided_array(np.empty(check_shape, dtype=np.float32), check_shape, ctypes_shape)
+            return _as_strided_array(
+                np.empty(check_shape, dtype=np.float32),
+                check_shape,
+                ctypes_shape,
+            )
         else:
-             raise TypeError("pre-allocated outputs must have a floating point type")
+            raise TypeError(
+                "pre-allocated outputs must have a floating point type"
+            )
     else:
         raise TypeError("pre-allocated outputs must be numpy.ndarray")
 
+
 def _copy_to_provided_output(user_arr, c_arr, shape):
     """
-    user_arr 
+    user_arr
         the provided output (eg. fitted). It may have more dimensions than was expected by internal C code
     c_arr
         the reshaped array that was passed into the C code
@@ -273,39 +371,59 @@ def _copy_to_provided_output(user_arr, c_arr, shape):
         return None
     reshaped_c_arr = c_arr.reshape(shape)
     if user_arr is not None:
-        if user_arr.dtype != np.float32: # copy was made to change dtype
+        if user_arr.dtype != np.float32:  # copy was made to change dtype
             np.copyto(user_arr, reshaped_c_arr)
         else:
             try:
                 user_shape = user_arr.shape
-                user_arr.shape = np.prod(user_arr.shape) # if error, copy was made for reshape (non-contiguous data)
-                user_arr.shape = user_shape # undo change
+                user_arr.shape = np.prod(
+                    user_arr.shape
+                )  # if error, copy was made for reshape (non-contiguous data)
+                user_arr.shape = user_shape  # undo change
             except AttributeError:
                 np.copyto(user_arr, reshaped_c_arr)
         return user_arr
     else:
         return reshaped_c_arr
-    
+
 
 def _prep_strided_sig(noise_type, sig, check_shape, ctypes_shape):
     """
-    Helper function to make sure noise_type is valid and sig is the correct type 
+    Helper function to make sure noise_type is valid and sig is the correct type
     for the noise_type given
     """
     if not noise_type in _noise_types.keys():
         raise ValueError(
-            "invalid noise type. The valid types are: ", _noise_types.keys)
-    elif noise_type == 'NOISE_GIVEN':
+            "invalid noise type. The valid types are: ", _noise_types.keys
+        )
+    elif noise_type == "NOISE_GIVEN":
         return _as_strided_array(sig, check_shape, ctypes_shape)
-    elif noise_type == 'NOISE_CONST':
+    elif noise_type == "NOISE_CONST":
         return _as_strided_array(np.asarray(sig).flatten(), (1,), (1,))
     elif sig is not None:
-        message = "Expected sig=None for noise type " + str(noise_type) + ". The given value of sig will be ignored"
+        message = (
+            "Expected sig=None for noise type "
+            + str(noise_type)
+            + ". The given value of sig will be ignored"
+        )
         warnings.warn(message)
     return None, None
 
-def _prep_common_params(period, photon_count, fit_start, fit_end, fit_mask, 
-                        fitted, residuals, chisq, compute_fitted, compute_residuals, compute_chisq, ndata_known):
+
+def _prep_common_params(
+    period,
+    photon_count,
+    fit_start,
+    fit_end,
+    fit_mask,
+    fitted,
+    residuals,
+    chisq,
+    compute_fitted,
+    compute_residuals,
+    compute_chisq,
+    ndata_known,
+):
     """
     Helper function to generate common flimlib inputs
     """
@@ -315,25 +433,61 @@ def _prep_common_params(period, photon_count, fit_start, fit_end, fit_mask,
     # triple integral expects fitted to be size = fit_end
     # phasors expects fitted to be size = fit_end
 
-    dshape = np.asarray(photon_count).shape # shape of the input data
+    dshape = np.asarray(photon_count).shape  # shape of the input data
     if dshape == ():
         raise TypeError("photon_count must be array-like")
-    fstart = 0 if fit_start is None else fit_start # default start at index 0
-    fend = dshape[-1] if fit_end is None else fit_end # default fit_end is the full length of photon_count
+    fstart = 0 if fit_start is None else fit_start  # default start at index 0
+    fend = (
+        dshape[-1] if fit_end is None else fit_end
+    )  # default fit_end is the full length of photon_count
     common.fit_start = fstart
     common.fit_end = fend
-    data_shape = dshape if ndata_known else (*dshape[0:-1], fend) # triple_integral and phasor use fit_end as the size of the data
+    data_shape = (
+        dshape if ndata_known else (*dshape[0:-1], fend)
+    )  # triple_integral and phasor use fit_end as the size of the data
     npixels = np.prod(data_shape[0:-1], dtype=int)
 
     common.xincr = period
-    common.trans, referenced_trans = _as_strided_array(photon_count, ..., (npixels, dshape[-1])) # the shape of trans is wildcard
-    common.fitted, fitted_out = _prep_optional_output(fitted, data_shape, (npixels, data_shape[-1]), flag=compute_fitted)
-    common.residuals, residuals_out = _prep_optional_output(residuals, data_shape, (npixels, data_shape[-1]), flag=compute_residuals)
-    common.chisq, chisq_out = _prep_optional_output(chisq, data_shape[0:-1], (npixels,), flag=compute_chisq)
-    common.fit_mask, referenced_fit_mask = (None, None) if fit_mask is None else _as_strided_array(
-        fit_mask, data_shape[0:-1], (npixels,), ctypes_type=ctypes.c_int8, numpy_type=np.int8)
-    referenced_objects = (referenced_trans, referenced_fit_mask) # stuff we want to prevent from getting garbage collected
-    return common, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects
+    common.trans, referenced_trans = _as_strided_array(
+        photon_count, ..., (npixels, dshape[-1])
+    )  # the shape of trans is wildcard
+    common.fitted, fitted_out = _prep_optional_output(
+        fitted, data_shape, (npixels, data_shape[-1]), flag=compute_fitted
+    )
+    common.residuals, residuals_out = _prep_optional_output(
+        residuals,
+        data_shape,
+        (npixels, data_shape[-1]),
+        flag=compute_residuals,
+    )
+    common.chisq, chisq_out = _prep_optional_output(
+        chisq, data_shape[0:-1], (npixels,), flag=compute_chisq
+    )
+    common.fit_mask, referenced_fit_mask = (
+        (None, None)
+        if fit_mask is None
+        else _as_strided_array(
+            fit_mask,
+            data_shape[0:-1],
+            (npixels,),
+            ctypes_type=ctypes.c_int8,
+            numpy_type=np.int8,
+        )
+    )
+    referenced_objects = (
+        referenced_trans,
+        referenced_fit_mask,
+    )  # stuff we want to prevent from getting garbage collected
+    return (
+        common,
+        fitted_out,
+        residuals_out,
+        chisq_out,
+        data_shape,
+        npixels,
+        referenced_objects,
+    )
+
 
 @dataclass
 class MarquardtResult:
@@ -357,25 +511,51 @@ class MarquardtResult:
     erraxes : numpy.ndarray
         An array containing the dimensions of the confidence ellipsoid of the chisq from each fit.
     """
-    param : np.ndarray
-    fitted : np.ndarray
-    residuals : np.ndarray
-    chisq : np.ndarray
-    covar : np.ndarray
-    alpha : np.ndarray
-    erraxes : np.ndarray
 
-_GCI_marquardt_fitting_engine = _flimlib.GCI_marquardt_fitting_engine_many # C function
-_GCI_marquardt_fitting_engine.argtypes= [ctypes.POINTER(_FlimParams)]
+    param: np.ndarray
+    fitted: np.ndarray
+    residuals: np.ndarray
+    chisq: np.ndarray
+    covar: np.ndarray
+    alpha: np.ndarray
+    erraxes: np.ndarray
 
-def GCI_marquardt_fitting_engine(  period, photon_count, param, fit_start=None, fit_end=None, 
-                                        instr=None, noise_type='NOISE_POISSON_FIT', sig=None, paramfree=None, 
-                                        restrain_type='ECF_RESTRAIN_DEFAULT',
-                                        fitfunc=GCI_multiexp_tau, fitted=None, residuals=None, 
-                                        chisq=None, covar=None, alpha=None, erraxes=None, 
-                                        chisq_target=1.1, chisq_delta=1E-5, chisq_percent=95, fit_mask=None,
-                                        compute_fitted=True, compute_residuals=True, compute_chisq=True,
-                                        compute_covar=True, compute_alpha=True, compute_erraxes=True):
+
+_GCI_marquardt_fitting_engine = (
+    _flimlib.GCI_marquardt_fitting_engine_many
+)  # C function
+_GCI_marquardt_fitting_engine.argtypes = [ctypes.POINTER(_FlimParams)]
+
+
+def GCI_marquardt_fitting_engine(
+    period,
+    photon_count,
+    param,
+    fit_start=None,
+    fit_end=None,
+    instr=None,
+    noise_type="NOISE_POISSON_FIT",
+    sig=None,
+    paramfree=None,
+    restrain_type="ECF_RESTRAIN_DEFAULT",
+    fitfunc=GCI_multiexp_tau,
+    fitted=None,
+    residuals=None,
+    chisq=None,
+    covar=None,
+    alpha=None,
+    erraxes=None,
+    chisq_target=1.1,
+    chisq_delta=1e-5,
+    chisq_percent=95,
+    fit_mask=None,
+    compute_fitted=True,
+    compute_residuals=True,
+    compute_chisq=True,
+    compute_covar=True,
+    compute_alpha=True,
+    compute_erraxes=True,
+):
     """
     Performs a multipixel exponential fits on the data using the Levenberg–Marquardt Algorithm
 
@@ -396,11 +576,11 @@ def GCI_marquardt_fitting_engine(  period, photon_count, param, fit_start=None, 
         A 1D array containing the instrument response (IRF) or prompt signal. If is None, no instrument response will be used
         (default is None)
     noise_type : str, optional
-        The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN', 
+        The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN',
         'NOISE_POISSON_DATA', 'NOISE_POISSON_FIT' (default is 'NOISE_POISSON_FIT')
     sig : {None, float, array_like}, optional
-        The standard deviation at each data point. A 1D float array the same length as the time axis of `photon_count` if `noise_type` 
-        is 'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None otherwise 
+        The standard deviation at each data point. A 1D float array the same length as the time axis of `photon_count` if `noise_type`
+        is 'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None otherwise
         (default is None)
     paramfree : {None, array_like}, optional
         A 1D array indicating which parameters are free (1), fixed (0)
@@ -442,26 +622,83 @@ def GCI_marquardt_fitting_engine(  period, photon_count, param, fit_start=None, 
         A dataclass containing fields to be acessed using dot (.) notation: param, fitted, residuals, chisq, covar, alpha, erraxes
         For each fit that fails, its corresponding outputs are filled with `NaN`
     """
-    
-    common_in, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects = _prep_common_params(
-        period, photon_count, fit_start, fit_end, fit_mask, fitted, residuals, chisq, compute_fitted, compute_residuals, compute_chisq, True)
+
+    (
+        common_in,
+        fitted_out,
+        residuals_out,
+        chisq_out,
+        data_shape,
+        npixels,
+        referenced_objects,
+    ) = _prep_common_params(
+        period,
+        photon_count,
+        fit_start,
+        fit_end,
+        fit_mask,
+        fitted,
+        residuals,
+        chisq,
+        compute_fitted,
+        compute_residuals,
+        compute_chisq,
+        True,
+    )
 
     marquardt_in = _MarquardtParams()
-    
-    marquardt_in.instr, referenced_instr = _as_strided_array([1.0], (1,), (1,)) if instr is None else _as_strided_array(instr, (...,), (-1,)) # must pass unit instr because of a bug with flimlib
-    marquardt_in.sig, referenced_sig = _prep_strided_sig(noise_type, sig, (data_shape[-1],), (data_shape[-1],)) # same size as second axis of fitted and residuals
+
+    marquardt_in.instr, referenced_instr = (
+        _as_strided_array([1.0], (1,), (1,))
+        if instr is None
+        else _as_strided_array(instr, (...,), (-1,))
+    )  # must pass unit instr because of a bug with flimlib
+    marquardt_in.sig, referenced_sig = _prep_strided_sig(
+        noise_type, sig, (data_shape[-1],), (data_shape[-1],)
+    )  # same size as second axis of fitted and residuals
     marquardt_in.noise = _noise_types[noise_type]
 
-    param_in = np.asarray(param).copy() # make a copy of param. this is less than ideal performance-wise but in python it is expected that inputs are not modified
+    param_in = np.asarray(
+        param
+    ).copy()  # make a copy of param. this is less than ideal performance-wise but in python it is expected that inputs are not modified
     nparam = param_in.shape[-1]
-    marquardt_in.param, param_out = _as_strided_array(param_in, (*data_shape[0:-1], ...), (npixels, nparam)) # Does it make sense to pass None and start all guesses at 0 or something?
-    marquardt_in.paramfree, referenced_paramfree = (None, None) if paramfree is None else _as_strided_array(paramfree, (nparam,), (nparam,), ctypes_type=ctypes.c_int8, numpy_type=np.int8)
+    marquardt_in.param, param_out = _as_strided_array(
+        param_in, (*data_shape[0:-1], ...), (npixels, nparam)
+    )  # Does it make sense to pass None and start all guesses at 0 or something?
+    marquardt_in.paramfree, referenced_paramfree = (
+        (None, None)
+        if paramfree is None
+        else _as_strided_array(
+            paramfree,
+            (nparam,),
+            (nparam,),
+            ctypes_type=ctypes.c_int8,
+            numpy_type=np.int8,
+        )
+    )
     marquardt_in.restrain = _restrain_types[restrain_type]
-    if all(data_shape): # is there any data
-        marquardt_in.fitfunc = ctypes.cast(fitfunc.get_c_func(nparam), ctypes.c_void_p) # nparam will be checked by the fitfunc predicate
-    marquardt_in.covar, covar_out = _prep_optional_output(covar, (*data_shape[0:-1], nparam, nparam), (npixels, nparam, nparam), flag=compute_covar)
-    marquardt_in.alpha, alpha_out = _prep_optional_output(alpha, (*data_shape[0:-1], nparam, nparam), (npixels, nparam, nparam), flag=compute_alpha)
-    marquardt_in.erraxes, erraxes_out = _prep_optional_output(erraxes, (*data_shape[0:-1], nparam, nparam), (npixels, nparam, nparam), flag=compute_erraxes)
+    if all(data_shape):  # is there any data
+        marquardt_in.fitfunc = ctypes.cast(
+            fitfunc.get_c_func(nparam), ctypes.c_void_p
+        )  # nparam will be checked by the fitfunc predicate
+    marquardt_in.covar, covar_out = _prep_optional_output(
+        covar,
+        (*data_shape[0:-1], nparam, nparam),
+        (npixels, nparam, nparam),
+        flag=compute_covar,
+    )
+    marquardt_in.alpha, alpha_out = _prep_optional_output(
+        alpha,
+        (*data_shape[0:-1], nparam, nparam),
+        (npixels, nparam, nparam),
+        flag=compute_alpha,
+    )
+    marquardt_in.erraxes, erraxes_out = _prep_optional_output(
+        erraxes,
+        (*data_shape[0:-1], nparam, nparam),
+        (npixels, nparam, nparam),
+        flag=compute_erraxes,
+    )
     marquardt_in.chisq_target = chisq_target
     marquardt_in.chisq_delta = chisq_delta
     marquardt_in.chisq_percent = chisq_percent
@@ -471,7 +708,9 @@ def GCI_marquardt_fitting_engine(  period, photon_count, param, fit_start=None, 
     flim_in.common = ctypes.pointer(common_in)
     flim_in.marquardt = ctypes.pointer(marquardt_in)
 
-    _GCI_marquardt_fitting_engine(flim_in) # ctypes automatically gets the pointer
+    _GCI_marquardt_fitting_engine(
+        flim_in
+    )  # ctypes automatically gets the pointer
 
     # Verify that reference was held until after above call
     referenced_instr
@@ -479,17 +718,35 @@ def GCI_marquardt_fitting_engine(  period, photon_count, param, fit_start=None, 
     referenced_paramfree
     referenced_objects
 
-    #print(data_shape)
-    param_out = _copy_to_provided_output(None, param_out, param_in.shape) # DO NOT copy to provided param since it is also an input
+    # print(data_shape)
+    param_out = _copy_to_provided_output(
+        None, param_out, param_in.shape
+    )  # DO NOT copy to provided param since it is also an input
     fitted_out = _copy_to_provided_output(fitted, fitted_out, data_shape)
-    residuals_out = _copy_to_provided_output(residuals, residuals_out, data_shape)
+    residuals_out = _copy_to_provided_output(
+        residuals, residuals_out, data_shape
+    )
     chisq_out = _copy_to_provided_output(chisq, chisq_out, data_shape[0:-1])
-    covar_out = _copy_to_provided_output(covar, covar_out, (*data_shape[0:-1], nparam, nparam))
-    alpha_out = _copy_to_provided_output(alpha, alpha_out, (*data_shape[0:-1], nparam, nparam))
-    erraxes_out = _copy_to_provided_output(erraxes, erraxes_out, (*data_shape[0:-1], nparam, nparam))
+    covar_out = _copy_to_provided_output(
+        covar, covar_out, (*data_shape[0:-1], nparam, nparam)
+    )
+    alpha_out = _copy_to_provided_output(
+        alpha, alpha_out, (*data_shape[0:-1], nparam, nparam)
+    )
+    erraxes_out = _copy_to_provided_output(
+        erraxes, erraxes_out, (*data_shape[0:-1], nparam, nparam)
+    )
 
-    return MarquardtResult( param_out, fitted_out, 
-                            residuals_out, chisq_out, covar_out, alpha_out, erraxes_out)
+    return MarquardtResult(
+        param_out,
+        fitted_out,
+        residuals_out,
+        chisq_out,
+        covar_out,
+        alpha_out,
+        erraxes_out,
+    )
+
 
 @dataclass
 class TripleIntegralResult:
@@ -511,21 +768,41 @@ class TripleIntegralResult:
     chisq : np.ndarray
         An array containing the resulting raw chi squared value of each fit. To get the reduced chisq, divide by the degrees of freedom (fit_start - fit_end - nparam)
     """
-    Z : np.ndarray
-    A : np.ndarray
-    tau : np.ndarray
-    fitted : np.ndarray
-    residuals : np.ndarray
-    chisq : np.ndarray
 
-_GCI_triple_integral_fitting_engine = _flimlib.GCI_triple_integral_fitting_engine_many # C function
-_GCI_triple_integral_fitting_engine.argtypes= [ctypes.POINTER(_FlimParams)]
+    Z: np.ndarray
+    A: np.ndarray
+    tau: np.ndarray
+    fitted: np.ndarray
+    residuals: np.ndarray
+    chisq: np.ndarray
 
-def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=None, fit_end=None, 
-                                            instr=None, noise_type='NOISE_POISSON_FIT', sig=None, 
-                                            Z=None, A=None, tau=None, fitted=None, residuals=None, 
-                                            chisq=None, chisq_target=-1.0, fit_mask=None,
-                                            compute_fitted=True, compute_residuals=True, compute_chisq=True):
+
+_GCI_triple_integral_fitting_engine = (
+    _flimlib.GCI_triple_integral_fitting_engine_many
+)  # C function
+_GCI_triple_integral_fitting_engine.argtypes = [ctypes.POINTER(_FlimParams)]
+
+
+def GCI_triple_integral_fitting_engine(
+    period,
+    photon_count,
+    fit_start=None,
+    fit_end=None,
+    instr=None,
+    noise_type="NOISE_POISSON_FIT",
+    sig=None,
+    Z=None,
+    A=None,
+    tau=None,
+    fitted=None,
+    residuals=None,
+    chisq=None,
+    chisq_target=-1.0,
+    fit_mask=None,
+    compute_fitted=True,
+    compute_residuals=True,
+    compute_chisq=True,
+):
     """
     Performs a multipixel exponential fits on the data using Rapid Lifetime Determination
 
@@ -544,11 +821,11 @@ def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=None, fit
         A 1D array containing the instrument response (IRF) or prompt signal. If is None, no instrument response will be used
         (default is None)
     noise_type : str, optional
-        The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN', 
+        The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN',
         'NOISE_POISSON_DATA', 'NOISE_POISSON_FIT' (default is 'NOISE_POISSON_FIT')
     sig : {None, float, array_like}, optional
-        The standard deviation at each data point. A 1D float array the same length as the time axis of `photon_count` if `noise_type` 
-        is 'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None otherwise 
+        The standard deviation at each data point. A 1D float array the same length as the time axis of `photon_count` if `noise_type`
+        is 'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None otherwise
         (default is None)
     Z : {None, numpy.ndarray}, optional
         An N-dimensional array to be filled with the computed background value for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
@@ -579,42 +856,79 @@ def GCI_triple_integral_fitting_engine(period, photon_count, fit_start=None, fit
         A dataclass containing fields to be acessed using dot (.) notation: Z, A, tau, fitted, residuals, chisq
         For each fit that fails, its corresponding outputs are filled with `NaN`
     """
-    common_in, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects = _prep_common_params(
-        period, photon_count, fit_start, fit_end, fit_mask, fitted, residuals, chisq, compute_fitted, compute_residuals, compute_chisq, False)
+    (
+        common_in,
+        fitted_out,
+        residuals_out,
+        chisq_out,
+        data_shape,
+        npixels,
+        referenced_objects,
+    ) = _prep_common_params(
+        period,
+        photon_count,
+        fit_start,
+        fit_end,
+        fit_mask,
+        fitted,
+        residuals,
+        chisq,
+        compute_fitted,
+        compute_residuals,
+        compute_chisq,
+        False,
+    )
     triple_integral_in = _TripleIntegralParams()
-    triple_integral_in.instr, referenced_instr = (None, None) if instr is None else _as_strided_array(instr, (...,), (-1,))
+    triple_integral_in.instr, referenced_instr = (
+        (None, None)
+        if instr is None
+        else _as_strided_array(instr, (...,), (-1,))
+    )
     # this lack of implementation is unique to triple integral
-    if noise_type == 'NOISE_GAUSSIAN_FIT' or noise_type == 'NOISE_MLE':
+    if noise_type == "NOISE_GAUSSIAN_FIT" or noise_type == "NOISE_MLE":
         raise ValueError(
-            "Noise types 'NOISE_GAUSSIAN_FIT' and 'NOISE_MLE' are currently unimplemented for GCI_triple_integral")
-    triple_integral_in.sig, referenced_sig = _prep_strided_sig(noise_type, sig, (data_shape[-1],), (data_shape[-1],)) # same size as second axis of fitted and residuals
+            "Noise types 'NOISE_GAUSSIAN_FIT' and 'NOISE_MLE' are currently unimplemented for GCI_triple_integral"
+        )
+    triple_integral_in.sig, referenced_sig = _prep_strided_sig(
+        noise_type, sig, (data_shape[-1],), (data_shape[-1],)
+    )  # same size as second axis of fitted and residuals
     triple_integral_in.noise = _noise_types[noise_type]
-    triple_integral_in.Z, Z_out = _prep_optional_output(Z, data_shape[0:-1], (npixels,))
-    triple_integral_in.A, A_out = _prep_optional_output(A, data_shape[0:-1], (npixels,))
-    triple_integral_in.tau, tau_out = _prep_optional_output(tau, data_shape[0:-1], (npixels,))
+    triple_integral_in.Z, Z_out = _prep_optional_output(
+        Z, data_shape[0:-1], (npixels,)
+    )
+    triple_integral_in.A, A_out = _prep_optional_output(
+        A, data_shape[0:-1], (npixels,)
+    )
+    triple_integral_in.tau, tau_out = _prep_optional_output(
+        tau, data_shape[0:-1], (npixels,)
+    )
     triple_integral_in.chisq_target = chisq_target
 
     flim_in = _FlimParams()
 
-    flim_in.common = ctypes.pointer(common_in) 
+    flim_in.common = ctypes.pointer(common_in)
     flim_in.triple_integral = ctypes.pointer(triple_integral_in)
 
     _GCI_triple_integral_fitting_engine(flim_in)
-    
+
     # Verify that reference was held until after above call
     referenced_instr
     referenced_sig
     referenced_objects
 
     fitted_out = _copy_to_provided_output(fitted, fitted_out, data_shape)
-    residuals_out = _copy_to_provided_output(residuals, residuals_out, data_shape)
+    residuals_out = _copy_to_provided_output(
+        residuals, residuals_out, data_shape
+    )
     chisq_out = _copy_to_provided_output(chisq, chisq_out, data_shape[0:-1])
     Z_out = _copy_to_provided_output(Z, Z_out, data_shape[0:-1])
     A_out = _copy_to_provided_output(A, A_out, data_shape[0:-1])
     tau_out = _copy_to_provided_output(tau, tau_out, data_shape[0:-1])
 
-    return TripleIntegralResult( Z_out, A_out, tau_out, fitted_out, 
-                            residuals_out, chisq_out)
+    return TripleIntegralResult(
+        Z_out, A_out, tau_out, fitted_out, residuals_out, chisq_out
+    )
+
 
 @dataclass
 class PhasorResult:
@@ -640,22 +954,40 @@ class PhasorResult:
     chisq : np.ndarray
         An array containing the resulting reduced chi squared value of each fit. To get the reduced chisq, divide by the degrees of freedom (fit_start - fit_end - nparam)
     """
-    u : np.ndarray
-    v : np.ndarray
-    taup : np.ndarray
-    taum : np.ndarray
-    tau : np.ndarray
-    fitted : np.ndarray
-    residuals : np.ndarray
-    chisq : np.ndarray
 
-_GCI_Phasor = _flimlib.GCI_Phasor_many # C function
-_GCI_Phasor.argtypes= [ctypes.POINTER(_FlimParams)]
+    u: np.ndarray
+    v: np.ndarray
+    taup: np.ndarray
+    taum: np.ndarray
+    tau: np.ndarray
+    fitted: np.ndarray
+    residuals: np.ndarray
+    chisq: np.ndarray
 
-def GCI_Phasor(period, photon_count, fit_start=None, fit_end=None, 
-                    Z=0.0, u=None, v=None, taup=None, taum=None, tau=None, fitted=None, residuals=None, 
-                    chisq=None, fit_mask=None,
-                    compute_fitted=True, compute_residuals=True, compute_chisq=True):
+
+_GCI_Phasor = _flimlib.GCI_Phasor_many  # C function
+_GCI_Phasor.argtypes = [ctypes.POINTER(_FlimParams)]
+
+
+def GCI_Phasor(
+    period,
+    photon_count,
+    fit_start=None,
+    fit_end=None,
+    Z=0.0,
+    u=None,
+    v=None,
+    taup=None,
+    taum=None,
+    tau=None,
+    fitted=None,
+    residuals=None,
+    chisq=None,
+    fit_mask=None,
+    compute_fitted=True,
+    compute_residuals=True,
+    compute_chisq=True,
+):
     """
     Performs a multipixel exponential fits on the data using Phasors
 
@@ -704,34 +1036,66 @@ def GCI_Phasor(period, photon_count, fit_start=None, fit_end=None,
         For each fit that fails, its corresponding outputs are filled with `NaN`
     """
 
-    common_in, fitted_out, residuals_out, chisq_out, data_shape, npixels, referenced_objects = _prep_common_params(
-        period, photon_count, fit_start, fit_end, fit_mask, fitted, residuals, chisq, compute_fitted, compute_residuals, compute_chisq, False)
+    (
+        common_in,
+        fitted_out,
+        residuals_out,
+        chisq_out,
+        data_shape,
+        npixels,
+        referenced_objects,
+    ) = _prep_common_params(
+        period,
+        photon_count,
+        fit_start,
+        fit_end,
+        fit_mask,
+        fitted,
+        residuals,
+        chisq,
+        compute_fitted,
+        compute_residuals,
+        compute_chisq,
+        False,
+    )
     phasor_in = _PhasorParams()
     try:
         Zf = float(Z)
-        phasor_in.Z, referenced_Z = _as_strided_array([Zf], (1,), (1,), shape_override=(npixels,), strides_override=(0,)) # stride 0 array!
+        phasor_in.Z, referenced_Z = _as_strided_array(
+            [Zf], (1,), (1,), shape_override=(npixels,), strides_override=(0,)
+        )  # stride 0 array!
     except TypeError:
-        phasor_in.Z, referenced_Z = _as_strided_array(Z, data_shape[0:-1], (npixels,))
+        phasor_in.Z, referenced_Z = _as_strided_array(
+            Z, data_shape[0:-1], (npixels,)
+        )
 
     phasor_in.u, u_out = _prep_optional_output(u, data_shape[0:-1], (npixels,))
     phasor_in.v, v_out = _prep_optional_output(v, data_shape[0:-1], (npixels,))
-    phasor_in.taup, taup_out = _prep_optional_output(taup, data_shape[0:-1], (npixels,))
-    phasor_in.taum, taum_out = _prep_optional_output(taum, data_shape[0:-1], (npixels,))
-    phasor_in.tau, tau_out = _prep_optional_output(tau, data_shape[0:-1], (npixels,))
+    phasor_in.taup, taup_out = _prep_optional_output(
+        taup, data_shape[0:-1], (npixels,)
+    )
+    phasor_in.taum, taum_out = _prep_optional_output(
+        taum, data_shape[0:-1], (npixels,)
+    )
+    phasor_in.tau, tau_out = _prep_optional_output(
+        tau, data_shape[0:-1], (npixels,)
+    )
 
     flim_in = _FlimParams()
 
-    flim_in.common = ctypes.pointer(common_in) 
+    flim_in.common = ctypes.pointer(common_in)
     flim_in.phasor = ctypes.pointer(phasor_in)
 
     _GCI_Phasor(flim_in)
 
     # Verify that reference was held until after above call
-    referenced_Z  
+    referenced_Z
     referenced_objects
 
     fitted_out = _copy_to_provided_output(fitted, fitted_out, data_shape)
-    residuals_out = _copy_to_provided_output(residuals, residuals_out, data_shape)
+    residuals_out = _copy_to_provided_output(
+        residuals, residuals_out, data_shape
+    )
     chisq_out = _copy_to_provided_output(chisq, chisq_out, data_shape[0:-1])
     u_out = _copy_to_provided_output(u, u_out, data_shape[0:-1])
     v_out = _copy_to_provided_output(v, v_out, data_shape[0:-1])
@@ -739,5 +1103,13 @@ def GCI_Phasor(period, photon_count, fit_start=None, fit_end=None,
     taum_out = _copy_to_provided_output(taum, taum_out, data_shape[0:-1])
     tau_out = _copy_to_provided_output(tau, tau_out, data_shape[0:-1])
 
-    return PhasorResult( u_out, v_out, taup_out, taum_out, tau_out, fitted_out, 
-                            residuals_out, chisq_out)
+    return PhasorResult(
+        u_out,
+        v_out,
+        taup_out,
+        taum_out,
+        tau_out,
+        fitted_out,
+        residuals_out,
+        chisq_out,
+    )
