@@ -41,7 +41,8 @@ class FitFunc:
     Attributes
     ----------
     python_func : function
-        A python function passed by the user to wrap as a ctypes function pointer
+        A python function passed by the user to wrap as a ctypes function
+        pointer
     c_func : ctypes._CFuncPtr
         A ctypes function pointer for the fitfunc for flimlib to use
     nparam_predicate : function
@@ -59,11 +60,12 @@ class FitFunc:
         Parameters
         ----------
         python_func : {function, ctypes._CFuncPtr}
-            A python function passed by the user to wrap as a ctypes function pointer.
-            If a ctypes function pointer is passed, it will be used directly instead
+            A python function passed by the user to wrap as a ctypes function
+            pointer. If a ctypes function pointer is passed, it will be used
+            directly instead
         nparam_predicate : {None, function}, optional
-            A python function that returns True if the correct number of parameters
-            has been passed for the given fitfunc (default is None)
+            A python function that returns True if the correct number of
+            parameters has been passed for the given fitfunc (default is None)
         """
         if isinstance(python_func, ctypes._CFuncPtr):
             # a ctypes c function was passed instead of a python function. We just use it directly
@@ -362,10 +364,11 @@ def _prep_optional_output(input, check_shape, ctypes_shape, flag=True):
 def _copy_to_provided_output(user_arr, c_arr, shape):
     """
     user_arr
-        the provided output (eg. fitted). It may have more dimensions than was expected by internal C code
+        The provided output (eg. fitted). It may have more dimensions than was
+        expected by internal C code
     c_arr
-        the reshaped array that was passed into the C code
-    if the data had the correct dtype and was contiguous no copy is made
+        The reshaped array that was passed into the C code. If the data had the
+        correct dtype and was contiguous no copy is made
     """
     if c_arr is None:
         return None
@@ -389,8 +392,8 @@ def _copy_to_provided_output(user_arr, c_arr, shape):
 
 def _prep_strided_sig(noise_type, sig, check_shape, ctypes_shape):
     """
-    Helper function to make sure noise_type is valid and sig is the correct type
-    for the noise_type given
+    Helper function to make sure noise_type is valid and sig is the correct
+    type for the noise_type given
     """
     if not noise_type in _noise_types.keys():
         raise ValueError(
@@ -497,19 +500,25 @@ class MarquardtResult:
     Attributes
     ----------
     param : numpy.ndarray
-        An array containing arrays of parameters, if the input `param` was dtype=float32, the input is modified and returned.
-    fitted : {None, numpy.ndarray}
-        An array containing arrays containing values fitted to the data for each fit. Fit points are coincident in time with the data points.
+        An array containing arrays of parameters, if the input `param` was
+        dtype=float32, the input is modified and returned.
+    fitted : {None, numpy.ndarray}.
+        An array containing arrays containing values fitted to the data for
+        each fit. Fit points are coincident in time with the data points.
     residuals : {None, numpy.ndarray}
-        An array containing arrays containing the difference between the data and the fit for each fit.
+        An array containing arrays containing the difference between the data
+        and the fit for each fit.
     chisq : {None, numpy.ndarray}
-        An array containing the resulting raw chi squared value of each fit. To get the reduced chisq, divide by the degrees of freedom (fit_start - fit_end - nparam)
+        An array containing the resulting raw chi squared value of each fit. To
+        get the reduced chisq, divide by the degrees of freedom (fit_start -
+        fit_end - nparam)
     covar : numpy.ndarray
         An array containing the covariance matrix from each fit.
     alpha : numpy.ndarray
         An array containing the alpha matrix from each fit.
     erraxes : numpy.ndarray
-        An array containing the dimensions of the confidence ellipsoid of the chisq from each fit.
+        An array containing the dimensions of the confidence ellipsoid of the
+        chisq from each fit.
     """
 
     param: np.ndarray
@@ -557,70 +566,105 @@ def GCI_marquardt_fitting_engine(
     compute_erraxes=True,
 ):
     """
-    Performs a multipixel exponential fits on the data using the Levenberg–Marquardt Algorithm
+    Performs a multipixel exponential fits on the data using the
+    Levenberg–Marquardt Algorithm
 
     Parameters
     ----------
     period : float
         The time between samples in `photon_count`
     photon_count : array_like
-        An N-dimensional array containing the data to be fit. The last axis is the time axis over which the data is fit. Any preceding axes will be preserved in the outputs.
+        An N-dimensional array containing the data to be fit. The last axis is
+        the time axis over which the data is fit. Any preceding axes will be
+        preserved in the outputs.
     param : array_like
-        An N-dimensional array of parameters. Provide parameter estimates, these are overridden with the fitted values. The shape must match `photon_count` except the last axis, which must match the parameters of `fitfunc`
+        An N-dimensional array of parameters. Provide parameter estimates,
+        these are overridden with the fitted values. The shape must match
+        `photon_count` except the last axis, which must match the parameters of
+        `fitfunc`
     fit_start : {None, int}, optional
-        The index of the start of the fit. Some data before this start index is required if convolving with the prompt.
-        If is None, the fit will begin at index 0 (default is None)
+        The index of the start of the fit. Some data before this start index is
+        required if convolving with the prompt. If is None, the fit will begin
+        at index 0 (default is None)
     fit_end : {None, int}, optional
-        The index of the end of the fit. If is None, the fit will cover the entire time axis of `photon_count`
+        The index of the end of the fit. If is None, the fit will cover the
+        entire time axis of `photon_count`
     instr : {None, array_like}, optional
-        A 1D array containing the instrument response (IRF) or prompt signal. If is None, no instrument response will be used
-        (default is None)
+        A 1D array containing the instrument response (IRF) or prompt signal.
+        If is None, no instrument response will be used (default is None)
     noise_type : str, optional
         The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN',
-        'NOISE_POISSON_DATA', 'NOISE_POISSON_FIT' (default is 'NOISE_POISSON_FIT')
+        'NOISE_POISSON_DATA', 'NOISE_POISSON_FIT' (default is
+        'NOISE_POISSON_FIT')
     sig : {None, float, array_like}, optional
-        The standard deviation at each data point. A 1D float array the same length as the time axis of `photon_count` if `noise_type`
-        is 'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None otherwise
-        (default is None)
+        The standard deviation at each data point. A 1D float array the same
+        length as the time axis of `photon_count` if `noise_type` is
+        'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None
+        otherwise (default is None)
     paramfree : {None, array_like}, optional
         A 1D array indicating which parameters are free (1), fixed (0)
         If is None, all parameters will be free. (default is None)
     restrain_type : str, optional
-        restrain type to use. Valid values are 'ECF_RESTRAIN_DEFAULT' and 'ECF_RESTRAIN_USER' (default is 'ECF_RESTRAIN_DEFAULT')
+        restrain type to use. Valid values are 'ECF_RESTRAIN_DEFAULT' and
+        'ECF_RESTRAIN_USER' (default is 'ECF_RESTRAIN_DEFAULT')
     fitfunc : FitFunc, optional
-        A FitFunc object that contains the fit function to be used in the fit. (default is GCI_multiexp_tau)
+        A FitFunc object that contains the fit function to be used in the fit.
+        (default is GCI_multiexp_tau)
     fitted : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed fitted plot for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed fitted plot for
+        each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     residuals : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed residuals plot for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed residuals plot
+        for each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     chisq : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed raw chi squared value for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed raw chi squared
+        value for each fit. To avoid copying, use dtype=np.float32. If is None,
+        a new array will be created (default is None)
     covar : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed covariance matrix for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed covariance matrix
+        for each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     alpha : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed alpha matrix for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed alpha matrix for
+        each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     erraxes : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed dimensions of the confidence ellipsoid of the chisq for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed dimensions of the
+        confidence ellipsoid of the chisq for each fit. To avoid copying, use
+        dtype=np.float32. If is None, a new array will be created (default is
+        None)
     chisq_target : float, optional
-        chisq_target A raw chi squared value to aim for. If this value is reached fitting will stop. If you want to aim for a reduced chisq (say 1.1 or 1.0) you must multiply by the degree of freedom. (default is 1.1)
+        chisq_target A raw chi squared value to aim for. If this value is
+        reached fitting will stop. If you want to aim for a reduced chisq (say
+        1.1 or 1.0) you must multiply by the degree of freedom. (default is
+        1.1)
     chisq_delta : float, optional
-        An individual fit will continue if the chisq value changes by more then this amount (default is 1E-5)
+        An individual fit will continue if the chisq value changes by more then
+        this amount (default is 1E-5)
     chisq_percent : int, optional
-        Defines the confidence interval when calculating the error axes (default is 95)
+        Defines the confidence interval when calculating the error axes
+        (default is 95)
     fit_mask : {None, array_like}, optional
-        An N-dimensional array of bool or 1s and 0s to select which pixels to fit. If is None, all pixels will be fit (default is None)
+        An N-dimensional array of bool or 1s and 0s to select which pixels to
+        fit. If is None, all pixels will be fit (default is None)
     compute_fitted : bool, optional
-        If True, the fitted plot for each fit is kept in memory and returned. Ignored if `fitted` is not None (default is True)
+        If True, the fitted plot for each fit is kept in memory and returned.
+        Ignored if `fitted` is not None (default is True)
     compute_residuals : bool, optional
-        If True, the residuals plot for each fit is kept in memory and returned. Ignored if `residuals` is not None (default is True)
+        If True, the residuals plot for each fit is kept in memory and
+        returned. Ignored if `residuals` is not None (default is True)
     compute_chisq : bool, optional
-        If True, the raw chi squared value for each fit is kept in memory and returned. Ignored if `chisq` is not None (default is True)
+        If True, the raw chi squared value for each fit is kept in memory and
+        returned. Ignored if `chisq` is not None (default is True)
 
     Returns
     -------
     MarquardtResult
-        A dataclass containing fields to be acessed using dot (.) notation: param, fitted, residuals, chisq, covar, alpha, erraxes
-        For each fit that fails, its corresponding outputs are filled with `NaN`
+        A dataclass containing fields to be acessed using dot (.) notation:
+        param, fitted, residuals, chisq, covar, alpha, erraxes. For each fit
+        that fails, its corresponding outputs are filled with `NaN`
     """
 
     (
@@ -762,11 +806,15 @@ class TripleIntegralResult:
     tau : np.ndarray
         An array containing the returned lifetime value from each fit.
     fitted : {None, numpy.ndarray}
-        An array containing arrays containing values fitted to the data for each fit. Fit points are coincident in time with the data points.
+        An array containing arrays containing values fitted to the data for
+        each fit. Fit points are coincident in time with the data points.
     residuals : {None, numpy.ndarray}
-        An array containing arrays containing the difference between the data and the fit for each fit.
+        An array containing arrays containing the difference between the data
+        and the fit for each fit.
     chisq : np.ndarray
-        An array containing the resulting raw chi squared value of each fit. To get the reduced chisq, divide by the degrees of freedom (fit_start - fit_end - nparam)
+        An array containing the resulting raw chi squared value of each fit. To
+        get the reduced chisq, divide by the degrees of freedom (fit_start -
+        fit_end - nparam)
     """
 
     Z: np.ndarray
@@ -804,57 +852,86 @@ def GCI_triple_integral_fitting_engine(
     compute_chisq=True,
 ):
     """
-    Performs a multipixel exponential fits on the data using Rapid Lifetime Determination
+    Performs a multipixel exponential fits on the data using Rapid Lifetime
+    Determination
 
     Parameters
     ----------
     period : float
         The time between samples in `photon_count`
     photon_count : array_like
-        An N-dimensional array containing the data to be fit. The last axis is the time axis over which the data is fit. Any preceding axes will be preserved in the outputs.
+        An N-dimensional array containing the data to be fit. The last axis is
+        the time axis over which the data is fit. Any preceding axes will be
+        preserved in the outputs.
     fit_start : {None, int}, optional
-        The index of the start of the fit. Some data before this start index is required if convolving with the prompt.
+        The index of the start of the fit. Some data before this start index is
+        required if convolving with the prompt.
         If is None, the fit will begin at index 0 (default is None)
     fit_end : {None, int}, optional
-        The index of the end of the fit. If is None, the fit will cover the entire time axis of `photon_count`
+        The index of the end of the fit. If is None, the fit will cover the
+        entire time axis of `photon_count`
     instr : {None, array_like}, optional
-        A 1D array containing the instrument response (IRF) or prompt signal. If is None, no instrument response will be used
-        (default is None)
+        A 1D array containing the instrument response (IRF) or prompt signal.
+        If is None, no instrument response will be used (default is None)
     noise_type : str, optional
         The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN',
-        'NOISE_POISSON_DATA', 'NOISE_POISSON_FIT' (default is 'NOISE_POISSON_FIT')
+        'NOISE_POISSON_DATA', 'NOISE_POISSON_FIT' (default is
+        'NOISE_POISSON_FIT')
     sig : {None, float, array_like}, optional
-        The standard deviation at each data point. A 1D float array the same length as the time axis of `photon_count` if `noise_type`
-        is 'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None otherwise
-        (default is None)
+        The standard deviation at each data point. A 1D float array the same
+        length as the time axis of `photon_count` if `noise_type` is
+        'NOISE_GIVEN', a float if `noise_type` is 'NOISE_CONST' and None
+        otherwise (default is None)
     Z : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed background value for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed background value
+        for each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     A : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed amplitude value for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed amplitude value
+        for each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     tau : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed lifetime value for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed lifetime value
+        for each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     fitted : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed fitted plot for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed fitted plot for
+        each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     residuals : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed residuals plot for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed residuals plot
+        for each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     chisq : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed raw chi squared value for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed raw chi squared
+        value for each fit. To avoid copying, use dtype=np.float32. If is None,
+        a new array will be created (default is None)
     chisq_target : float, optional
-        chisq_target A raw chi squared value to aim for. If this value is reached fitting will stop. Retries will shorten the fit range (without changing fit_start). If you want to aim for a reduced chisq (say 1.1 or 1.0) you must multiply by the degree of freedom. A negative value will lead to only a single iteration (default is -1.0)
+        chisq_target A raw chi squared value to aim for. If this value is
+        reached fitting will stop. Retries will shorten the fit range (without
+        changing fit_start). If you want to aim for a reduced chisq (say 1.1 or
+        1.0) you must multiply by the degree of freedom. A negative value will
+        lead to only a single iteration (default is -1.0)
     fit_mask : {None, array_like}, optional
-        An N-dimensional array of bool or 1s and 0s to select which pixels to fit. If is None, all pixels will be fit (default is None)
+        An N-dimensional array of bool or 1s and 0s to select which pixels to
+        fit. If is None, all pixels will be fit (default is None)
     compute_fitted : bool, optional
-        If True, the fitted plot for each fit is computed. If is False, residuals and chisq will also not be computed. Ignored if `fitted` is not None (default is True)
+        If True, the fitted plot for each fit is computed. If is False,
+        residuals and chisq will also not be computed. Ignored if `fitted` is
+        not None (default is True)
     compute_residuals : bool, optional
-        If True, the residuals plot for each fit is computed. Ignored if `residuals` is not None (default is True)
+        If True, the residuals plot for each fit is computed. Ignored if
+        `residuals` is not None (default is True)
     compute_chisq : bool, optional
-        If True, the raw chi squared value for each fit is computed. Ignored if `chisq` is not None (default is True)
+        If True, the raw chi squared value for each fit is computed. Ignored if
+        `chisq` is not None (default is True)
 
     Returns
     -------
     TripleIntegralResult
-        A dataclass containing fields to be acessed using dot (.) notation: Z, A, tau, fitted, residuals, chisq
-        For each fit that fails, its corresponding outputs are filled with `NaN`
+        A dataclass containing fields to be acessed using dot (.) notation: Z,
+        A, tau, fitted, residuals, chisq. For each fit that fails, its
+        corresponding outputs are filled with `NaN`
     """
     (
         common_in,
@@ -942,17 +1019,23 @@ class PhasorResult:
     v : numpy.ndarray
         An array containing the 'vertical' phasor coordinate for each fit.
     taup : float
-        An array containg the lifetime calculated from the phase change for each fit.
+        An array containg the lifetime calculated from the phase change for
+        each fit.
     taum : numpy.ndarray
-        An array containing the lifetimes calculated from the amplitude change (the demodulation) for each fit.
+        An array containing the lifetimes calculated from the amplitude change
+        (the demodulation) for each fit.
     tau : numpy.ndarray
         An array containing the averages of the other taus for each fit
     fitted : {None, numpy.ndarray}
-        An array containing arrays containing values fitted to the data for each fit. Fit points are coincident in time with the data points.
+        An array containing arrays containing values fitted to the data for
+        each fit. Fit points are coincident in time with the data points.
     residuals : {None, numpy.ndarray}
-        An array containing arrays containing the difference between the data and the fit for each fit.
+        An array containing arrays containing the difference between the data
+        and the fit for each fit.
     chisq : np.ndarray
-        An array containing the resulting reduced chi squared value of each fit. To get the reduced chisq, divide by the degrees of freedom (fit_start - fit_end - nparam)
+        An array containing the resulting reduced chi squared value of each
+        fit. To get the reduced chisq, divide by the degrees of freedom
+        (fit_start - fit_end - nparam)
     """
 
     u: np.ndarray
@@ -996,44 +1079,73 @@ def GCI_Phasor(
     period : float
         The time between samples in `photon_count`
     photon_count : array_like
-        An N-dimensional array containing the data to be fit. The last axis is the time axis over which the data is fit. Any preceding axes will be preserved in the outputs.
+        An N-dimensional array containing the data to be fit. The last axis is
+        the time axis over which the data is fit. Any preceding axes will be
+        preserved in the outputs.
     fit_start : {None, int}, optional
-        The index of the start of the fit. Some data before this start index is required if convolving with the prompt.
+        The index of the start of the fit. Some data before this start index is
+        required if convolving with the prompt.
         If is None, the fit will begin at index 0 (default is None)
     fit_end : {None, int}, optional
-        The index of the end of the fit. If is None, the fit will cover the entire time axis of `photon_count`
+        The index of the end of the fit. If is None, the fit will cover the
+        entire time axis of `photon_count`
     Z : {float, array_like}, optional
-        The background to be subtracted from the data. If is a float, it will be constant for all pixels. (default is 0.0)
+        The background to be subtracted from the data. If is a float, it will
+        be constant for all pixels. (default is 0.0)
     u : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed 'horizontal' phasor coordinate. for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed 'horizontal'
+        phasor coordinate. for each fit. To avoid copying, use
+        dtype=np.float32. If is None, a new array will be created (default is
+        None)
     v : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed 'vertical' phasor coordinate. for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed 'vertical' phasor
+        coordinate. for each fit. To avoid copying, use dtype=np.float32. If is
+        None, a new array will be created (default is None)
     taup : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the lifetime calculated from the phase change for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the lifetime calculated from
+        the phase change for each fit. To avoid copying, use dtype=np.float32.
+        If is None, a new array will be created (default is None)
     taum : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the lifetime calculated from the amplitude change for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the lifetime calculated from
+        the amplitude change for each fit. To avoid copying, use
+        dtype=np.float32. If is None, a new array will be created (default is
+        None)
     tau : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the average of the other taus for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the average of the other taus
+        for each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     fitted : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed fitted plot for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed fitted plot for
+        each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     residuals : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed residuals plot for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed residuals plot
+        for each fit. To avoid copying, use dtype=np.float32. If is None, a new
+        array will be created (default is None)
     chisq : {None, numpy.ndarray}, optional
-        An N-dimensional array to be filled with the computed reduced chi squared value for each fit. To avoid copying, use dtype=np.float32. If is None, a new array will be created (default is None)
+        An N-dimensional array to be filled with the computed reduced chi
+        squared value for each fit. To avoid copying, use dtype=np.float32. If
+        is None, a new array will be created (default is None)
     fit_mask : {None, array_like}, optional
-        An N-dimensional array of bool or 1s and 0s to select which pixels to fit. If is None, all pixels will be fit (default is None)
+        An N-dimensional array of bool or 1s and 0s to select which pixels to
+        fit. If is None, all pixels will be fit (default is None)
     compute_fitted : bool, optional
-        If True, the fitted plot for each fit is computed. If is False, residuals and chisq will also not be computed. Ignored if `fitted` is not None (default is True)
+        If True, the fitted plot for each fit is computed. If is False,
+        residuals and chisq will also not be computed. Ignored if `fitted` is
+        not None (default is True)
     compute_residuals : bool, optional
-        If True, the residuals plot for each fit is computed. Ignored if `residuals` is not None (default is True)
+        If True, the residuals plot for each fit is computed. Ignored if
+        `residuals` is not None (default is True)
     compute_chisq : bool, optional
-        If True, the reduced chi squared value for each fit is computed. Ignored if `chisq` is not None (default is True)
+        If True, the reduced chi squared value for each fit is computed.
+        Ignored if `chisq` is not None (default is True)
 
     Returns
     -------
     PhasorResult
-        A dataclass containing fields to be acessed using dot (.) notation: u, v, taup, taum, tau, fitted, residuals, chisq
-        For each fit that fails, its corresponding outputs are filled with `NaN`
+        A dataclass containing fields to be acessed using dot (.) notation: u,
+        v, taup, taum, tau, fitted, residuals, chisq. For each fit that fails,
+        its corresponding outputs are filled with `NaN`
     """
 
     (
