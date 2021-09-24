@@ -473,6 +473,7 @@ class Test3Integral(unittest.TestCase):
         self.assertTrue(np.all(np.isnan(result.tau)))
         self.assertTrue(np.all(np.isnan(result.fitted)))
         self.assertTrue(np.all(np.isnan(result.residuals)))
+        self.assertTrue(np.all(np.isnan(result.chisq)))
 
 
 class TestPhasor(unittest.TestCase):
@@ -981,8 +982,9 @@ class TestMarquardt(unittest.TestCase):
             photon_count2d[0:2],
             param_in,
             restrain_type="ECF_RESTRAIN_USER",
+            chisq_target=np.Infinity,
         )
-        self.assertTrue(all(result.param[1] <= a_in - 1))
+        self.assertTrue(all(result.param[:,1] <= a_in - 1))
 
     def test_multiexp_lambda(self):
         lambda_in = 1 / tau_in  # lambda is the decay rate!
