@@ -270,6 +270,9 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 				write_2d_row_nan(flim->marquardt->param, i);
 				write_2d_row_nan(flim->common->fitted, i);
 				write_2d_row_nan(flim->common->residuals, i);
+				if (unstrided_chisq != NULL){
+					*unstrided_chisq = NAN;
+				}
 				write_matrix_nan(flim->marquardt->covar, i);
 				write_matrix_nan(flim->marquardt->alpha, i);
 				write_matrix_nan(flim->marquardt->erraxes, i);
@@ -340,6 +343,9 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 				*array1d_float_ptr(flim->triple_integral->tau, i) = NAN;
 				write_2d_row_nan(flim->common->fitted, i);
 				write_2d_row_nan(flim->common->residuals, i);
+				if (unstrided_chisq != NULL){
+					*unstrided_chisq = NAN;
+				}
 			}
 			else{
 				write_2d_row_output(unstrided_fitted, flim->common->fitted, i);
@@ -385,6 +391,9 @@ int GCI_Phasor_many(struct flim_params* flim) {
 				*array1d_float_ptr(flim->phasor->tau, i) = NAN;
 				write_2d_row_nan(flim->common->fitted, i);
 				write_2d_row_nan(flim->common->residuals, i);
+				if (unstrided_chisq != NULL){
+					*unstrided_chisq = NAN;
+				}
 			}
 			else{
 				write_2d_row_output(unstrided_fitted, flim->common->fitted, i);
