@@ -3,6 +3,7 @@ curl -fsLO https://raw.githubusercontent.com/scijava/scijava-scripts/master/ci-b
 sh ci-build.sh
 
 exit_code=$?
+if [ $exit_code -ne 0 ]; then exit $exit_code; fi
 
 # NB: We skip tests when doing a release, because:
 # A) The target folder structure differs, and cram hardcodes it; and
