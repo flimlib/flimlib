@@ -25,7 +25,7 @@
   RLD return_value 2
   RLD estimate A 11515.900391 T 2.392674 Z 208.731979 X2 8.997931
   LMA return value 34
-  LMA fitted A1 7850.844238 T1 3.024728 A2 5444.664551 T2 1.022018 A3 4237.820312 T3 0.162697 Z 71.399940 X2 1.133069
+  LMA fitted A1 7850.844238 T1 3.024728 A2 5444.664551 T2 1.022018 A3 4237.820312 T3 0.162697 Z 71.399940 X2 1.13306* (glob)
 
   $ ./flimlib-cmd settings4.ini data.dat
   Settings: settings4.ini
@@ -34,7 +34,7 @@
   RLD return_value 2
   RLD estimate A 11515.900391 T 2.392674 Z 208.731979 X2 8.997931
   LMA return value * (glob)
-  LMA fitted A 15745.* T 1.6161* H 1.3704* Z 0.00* X2 1.145* (glob)
+  LMA fitted A 15745.* T 1.6161* H 1.3704* Z 0.0* X2 1.145* (glob)
 
   $ ./flimlib-cmd settings5.ini data.dat
   Settings: settings5.ini
