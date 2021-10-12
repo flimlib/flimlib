@@ -122,6 +122,7 @@ if(UNIX)
   target_link_libraries(flimlib m)
   target_link_libraries(flimlib-cmd m)
   target_link_libraries(flimlib-test m)
+  target_link_libraries(test-many m)
 endif(UNIX)
 
 # Setup swig to build a java lib
