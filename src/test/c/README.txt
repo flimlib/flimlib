@@ -42,12 +42,12 @@ There is a tests.c source file that is customized to look for the test name stri
 
 II.  Running the Tests
 
-There are two test files provided, original.json and test.json.  (They are actually identical except the original.json file has empty output sections [i.e. '"outputs":{}']).
+There are two test files provided, original.json and ref.json.  (They are actually identical except the original.json file has empty output sections [i.e. '"outputs":{}']).
 
 If you run the test with the file original.json (in Windows, '"FLIMLib Testing" original.json > output') it will run with the old NR-dependent versions of the fitting methods, add the results to the JSON tree, and print out the JSON document to standard output.
 
-You can cut & paste from standard output and build test.json.  Running this version exercises the new code under test and prints out test results.
+You can cut & paste from standard output and build ref.json.  Running this version exercises the new code under test and prints out test results.
 
-Unfortunately the JSON document is printed without any whitespace (this is common with JSON).  Fortunately there are many web-based JSON validators available, such as http://jsonformatter.curiousconcept.com/#jsonformatter (or just Google "JSON validator").  It's best to copy and paste the JSON text from the output using original.json into the validator, then copy and paste the validated/formatted results into test.json.
+Unfortunately the JSON document is printed without any whitespace (this is common with JSON).  Fortunately there are many web-based JSON validators available, such as http://jsonformatter.curiousconcept.com/#jsonformatter (or just Google "JSON validator").  It's best to copy and paste the JSON text from the output using original.json into the validator, then copy and paste the validated/formatted results into ref.json.
 
-So if you want to change one of the input parameters you have to edit original.json and go through this two stage process building a new test.json.  If you are just tweaking the new code and regression testing just running with the existing test.json will suffice.
+So if you want to change one of the input parameters you have to edit original.json and go through this two stage process building a new test.json.  If you are just tweaking the new code and regression testing just running with the existing ref.json will suffice.
