@@ -1038,7 +1038,7 @@ class PhasorResult:
         and the fit for each fit.
     chisq : np.ndarray
         An array containing the resulting reduced chi squared value of each
-        fit. To get the reduced chisq, divide by the degrees of freedom
+        fit. To get the raw chisq, multiply by the degrees of freedom
         (fit_start - fit_end - nparam)
     """
 
