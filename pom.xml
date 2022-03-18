@@ -67,7 +67,7 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/flimlib/flimlib</connection>
+		<connection>scm:git:https://github.com/flimlib/flimlib</connection>
 		<developerConnection>scm:git:git@github.com:flimlib/flimlib</developerConnection>
 		<tag>HEAD</tag>
 		<url>https://github.com/flimlib/flimlib</url>
@@ -77,8 +77,8 @@
 		<url>https://github.com/flimlib/flimlib/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.com/flimlib/flimlib</url>
+		<system>GitHub Actions</system>
+		<url>https://github.com/flimlib/flimlib/actions</url>
 	</ciManagement>
 
 	<properties>
@@ -90,7 +90,7 @@
 University of Wisconsin-Madison.</license.copyrightOwners>
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
-		<releaseProfiles>deploy-to-scijava</releaseProfiles>
+		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 
 		<exists-maven-plugin.version>0.0.6</exists-maven-plugin.version>
 		<json-simple.version>1.1.1</json-simple.version>
