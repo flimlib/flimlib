@@ -440,9 +440,9 @@ def _prep_common_params(
     dshape = np.asarray(photon_count).shape  # shape of the input data
     if dshape == ():
         raise TypeError("photon_count must be array-like")
-    fstart = 0 if fit_start is None else fit_start  # default start at index 0
-    # default fit_end is the full length of photon_count
+    fstart = 0 if fit_start is None else fit_start
     fend = dshape[-1] if fit_end is None else fit_end
+    assert 0 <= fstart < fend <= dshape[-1], "invalid fit range!"
     common.fit_start = fstart
     common.fit_end = fend
     # triple_integral and phasor use fit_end as the size of the data
@@ -1038,7 +1038,7 @@ class PhasorResult:
         and the fit for each fit.
     chisq : np.ndarray
         An array containing the resulting reduced chi squared value of each
-        fit. To get the reduced chisq, divide by the degrees of freedom
+        fit. To get the raw chisq, multiply by the degrees of freedom
         (fit_start - fit_end - nparam)
     """
 
