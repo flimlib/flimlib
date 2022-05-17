@@ -336,11 +336,14 @@ def _as_strided_array(
     return ctypes.pointer(result), arr
 
 
-def _prep_optional_output(input, check_shape, ctypes_shape, flag=True):
+def _prep_optional_output(input, check_shape, ctypes_shape, fit_mask, flag=True):
     if input is None:
         if flag:
+            temp_in = np.empty(check_shape, dtype=np.float32)
+            if fit_mask is not None:
+                temp_in.fill(np.nan)
             return _as_strided_array(
-                np.empty(check_shape, dtype=np.float32),
+                temp_in,
                 check_shape,
                 ctypes_shape,
             )
@@ -350,14 +353,20 @@ def _prep_optional_output(input, check_shape, ctypes_shape, flag=True):
         if input.dtype == np.float32:
             return _as_strided_array(input, check_shape, ctypes_shape)
         elif np.issubdtype(input.dtype, np.floating):
+            message = "Pre-allocated output is not of type float32. An internal copy will be made."
+            warnings.warn(message)
+            if fit_mask is None:
+                temp_in = np.empty(input.shape, dtype=np.float32)
+            else:
+                temp_in = input.astype(np.float32) # always makes a copy
             return _as_strided_array(
-                np.empty(check_shape, dtype=np.float32),
+                temp_in,
                 check_shape,
                 ctypes_shape,
             )
         else:
             raise TypeError(
-                "pre-allocated outputs must have a floating point type"
+                "pre-allocated outputs must be of type float"
             )
     else:
         raise TypeError("pre-allocated outputs must be numpy.ndarray")
@@ -455,16 +464,17 @@ def _prep_common_params(
         photon_count, ..., (npixels, dshape[-1])
     )
     common.fitted, fitted_out = _prep_optional_output(
-        fitted, data_shape, (npixels, data_shape[-1]), flag=compute_fitted
+        fitted, data_shape, (npixels, data_shape[-1]), fit_mask, flag=compute_fitted
     )
     common.residuals, residuals_out = _prep_optional_output(
         residuals,
         data_shape,
         (npixels, data_shape[-1]),
+        fit_mask,
         flag=compute_residuals,
     )
     common.chisq, chisq_out = _prep_optional_output(
-        chisq, data_shape[0:-1], (npixels,), flag=compute_chisq
+        chisq, data_shape[0:-1], (npixels,), fit_mask, flag=compute_chisq
     )
     common.fit_mask, referenced_fit_mask = (
         (None, None)
@@ -567,7 +577,7 @@ def GCI_marquardt_fitting_engine(
 ):
     """
     Performs a multipixel exponential fits on the data using the
-    Levenberg–Marquardt Algorithm
+    Levenberg-Marquardt Algorithm
 
     Parameters
     ----------
@@ -733,18 +743,21 @@ def GCI_marquardt_fitting_engine(
         covar,
         (*data_shape[0:-1], nparam, nparam),
         (npixels, nparam, nparam),
+        fit_mask,
         flag=compute_covar,
     )
     marquardt_in.alpha, alpha_out = _prep_optional_output(
         alpha,
         (*data_shape[0:-1], nparam, nparam),
         (npixels, nparam, nparam),
+        fit_mask,
         flag=compute_alpha,
     )
     marquardt_in.erraxes, erraxes_out = _prep_optional_output(
         erraxes,
         (*data_shape[0:-1], nparam, nparam),
         (npixels, nparam, nparam),
+        fit_mask,
         flag=compute_erraxes,
     )
     marquardt_in.chisq_target = chisq_target
@@ -975,13 +988,13 @@ def GCI_triple_integral_fitting_engine(
     )
     triple_integral_in.noise = _noise_types[noise_type]
     triple_integral_in.Z, Z_out = _prep_optional_output(
-        Z, data_shape[0:-1], (npixels,)
+        Z, data_shape[0:-1], (npixels,), fit_mask
     )
     triple_integral_in.A, A_out = _prep_optional_output(
-        A, data_shape[0:-1], (npixels,)
+        A, data_shape[0:-1], (npixels,), fit_mask
     )
     triple_integral_in.tau, tau_out = _prep_optional_output(
-        tau, data_shape[0:-1], (npixels,)
+        tau, data_shape[0:-1], (npixels,), fit_mask
     )
     triple_integral_in.chisq_target = chisq_target
 
@@ -1186,16 +1199,16 @@ def GCI_Phasor(
             Z, data_shape[0:-1], (npixels,)
         )
 
-    phasor_in.u, u_out = _prep_optional_output(u, data_shape[0:-1], (npixels,))
-    phasor_in.v, v_out = _prep_optional_output(v, data_shape[0:-1], (npixels,))
+    phasor_in.u, u_out = _prep_optional_output(u, data_shape[0:-1], (npixels,), fit_mask)
+    phasor_in.v, v_out = _prep_optional_output(v, data_shape[0:-1], (npixels,), fit_mask)
     phasor_in.taup, taup_out = _prep_optional_output(
-        taup, data_shape[0:-1], (npixels,)
+        taup, data_shape[0:-1], (npixels,), fit_mask
     )
     phasor_in.taum, taum_out = _prep_optional_output(
-        taum, data_shape[0:-1], (npixels,)
+        taum, data_shape[0:-1], (npixels,), fit_mask
     )
     phasor_in.tau, tau_out = _prep_optional_output(
-        tau, data_shape[0:-1], (npixels,)
+        tau, data_shape[0:-1], (npixels,), fit_mask
     )
 
     flim_in = _FlimParams()

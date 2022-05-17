@@ -5,6 +5,13 @@ import numpy as np
 import math
 import time
 
+# number of decimal places of the error to use to confirm equals 0
+# Setting this value to 2 ensures error is not greater than 1%
+# Note: for values that are supposed to be 0, these are compared directly to 0
+PRECISION = 4
+# when ensuring a value stays unmodified use this number
+UNLIKELY_OUTPUT = -42.42424242
+
 samples = 128
 a_in = 10.0
 tau_in = 1.0
@@ -44,12 +51,12 @@ class Test3Integral(unittest.TestCase):
             period, photon_count32
         )
 
-        self.assertAlmostEqual(result.A, a_in * error_factor, 1)
-        self.assertAlmostEqual(result.tau, tau_in, 1)
-        self.assertAlmostEqual(result.Z, 0.0, 1)
+        self.assertAlmostEqual((result.A - a_in * error_factor) / a_in * error_factor, 0, PRECISION)
+        self.assertAlmostEqual((result.tau - tau_in) / tau_in, 0, PRECISION)
+        self.assertAlmostEqual(result.Z, 0.0, PRECISION)
         # self.assertTrue(result.error_code>0) error code no longer says
         # anything about the fit
-        self.assertAlmostEqual(result.fitted[0], a_in * error_factor, 1)
+        self.assertAlmostEqual((result.fitted[0] - a_in * error_factor) / a_in * error_factor, 0, PRECISION)
 
     def test_photon_count(self):
         flimlib.GCI_triple_integral_fitting_engine(
@@ -208,18 +215,18 @@ class Test3Integral(unittest.TestCase):
             "milliseconds",
         )
         for i in range(samples * samples):
-            self.assertAlmostEqual(result.tau[i], tau_in1d[i], 1)
+            self.assertAlmostEqual((result.tau[i] - tau_in1d[i]) / tau_in1d[i], 0, PRECISION)
             self.assertAlmostEqual(
-                result.A[i], a_in1d[i] * error_factor1d[i], 1
+                (result.A[i] - a_in1d[i] * error_factor1d[i]) / a_in1d[i] * error_factor1d[i], 0, PRECISION
             )
 
     def test_outputs_modified(self):
-        fitted_in = np.empty((2, samples), dtype=np.float32)
-        residuals_in = np.empty((2, samples), dtype=np.float32)
-        chisq_in = np.empty((2,), dtype=np.float32)
-        Z_in = np.empty((2,), dtype=np.float32)
-        A_in = np.empty((2,), dtype=np.float32)
-        tau_in = np.empty((2,), dtype=np.float32)
+        fitted_in = np.empty((2, samples), dtype=np.float32) * np.nan
+        residuals_in = np.empty((2, samples), dtype=np.float32) * np.nan
+        chisq_in = np.empty((2,), dtype=np.float32) * np.nan
+        Z_in = np.empty((2,), dtype=np.float32) * np.nan
+        A_in = np.empty((2,), dtype=np.float32) * np.nan
+        tau_in = np.empty((2,), dtype=np.float32) * np.nan
         result = flimlib.GCI_triple_integral_fitting_engine(
             period,
             photon_count2d[0:2],
@@ -237,12 +244,12 @@ class Test3Integral(unittest.TestCase):
         self.assertTrue(np.all(result.A == A_in))
         self.assertTrue(np.all(result.tau == tau_in))
         # if not float 32 the inputs are still modified but a copy is made
-        fitted_in = np.empty((2, samples), dtype=np.float64)
-        residuals_in = np.empty((2, samples), dtype=np.float64)
-        chisq_in = np.empty((2,), dtype=np.float64)
-        Z_in = np.empty((2,), dtype=np.float64)
-        A_in = np.empty((2,), dtype=np.float64)
-        tau_in = np.empty((2,), dtype=np.float64)
+        fitted_in = np.empty((2, samples), dtype=np.float64) * np.nan
+        residuals_in = np.empty((2, samples), dtype=np.float64) * np.nan
+        chisq_in = np.empty((2,), dtype=np.float64) * np.nan
+        Z_in = np.empty((2,), dtype=np.float64) * np.nan
+        A_in = np.empty((2,), dtype=np.float64) * np.nan
+        tau_in = np.empty((2,), dtype=np.float64) * np.nan
         result = flimlib.GCI_triple_integral_fitting_engine(
             period,
             photon_count2d[0:2],
@@ -298,7 +305,7 @@ class Test3Integral(unittest.TestCase):
         self.assertTrue(
             np.all(np.diff(result.fitted) < 0)
         )  # monotonic decrease
-        self.assertAlmostEqual(result.fitted[0][0], result.A[0], 1)
+        self.assertAlmostEqual((result.fitted[0][0] - result.A[0]) / result.A[0], 0, PRECISION)
 
     def test_compute_flags(self):
         result = flimlib.GCI_triple_integral_fitting_engine(
@@ -308,7 +315,7 @@ class Test3Integral(unittest.TestCase):
             compute_residuals=False,
             compute_chisq=False,
         )
-        self.assertTrue(result.fitted == result.residuals == result.chisq)
+        self.assertTrue(result.fitted is result.residuals is result.chisq is None)
 
     def test_strided(self):
         fitted_strided = np.flip(
@@ -320,7 +327,8 @@ class Test3Integral(unittest.TestCase):
         self.assertEqual(result.fitted.strides, (samples * -4, -8))
 
     def test_size_zero_input(self):
-        result = flimlib.GCI_triple_integral_fitting_engine(period, [[]])
+        with self.assertRaises(AssertionError):
+            flimlib.GCI_triple_integral_fitting_engine(period, [[]])
 
     def test_different_shapes(self):
         result = flimlib.GCI_triple_integral_fitting_engine(
@@ -480,8 +488,8 @@ class TestPhasor(unittest.TestCase):
     def test_output_margin(self):
         result = flimlib.GCI_Phasor(period, photon_count32)
         self.assertEqual(result.error_code, 0)
-        self.assertAlmostEqual(result.fitted[0], a_in, 1)
-        self.assertAlmostEqual(result.residuals[0], 0.0, 1)
+        self.assertAlmostEqual((result.fitted[0] - a_in) / a_in, 0, PRECISION)
+        self.assertAlmostEqual(result.residuals[0], 0.0, PRECISION)
 
     def test_output_margin(self):
         start = time.time_ns()
@@ -498,14 +506,14 @@ class TestPhasor(unittest.TestCase):
         self.assertFalse(any(result.chisq > 1))
 
     def test_outputs_modified(self):
-        u_in = np.empty((2,), dtype=np.float32)
-        v_in = np.empty((2,), dtype=np.float32)
-        taup_in = np.empty((2,), dtype=np.float32)
-        taum_in = np.empty((2,), dtype=np.float32)
-        tau_in = np.empty((2,), dtype=np.float32)
-        fitted_in = np.empty((2, samples), dtype=np.float32)
-        residuals_in = np.empty((2, samples), dtype=np.float32)
-        chisq_in = np.empty((2,), dtype=np.float32)
+        u_in = np.empty((2,), dtype=np.float32) * np.nan
+        v_in = np.empty((2,), dtype=np.float32) * np.nan
+        taup_in = np.empty((2,), dtype=np.float32) * np.nan
+        taum_in = np.empty((2,), dtype=np.float32) * np.nan
+        tau_in = np.empty((2,), dtype=np.float32) * np.nan
+        fitted_in = np.empty((2, samples), dtype=np.float32) * np.nan
+        residuals_in = np.empty((2, samples), dtype=np.float32) * np.nan
+        chisq_in = np.empty((2,), dtype=np.float32) * np.nan
         result = flimlib.GCI_Phasor(
             period,
             photon_count2d[0:2],
@@ -527,14 +535,14 @@ class TestPhasor(unittest.TestCase):
         self.assertTrue(np.all(result.residuals == residuals_in))
         self.assertTrue(all(result.chisq == chisq_in))
         # if not float 32 the inputs are still modified but a copy is made
-        u_in = np.empty((2,), dtype=np.float64)
-        v_in = np.empty((2,), dtype=np.float64)
-        taup_in = np.empty((2,), dtype=np.float64)
-        taum_in = np.empty((2,), dtype=np.float64)
-        tau_in = np.empty((2,), dtype=np.float64)
-        fitted_in = np.empty((2, samples), dtype=np.float64)
-        residuals_in = np.empty((2, samples), dtype=np.float64)
-        chisq_in = np.empty((2,), dtype=np.float64)
+        u_in = np.empty((2,), dtype=np.float64) * np.nan
+        v_in = np.empty((2,), dtype=np.float64) * np.nan
+        taup_in = np.empty((2,), dtype=np.float64) * np.nan
+        taum_in = np.empty((2,), dtype=np.float64) * np.nan
+        tau_in = np.empty((2,), dtype=np.float64) * np.nan
+        fitted_in = np.empty((2, samples), dtype=np.float64) * np.nan
+        residuals_in = np.empty((2, samples), dtype=np.float64) * np.nan
+        chisq_in = np.empty((2,), dtype=np.float64) * np.nan
         result = flimlib.GCI_Phasor(
             period,
             photon_count2d[0:2],
@@ -599,7 +607,7 @@ class TestPhasor(unittest.TestCase):
             compute_residuals=False,
             compute_chisq=False,
         )
-        self.assertTrue(result.fitted == result.residuals == result.chisq)
+        self.assertTrue(result.fitted is result.residuals is result.chisq is None)
 
     def test_strided(self):
         fitted_strided = np.flip(
@@ -611,8 +619,10 @@ class TestPhasor(unittest.TestCase):
         self.assertEqual(result.fitted.strides, (samples * -4, -8))
 
     def test_size_zero_input(self):
-        result = flimlib.GCI_Phasor(period, [[]])
-        result = flimlib.GCI_Phasor(period, [])
+        with self.assertRaises(AssertionError):
+            flimlib.GCI_Phasor(period, [[]])
+        with self.assertRaises(AssertionError):
+            flimlib.GCI_Phasor(period, [])
 
     def test_different_shapes(self):
         result = flimlib.GCI_Phasor(
@@ -656,9 +666,9 @@ class TestMarquardt(unittest.TestCase):
         result = flimlib.GCI_marquardt_fitting_engine(
             period, photon_count32, param_in
         )
-        self.assertAlmostEqual(0.0, result.param[0], 1)
-        self.assertAlmostEqual(a_in, result.param[1], 1)
-        self.assertAlmostEqual(tau_in, result.param[2], 1)
+        self.assertAlmostEqual(result.param[0], 0, PRECISION)
+        self.assertAlmostEqual((a_in - result.param[1]) / a_in, 0, PRECISION)
+        self.assertAlmostEqual((tau_in - result.param[2]) / tau_in, 0, PRECISION)
 
     def test_paramfree(self):
         # slight offset to detect if the fitting works!
@@ -667,7 +677,7 @@ class TestMarquardt(unittest.TestCase):
             period, photon_count32, param_in, paramfree=[1, 0, 1]
         )
         # second parameter should have been held fixed!
-        self.assertAlmostEqual(a_in + 1, result.param[1], 1)
+        self.assertAlmostEqual((a_in + 1 - result.param[1]) / (a_in + 1), 0, PRECISION)
 
     def test_restraintype(self):
         with self.assertRaises(ValueError):
@@ -692,8 +702,8 @@ class TestMarquardt(unittest.TestCase):
             fitfunc=flimlib.GCI_multiexp_lambda,
         )
 
-        self.assertAlmostEqual(a_in, result.param[1], 1)
-        self.assertAlmostEqual(lambda_in, result.param[2], 1)
+        self.assertAlmostEqual((a_in - result.param[1]) / a_in, 0, PRECISION)
+        self.assertAlmostEqual((lambda_in - result.param[2]) / lambda_in, 0, PRECISION)
 
     def test_user_defined_fitfunc(self):
         # slight offset to detect if the fitting works!
@@ -704,9 +714,9 @@ class TestMarquardt(unittest.TestCase):
         result = flimlib.GCI_marquardt_fitting_engine(
             period, photon_count32, param_in, fitfunc=fitfunc_in
         )
-        self.assertAlmostEqual(0.0, result.param[0], 1)
-        self.assertAlmostEqual(a_in, result.param[1], 1)
-        self.assertAlmostEqual(tau_in, result.param[2], 1)
+        self.assertAlmostEqual(0.0, result.param[0], PRECISION)
+        self.assertAlmostEqual((a_in, result.param[1]) / a_in, 0, PRECISION)
+        self.assertAlmostEqual((tau_in, result.param[2]) / tau_in, 0, PRECISION)
 
         # linear fit! (did not work with the first param being nonzero)
         param_in = np.asarray([0, linear_const + 1], dtype=np.float32)
@@ -721,8 +731,8 @@ class TestMarquardt(unittest.TestCase):
             noise_type="NOISE_CONST",
             sig=1.0,
         )
-        self.assertAlmostEqual(0.0, result.param[0], 1)
-        self.assertAlmostEqual(linear_const, result.param[1], 1)
+        self.assertAlmostEqual(0.0, result.param[0], PRECISION)
+        self.assertAlmostEqual((linear_const - result.param[1]) / linear_const, 0, PRECISION)
 
     def test_nparam(self):
         with self.assertRaises(TypeError):
@@ -760,8 +770,8 @@ class TestMarquardt(unittest.TestCase):
             "milliseconds",
         )
         for i in range(samples * samples):
-            self.assertAlmostEqual(result.param[i][1], a_in1d[i], 1)
-            self.assertAlmostEqual(result.param[i][2], tau_in1d[i], 1)
+            self.assertAlmostEqual((result.param[i][1] - a_in1d[i]) / a_in1d[i], 0, PRECISION)
+            self.assertAlmostEqual((result.param[i][2] - tau_in1d[i]) / tau_in1d[i], 0, PRECISION)
 
     def test_integer_input(self):
         param_in = np.asarray(
@@ -775,12 +785,12 @@ class TestMarquardt(unittest.TestCase):
         param_in = np.asarray(
             [[0, a_in + 1, tau_in + 1] for i in range(2)], dtype=np.float32
         )
-        fitted_in = np.empty((2, samples), dtype=np.float32)
-        residuals_in = np.empty((2, samples), dtype=np.float32)
-        chisq_in = np.empty((2,), dtype=np.float32)
-        covar_in = np.empty((2, 3, 3), dtype=np.float32)
-        alpha_in = np.empty((2, 3, 3), dtype=np.float32)
-        erraxes_in = np.empty((2, 3, 3), dtype=np.float32)
+        fitted_in = np.empty((2, samples), dtype=np.float32) * np.nan
+        residuals_in = np.empty((2, samples), dtype=np.float32) * np.nan
+        chisq_in = np.empty((2,), dtype=np.float32) * np.nan
+        covar_in = np.empty((2, 3, 3), dtype=np.float32) * np.nan
+        alpha_in = np.empty((2, 3, 3), dtype=np.float32) * np.nan
+        erraxes_in = np.empty((2, 3, 3), dtype=np.float32) * np.nan
         result = flimlib.GCI_marquardt_fitting_engine(
             period,
             photon_count2d[0:2],
@@ -804,12 +814,12 @@ class TestMarquardt(unittest.TestCase):
         param_in = np.asarray(
             [[0, a_in + 1, tau_in + 1] for i in range(2)], dtype=np.float64
         )
-        fitted_in = np.empty((2, samples), dtype=np.float64)
-        residuals_in = np.empty((2, samples), dtype=np.float64)
-        chisq_in = np.empty((2,), dtype=np.float64)
-        covar_in = np.empty((2, 3, 3), dtype=np.float64)
-        alpha_in = np.empty((2, 3, 3), dtype=np.float64)
-        erraxes_in = np.empty((2, 3, 3), dtype=np.float64)
+        fitted_in = np.empty((2, samples), dtype=np.float64) * np.nan
+        residuals_in = np.empty((2, samples), dtype=np.float64) * np.nan
+        chisq_in = np.empty((2,), dtype=np.float64) * np.nan
+        covar_in = np.empty((2, 3, 3), dtype=np.float64) * np.nan
+        alpha_in = np.empty((2, 3, 3), dtype=np.float64) * np.nan
+        erraxes_in = np.empty((2, 3, 3), dtype=np.float64) * np.nan
         result = flimlib.GCI_marquardt_fitting_engine(
             period,
             photon_count2d[0:2],
@@ -864,7 +874,7 @@ class TestMarquardt(unittest.TestCase):
         self.assertTrue(result.fitted.shape == (2, samples))
         # monotonic decrease
         self.assertTrue(np.all(np.diff(result.fitted) < 0))
-        self.assertAlmostEqual(result.fitted[0][0], result.param[0][1], 1)
+        self.assertAlmostEqual((result.fitted[0][0] - result.param[0][1]) / result.param[0][1], 0, PRECISION)
 
     def test_compute_flags(self):
         param_in = np.asarray(
@@ -883,12 +893,12 @@ class TestMarquardt(unittest.TestCase):
         )
         self.assertTrue(
             result.fitted
-            == result.residuals
-            == result.chisq
-            == result.covar
-            == result.alpha
-            == result.erraxes
-            == None
+            is result.residuals
+            is result.chisq
+            is result.covar
+            is result.alpha
+            is result.erraxes
+            is None
         )
 
     def test_strided(self):
@@ -904,7 +914,7 @@ class TestMarquardt(unittest.TestCase):
         self.assertEqual(result.fitted.strides, (samples * -4, -8))
 
     def test_fitmask(self):
-        fitted_in = np.ones((2, samples), dtype=np.float32)
+        fitted_in = np.ones((2, samples), dtype=np.float32) * UNLIKELY_OUTPUT
         param_in = np.asarray(
             [[0, a_in + 1, tau_in + 1] for i in range(2)], dtype=np.float32
         )
@@ -913,11 +923,12 @@ class TestMarquardt(unittest.TestCase):
             photon_count2d[0:2],
             param_in,
             fit_mask=[1, 0],
-            fitted=fitted_in,
+            fitted=fitted_in.copy(),
         )
-        self.assertTrue(all(result.fitted[1] == 1))
+        self.assertTrue(all(result.fitted[0] != fitted_in[0]))
+        self.assertTrue(all(result.fitted[1] == fitted_in[1]))
         # 3-dimensional photon_count
-        fitted_in = np.ones((2, 2, samples), dtype=np.float32)
+        fitted_in = np.ones((2, 2, samples), dtype=np.float32) * UNLIKELY_OUTPUT
         param_in = np.asarray(
             [[[0, a_in + 1, tau_in + 1] for i in range(2)] for i in range(2)],
             dtype=np.float32,
@@ -927,11 +938,44 @@ class TestMarquardt(unittest.TestCase):
             [photon_count2d[0:2], photon_count2d[0:2]],
             param_in,
             fit_mask=[[0, 1], [1, 0]],
-            fitted=fitted_in,
+            fitted=fitted_in.copy(),
         )
         self.assertTrue(
-            all(result.fitted[0][0] == 1) and all(result.fitted[1][1] == 1)
+            all(result.fitted[0][0] == fitted_in[0][0]) and 
+            all(result.fitted[1][0] != fitted_in[1][0]) and 
+            all(result.fitted[0][1] != fitted_in[0][1]) and 
+            all(result.fitted[1][1] == fitted_in[1][1])
         )
+
+        # if float64, a copy is made, but it still should carry through
+        fitted_in = np.ones((2, samples), dtype=np.float64)* UNLIKELY_OUTPUT
+        param_in = np.asarray(
+            [[0, a_in + 1, tau_in + 1] for i in range(2)], dtype=np.float32
+        )
+        result = flimlib.GCI_marquardt_fitting_engine(
+            period,
+            photon_count2d[0:2],
+            param_in,
+            fit_mask=[1, 0],
+            fitted=fitted_in.copy(),
+        )
+        for i in range(samples):
+            # conversion to float32 and back might introduce some rounding error
+            self.assertNotAlmostEqual(result.fitted[0][i], fitted_in[0][i], PRECISION)
+            self.assertAlmostEqual(result.fitted[1][i], fitted_in[1][i], PRECISION)
+
+        # if no provided output, should be nan in masked out spots
+        param_in = np.asarray(
+            [[0, a_in + 1, tau_in + 1] for i in range(2)], dtype=np.float32
+        )
+        result = flimlib.GCI_marquardt_fitting_engine(
+            period,
+            photon_count2d[0:2],
+            param_in,
+            fit_mask=[True, False]
+        )
+        self.assertFalse(np.any(np.isnan(result.fitted[0])))
+        self.assertTrue(np.all(np.isnan(result.fitted[1])))
 
     def test_paramfree(self):
         param_in = np.asarray(
@@ -943,7 +987,8 @@ class TestMarquardt(unittest.TestCase):
         self.assertEqual(result.param[0][1], a_in + 1)
 
     def test_size_zero_input(self):
-        result = flimlib.GCI_marquardt_fitting_engine(period, [[]], [[]])
+        with self.assertRaises(AssertionError):
+            flimlib.GCI_marquardt_fitting_engine(period, [[]], [[]])
 
     def test_chisq_target(self):
         param_in = np.asarray(
@@ -995,8 +1040,8 @@ class TestMarquardt(unittest.TestCase):
             param_in,
             fitfunc=flimlib.GCI_multiexp_lambda,
         )
-        self.assertAlmostEqual(a_in, result.param[1], 1)
-        self.assertAlmostEqual(lambda_in, result.param[2], 1)
+        self.assertAlmostEqual((a_in - result.param[1]) / a_in, 0, PRECISION)
+        self.assertAlmostEqual((lambda_in - result.param[2]) / lambda_in, 0, PRECISION)
 
     def test_user_defined_fitfunc(self):
         param_in = np.asarray([0, a_in + 1, tau_in + 1], dtype=np.float32)
@@ -1006,9 +1051,9 @@ class TestMarquardt(unittest.TestCase):
         result = flimlib.GCI_marquardt_fitting_engine(
             period, photon_count32, param_in, fitfunc=fitfunc_in
         )
-        self.assertAlmostEqual(0.0, result.param[0], 1)
-        self.assertAlmostEqual(a_in, result.param[1], 1)
-        self.assertAlmostEqual(tau_in, result.param[2], 1)
+        self.assertAlmostEqual(0.0, result.param[0], PRECISION)
+        self.assertAlmostEqual((a_in - result.param[1]) / a_in, 0, PRECISION)
+        self.assertAlmostEqual((tau_in - result.param[2]) / tau_in, 0, PRECISION)
 
         # linear fit! (did not work with the first param being nonzero)
         param_in = np.asarray([0, linear_const + 1], dtype=np.float32)
@@ -1024,7 +1069,7 @@ class TestMarquardt(unittest.TestCase):
             sig=1.0,
         )
         self.assertAlmostEqual(0.0, result.param[0], 1)
-        self.assertAlmostEqual(linear_const, result.param[1], 1)
+        self.assertAlmostEqual((linear_const - result.param[1]) / linear_const, 0, PRECISION)
 
     def test_nparam(self):
         with self.assertRaises(TypeError):
