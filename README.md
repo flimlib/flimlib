@@ -64,6 +64,10 @@ you to call these functions from Java.
 
 ## Building the source
 
+You need JDK, Maven, CMake, SWIG, and C and C++ toolchains (GCC on Linux,
+Command Line Tools or Xcode on macOS, Visual Studio (with C++ Desktop
+Development) on Windows) to be installed.
+
 To build the library and standalone program using maven:
 
   ```
