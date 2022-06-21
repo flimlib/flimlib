@@ -317,6 +317,18 @@ class Test3Integral(unittest.TestCase):
         )
         self.assertTrue(result.fitted is result.residuals is result.chisq is None)
 
+    def test_compute_flags_partial(self):
+        chisq_in = np.array([UNLIKELY_OUTPUT] * 2, dtype=np.float32)
+        result = flimlib.GCI_triple_integral_fitting_engine(
+            period,
+            photon_count2d[0:2],
+            chisq=chisq_in,
+            compute_fitted=False,
+        )
+        self.assertTrue(result.fitted is None)
+        self.assertTrue(result.residuals is not None and result.chisq is not None)
+        self.assertNotAlmostEqual(result.chisq[0], UNLIKELY_OUTPUT, PRECISION)
+
     def test_strided(self):
         fitted_strided = np.flip(
             np.empty((2, samples), dtype=np.float32)[:, 0:-1:2]
@@ -609,6 +621,18 @@ class TestPhasor(unittest.TestCase):
         )
         self.assertTrue(result.fitted is result.residuals is result.chisq is None)
 
+    def test_compute_flags_partial(self):
+        chisq_in = np.array([UNLIKELY_OUTPUT] * 2, dtype=np.float32)
+        result = flimlib.GCI_Phasor(
+            period,
+            photon_count2d[0:2],
+            chisq=chisq_in,
+            compute_fitted=False,
+        )
+        self.assertTrue(result.fitted is None)
+        self.assertTrue(result.residuals is not None and result.chisq is not None)
+        self.assertNotAlmostEqual(result.chisq[0], UNLIKELY_OUTPUT, PRECISION)
+
     def test_strided(self):
         fitted_strided = np.flip(
             np.empty((2, samples), dtype=np.float32)[:, 0:-1:2]
@@ -900,6 +924,32 @@ class TestMarquardt(unittest.TestCase):
             is result.erraxes
             is None
         )
+
+    def test_compute_flags_partial(self):
+        param_in = np.asarray(
+            [[0, a_in + 1, tau_in + 1] for i in range(2)], dtype=np.float32
+        )
+        chisq_in = np.array([UNLIKELY_OUTPUT] * 2, dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine(
+            period,
+            photon_count2d[0:2],
+            param_in,
+            chisq=chisq_in,
+            compute_fitted=False,
+            compute_erraxes=False,
+        )
+        self.assertTrue(
+            result.fitted
+            is result.erraxes
+            is None
+        )
+        self.assertTrue(
+            result.residuals is not None and
+            result.chisq is not None and
+            result.covar is not None and
+            result.alpha is not None
+        )
+        self.assertNotAlmostEqual(result.chisq[0], UNLIKELY_OUTPUT, PRECISION)
 
     def test_strided(self):
         param_in = np.asarray(
