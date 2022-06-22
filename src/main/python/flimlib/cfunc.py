@@ -574,7 +574,7 @@ def GCI_marquardt_fitting_engine(
     compute_covar=True,
     compute_alpha=True,
     compute_erraxes=True,
-):
+) -> MarquardtResult:
     """
     Performs a multipixel exponential fits on the data using the
     Levenberg-Marquardt Algorithm
@@ -668,6 +668,16 @@ def GCI_marquardt_fitting_engine(
     compute_chisq : bool, optional
         If True, the raw chi squared value for each fit is kept in memory and
         returned. Ignored if `chisq` is not None (default is True)
+    compute_covar : bool, optional
+        If True, the covariance matrix for each fit is kept in memory and
+        returned. Ignored if `covar` is not None (default is True)
+    compute_alpha : bool, optional
+        If True, the alpha matrix for each fit is kept in memory and
+        returned. Ignored if `alpha` is not None (default is True)
+    compute_erraxes : bool, optional
+        If True, the dimensions of the confidence ellipsoid of the chisq for
+        each fit is kept in memory and returned. Ignored if `erraxes` is not
+        None (default is True)
 
     Returns
     -------
@@ -932,8 +942,7 @@ def GCI_triple_integral_fitting_engine(
         An N-dimensional array of bool or 1s and 0s to select which pixels to
         fit. If is None, all pixels will be fit (default is None)
     compute_fitted : bool, optional
-        If True, the fitted plot for each fit is computed. If is False,
-        residuals and chisq will also not be computed. Ignored if `fitted` is
+        If True, the fitted plot for each fit is computed. Ignored if `fitted` is
         not None (default is True)
     compute_residuals : bool, optional
         If True, the residuals plot for each fit is computed. Ignored if
@@ -1147,8 +1156,7 @@ def GCI_Phasor(
         An N-dimensional array of bool or 1s and 0s to select which pixels to
         fit. If is None, all pixels will be fit (default is None)
     compute_fitted : bool, optional
-        If True, the fitted plot for each fit is computed. If is False,
-        residuals and chisq will also not be computed. Ignored if `fitted` is
+        If True, the fitted plot for each fit is computed. Ignored if `fitted` is
         not None (default is True)
     compute_residuals : bool, optional
         If True, the residuals plot for each fit is computed. Ignored if
