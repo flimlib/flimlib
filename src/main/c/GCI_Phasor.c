@@ -135,8 +135,9 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 	*V = v;
 
 	/* Now calculate the fitted curve and chi-squared if wanted. */
+	/* if validFittedArray is NULL, malloc was not used */
 	if (validFittedArray == NULL)
-		return 0;
+		return ret;
 	memset(validFittedArray, 0, (size_t)fit_end * sizeof(float));
 	if (residuals != NULL)
 		memset(residuals, 0, (size_t)fit_end * sizeof(float));
@@ -157,8 +158,9 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 	// We can calculate a chisq value and plot the graph, along with
 	// the residuals.
 
+	/* if both residuals and chisq are NULL, malloc was not used for validFittedArray */
 	if (residuals == NULL && chisq == NULL)
-		return 0;
+		return ret;
 
 	chisq_local = 0.0f;
 	for (i=0; i<fit_start; i++) {
@@ -181,6 +183,10 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 
 	if (chisq != NULL)
 		*chisq = chisq_local;
+
+	if (fitted==NULL){
+		free (validFittedArray);
+	}
 
 	return (ret);
 }
