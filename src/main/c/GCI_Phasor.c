@@ -91,7 +91,13 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 	// fitted and residuals must be arrays big enough to hold possibly fit_end floats.
 
 	int   i, ret = PHASOR_ERR_NO_ERROR, nBins;
-	float *data, u, v, A, w, I, Ifit, bg, chisq_local, res, sigma2;
+	float *data, u, v, A, w, I, Ifit, bg, chisq_local, res, sigma2, *validFittedArray;
+
+	// we require residuals or chisq but have not supplied a "fitted" array so must malloc one
+	if (fitted==NULL && (residuals!=NULL || chisq!=NULL)){
+		if ((validFittedArray = (float *)malloc((long unsigned int)fit_end * sizeof(float)))== NULL) return (-1);
+	}
+	else validFittedArray = fitted;
 
 	data = &(y[fit_start]);	
 	nBins = (fit_end - fit_start);
@@ -129,10 +135,10 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 	*V = v;
 
 	/* Now calculate the fitted curve and chi-squared if wanted. */
-	if (fitted == NULL)
-		return 0;
-
-	memset(fitted, 0, (size_t)fit_end * sizeof(float));
+	/* if validFittedArray is NULL, malloc was not used */
+	if (validFittedArray == NULL)
+		return ret;
+	memset(validFittedArray, 0, (size_t)fit_end * sizeof(float));
 	if (residuals != NULL)
 		memset(residuals, 0, (size_t)fit_end * sizeof(float));
 	// Madison report some "memory issue", and replaced the 2 line above with new arrays.
@@ -146,18 +152,19 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 
 	// Calculate fit
 	for (i=fit_start; i<fit_end; i++){
-		fitted[i] = bg + A * expf((float)(-(i-fit_start))*xincr/(*tau));
+		validFittedArray[i] = bg + A * expf((float)(-(i-fit_start))*xincr/(*tau));
 	}
 	// OK, so now fitted contains our data for the timeslice of interest.
 	// We can calculate a chisq value and plot the graph, along with
 	// the residuals.
 
+	/* if both residuals and chisq are NULL, malloc was not used for validFittedArray */
 	if (residuals == NULL && chisq == NULL)
-		return 0;
+		return ret;
 
 	chisq_local = 0.0f;
 	for (i=0; i<fit_start; i++) {
-		res = y[i]-fitted[i];
+		res = y[i]-validFittedArray[i];
 		if (residuals != NULL)
 			residuals[i] = res;
 	}
@@ -166,16 +173,20 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 //	case NOISE_POISSON_FIT:
 		/* Summation loop over all data */
 		for (i=fit_start ; i<fit_end; i++) {
-			res = y[i] - fitted[i];
+			res = y[i] - validFittedArray[i];
 			if (residuals != NULL)
 				residuals[i] = res;
 			/* don't let variance drop below 1 */
-			sigma2 = (fitted[i] > 1 ? 1.0f/fitted[i] : 1.0f);
+			sigma2 = (validFittedArray[i] > 1 ? 1.0f/validFittedArray[i] : 1.0f);
 			chisq_local += res * res * sigma2;
 		}
 
 	if (chisq != NULL)
 		*chisq = chisq_local;
+
+	if (fitted==NULL){
+		free (validFittedArray);
+	}
 
 	return (ret);
 }

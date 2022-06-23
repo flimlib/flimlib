@@ -366,26 +366,14 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 int GCI_Phasor_many(struct flim_params* flim) {
 
 	float* temp_trans = allocate_temp_2d_row(flim->common->trans);
-	float* temp_fitted;
-	if(flim->common->residuals == NULL && flim->common->chisq == NULL){
-		temp_fitted = allocate_temp_2d_row(flim->common->fitted);
-	}
-	else{
-		temp_fitted = allocate_required_temp_2d_row(flim->common->fitted, flim->common->trans->sizes[1]);
-	}
+	float* temp_fitted = allocate_temp_2d_row(flim->common->fitted);
 	float* temp_residuals = allocate_temp_2d_row(flim->common->residuals);
 
 	for (int i = 0; i < flim->common->trans->sizes[0]; i++) {
 		if (flim->common->fit_mask == NULL || *array1d_int8_ptr(flim->common->fit_mask, i)) {
 
 			float* unstrided_trans = get_unstrided_2d_row_input(flim->common->trans, temp_trans, i);
-			float* unstrided_fitted;
-			if(flim->common->residuals == NULL && flim->common->chisq == NULL){
-				unstrided_fitted = get_unstrided_2d_row_output(flim->common->fitted, temp_fitted, i);
-			}
-			else{
-				unstrided_fitted = get_required_unstrided_2d_row_output(flim->common->fitted, temp_fitted, i);
-			}
+			float* unstrided_fitted = get_unstrided_2d_row_output(flim->common->fitted, temp_fitted, i);
 			float* unstrided_residuals = get_unstrided_2d_row_output(flim->common->residuals, temp_residuals, i);
 			float* unstrided_chisq = flim->common->chisq == NULL ? NULL : array1d_float_ptr(flim->common->chisq, i);
 

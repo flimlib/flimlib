@@ -387,8 +387,8 @@ int GCI_triple_integral_fitting_engine(float xincr, float y[], int fit_start, in
 	float local_chisq=3.0e38f, oldChisq=3.0e38f, oldZ, oldA, oldTau, *validFittedArray; // local_chisq a very high float but below oldChisq
 	int result = 0;
 
-	if (fitted==NULL)   // we require chisq but have not supplied a "fitted" array so must malloc one
-	{
+	// we require residuals or chisq but have not supplied a "fitted" array so must malloc one
+	if (fitted==NULL && (residuals!=NULL || chisq!=NULL)){
 		if ((validFittedArray = (float *)malloc((long unsigned int)fit_end * sizeof(float)))== NULL) return (-1);
 	}
 	else validFittedArray = fitted;
