@@ -451,13 +451,13 @@ def _prep_common_params(
         raise TypeError("photon_count must be array-like")
     fstart = 0 if fit_start is None else fit_start
     fend = dshape[-1] if fit_end is None else fit_end
-    assert 0 <= fstart < fend <= dshape[-1], "invalid fit range!"
+    assert 0 <= fstart <= fend <= dshape[-1], "invalid fit range!"
     common.fit_start = fstart
     common.fit_end = fend
     # triple_integral and phasor use fit_end as the size of the data
     data_shape = dshape if ndata_known else (*dshape[0:-1], fend)
     npixels = np.prod(data_shape[0:-1], dtype=int)
-
+    assert period > 0.0, "period must be greater than 0"
     common.xincr = period
     # the shape of trans is wildcard
     common.trans, referenced_trans = _as_strided_array(
