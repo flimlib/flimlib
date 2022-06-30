@@ -44,6 +44,32 @@ trans_strided = np.flip(photon_count2d_flip[0:2])[:, 0:-1:2]
 linear_const = 1
 photon_count_linear = linear_const * tt
 
+def assertPhasorFailure(test : unittest.TestCase, result : flimlib.PhasorResult):
+    test.assertTrue(np.all(np.isnan(result.u)))
+    test.assertTrue(np.all(np.isnan(result.v)))
+    test.assertTrue(np.all(np.isnan(result.taup)))
+    test.assertTrue(np.all(np.isnan(result.taum)))
+    test.assertTrue(np.all(np.isnan(result.tau)))
+    test.assertTrue(np.all(np.isnan(result.fitted)))
+    test.assertTrue(np.all(np.isnan(result.residuals)))
+    test.assertTrue(np.all(np.isnan(result.chisq)))
+
+def assert3IntegralFailure(test : unittest.TestCase, result : flimlib.TripleIntegralResult):
+    test.assertTrue(np.all(np.isnan(result.Z)))
+    test.assertTrue(np.all(np.isnan(result.A)))
+    test.assertTrue(np.all(np.isnan(result.tau)))
+    test.assertTrue(np.all(np.isnan(result.fitted)))
+    test.assertTrue(np.all(np.isnan(result.residuals)))
+    test.assertTrue(np.all(np.isnan(result.chisq)))
+
+def assertMarquardtFailure(test : unittest.TestCase, result : flimlib.MarquardtResult):
+    test.assertTrue(np.all(np.isnan(result.param)))
+    test.assertTrue(np.all(np.isnan(result.fitted)))
+    test.assertTrue(np.all(np.isnan(result.residuals)))
+    test.assertTrue(np.all(np.isnan(result.chisq)))
+    test.assertTrue(np.all(np.isnan(result.covar)))
+    test.assertTrue(np.all(np.isnan(result.alpha)))
+    test.assertTrue(np.all(np.isnan(result.erraxes)))
 
 class Test3Integral(unittest.TestCase):
     def test_output_margin(self):
@@ -339,8 +365,21 @@ class Test3Integral(unittest.TestCase):
         self.assertEqual(result.fitted.strides, (samples * -4, -8))
 
     def test_size_zero_input(self):
+        result = flimlib.GCI_triple_integral_fitting_engine(period, [[]])
+        assert3IntegralFailure(self, result)
+
+    def test_zero_fit_range(self):
+        result = flimlib.GCI_triple_integral_fitting_engine(period, photon_count2d[0:2], fit_start=0, fit_end=0)
+        assert3IntegralFailure(self, result)
+
+    def test_invalid_fit_range(self):
         with self.assertRaises(AssertionError):
-            flimlib.GCI_triple_integral_fitting_engine(period, [[]])
+            flimlib.GCI_triple_integral_fitting_engine(0.0, photon_count2d[0:2])
+        with self.assertRaises(AssertionError):
+            flimlib.GCI_triple_integral_fitting_engine(-42.0, photon_count2d[0:2])
+        with self.assertRaises(AssertionError):
+            flimlib.GCI_triple_integral_fitting_engine(period, photon_count2d[0:2], fit_start=42, fit_end=0)
+
 
     def test_different_shapes(self):
         result = flimlib.GCI_triple_integral_fitting_engine(
@@ -488,13 +527,7 @@ class Test3Integral(unittest.TestCase):
         result = flimlib.GCI_triple_integral_fitting_engine(
             period, np.flip(photon_count2d[0:2])
         )
-        self.assertTrue(np.all(np.isnan(result.Z)))
-        self.assertTrue(np.all(np.isnan(result.A)))
-        self.assertTrue(np.all(np.isnan(result.tau)))
-        self.assertTrue(np.all(np.isnan(result.fitted)))
-        self.assertTrue(np.all(np.isnan(result.residuals)))
-        self.assertTrue(np.all(np.isnan(result.chisq)))
-
+        assert3IntegralFailure(self, result)
 
 class TestPhasor(unittest.TestCase):
     def test_output_margin(self):
@@ -643,10 +676,22 @@ class TestPhasor(unittest.TestCase):
         self.assertEqual(result.fitted.strides, (samples * -4, -8))
 
     def test_size_zero_input(self):
+        result = flimlib.GCI_Phasor(period, [[]])
+        assertPhasorFailure(self, result)
+        result = flimlib.GCI_Phasor(period, [])
+        assertPhasorFailure(self, result)
+
+    def test_zero_fit_range(self):
+        result = flimlib.GCI_Phasor(period, photon_count2d[0:2], fit_start=0, fit_end=0)
+        assertPhasorFailure(self, result)
+
+    def test_invalid_fit_range(self):
         with self.assertRaises(AssertionError):
-            flimlib.GCI_Phasor(period, [[]])
+            flimlib.GCI_Phasor(0.0, photon_count2d[0:2])
         with self.assertRaises(AssertionError):
-            flimlib.GCI_Phasor(period, [])
+            flimlib.GCI_Phasor(-42.0, photon_count2d[0:2])
+        with self.assertRaises(AssertionError):
+            flimlib.GCI_Phasor(period, photon_count2d[0:2], fit_start=42, fit_end=0)
 
     def test_different_shapes(self):
         result = flimlib.GCI_Phasor(
@@ -1037,8 +1082,22 @@ class TestMarquardt(unittest.TestCase):
         self.assertEqual(result.param[0][1], a_in + 1)
 
     def test_size_zero_input(self):
+        result = flimlib.GCI_marquardt_fitting_engine(period, [[]], [[]])
+        assertMarquardtFailure(self, result)
+
+    def test_zero_fit_range(self):
+        param_in = np.asarray([[0, a_in + 1, tau_in + 1] for i in range(2)], dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine(period, photon_count2d[0:2], param_in, fit_start=0, fit_end=0)
+        assertMarquardtFailure(self, result)
+
+    def test_invalid_fit_range(self):
+        param_in = np.asarray([[0, a_in + 1, tau_in + 1] for i in range(2)], dtype=np.float32)
         with self.assertRaises(AssertionError):
-            flimlib.GCI_marquardt_fitting_engine(period, [[]], [[]])
+            flimlib.GCI_marquardt_fitting_engine(0.0, photon_count2d[0:2], param_in)
+        with self.assertRaises(AssertionError):
+            flimlib.GCI_marquardt_fitting_engine(-42.0, photon_count2d[0:2], param_in)
+        with self.assertRaises(AssertionError):
+            flimlib.GCI_marquardt_fitting_engine(period, photon_count2d[0:2], param_in, fit_start=42, fit_end=0)
 
     def test_chisq_target(self):
         param_in = np.asarray(
