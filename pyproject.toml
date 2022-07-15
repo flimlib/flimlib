@@ -7,5 +7,15 @@ build-backend = "setuptools.build_meta"
 
 [tool.black]
 line-length = 79
-target-version = ['py37']
+target-version = ['py38']
 
+[tool.cibuildwheel]
+test-command = "python -m unittest discover -s {project}/src/test/python"
+build = [
+    # Only build with the minimum supported Python version, since we use the
+    # stable ABI (cp36-abi3, supporting 3.8 and later).
+    "cp38-macosx_universal2",
+    "cp38-win32",
+    "cp38-win_amd64",
+    "cp38-manylinux_x86_64",
+]

@@ -1,0 +1,38 @@
+name: build-python
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  wheels:
+    name: wheels-${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner:
+          - ubuntu-20.04
+          - windows-2019
+          - macos-12
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pypa/cibuildwheel@v2.8.0
+        env:
+          # On macOS/x86_64, default is x86_64 only
+          CIBW_ARCHS_MACOS: x86_64 universal2 arm64
+          # Do not warn about the arm64 portion of universal2 not being tested
+          CIBW_TEST_SKIP: "*-macosx_universal2:arm64"
+      - uses: actions/upload-artifact@v3
+        with:
+          path: wheelhouse/*.whl
+
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: pipx run build --sdist
+      - uses: actions/upload-artifact@v3
+        with:
+          path: dist/*.tar.gz
