@@ -160,8 +160,11 @@ int main(int argc, const char * argv[])
 	}
 
 	// Setup a resonable start for stretched-exp
+	flimLib.setupIRF(NULL, 0);
+	flimLib.param[FLIMLIB_STRETCHED_PARAM_Z] = 1.0;
+	flimLib.param[FLIMLIB_STRETCHED_PARAM_A] = 10000.0;
 	flimLib.param[FLIMLIB_STRETCHED_PARAM_TAU] = 2.0;
-	flimLib.param[FLIMLIB_STRETCHED_PARAM_H] = 1.5;
+	flimLib.param[FLIMLIB_STRETCHED_PARAM_H] = 1.0;
 	// all other params carry over from last fit
 
 	// Clear previous fixing and restraining
