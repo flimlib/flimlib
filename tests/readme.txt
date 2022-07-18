@@ -1,5 +1,9 @@
-This directory houses automated tests for use with cram.
+This directory houses automated tests for use with prysk.
 
-  https://bitheap.org/cram/
+  https://www.prysk.net
 
-To run them, type "cram tests" from the toplevel directory.
+  https://github.com/Nicoretti/prysk
+
+  pip install prysk
+
+To run them, type "prysk tests" from the toplevel directory.
