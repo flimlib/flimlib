@@ -1,11 +1,36 @@
 import glob
 import os.path
-import setuptools
+import re
 import sys
-
 from distutils.command.build_ext import build_ext
 from distutils.unixccompiler import UnixCCompiler
+from xml.etree import ElementTree
+
+import setuptools
 from wheel.bdist_wheel import bdist_wheel
+
+
+def read_pom_version():
+    pom = ElementTree.parse("pom.xml")
+    pom_root = pom.getroot()
+    m = re.match(r"\{(.*)\}project", pom_root.tag)
+    xmlns = m.group(1)
+    assert xmlns.startswith("http://maven.apache.org/POM/")
+    namespaces = {"pom": xmlns}
+    pom_version = pom_root.findall("pom:version", namespaces)
+    assert len(pom_version) == 1
+    return pom_version[0].text.strip()
+
+
+def get_pep440_version():
+    pom_version = read_pom_version()
+    m = re.fullmatch(r"([0-9]+)\.([0-9]+)\.([0-9]+)(-SNAPSHOT)?", pom_version)
+    assert m, "pom version must match major.minor.patch[-SNAPSHOT]"
+    major, minor, patch = m.group(1, 2, 3)
+    is_snapshot = m.group(4) is not None
+    suffix = ".dev0" if is_snapshot else ""
+    return f"{major}.{minor}.{patch}{suffix}"
+
 
 # Workaround for setuptools/distutils limitations described in:
 # https://github.com/pypa/setuptools/issues/1192 and
@@ -73,6 +98,7 @@ class bdist_wheel_abi3(bdist_wheel):
 
 
 setuptools.setup(
+    version=get_pep440_version(),
     install_requires=["numpy>=1.12.0"],
     ext_modules=[flimlib_ext],
     py_limited_api=True,
