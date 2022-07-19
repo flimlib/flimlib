@@ -59,29 +59,27 @@ int main(int argc, const char * argv[])
 
 	// Run the RLD fit function: Basic fit, no prompt, on data subset
 	iterations = flimLib.fitRLD();
-	if (iterations <= 0) {
-		// An error occurred
-		cout << "ERROR with FLIMLib.fitRLD\n";
-		exit(0);
-	}
 	cout << "RLD Z:" << flimLib.param[FLIMLIB_RLD_PARAM_Z]
 		<< " A:"    << flimLib.param[FLIMLIB_RLD_PARAM_A] 
 		<< " tau:"  << flimLib.param[FLIMLIB_RLD_PARAM_TAU]
 		<< " chisq:" << flimLib.getReducedChiSq() 
 		<< " iterations:" << iterations << "\n";
+	if (iterations <= 0) {
+		cout << "ERROR with FLIMLib.fitRLD\n";
+		exit(0);
+	}
 
 	// Run the LMA fit function; all flimLib.param values will carry over into the next fit as a starting point
 	iterations = flimLib.fitLMA(FLIMLIB_MONO);
-	if (iterations <= 0) {
-		// An error occurred
-		cout << "ERROR with FLIMLib.fitLMA\n";
-		exit(0);
-	}
 	cout << "LMA Z:" << flimLib.param[FLIMLIB_MONO_PARAM_Z]
 		<< " A:" << flimLib.param[FLIMLIB_MONO_PARAM_A]
 		<< " tau:" << flimLib.param[FLIMLIB_MONO_PARAM_TAU]
 		<< " chisq:" << flimLib.getReducedChiSq() 
 		<< " iterations:" << iterations << "\n";
+	if (iterations <= 0) {
+		cout << "ERROR with FLIMLib.fitLMA\n";
+		exit(0);
+	}
 	
 
 	// Use an instrument function
@@ -89,16 +87,15 @@ int main(int argc, const char * argv[])
 
 	// Run the RLD fit function: simple
 	iterations = flimLib.fitRLD();
-	if (iterations <= 0) {
-		// An error occurred
-		cout << "ERROR with FLIMLib.fitRLD\n";
-		exit(0);
-	}
 	cout << "RLDi Z:" << flimLib.param[FLIMLIB_RLD_PARAM_Z]
 		<< " A:" << flimLib.param[FLIMLIB_RLD_PARAM_A]
 		<< " tau:" << flimLib.param[FLIMLIB_RLD_PARAM_TAU]
 		<< " chisq:" << flimLib.getReducedChiSq()
 		<< " iterations:" << iterations << "\n";
+	if (iterations <= 0) {
+		cout << "ERROR with FLIMLib.fitRLD\n";
+		exit(0);
+	}
 
 	// Assign the optional fitter Outputs to make plots if we want
 	flimLib.fitted = fitted;
@@ -107,16 +104,15 @@ int main(int argc, const char * argv[])
 	// Run the LMA fit function: with instr and maximum likelihood (NOISE_MLE)
 	flimLib.noise_model = NOISE_MLE;
 	iterations = flimLib.fitLMA(FLIMLIB_MONO);
-	if (iterations <= 0) {
-		// An error occurred
-		cout << "ERROR with FLIMLib.fitLMA\n";
-		exit(0);
-	}
 	cout << "LMAi Z:" << flimLib.param[FLIMLIB_MONO_PARAM_Z]
 		<< " A:" << flimLib.param[FLIMLIB_MONO_PARAM_A]
 		<< " tau:" << flimLib.param[FLIMLIB_MONO_PARAM_TAU]
 		<< " chisq:" << flimLib.getReducedChiSq()
 		<< " iterations:" << iterations << "\n";
+	if (iterations <= 0) {
+		cout << "ERROR with FLIMLib.fitLMA\n";
+		exit(0);
+	}
 
 	// Setup a resonable start for tri-exp
 	flimLib.param[FLIMLIB_TRI_PARAM_A1] /= 3.0;      // divide the amplitude A1
@@ -129,11 +125,6 @@ int main(int argc, const char * argv[])
 	// Run the LMA Bi exp
 	// all starting params from last fit
 	iterations = flimLib.fitLMA(FLIMLIB_BI);
-	if (iterations <= 0) {
-		// An error occurred
-		cout << "ERROR with FLIMLib.fitLMA\n";
-		exit(0);
-	}
 	cout << "LMAi Z:" << flimLib.param[FLIMLIB_BI_PARAM_Z]
 		<< " A1:" << flimLib.param[FLIMLIB_BI_PARAM_A1]
 		<< " tau1:" << flimLib.param[FLIMLIB_BI_PARAM_TAU1]
@@ -141,6 +132,10 @@ int main(int argc, const char * argv[])
 		<< " tau2:" << flimLib.param[FLIMLIB_BI_PARAM_TAU2]
 		<< " chisq:" << flimLib.getReducedChiSq()
 		<< " iterations:" << iterations << "\n";
+	if (iterations <= 0) {
+		cout << "ERROR with FLIMLib.fitLMA\n";
+		exit(0);
+	}
 
 	// Let's restrain Z>0
 	flimLib.restrainParameter(FLIMLIB_STRETCHED_PARAM_Z, 0.0, INFINITY);
@@ -150,11 +145,6 @@ int main(int argc, const char * argv[])
 
 	// Run the LMA Tri exp, fix tau3=0.5;
 	iterations = flimLib.fitLMA(FLIMLIB_TRI);
-	if (iterations <= 0) {
-		// An error occurred
-		cout << "ERROR with FLIMLib.fitLMA\n";
-		exit(0);
-	}
 	cout << "LMAi Z:" << flimLib.param[FLIMLIB_TRI_PARAM_Z]
 		<< " A1:" << flimLib.param[FLIMLIB_TRI_PARAM_A1]
 		<< " tau1:" << flimLib.param[FLIMLIB_TRI_PARAM_TAU1]
@@ -164,10 +154,17 @@ int main(int argc, const char * argv[])
 		<< " tau3:" << flimLib.param[FLIMLIB_TRI_PARAM_TAU3]
 		<< " chisq:" << flimLib.getReducedChiSq()
 		<< " iterations:" << iterations << "\n";
+	if (iterations <= 0) {
+		cout << "ERROR with FLIMLib.fitLMA\n";
+		exit(0);
+	}
 
 	// Setup a resonable start for stretched-exp
+	flimLib.setupIRF(NULL, 0);
+	flimLib.param[FLIMLIB_STRETCHED_PARAM_Z] = 1.0;
+	flimLib.param[FLIMLIB_STRETCHED_PARAM_A] = 10000.0;
 	flimLib.param[FLIMLIB_STRETCHED_PARAM_TAU] = 2.0;
-	flimLib.param[FLIMLIB_STRETCHED_PARAM_H] = 1.5;
+	flimLib.param[FLIMLIB_STRETCHED_PARAM_H] = 1.0;
 	// all other params carry over from last fit
 
 	// Clear previous fixing and restraining
@@ -176,31 +173,29 @@ int main(int argc, const char * argv[])
 
 	// Run the LMA stretched exp
 	iterations = flimLib.fitLMA(FLIMLIB_STRETCHED);
-	if (iterations <= 0) {
-		// An error occurred
-		cout << "ERROR with FLIMLib.fitLMA\n";
-		exit(0);
-	}
 	cout << "LMAi Z:" << flimLib.param[FLIMLIB_STRETCHED_PARAM_Z]
 		<< " A:" << flimLib.param[FLIMLIB_STRETCHED_PARAM_A]
 		<< " tau:" << flimLib.param[FLIMLIB_STRETCHED_PARAM_TAU]
 		<< " h:" << flimLib.param[FLIMLIB_STRETCHED_PARAM_H]
 		<< " chisq:" << flimLib.getReducedChiSq()
 		<< " iterations:" << iterations << "\n";
+	if (iterations <= 0) {
+		cout << "ERROR with FLIMLib.fitLMA\n";
+		exit(0);
+	}
 
 	
 	// Run the phasor analysis
 	int error = flimLib.fitPhasor(50.0f);
-	if (FLIMLIB_SUCCESS != error) {
-		// An error occurred
-		cout << "ERROR with FLIMLib.fitPhasor\n";
-		exit(0);
-	}
 	cout << "Phasor Z:" << flimLib.param[FLIMLIB_PHASOR_PARAM_Z]
 		<< " tau:" << flimLib.param[FLIMLIB_PHASOR_PARAM_TAU]
 		<< " u:" << flimLib.param[FLIMLIB_PHASOR_PARAM_U]
 		<< " v:" << flimLib.param[FLIMLIB_PHASOR_PARAM_V]
 		<< " chisq:" << flimLib.getReducedChiSq() << "\n";
+	if (error != FLIMLIB_SUCCESS) {
+		cout << "ERROR with FLIMLib.fitPhasor\n";
+		exit(0);
+	}
 
 	return 0;
 }

@@ -6,12 +6,12 @@ exit_code=$?
 if [ $exit_code -ne 0 ]; then exit $exit_code; fi
 
 # NB: We skip tests when doing a release, because:
-# A) The target folder structure differs, and cram hardcodes it; and
+# A) The target folder structure differs, and prysk hardcodes it; and
 # B) The release already happened and was deployed by now. ;-)
 if [ ! -f ./target/checkout/release.properties ]
 then
   # Run the unit tests
-  python -m cram ./tests
+  python -m prysk ./tests
 
   exit_code=$((exit_code | $?))
 fi
