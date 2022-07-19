@@ -1,0 +1,32 @@
+  $ cp "$TESTDIR/../target/build/bin/flimlib-test" "$TESTDIR"/../test_files/* .
+
+# greps changed json string from output as new reference
+#  $ (./flimlib-test ./original.json) | grep '^[\s\S]*{' > ref.json
+
+# finds FAILed tests from output
+  $ (./flimlib-test ./ref.json) | perl -0777 -ne "while(m/\nTEST((.*\S.*)\n)+FAIL((.*\S.*)\n)+/g){print $&}"
+
+# This test is currently disabled (by renaming this file) because
+# 1. Much of the test data (original.json/ref.json) consists of low random
+#    counts, where the fit is useless. Testing for the same output under those
+#    conditions is completely pointless, unless the goal is to forbid any code
+#    change (even that would only work under the same CPU architecture).
+# 2. It was found that flimlib-test does not execute the tests correctly. It
+#    appears to have the following issues:
+#     - When there is no IRF, the RLD and Marquardt interpret the relationship
+#       between fitstart and A (the amplitude parameter) differently. Therefore
+#       the Marquardt fit parameters are not initialized correclty.
+#     - When an IRF is given, I'm not sure entirely what happens but the RLD
+#       clearly does not work the same way. We really need tests for RLD
+#       alone first.
+#     - Use of a single fractional tolerance for all of the fit parameters is
+#       problematic, because Z will usually have a larger error. This could be
+#       worked around by using data with large Z values with relatively low
+#       noise, but that is not very realistic.
+# Because of point 2, it is not clear what is being tested even with the tests
+# that do have realistic-looking decay data.
+#
+# We need to
+# - Fix flimlib-test to address the above issues
+# - Use test data generated in a known manner (i.e., use an exponential, add
+#   poisson noise, optionally convolve with a known IRF, etc.)
