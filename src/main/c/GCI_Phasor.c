@@ -30,6 +30,7 @@
  */
 
 #include "GCI_Phasor.h"
+#include "GCI_PhasorInternal.h"
 
 #include <math.h>
 #include <string.h>
@@ -83,9 +84,33 @@ double GCI_Phasor_getPeriod()
  chisq is calculated for comparison with other methods but is not used as there is no optimisation with this method
 */
 
-int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
+int GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 							  const float *Z, float *U, float *V, float *taup, float *taum, float *tau, float *fitted, float *residuals,
 							  float *chisq)
+{
+	int nBins = (fit_end - fit_start);
+	if (nBins < 0)
+		return (PHASOR_ERR_INVALID_WINDOW);
+	float* cos = (float*)malloc((long unsigned int)nBins * sizeof(float));
+	float* sin = (float*)malloc((long unsigned int)nBins * sizeof(float));
+	createSinusoids(nBins, cos, sin);
+	int ret = GCI_Phasor_compute(xincr, y, fit_start, fit_end, Z, cos, sin, U, V, taup, taum, tau, fitted, residuals, chisq);
+	free(cos);
+	free(sin);
+	return ret;
+}
+
+void createSinusoids(int nBins, float* cos, float* sin) {
+	float w = 2.0f * 3.1415926535897932384626433832795028841971f / (float)nBins; //2.0*PI/(float)nBins;
+	for (int i = 0; i < nBins; i++) {
+		cos[i] = cosf(w * ((float)i + 0.5f));
+		sin[i] = sinf(w * ((float)i + 0.5f));
+	}
+}
+
+int GCI_Phasor_compute(float xincr, float y[], int fit_start, int fit_end,
+	const float* Z, float* cos, float* sin, float* U, float* V, float* taup, float* taum, float* tau, float* fitted, float* residuals,
+	float* chisq)
 {
     // Z must contain a bg estimate
 	// fitted and residuals must be arrays big enough to hold possibly fit_end floats.
@@ -116,13 +141,12 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 		I += (data[i]-bg);
 
 	// Phasor coords
-    // Take care that values correspond to the centre of the bin, hence i+0.5
-	for (i=0, u=0.0f; i<nBins; i++) 
-		u += (data[i]-bg) * cosf(w*((float)i+0.5f));
+	// Take care that values correspond to the centre of the bin, hence i+0.5
+	for (i = 0, u = 0.0f, v = 0.0f; i < nBins; i++) {
+		u += (data[i] - bg) * cos[i];
+		v += (data[i] - bg) * sin[i];
+	}
 	u /= I;
-
-	for (i=0, v=0.0f; i<nBins; i++) 
-		v += (data[i]-bg) * sinf(w*((float)i+0.5f));
 	v /= I;
 
 	// taus, convert now to real time with xincr
@@ -190,4 +214,3 @@ int    GCI_Phasor(float xincr, float y[], int fit_start, int fit_end,
 
 	return (ret);
 }
-

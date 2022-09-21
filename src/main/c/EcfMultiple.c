@@ -29,6 +29,7 @@
 
 #include "Ecf.h"
 #include "GCI_Phasor.h"
+#include "GCI_PhasorInternal.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -376,6 +377,17 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 
 int GCI_Phasor_many(struct flim_params* flim) {
 
+	float *cos, *sin;
+	int nBins = (flim->common->fit_end - flim->common->fit_start);
+	if (nBins > 0) {
+		cos = (float*)malloc((long unsigned int)nBins * sizeof(float));
+		sin = (float*)malloc((long unsigned int)nBins * sizeof(float));
+		createSinusoids(nBins, cos, sin);
+	}
+	else {
+		cos = sin = NULL;
+	}
+
 	float* temp_trans = allocate_temp_2d_row(flim->common->trans);
 	float* temp_fitted = allocate_temp_2d_row(flim->common->fitted);
 	float* temp_residuals = allocate_temp_2d_row(flim->common->residuals);
@@ -389,12 +401,12 @@ int GCI_Phasor_many(struct flim_params* flim) {
 			float* unstrided_chisq = flim->common->chisq == NULL ? NULL : array1d_float_ptr(flim->common->chisq, i);
 
 			int error_code = 0;
-			if(flim->common->fit_start >= flim->common->fit_end || flim->common->xincr <= 0.0){
+			if(nBins <= 0 || flim->common->xincr <= 0.0){
 				error_code = -1;
 			}
 			else{
-				error_code = GCI_Phasor(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
-					array1d_float_ptr(flim->phasor->Z, i), array1d_float_ptr(flim->phasor->u, i), 
+				error_code = GCI_Phasor_compute(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
+					array1d_float_ptr(flim->phasor->Z, i), cos, sin, array1d_float_ptr(flim->phasor->u, i), 
 					array1d_float_ptr(flim->phasor->v, i), array1d_float_ptr(flim->phasor->taup, i), 
 					array1d_float_ptr(flim->phasor->taum, i), array1d_float_ptr(flim->phasor->tau, i),
 					unstrided_fitted, unstrided_residuals, unstrided_chisq);
@@ -421,6 +433,9 @@ int GCI_Phasor_many(struct flim_params* flim) {
 	free(temp_trans);
 	free(temp_fitted);
 	free(temp_residuals);
+
+	free(cos);
+	free(sin);
 
 	return 0;
 }
