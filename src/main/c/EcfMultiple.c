@@ -216,9 +216,9 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 	// ndata is the length of data to fit. will be sliced further using fit_start and fit_end
 	// fit_start and fit_end are not redundant with the stride characteristics of trans since
 	// on occasion data outside of the fit range is used for convolution with the "prompt" whatever that means
-	size_t ndata = flim->common->trans->sizes[1];
-	size_t nparam = flim->marquardt->param->sizes[1];
-	int ninstr = flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0];
+	long ndata = (int)(flim->common->trans->sizes[1]);
+	long nparam = (long)(flim->marquardt->param->sizes[1]);
+	int ninstr = (int)(flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0]);
 
 	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
 	float* temp_trans = allocate_temp_2d_row(flim->common->trans);
@@ -315,7 +315,7 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 }
 
 int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
-	int ninstr = flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0];
+	int ninstr = (int)(flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0]);
 	// set the target to be INFINITY since this will cause the algorithm to iterate only once
 	float chisq_target_in = flim->triple_integral->chisq_target < 0 ? INFINITY : flim->triple_integral->chisq_target;
 	
