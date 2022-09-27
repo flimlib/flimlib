@@ -216,8 +216,8 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 	// ndata is the length of data to fit. will be sliced further using fit_start and fit_end
 	// fit_start and fit_end are not redundant with the stride characteristics of trans since
 	// on occasion data outside of the fit range is used for convolution with the "prompt" whatever that means
-	long ndata = (int)(flim->common->trans->sizes[1]);
-	long nparam = (long)(flim->marquardt->param->sizes[1]);
+	int ndata = (int)(flim->common->trans->sizes[1]);
+	int nparam = (int)(flim->marquardt->param->sizes[1]);
 	int ninstr = (int)(flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0]);
 
 	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
@@ -377,15 +377,15 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 
 int GCI_Phasor_many(struct flim_params* flim) {
 
-	float *cos, *sin;
+	float *cosine, *sine;
 	int nBins = (flim->common->fit_end - flim->common->fit_start);
 	if (nBins > 0) {
-		cos = (float*)malloc((long unsigned int)nBins * sizeof(float));
-		sin = (float*)malloc((long unsigned int)nBins * sizeof(float));
-		createSinusoids(nBins, cos, sin);
+		cosine = malloc((size_t)nBins * sizeof(float));
+		sine = malloc((size_t)nBins * sizeof(float));
+		createSinusoids(nBins, cosine, sine);
 	}
 	else {
-		cos = sin = NULL;
+		cosine = sine = NULL;
 	}
 
 	float* temp_trans = allocate_temp_2d_row(flim->common->trans);
@@ -406,7 +406,7 @@ int GCI_Phasor_many(struct flim_params* flim) {
 			}
 			else{
 				error_code = GCI_Phasor_compute(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
-					array1d_float_ptr(flim->phasor->Z, i), cos, sin, array1d_float_ptr(flim->phasor->u, i), 
+					array1d_float_ptr(flim->phasor->Z, i), cosine, sine, array1d_float_ptr(flim->phasor->u, i), 
 					array1d_float_ptr(flim->phasor->v, i), array1d_float_ptr(flim->phasor->taup, i), 
 					array1d_float_ptr(flim->phasor->taum, i), array1d_float_ptr(flim->phasor->tau, i),
 					unstrided_fitted, unstrided_residuals, unstrided_chisq);
@@ -434,8 +434,8 @@ int GCI_Phasor_many(struct flim_params* flim) {
 	free(temp_fitted);
 	free(temp_residuals);
 
-	free(cos);
-	free(sin);
+	free(cosine);
+	free(sine);
 
 	return 0;
 }

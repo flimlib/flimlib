@@ -32,19 +32,20 @@ extern "C" {
 #endif
 
 /**
- * Generates one period of both a cosine and a sine
+ * Generates one period of both a cosine and a sine. Values are computed from
+ * the center of the bins.
  * 
  * \param[in] nBins The number of data points in the resulting sinusoids.
- * \param[out] cos The cosine result.
- * \param[out] sin The sine result.
+ * \param[out] cosine
+ * \param[out] sine
  */
-void createSinusoids(int nBins, float* cos, float* sin);
+void createSinusoids(int nBins, float* cosine, float* sine);
 
 /**
  * Handles the computation for phasor analysis utilizing a provided sine and cosine
  */
 int GCI_Phasor_compute(float xincr, float y[], int fit_start, int fit_end,
-	const float* Z, float* cos, float* sin, float* U, float* V, float* taup, 
+	const float* Z, float* cosine, float* sine, float* U, float* V, float* taup, 
 	float* taum, float* tau, float* fitted, float* residuals, float* chisq);
 
 #ifdef __cplusplus
