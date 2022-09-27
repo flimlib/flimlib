@@ -25,6 +25,9 @@
   * \file EcfMultiple.h
   */
 
+#ifndef _ECF_MULTIPLE_H
+#define _ECF_MULTIPLE_H
+
 #include "Ecf.h"
 
 #include <stddef.h>
@@ -347,3 +350,5 @@ int GCI_Phasor_many(struct flim_params* flim);
 #ifdef __cplusplus
 } // extern "C"
 #endif
+
+#endif /* _ECF_MULTIPLE_H */
