@@ -85,10 +85,6 @@ flimlib_ext = setuptools.Extension(
     "flimlib._flimlib",
     sources=c_sources,
     extra_link_args=link_args,
-    py_limited_api=True,
-    define_macros=[
-        ("Py_LIMITED_API", "0x03060000"),
-    ],
 )
 
 
