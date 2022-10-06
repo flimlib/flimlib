@@ -85,6 +85,10 @@ flimlib_ext = setuptools.Extension(
     "flimlib._flimlib",
     sources=c_sources,
     extra_link_args=link_args,
+    py_limited_api=True,
+    define_macros=[
+        ("Py_LIMITED_API", "0x03060000"),
+    ],
 )
 
 
@@ -101,10 +105,6 @@ setuptools.setup(
     version=get_pep440_version(),
     install_requires=["numpy>=1.12.0"],
     ext_modules=[flimlib_ext],
-    py_limited_api=True,
-    define_macros=[
-        ("Py_LIMITED_API", "0x03060000"),
-    ],
     cmdclass={
         "build_ext": build_ext_c_cxx,
         "bdist_wheel": bdist_wheel_abi3,
