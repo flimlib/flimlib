@@ -88,25 +88,11 @@ flimlib_ext = setuptools.Extension(
 )
 
 
-class bdist_wheel_abi3(bdist_wheel):
-    # See https://github.com/joerick/python-abi3-package-sample
-    def get_tag(self):
-        python, abi, plat = super().get_tag()
-        if python.startswith("cp"):
-            return "cp36", "abi3", plat
-        return python, abi, plat
-
-
 setuptools.setup(
     version=get_pep440_version(),
     install_requires=["numpy>=1.12.0"],
     ext_modules=[flimlib_ext],
-    py_limited_api=True,
-    define_macros=[
-        ("Py_LIMITED_API", "0x03060000"),
-    ],
     cmdclass={
         "build_ext": build_ext_c_cxx,
-        "bdist_wheel": bdist_wheel_abi3,
     },
 )
