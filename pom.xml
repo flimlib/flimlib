@@ -24,7 +24,7 @@
 	<licenses>
 		<license>
 			<name>GNU General Public License v3+</name>
-			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+			<url>https://www.gnu.org/licenses/gpl-3.0.html</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -33,6 +33,7 @@
 		<developer>
 			<id>paulbarber</id>
 			<name>Paul Barber</name>
+			<url>https://imagej.net/people/paulbarber</url>
 			<roles>
 				<role>lead</role>
 				<role>founder</role>
@@ -42,7 +43,7 @@
 		<developer>
 			<id>ctrueden</id>
 			<name>Curtis Rueden</name>
-			<url>https://imagej.net/User:Rueden</url>
+			<url>https://imagej.net/people/ctrueden</url>
 			<roles>
 				<role>maintainer</role>
 			</roles>
@@ -51,10 +52,12 @@
 	<contributors>
 		<contributor>
 			<name>Aivar Grislis</name>
+			<url>https://imagej.net/people/grislis</url>
 			<properties><id>grislis</id></properties>
 		</contributor>
 		<contributor>
 			<name>Dasong Gao</name>
+			<url>https://imagej.net/people/Xanthorapedia</url>
 			<properties><id>Xanthorapedia</id></properties>
 		</contributor>
 	</contributors>
