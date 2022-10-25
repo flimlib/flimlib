@@ -21,7 +21,6 @@ jobs:
         with:
           path: |
             ~/.cache/pip
-            ~/.m2/repository
             ~/Library/Caches/Homebrew
           key: ${{ runner.os }}-build-${{ env.cache-name }}
           restore-keys: |
@@ -41,6 +40,7 @@ jobs:
         with:
           java-version: 8
           distribution: zulu
+          cache: maven
       - name: Set up CI environment
         run: .github/setup.sh
       - name: Execute the build
