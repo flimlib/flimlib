@@ -14,13 +14,13 @@ jobs:
     strategy:
       matrix:
         runner:
-          - ubuntu-20.04
-          - windows-2019
+          - ubuntu-22.04
+          - windows-2022
           - macos-12
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v3
-      - uses: pypa/cibuildwheel@v2.8.0
+      - uses: pypa/cibuildwheel@v2.11.2
         env:
           # On macOS/x86_64, default is x86_64 only
           CIBW_ARCHS_MACOS: x86_64 universal2 arm64
