@@ -11,7 +11,7 @@
 
 	<groupId>flimlib</groupId>
 	<artifactId>flimlib</artifactId>
-	<version>2.2.2-SNAPSHOT</version>
+	<version>2.2.2</version>
 
 	<name>FLIMLib</name>
 	<description>A package for exponential curve fitting of fluorescence lifetime image data.</description>
@@ -72,7 +72,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/flimlib/flimlib</connection>
 		<developerConnection>scm:git:git@github.com:flimlib/flimlib</developerConnection>
-		<tag>HEAD</tag>
+		<tag>flimlib-2.2.2</tag>
 		<url>https://github.com/flimlib/flimlib</url>
 	</scm>
 	<issueManagement>
