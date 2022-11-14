@@ -91,6 +91,7 @@
 		<license.projectName>FLIMLib package for exponential curve fitting of fluorescence lifetime data.</license.projectName>
 		<license.copyrightOwners>University of Oxford and Board of Regents of the
 University of Wisconsin-Madison.</license.copyrightOwners>
+		<license.excludes>${scijava.excludedLicensePatterns},**/flimlib-cmd/c/iniparser/**,**/test/c/json*,**/test/c/pstdint.h</license.excludes>
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
