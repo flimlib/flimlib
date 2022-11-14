@@ -35,7 +35,7 @@
 		<fileSet>
 			<directory>${project.build.directory}/natives</directory>
 			<!-- This is exactly natives/<what ever follows "natives-" in scijava.natives.classifier> -->
-			<outputDirectory>natives/${scijava.platform.family.medium}_${scijava.platform.bits}</outputDirectory>
+			<outputDirectory>natives/${scijava.platform.family.medium}_${scijava.platform.arch}</outputDirectory>
 			<includes>
 				<include>**/*.so</include>
 				<include>**/*.dylib</include>
