@@ -1184,6 +1184,16 @@ class TestMarquardt(unittest.TestCase):
         )
         flimlib.GCI_marquardt_fitting_engine(period, photon_count32, param_in)
 
+    def test_noise_mle_single_fit(self):
+        # slight offset to detect if the fitting works!
+        param_in = np.asarray([0, a_in + 1, tau_in + 1], dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine(
+            period, photon_count32, param_in, noise_type="NOISE_MLE", paramfree=[0, 1, 1],
+        )
+        # the precision of MLE seems lower for this ideal data
+        self.assertAlmostEqual(result.param[0], 0, PRECISION - 2)
+        self.assertAlmostEqual((result.param[1] - a_in) / a_in, 0, PRECISION - 2)
+        self.assertAlmostEqual((result.param[2] - tau_in) / tau_in, 0, PRECISION - 2)
 
 if __name__ == "__main__":
     unittest.main()
