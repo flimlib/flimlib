@@ -764,14 +764,23 @@ class TestMarquardt(unittest.TestCase):
         self.assertAlmostEqual((result.param[1] - a_in) / a_in, 0, PRECISION)
         self.assertAlmostEqual((result.param[2] - tau_in) / tau_in, 0, PRECISION)
 
+    def test_output_margin_single_fit_bad_init(self):
+        # MAJOR offset to initial parameters
+        param_in = np.asarray([-1, a_in / 2, tau_in + 1], dtype=np.float32)
+        result = flimlib.GCI_marquardt_fitting_engine(
+            period, photon_count32, param_in,
+        )
+        self.assertTrue(np.all(np.isnan(result.param)))
+
     def test_paramfree_single_fit(self):
         # slight offset to detect if the fitting works!
-        param_in = np.asarray([0, a_in + 1, tau_in + 1], dtype=np.float32)
+        offset = 0.000042
+        param_in = np.asarray([0, a_in + offset, tau_in + 1], dtype=np.float32)
         result = flimlib.GCI_marquardt_fitting_engine(
             period, photon_count32, param_in, paramfree=[1, 0, 1]
         )
         # second parameter should have been held fixed!
-        self.assertAlmostEqual((a_in + 1 - result.param[1]) / (a_in + 1), 0, PRECISION)
+        self.assertEqual(result.param[1], np.float32(a_in + offset))
 
     def test_restraintype_single_fit(self):
         with self.assertRaises(ValueError):
@@ -1101,13 +1110,14 @@ class TestMarquardt(unittest.TestCase):
         self.assertTrue(np.all(np.isnan(result.fitted[1])))
 
     def test_paramfree(self):
+        offset = 0.000042
         param_in = np.asarray(
-            [[0, a_in + 1, tau_in + 1] for i in range(pixels)], dtype=np.float32
+            [[0, a_in + offset, tau_in + 1] for i in range(pixels)], dtype=np.float32
         )
         result = flimlib.GCI_marquardt_fitting_engine(
             period, photon_count2d, param_in, paramfree=[1, 0, 1]
         )
-        self.assertEqual(result.param[0][1], a_in + 1)
+        self.assertTrue(np.all(result.param[:,1] == np.float32(a_in + offset)))
 
     def test_size_zero_input(self):
         result = flimlib.GCI_marquardt_fitting_engine(period, [[]], [[]])
