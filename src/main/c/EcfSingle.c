@@ -1928,6 +1928,9 @@ int GCI_marquardt_fitting_engine(float xincr, float *trans, int ndata, int fit_s
 	if (tries >= MAXREFITS && local_chisq > chisq_target) // maxrefits reached and target not reached
 		return -6;
 
+	if (local_chisq > chisq_target)
+    	return -7;
+
 	return error == 0 ? total_iters : error;
 }
 
