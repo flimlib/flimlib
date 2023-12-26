@@ -837,6 +837,20 @@ class TestMarquardt(unittest.TestCase):
         self.assertAlmostEqual(0.0, result.param[0], PRECISION)
         self.assertAlmostEqual((linear_const - result.param[1]) / linear_const, 0, PRECISION)
 
+    def test_fitfunc_fit_start(self):
+        # slight offset to detect if the fitting works!
+        param_in = np.asarray([0, a_in + 1, tau_in + 1], dtype=np.float32)
+        fitfunc_in = flimlib.FitFunc(
+            dummy_exp_tau, nparam_predicate=dummy_exp_tau_predicate
+        )
+        with self.assertRaises(ValueError):
+            result = flimlib.GCI_marquardt_fitting_engine(
+                period, photon_count32, param_in, fitfunc=fitfunc_in, fit_start=samples//4
+            )
+        #self.assertAlmostEqual(0.0, result.param[0], PRECISION)
+        #self.assertAlmostEqual((result.param[1] - a_in) / a_in, 0, PRECISION)
+        #self.assertAlmostEqual((result.param[2] - tau_in) / tau_in, 0, PRECISION)
+
     def test_nparam(self):
         with self.assertRaises(TypeError):
             # forgot the first parameter!
