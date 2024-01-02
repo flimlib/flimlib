@@ -109,6 +109,22 @@ void createSinusoids(int nBins, float* cosine, float* sine) {
 	}
 }
 
+void computeInstrPhasor(float xincr, float instr[], int ninstr, float* cosine, float* sine, float* Uinstr, float* Vinstr)
+{
+	int i;
+	float uinstr, vinstr, Iinstr, scaleFactor;
+	for (i = 0, uinstr = 0.0f, vinstr = 0.0f, Iinstr=0.0f; i < ninstr; i++) {
+		uinstr += instr[i] * cosine[i];
+		vinstr += instr[i] * sine[i];
+		Iinstr += instr[i];
+	}
+	uinstr /= Iinstr;
+	vinstr /= Iinstr;
+	scaleFactor = 1.0f/((uinstr*uinstr)+(vinstr*vinstr));
+	*Uinstr = uinstr * scaleFactor;
+    *Vinstr = vinstr * scaleFactor;
+}
+
 int GCI_Phasor_compute(float xincr, float y[], int fit_start, int fit_end,
 	const float* Z, float* cosine, float* sine, float* U, float* V, float* taup, float* taum, float* tau, float* fitted, float* residuals,
 	float* chisq)
@@ -157,6 +173,121 @@ int GCI_Phasor_compute(float xincr, float y[], int fit_start, int fit_end,
 
 	*U = u;
 	*V = v;
+
+	/* Now calculate the fitted curve and chi-squared if wanted. */
+	/* if validFittedArray is NULL, malloc was not used */
+	if (validFittedArray == NULL)
+		return ret;
+	memset(validFittedArray, 0, (size_t)fit_end * sizeof(float));
+	if (residuals != NULL)
+		memset(residuals, 0, (size_t)fit_end * sizeof(float));
+	// Madison report some "memory issue", and replaced the 2 line above with new arrays.
+	// Not sure what that was but I breaks the filling of the fitted array, probably not allocating the arrays before calling
+
+	// integral over nominal fit data
+	for (Ifit=0.0f, i=fit_start; i<fit_end; i++) 
+		Ifit += expf((float)(-(i-fit_start))*xincr/(*tau));
+	// Estimate A
+	A = I / Ifit;
+
+	// Calculate fit
+	for (i=fit_start; i<fit_end; i++){
+		validFittedArray[i] = bg + A * expf((float)(-(i-fit_start))*xincr/(*tau));
+	}
+	// OK, so now fitted contains our data for the timeslice of interest.
+	// We can calculate a chisq value and plot the graph, along with
+	// the residuals.
+
+	/* if both residuals and chisq are NULL, malloc was not used for validFittedArray */
+	if (residuals == NULL && chisq == NULL)
+		return ret;
+
+	chisq_local = 0.0f;
+	for (i=0; i<fit_start; i++) {
+		res = y[i]-validFittedArray[i];
+		if (residuals != NULL)
+			residuals[i] = res;
+	}
+
+
+//	case NOISE_POISSON_FIT:
+		/* Summation loop over all data */
+		for (i=fit_start ; i<fit_end; i++) {
+			res = y[i] - validFittedArray[i];
+			if (residuals != NULL)
+				residuals[i] = res;
+			/* don't let variance drop below 1 */
+			sigma2 = (validFittedArray[i] > 1 ? 1.0f/validFittedArray[i] : 1.0f);
+			chisq_local += res * res * sigma2;
+		}
+
+	if (chisq != NULL)
+		*chisq = chisq_local;
+
+	if (fitted==NULL){
+		free (validFittedArray);
+	}
+
+	return (ret);
+}
+
+int GCI_Phasor_compute_instr(float xincr, float y[], int fit_start, int fit_end,
+	const float* Z, float* cosine, float* sine, float* Uinstr, float* Vinstr, float* U, float* V, float* taup, float* taum, float* tau, float* fitted, float* residuals,
+	float* chisq)
+{
+    // Z must contain a bg estimate
+	// fitted and residuals must be arrays big enough to hold possibly fit_end floats.
+
+	int   i, ret = PHASOR_ERR_NO_ERROR, nBins;
+	float *data, u, v, A, w, I, Ifit, bg, chisq_local, res, sigma2, *validFittedArray;
+
+	// we require residuals or chisq but have not supplied a "fitted" array so must malloc one
+	if (fitted==NULL && (residuals!=NULL || chisq!=NULL)){
+		if ((validFittedArray = (float *)malloc((long unsigned int)fit_end * sizeof(float)))== NULL) return (-1);
+	}
+	else validFittedArray = fitted;
+
+	data = &(y[fit_start]);	
+	nBins = (fit_end - fit_start);
+	bg = *Z;
+    if (!data)
+        return (PHASOR_ERR_INVALID_DATA);
+    if (nBins<0)
+        return (PHASOR_ERR_INVALID_WINDOW);
+
+	// rep frequency, lets use the period of the measurement, but we can stay in the units of bins
+	w = 2.0f*3.1415926535897932384626433832795028841971f/(float)nBins; //2.0*PI/(float)nBins;
+	setPhasorPeriod((float)nBins*xincr); // store the real phasor period used for future external use.
+
+	// integral over data
+	for (i=0, I=0.0f; i<nBins; i++) 
+		I += (data[i]-bg);
+
+	// Phasor coords
+	for (i = 0, u = 0.0f, v = 0.0f; i < nBins; i++) {
+		u += (data[i] - bg) * cosine[i];
+		v += (data[i] - bg) * sine[i];
+	}
+	u /= I;
+	v /= I;
+
+	// apply deconvolution (note: Uinstr and Vinstr are already scaled)
+	if (Uinstr != NULL && Vinstr != NULL){
+		*U = (*Uinstr * u) + (*Vinstr * v);
+    	*V = (*Uinstr * v) - (*Vinstr * u);
+		u = *U;
+		v = *V;
+	}
+	else{
+		*U = u;
+		*V = v;
+	}
+
+	// taus, convert now to real time with xincr
+	*taup = (xincr/w) * (v/u);
+	*taum = (xincr/w) * sqrtf(1.0f/(u*u + v*v) - 1.0f);
+
+	*tau = ((*taup) + (*taum))/2.0f;
 
 	/* Now calculate the fitted curve and chi-squared if wanted. */
 	/* if validFittedArray is NULL, malloc was not used */
