@@ -394,7 +394,7 @@ int GCI_Phasor_many(struct flim_params* flim) {
 		createSinusoids(nBins, cosine, sine);
 		if (ninstr > 0){
 			float* unstrided_instr = get_unstrided_1d_input(flim->common->instr, temp_instr);
-			computeInstrPhasor(flim->common->xincr, unstrided_instr, min(ninstr, nBins), cosine, sine, Uinstr, Vinstr);
+			computeInstrPhasor(flim->common->xincr, unstrided_instr, (ninstr < nBins) ? ninstr : nBins, cosine, sine, Uinstr, Vinstr);
 		}
 		else{
 			Uinstr = Vinstr = NULL;
