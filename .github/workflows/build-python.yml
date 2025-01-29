@@ -16,7 +16,7 @@ jobs:
         runner:
           - ubuntu-22.04
           - windows-2022
-          - macos-12
+          - macos-13
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v3
@@ -28,6 +28,7 @@ jobs:
           CIBW_TEST_SKIP: "*-macosx_universal2:arm64"
       - uses: actions/upload-artifact@v4
         with:
+          name: ${{ matrix.runner }}-wheels
           path: wheelhouse/*.whl
 
   sdist:
@@ -35,24 +36,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: pipx run build --sdist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
+          name: sdist
           path: dist/*.tar.gz
 
   pypi-upload:
-    if: >-
-      github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/tags/flimlib-')
     needs:
       - wheels
       - sdist
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v4.1.7
+      - uses: actions/download-artifact@v4
         with:
-          name: artifact
+          merge-multiple: true
           path: dist
+      - run: ls dist  # For the log.
       - uses: pypa/gh-action-pypi-publish@v1.5.0
+        if: >-
+          github.event_name == 'push' &&
+          startsWith(github.ref, 'refs/tags/flimlib-')
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
