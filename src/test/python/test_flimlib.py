@@ -1158,7 +1158,7 @@ class TestMarquardt(unittest.TestCase):
             photon_count2d[0:2],
             param_in,
             restrain_type="ECF_RESTRAIN_USER",
-            chisq_target=np.Infinity,
+            chisq_target=np.inf,
         )
         self.assertTrue(all(result.param[:,1] <= a_in - 1))
 
