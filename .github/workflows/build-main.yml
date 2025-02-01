@@ -41,6 +41,9 @@ jobs:
           java-version: 8
           distribution: zulu
           cache: maven
+      - name: Install SWIG
+        if: startsWith(matrix.os, 'macos')  # Ubuntu runners have SWIG
+        run: brew install swig
       - name: Set up CI environment
         run: .github/setup.sh
       - name: Execute the build
