@@ -12,20 +12,28 @@ target-version = ['py38']
 [tool.cibuildwheel]
 test-command = "python -m unittest discover -s {project}/src/test/python"
 build = [
-    "cp38-macosx_universal2",
-    "cp38-win32",
-    "cp38-win_amd64",
-    "cp38-manylinux_x86_64",
     "cp39-macosx_universal2",
     "cp39-win32",
     "cp39-win_amd64",
     "cp39-manylinux_x86_64",
+
     "cp310-macosx_universal2",
     "cp310-win32",
     "cp310-win_amd64",
     "cp310-manylinux_x86_64",
+
     "cp311-macosx_universal2",
     "cp311-win32",
     "cp311-win_amd64",
     "cp311-manylinux_x86_64",
+
+    "cp312-macosx_universal2",
+    "cp312-win32",
+    "cp312-win_amd64",
+    "cp312-manylinux_x86_64",
+
+    "cp313-macosx_universal2",
+    "cp313-win32",
+    "cp313-win_amd64",
+    "cp313-manylinux_x86_64",
 ]
