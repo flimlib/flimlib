@@ -35,7 +35,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: pipx run build --sdist
+      # Do not pass --sdist to 'build' so that building from the sdist is
+      # tested (at least on Ubuntu)
+      - run: pipx run build
       - uses: actions/upload-artifact@v4
         with:
           name: sdist
