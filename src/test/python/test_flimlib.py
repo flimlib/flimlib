@@ -66,6 +66,14 @@ for i in range(pixels):
 photon_count2d_flip = np.asarray(photon_count2d_flip)
 trans_strided = np.flip(photon_count2d_flip)[:, 0:-1:2]
 
+irf_offset = 10
+irf = np.array([.1, .2, .3, .6, .8, .9, 1, 1, .9, .8, .6, .3, .2, .1])
+irf = irf / np.sum(irf)
+irf = np.pad(irf, (irf_offset, samples - irf_offset - len(irf)))
+
+photon_count2d_irf = np.asarray([np.convolve(decay, irf, mode='full')[:samples] for decay in photon_count2d])
+irf_decay_peak = np.argmax(photon_count2d_irf[0])
+
 linear_const = 1
 photon_count_linear = linear_const * tt
 
@@ -118,29 +126,6 @@ class Test3Integral(unittest.TestCase):
                 period, 5.7
             )  # must be 1d array
         flimlib.GCI_triple_integral_fitting_engine(period, [1, 2])
-
-    def test_instr_single_fit(self):
-        flimlib.GCI_triple_integral_fitting_engine(
-            period, photon_count32, instr=[1, 2, 3, 4, 5]
-        )
-        flimlib.GCI_triple_integral_fitting_engine(
-            period, photon_count32, instr=["42"]
-        )
-        flimlib.GCI_triple_integral_fitting_engine(
-            period, photon_count32, instr=list(range(300))
-        )
-        with self.assertRaises(ValueError):
-            flimlib.GCI_triple_integral_fitting_engine(
-                period, photon_count32, instr=5
-            )
-        with self.assertRaises(ValueError):
-            flimlib.GCI_triple_integral_fitting_engine(
-                period, photon_count32, instr="foo"
-            )
-        with self.assertRaises(TypeError):
-            flimlib.GCI_triple_integral_fitting_engine(
-                period, photon_count32, instr={"foo": "bar"}
-            )
 
     def test_noise_type_input_single_fit(self):
         with self.assertRaises(ValueError):
@@ -416,7 +401,7 @@ class Test3Integral(unittest.TestCase):
         )
         self.assertEqual(result.fitted.shape, (samples,))
 
-    def test_instr(self):
+    def test_instr_type(self):
         flimlib.GCI_triple_integral_fitting_engine(
             period, photon_count2d, instr=[1, 2, 3, 4, 5]
         )
@@ -438,6 +423,19 @@ class Test3Integral(unittest.TestCase):
             flimlib.GCI_triple_integral_fitting_engine(
                 period, photon_count2d, instr={"foo": "bar"}
             )
+    
+    def test_instr(self):
+        param_in = np.asarray(
+            [[0, a_in + 1, tau_in + 1] for i in range(pixels)],
+            dtype=np.float32,
+        )
+        result = flimlib.GCI_marquardt_fitting_engine(period=period, photon_count=photon_count2d_irf[:,irf_decay_peak:], param=param_in, paramfree=[0,1,1],)
+        orig_param = result.param
+        result = flimlib.GCI_marquardt_fitting_engine(period=period, photon_count=photon_count2d_irf, param=param_in, instr=irf, paramfree=[0,1,1],)
+        deconv_param = result.param
+
+        self.assertTrue(np.all(np.absolute(deconv_param[:,1] - a_in1d) < np.absolute(orig_param[:,1] - a_in1d)))
+        self.assertTrue(np.all(np.absolute(deconv_param[:,2] - tau_in1d) < np.absolute(orig_param[:,2] - tau_in1d)))
 
     def test_noise_type_input(self):
         with self.assertRaises(ValueError):
@@ -726,6 +724,40 @@ class TestPhasor(unittest.TestCase):
         result = flimlib.GCI_Phasor(period, photon_count32)
         self.assertEqual(result.fitted.shape, (samples,))
 
+    def test_instr_type(self):
+        flimlib.GCI_triple_integral_fitting_engine(
+            period, photon_count2d, instr=[1, 2, 3, 4, 5]
+        )
+        flimlib.GCI_triple_integral_fitting_engine(
+            period, photon_count2d, instr=["42"]
+        )
+        flimlib.GCI_triple_integral_fitting_engine(
+            period, photon_count2d, instr=list(range(300))
+        )
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine(
+                period, photon_count2d, instr=5
+            )
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine(
+                period, photon_count2d, instr="foo"
+            )
+        with self.assertRaises(TypeError):
+            flimlib.GCI_triple_integral_fitting_engine(
+                period, photon_count2d, instr={"foo": "bar"}
+            )
+
+    def test_instr(self):
+        result = flimlib.GCI_triple_integral_fitting_engine(period=period, photon_count=photon_count2d_irf[:,irf_decay_peak:])
+        orig_a = result.A
+        orig_tau = result.tau
+        result = flimlib.GCI_triple_integral_fitting_engine(period=period, photon_count=photon_count2d_irf, fit_start=irf_decay_peak, instr=irf)
+        deconv_a = result.A
+        deconv_tau = result.tau
+
+        self.assertTrue(np.all(np.absolute(deconv_a - a_in1d) < np.absolute(orig_a - a_in1d)))
+        # IRF Does not improve lifetime estimate. So check if it's as least as good of a fit
+        self.assertTrue(np.all(np.absolute(deconv_tau - tau_in1d) <= np.absolute(orig_tau - tau_in1d))) 
 
 def dummy_exp_tau(x, param):
     y = param[1] * np.exp(-x / param[2])
@@ -1173,6 +1205,43 @@ class TestMarquardt(unittest.TestCase):
             period, photon_count32, [0, a_in + 1, tau_in + 1]
         )
         self.assertEqual(result.fitted.shape, (samples,))
+
+    def test_instr_type(self):
+        flimlib.GCI_triple_integral_fitting_engine(
+            period, photon_count2d, instr=[1, 2, 3, 4, 5]
+        )
+        flimlib.GCI_triple_integral_fitting_engine(
+            period, photon_count2d, instr=["42"]
+        )
+        flimlib.GCI_triple_integral_fitting_engine(
+            period, photon_count2d, instr=list(range(300))
+        )
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine(
+                period, photon_count2d, instr=5
+            )
+        with self.assertRaises(ValueError):
+            flimlib.GCI_triple_integral_fitting_engine(
+                period, photon_count2d, instr="foo"
+            )
+        with self.assertRaises(TypeError):
+            flimlib.GCI_triple_integral_fitting_engine(
+                period, photon_count2d, instr={"foo": "bar"}
+            )
+    
+    def test_instr(self):
+        result = flimlib.GCI_Phasor(period=period, photon_count=photon_count2d)
+        raw_u = result.u
+        raw_v = result.v
+        result = flimlib.GCI_Phasor(period=period, photon_count=photon_count2d_irf, fit_start=irf_decay_peak)
+        orig_u = result.u
+        orig_v = result.v
+        result = flimlib.GCI_Phasor(period=period, photon_count=photon_count2d_irf, instr=irf)
+        deconv_u = result.u
+        deconv_v = result.v
+        # Estimates of lifetime can actually be slightly worse, but phasor components are improved. I'm not sure exactly why.
+        self.assertTrue(np.all(np.absolute(deconv_u - raw_u) < np.absolute(orig_u - raw_u)))
+        self.assertTrue(np.all(np.absolute(deconv_v - raw_v) < np.absolute(orig_v - raw_v)))
 
     def test_restraintype(self):
         with self.assertRaises(ValueError):
