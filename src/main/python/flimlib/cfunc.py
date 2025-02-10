@@ -622,7 +622,7 @@ def GCI_marquardt_fitting_engine(
         `fitfunc`
     fit_start : {None, int}, optional
         The index of the start of the fit. Some data before this start index is
-        required if convolving with the prompt. If is None, the fit will begin
+        required if convolving with `instr`. If is None, the fit will begin
         at index 0 (default is None)
     fit_end : {None, int}, optional
         The index of the end of the fit. If is None, the fit will cover the
@@ -931,13 +931,14 @@ def GCI_triple_integral_fitting_engine(
         preserved in the outputs.
     fit_start : {None, int}, optional
         The index of the start of the fit. Some data before this start index is
-        required if convolving with the prompt.
+        required if convolving with `instr`.
         If is None, the fit will begin at index 0 (default is None)
     fit_end : {None, int}, optional
         The index of the end of the fit. If is None, the fit will cover the
         entire time axis of `photon_count`
     instr : {None, array_like}, optional
         A 1D array containing the instrument response (IRF) or prompt signal.
+        May improve estimate of `A`.
         If is None, no instrument response will be used (default is None)
     noise_type : str, optional
         The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN',
@@ -1146,13 +1147,14 @@ def GCI_Phasor(
         preserved in the outputs.
     fit_start : {None, int}, optional
         The index of the start of the fit. Some data before this start index is
-        required if convolving with the prompt.
+        required if convolving with `instr`.
         If is None, the fit will begin at index 0 (default is None)
     fit_end : {None, int}, optional
         The index of the end of the fit. If is None, the fit will cover the
         entire time axis of `photon_count`
     instr : {None, array_like}, optional
         A 1D array containing the instrument response (IRF) or prompt signal.
+        May improve accuracy of the phasor coordinates `u` and `v`.
         If is None, no instrument response will be used (default is None)
     Z : {float, array_like}, optional
         The background to be subtracted from the data. If is a float, it will
