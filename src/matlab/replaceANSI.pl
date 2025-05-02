@@ -4,7 +4,7 @@
 # #%L
 # FLIMLib package for exponential curve fitting of fluorescence lifetime data.
 # %%
-# Copyright (C) 2010 - 2022 University of Oxford and Board of Regents of the
+# Copyright (C) 2010 - 2025 University of Oxford and Board of Regents of the
 # University of Wisconsin-Madison.
 # %%
 # This program is free software: you can redistribute it and/or modify
