@@ -19,8 +19,8 @@ jobs:
           - macos-13
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: pypa/cibuildwheel@v2.22.0
+      - uses: actions/checkout@v4
+      - uses: pypa/cibuildwheel@v2.23.3
         env:
           # On macOS/x86_64, default is x86_64 only
           CIBW_ARCHS_MACOS: x86_64 universal2 arm64
@@ -34,7 +34,7 @@ jobs:
   sdist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # Do not pass --sdist to 'build' so that building from the sdist is
       # tested (at least on Ubuntu)
       - run: pipx run build
@@ -54,7 +54,7 @@ jobs:
           merge-multiple: true
           path: dist
       - run: ls dist  # For the log.
-      - uses: pypa/gh-action-pypi-publish@v1.5.0
+      - uses: pypa/gh-action-pypi-publish@v1.12.4
         if: >-
           github.event_name == 'push' &&
           startsWith(github.ref, 'refs/tags/flimlib-')
