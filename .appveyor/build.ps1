@@ -69,7 +69,7 @@ If (($Env:APPVEYOR_REPO_TAG -match "false")  -and ($Env:APPVEYOR_REPO_BRANCH -ma
     }
 } Else {
     "== Building the artifact locally =="
-    & "mvn" "-B" "-P$profiles" "install" "javadoc:aggregate-jar" 2> $null
+    & "mvn" "-B" "install" "javadoc:aggregate-jar" 2> $null
 }
 
 exit $LASTEXITCODE
