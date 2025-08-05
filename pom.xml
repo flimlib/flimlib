@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>40.0.0</version>
+		<version>41.0.0</version>
 		<relativePath />
 	</parent>
 
@@ -274,21 +274,12 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<forkMode>once</forkMode>
 					<argLine>-Djava.library.path=${project.build.directory}/natives</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.honton.chas</groupId>
 				<artifactId>exists-maven-plugin</artifactId>
-				<version>${exists-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>remote</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
