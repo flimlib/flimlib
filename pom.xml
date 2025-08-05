@@ -98,7 +98,9 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 
 		<exists-maven-plugin.version>0.0.6</exists-maven-plugin.version>
 		<json-simple.version>1.1.1</json-simple.version>
-		<cmake.build.option>Release</cmake.build.option>
+
+		<cmake.generator-platform />
+		<cmake.build-type>Release</cmake.build-type>
 	</properties>
 
 	<dependencies>
@@ -200,9 +202,8 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 							<workingDirectory>${project.build.directory}/build</workingDirectory>
 							<arguments>
 								<argument>${project.basedir}</argument>
-								<argument>${cmake.generator}</argument>
-								<!-- CMAKE_BUILD_TYPE specifies build option for Linux/MacOS -->
-								<argument>-DCMAKE_BUILD_TYPE=${cmake.build.option}</argument>
+								<argument>-DCMAKE_GENERATOR_PLATFORM=${cmake.generator-platform}</argument>
+								<argument>-DCMAKE_BUILD_TYPE=${cmake.build-type}</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -218,9 +219,6 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 							<arguments>
 								<argument>--build</argument>
 								<argument>.</argument>
-								<!-- But on windows, only "- -config Release" sets the option -->
-								<argument>${cmake.flag.config}</argument>
-								<argument>${cmake.flag.configOption}</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -283,22 +281,4 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<!-- Os name (for naming the artifact and the os-specific directory in it) -->
-		<profile>
-			<id>build-win</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-			<properties>
-				<!-- <cmake.generator>-GUnix Makefiles</cmake.generator> -->
-				<cmake.generator>-DCMAKE_GENERATOR_PLATFORM=x64</cmake.generator>
-				<cmake.flag.config>--config</cmake.flag.config>
-				<cmake.flag.configOption>${cmake.build.option}</cmake.flag.configOption>
-			</properties>
-		</profile>
-	</profiles>
 </project>
