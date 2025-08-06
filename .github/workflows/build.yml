@@ -83,14 +83,6 @@ jobs:
       - name: Download all platform artifacts
         uses: actions/download-artifact@v4
 
-      - name: Move downloaded artifacts into place
-        shell: bash
-        run: |
-          mkdir -p target
-          for jar in */*.jar; do
-            mv -fv "$jar" target/
-          done
-
       - name: Deploy aggregated artifacts
         shell: bash
         run: .github/deploy.sh

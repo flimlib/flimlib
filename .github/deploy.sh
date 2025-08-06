@@ -3,7 +3,12 @@
 # Deploy script with aggregated multi-platform native artifacts.
 # Runs on the deploy node after downloading artifacts from all platforms.
 
-echo "=== FLIMLib Deployment ==="
+echo "--> Moving downloaded artifacts into place:"
+mkdir -p target
+for jar in */*.jar; do
+  mv -fv "$jar" target/
+done
+
 echo
 echo "Available artifacts:"
 ls -la target/
