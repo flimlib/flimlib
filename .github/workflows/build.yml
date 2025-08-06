@@ -94,6 +94,7 @@ jobs:
       - name: Move downloaded artifacts into place
         shell: bash
         run: |
+          mkdir -p target
           mv -v */*.jar target/
 
       - name: Deploy aggregated artifacts
