@@ -241,12 +241,28 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 								<configuration>
 									<artifacts>
 										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-linux_64.jar</file>
+											<classifier>natives-linux_64</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-linux_arm64.jar</file>
+											<classifier>natives-linux_arm64</classifier>
+										</artifact>
+										<artifact>
 											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-osx_64.jar</file>
 											<classifier>natives-osx_64</classifier>
 										</artifact>
 										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-osx_arm64.jar</file>
+											<classifier>natives-osx_arm64</classifier>
+										</artifact>
+										<artifact>
 											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-windows_64.jar</file>
 											<classifier>natives-windows_64</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-windows_arm64.jar</file>
+											<classifier>natives-windows_arm64</classifier>
 										</artifact>
 									</artifacts>
 								</configuration>

@@ -19,10 +19,16 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux_64
-          - os: macos-latest
+          - os: ubuntu-22.04-arm
+            platform: linux_arm64
+          - os: macos-13
             platform: osx_64
+          - os: macos-latest
+            platform: osx_arm64
           - os: windows-latest
             platform: windows_64
+          - os: windows-11-arm
+            platform: windows_arm64
     steps:
       - uses: actions/checkout@v4
 

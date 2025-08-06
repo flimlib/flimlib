@@ -6,11 +6,8 @@
 echo '--> Moving downloaded platform artifacts into place:'
 mkdir -p target
 
-# Drop in the non-matching-platform native JARs.
-for jar in \
-  */flimlib-*-natives-osx_*.jar \
-  */flimlib-*-natives-windows_*.jar
-do
+# Move the platform native JARs into place.
+for jar in */flimlib-*-natives-*.jar; do
   if [ -f "$jar" ]; then mv -fv "$jar" target/; fi
 done
 
