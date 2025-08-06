@@ -91,12 +91,10 @@ jobs:
       - name: Download all platform artifacts
         uses: actions/download-artifact@v4
 
-      - name: Report on downloaded artifacts
+      - name: Move downloaded artifacts into place
         shell: bash
         run: |
-          # Move all platform JARs to target/ directory
-          echo "Unpacked artifacts:"
-          find . -name '*.jar' -exec ls -la '{}' \;
+          mv -v */*.jar target/
 
       - name: Deploy aggregated artifacts
         shell: bash
