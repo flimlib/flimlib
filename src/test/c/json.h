@@ -27,9 +27,7 @@
 \version v1.3
 */
 
-//C99 not available in VS2008
-//#include <stdint.h>
-#include "pstdint.h"
+#include <stdint.h>
 #include <stdio.h>
 
 #ifndef JSON_H
