@@ -42,10 +42,25 @@ extern "C" {
 void createSinusoids(int nBins, float* cosine, float* sine);
 
 /**
+ * Computes the scaled phasor for the instrument response function
+ */
+void computeInstrPhasor(float xincr, float instr[], int ninstr,
+	float* cosine, float* sine, float* Uinstr, float* Vinstr);
+
+/**
  * Handles the computation for phasor analysis utilizing a provided sine and cosine
  */
 int GCI_Phasor_compute(float xincr, float y[], int fit_start, int fit_end,
 	const float* Z, float* cosine, float* sine, float* U, float* V, float* taup, 
+	float* taum, float* tau, float* fitted, float* residuals, float* chisq);
+
+/**
+ * Handles the computation for phasor analysis utilizing a provided sine and cosine
+ * Uinstr and Vinstr must be provided by `computeInstr`
+ * If Uinstr and Vinstr are not NULL, a deconvolution of the IRF is performed
+ */
+int GCI_Phasor_compute_instr(float xincr, float y[], int fit_start, int fit_end,
+	const float* Z, float* cosine, float* sine, float* Uinstr, float* Vinstr, float* U, float* V, float* taup, 
 	float* taum, float* tau, float* fitted, float* residuals, float* chisq);
 
 #ifdef __cplusplus
