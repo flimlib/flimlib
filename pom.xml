@@ -96,7 +96,6 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 
-		<exists-maven-plugin.version>0.0.6</exists-maven-plugin.version>
 		<json-simple.version>1.1.1</json-simple.version>
 
 		<cmake.generator-platform />
@@ -224,6 +223,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- Include swig generated sources -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -243,7 +243,8 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Make native jar -->
+
+			<!-- Make native jar for current platform. -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -268,6 +269,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- Add natives to classpath for unit test -->
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -275,10 +277,62 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 					<argLine>-Djava.library.path=${project.build.directory}/natives</argLine>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.honton.chas</groupId>
-				<artifactId>exists-maven-plugin</artifactId>
-			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>deploy-multiplatform</id>
+			<properties>
+				<maven.main.skip>true</maven.main.skip>
+				<maven.resources.skip>true</maven.resources.skip>
+				<maven.compile.skip>true</maven.compile.skip>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+			<build>
+				<plugins>
+					<!-- Attach pre-built artifacts. -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-native-artifacts</id>
+								<phase>package</phase>
+								<goals>
+									<goal>attach-artifact</goal>
+								</goals>
+								<configuration>
+									<artifacts>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</file>
+											<classifier>sources</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar</file>
+											<classifier>javadoc</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-linux_64.jar</file>
+											<classifier>natives-linux_64</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-osx_64.jar</file>
+											<classifier>natives-osx_64</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-windows_64.jar</file>
+											<classifier>natives-windows_64</classifier>
+										</artifact>
+									</artifacts>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
