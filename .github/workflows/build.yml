@@ -95,7 +95,9 @@ jobs:
         shell: bash
         run: |
           mkdir -p target
-          mv -v */*.jar target/
+          for jar in */*.jar; do
+            mv -fv "$jar" target/
+          done
 
       - name: Deploy aggregated artifacts
         shell: bash
