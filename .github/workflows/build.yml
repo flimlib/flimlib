@@ -40,7 +40,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: 8
+          # OpenJDK 17 is the oldest Java version available for Windows ARM64.
+          java-version: 17
           distribution: zulu
           cache: maven
 
