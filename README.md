@@ -1,5 +1,5 @@
 # FLIMLib
-[![](https://github.com/flimlib/flimlib/actions/workflows/build-main.yml/badge.svg)](https://github.com/flimlib/flimlib/actions/workflows/build-main.yml)
+[![](https://github.com/flimlib/flimlib/actions/workflows/build.yml/badge.svg)](https://github.com/flimlib/flimlib/actions/workflows/build.yml)
 [![](https://ci.appveyor.com/api/projects/status/github/flimlib/flimlib?svg=true)](https://ci.appveyor.com/project/scijava/flimlib "AppVeyor")
 
 FLIMLib is a curve fitting library used for Fluorescent Lifetime Imaging or

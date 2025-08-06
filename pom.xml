@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>33.2.0</version>
+		<version>41.0.0</version>
 		<relativePath />
 	</parent>
 
@@ -96,9 +96,10 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 
-		<exists-maven-plugin.version>0.0.6</exists-maven-plugin.version>
 		<json-simple.version>1.1.1</json-simple.version>
-		<cmake.build.option>Release</cmake.build.option>
+
+		<cmake.generator-platform />
+		<cmake.build-type>Release</cmake.build-type>
 	</properties>
 
 	<dependencies>
@@ -200,9 +201,8 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 							<workingDirectory>${project.build.directory}/build</workingDirectory>
 							<arguments>
 								<argument>${project.basedir}</argument>
-								<argument>${cmake.generator}</argument>
-								<!-- CMAKE_BUILD_TYPE specifies build option for Linux/MacOS -->
-								<argument>-DCMAKE_BUILD_TYPE=${cmake.build.option}</argument>
+								<argument>-DCMAKE_GENERATOR_PLATFORM=${cmake.generator-platform}</argument>
+								<argument>-DCMAKE_BUILD_TYPE=${cmake.build-type}</argument>
 							</arguments>
 						</configuration>
 					</execution>
@@ -218,14 +218,12 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 							<arguments>
 								<argument>--build</argument>
 								<argument>.</argument>
-								<!-- But on windows, only "- -config Release" sets the option -->
-								<argument>${cmake.flag.config}</argument>
-								<argument>${cmake.flag.configOption}</argument>
 							</arguments>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- Include swig generated sources -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -245,7 +243,8 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 					</execution>
 				</executions>
 			</plugin>
-			<!-- Make native jar -->
+
+			<!-- Make native jar for current platform. -->
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -270,44 +269,70 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- Add natives to classpath for unit test -->
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<forkMode>once</forkMode>
 					<argLine>-Djava.library.path=${project.build.directory}/natives</argLine>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.honton.chas</groupId>
-				<artifactId>exists-maven-plugin</artifactId>
-				<version>${exists-maven-plugin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>remote</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
-
 	<profiles>
-		<!-- Os name (for naming the artifact and the os-specific directory in it) -->
 		<profile>
-			<id>build-win</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
+			<id>deploy-multiplatform</id>
 			<properties>
-				<!-- <cmake.generator>-GUnix Makefiles</cmake.generator> -->
-				<cmake.generator>-DCMAKE_GENERATOR_PLATFORM=x64</cmake.generator>
-				<cmake.flag.config>--config</cmake.flag.config>
-				<cmake.flag.configOption>${cmake.build.option}</cmake.flag.configOption>
+				<maven.main.skip>true</maven.main.skip>
+				<maven.resources.skip>true</maven.resources.skip>
+				<maven.compile.skip>true</maven.compile.skip>
+				<maven.test.skip>true</maven.test.skip>
 			</properties>
+			<build>
+				<plugins>
+					<!-- Attach pre-built artifacts. -->
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>attach-native-artifacts</id>
+								<phase>package</phase>
+								<goals>
+									<goal>attach-artifact</goal>
+								</goals>
+								<configuration>
+									<artifacts>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</file>
+											<classifier>sources</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar</file>
+											<classifier>javadoc</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-linux_64.jar</file>
+											<classifier>natives-linux_64</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-osx_64.jar</file>
+											<classifier>natives-osx_64</classifier>
+										</artifact>
+										<artifact>
+											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-windows_64.jar</file>
+											<classifier>natives-windows_64</classifier>
+										</artifact>
+									</artifacts>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 </project>
