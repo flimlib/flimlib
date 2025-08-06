@@ -17,5 +17,4 @@ echo
 # Run the build in multiplatform deploy mode.
 # This skips compilation etc. and deploys all JARs.
 curl -fsLO https://raw.githubusercontent.com/scijava/scijava-scripts/main/ci-build.sh
-BUILD_ARGS="-Ddeploy -Dmaven.javadoc.skip" sh ci-build.sh
-#                    ^^^^^^^^^^^^^^^^^^^^ TEMP: javadoc generation fails; disable for now.
+BUILD_ARGS="-Ddeploy" sh ci-build.sh

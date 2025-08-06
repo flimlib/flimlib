@@ -244,6 +244,8 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 				<maven.resources.skip>true</maven.resources.skip>
 				<maven.compile.skip>true</maven.compile.skip>
 				<maven.test.skip>true</maven.test.skip>
+				<!-- TEMP: javadoc generation fails; disable for now. -->
+				<maven.javadoc.skip>true</maven.javadoc.skip>
 			</properties>
 			<build>
 				<plugins>
