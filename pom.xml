@@ -126,130 +126,108 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		</repository>
 	</repositories>
 
+	<build>
+		<plugins>
+			<!-- build the native library -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>native-cmake-generate</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>cmake</executable>
+							<workingDirectory>${project.build.directory}/build</workingDirectory>
+							<arguments>
+								<argument>${project.basedir}</argument>
+								<argument>-DCMAKE_GENERATOR_PLATFORM=${cmake.generator-platform}</argument>
+								<argument>-DCMAKE_BUILD_TYPE=${cmake.build-type}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>native-cmake-build</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>cmake</executable>
+							<workingDirectory>${project.build.directory}/build</workingDirectory>
+							<arguments>
+								<argument>--build</argument>
+								<argument>.</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Include swig generated sources -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/main/java/</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Make native jar for current platform. -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<appendAssemblyId>true</appendAssemblyId>
+					<descriptors>
+						<descriptor>src/main/assembly/asm.xml</descriptor>
+					</descriptors>
+					<archive>
+						<manifest>
+							<packageName>${package-name}</packageName>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Add natives to classpath for unit test -->
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>-Djava.library.path=${project.build.directory}/natives</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 	<profiles>
 		<profile>
-			<id>build</id>
-			<activation>
-				<property>
-					<name>!deploy</name>
-				</property>
-			</activation>
+			<id>attach-prebuilt-artifacts</id>
 			<build>
 				<plugins>
-					<!-- build the native library -->
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>native-cmake-generate</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<configuration>
-									<executable>cmake</executable>
-									<workingDirectory>${project.build.directory}/build</workingDirectory>
-									<arguments>
-										<argument>${project.basedir}</argument>
-										<argument>-DCMAKE_GENERATOR_PLATFORM=${cmake.generator-platform}</argument>
-										<argument>-DCMAKE_BUILD_TYPE=${cmake.build-type}</argument>
-									</arguments>
-								</configuration>
-							</execution>
-							<execution>
-								<id>native-cmake-build</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<configuration>
-									<executable>cmake</executable>
-									<workingDirectory>${project.build.directory}/build</workingDirectory>
-									<arguments>
-										<argument>--build</argument>
-										<argument>.</argument>
-									</arguments>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-					<!-- Include swig generated sources -->
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>build-helper-maven-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>add-source</id>
-								<phase>process-sources</phase>
-								<goals>
-									<goal>add-source</goal>
-								</goals>
-								<configuration>
-									<sources>
-										<source>${project.build.directory}/generated-sources/main/java/</source>
-									</sources>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-					<!-- Make native jar for current platform. -->
-					<plugin>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<configuration>
-							<appendAssemblyId>true</appendAssemblyId>
-							<descriptors>
-								<descriptor>src/main/assembly/asm.xml</descriptor>
-							</descriptors>
-							<archive>
-								<manifest>
-									<packageName>${package-name}</packageName>
-									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-								</manifest>
-							</archive>
-						</configuration>
-						<executions>
-							<execution>
-								<id>make-assembly</id>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-
-					<!-- Add natives to classpath for unit test -->
-					<plugin>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<configuration>
-							<argLine>-Djava.library.path=${project.build.directory}/natives</argLine>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-
-		<profile>
-			<id>deploy-multiplatform</id>
-			<activation>
-				<property>
-					<name>deploy</name>
-				</property>
-			</activation>
-			<properties>
-				<maven.main.skip>true</maven.main.skip>
-				<maven.resources.skip>true</maven.resources.skip>
-				<maven.compile.skip>true</maven.compile.skip>
-				<maven.test.skip>true</maven.test.skip>
-				<!-- TEMP: javadoc generation fails; disable for now. -->
-				<maven.javadoc.skip>true</maven.javadoc.skip>
-			</properties>
-			<build>
-				<plugins>
-					<!-- Attach pre-built artifacts. -->
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>build-helper-maven-plugin</artifactId>
@@ -262,10 +240,6 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 								</goals>
 								<configuration>
 									<artifacts>
-										<artifact>
-											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-linux_64.jar</file>
-											<classifier>natives-linux_64</classifier>
-										</artifact>
 										<artifact>
 											<file>${project.build.directory}/${project.artifactId}-${project.version}-natives-osx_64.jar</file>
 											<classifier>natives-osx_64</classifier>
