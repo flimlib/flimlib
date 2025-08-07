@@ -226,6 +226,19 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 	<profiles>
 		<profile>
 			<id>attach-prebuilt-artifacts</id>
+			<properties>
+				<!--
+				Note: This flag instructs the maven-release-plugin's perform
+				goal to do the build+deploy from the *current working copy*
+				(which is already the correct revision of the program,
+				matching the release tag), rather than doing a shallow clone
+				of the upstream repository at that same release tag.
+				This mode is necessary in order to successfully deploy the
+				pre-built native classifier artifacts which were dropped
+				into place just prior to invoking `mvn release:perform`.
+				-->
+				<localCheckout>true</localCheckout>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
