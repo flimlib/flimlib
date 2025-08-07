@@ -277,21 +277,24 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>exec-maven-plugin</artifactId>
+						<artifactId>maven-resources-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>copy-parent-native-artifacts</id>
+								<id>copy-parent-artifacts</id>
 								<phase>process-resources</phase>
 								<goals>
-									<goal>exec</goal>
+									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<executable>sh</executable>
-									<arguments>
-										<argument>-c</argument>
-										<argument>mkdir -p target &amp;&amp; cp -fv ../*.jar target/ 2&gt;/dev/null || true</argument>
-									</arguments>
+									<outputDirectory>${project.build.directory}</outputDirectory>
+									<resources>
+										<resource>
+											<directory>..</directory>
+											<includes>
+												<include>*.jar</include>
+											</includes>
+										</resource>
+									</resources>
 								</configuration>
 							</execution>
 						</executions>
