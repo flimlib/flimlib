@@ -94,7 +94,7 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 		<license.excludes>${scijava.excludedLicensePatterns},**/flimlib-cmd/c/iniparser/**,**/test/c/json*,**/test/c/pstdint.h</license.excludes>
 
 		<!-- NB: Deploy releases to the SciJava Maven repository. -->
-		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
+		<releaseProfiles>copy-parent-artifacts,attach-prebuilt-artifacts,sign,deploy-to-scijava</releaseProfiles>
 
 		<json-simple.version>1.1.1</json-simple.version>
 
@@ -226,19 +226,6 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 	<profiles>
 		<profile>
 			<id>attach-prebuilt-artifacts</id>
-			<properties>
-				<!--
-				Note: This flag instructs the maven-release-plugin's perform
-				goal to do the build+deploy from the *current working copy*
-				(which is already the correct revision of the program,
-				matching the release tag), rather than doing a shallow clone
-				of the upstream repository at that same release tag.
-				This mode is necessary in order to successfully deploy the
-				pre-built native classifier artifacts which were dropped
-				into place just prior to invoking `mvn release:perform`.
-				-->
-				<localCheckout>true</localCheckout>
-			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -278,6 +265,33 @@ University of Wisconsin-Madison.</license.copyrightOwners>
 											<classifier>natives-windows_arm64</classifier>
 										</artifact>
 									</artifacts>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>copy-parent-artifacts</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>copy-parent-native-artifacts</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>exec</goal>
+								</goals>
+								<configuration>
+									<executable>sh</executable>
+									<arguments>
+										<argument>-c</argument>
+										<argument>mkdir -p target &amp;&amp; cp -fv ../*.jar target/ 2&gt;/dev/null || true</argument>
+									</arguments>
 								</configuration>
 							</execution>
 						</executions>
