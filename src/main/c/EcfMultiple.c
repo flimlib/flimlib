@@ -218,18 +218,18 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 	// on occasion data outside of the fit range is used for convolution with the "prompt" whatever that means
 	int ndata = (int)(flim->common->trans->sizes[1]);
 	int nparam = (int)(flim->marquardt->param->sizes[1]);
-	int ninstr = (int)(flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0]);
+	int ninstr = (int)(flim->common->instr == NULL ? 0 : flim->common->instr->sizes[0]);
 
 	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
 	float* temp_trans = allocate_temp_2d_row(flim->common->trans);
-	float* temp_instr = allocate_temp_1d(flim->marquardt->instr);
+	float* temp_instr = allocate_temp_1d(flim->common->instr);
 	float* temp_sig = allocate_temp_1d(flim->marquardt->sig);
 	float* temp_param = allocate_temp_2d_row(flim->marquardt->param);
 	float* temp_fitted = allocate_required_temp_2d_row(flim->common->fitted, ndata);
 	float* temp_residuals = allocate_required_temp_2d_row(flim->common->residuals, ndata);
 
 	// these two don't get modified by the algorithm and are constant for all pixels
-	float* unstrided_instr = get_unstrided_1d_input(flim->marquardt->instr, temp_instr);
+	float* unstrided_instr = get_unstrided_1d_input(flim->common->instr, temp_instr);
 	float* unstrided_sig = get_unstrided_1d_input(flim->marquardt->sig, temp_sig);
 
 	// paramfree passed to marquardt must not be NULL! if NULL we want to leave all parameters free
@@ -315,19 +315,19 @@ int GCI_marquardt_fitting_engine_many(struct flim_params* flim) {
 }
 
 int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
-	int ninstr = (int)(flim->marquardt->instr == NULL ? 0 : flim->marquardt->instr->sizes[0]);
+	int ninstr = (int)(flim->common->instr == NULL ? 0 : flim->common->instr->sizes[0]);
 	// set the target to be INFINITY since this will cause the algorithm to iterate only once
 	float chisq_target_in = flim->triple_integral->chisq_target < 0 ? INFINITY : flim->triple_integral->chisq_target;
 	
 	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
 	float* temp_trans = allocate_temp_2d_row(flim->common->trans);
-	float* temp_instr = allocate_temp_1d(flim->triple_integral->instr);
+	float* temp_instr = allocate_temp_1d(flim->common->instr);
 	float* temp_sig = allocate_temp_1d(flim->triple_integral->sig);
 	float* temp_fitted = allocate_temp_2d_row(flim->common->fitted);
 	float* temp_residuals = allocate_temp_2d_row(flim->common->residuals);
 	
 	// these two don't get modified by the algorithm and are constant for all pixels
-	float* unstrided_instr = get_unstrided_1d_input(flim->triple_integral->instr, temp_instr);
+	float* unstrided_instr = get_unstrided_1d_input(flim->common->instr, temp_instr);
 	float* unstrided_sig = get_unstrided_1d_input(flim->triple_integral->sig, temp_sig);
 
 	for (int i = 0; i < flim->common->trans->sizes[0]; i++) {
@@ -377,20 +377,32 @@ int GCI_triple_integral_fitting_engine_many(struct flim_params* flim) {
 
 int GCI_Phasor_many(struct flim_params* flim) {
 
-	float *cosine, *sine;
+	float uinstr, vinstr;
+	float *cosine, *sine, *Uinstr = &uinstr, *Vinstr = &vinstr;
 	int nBins = (flim->common->fit_end - flim->common->fit_start);
+	int ninstr = (int)(flim->common->instr == NULL ? 0 : flim->common->instr->sizes[0]);
+
+	// allocate inputs and outputs. they may be NULL (no memory used) if not needed
+	float* temp_instr = allocate_temp_1d(flim->common->instr);
+	float* temp_trans = allocate_temp_2d_row(flim->common->trans);
+	float* temp_fitted = allocate_temp_2d_row(flim->common->fitted);
+	float* temp_residuals = allocate_temp_2d_row(flim->common->residuals);
+
 	if (nBins > 0) {
 		cosine = malloc((size_t)nBins * sizeof(float));
 		sine = malloc((size_t)nBins * sizeof(float));
 		createSinusoids(nBins, cosine, sine);
+		if (ninstr > 0){
+			float* unstrided_instr = get_unstrided_1d_input(flim->common->instr, temp_instr);
+			computeInstrPhasor(flim->common->xincr, unstrided_instr, (ninstr < nBins) ? ninstr : nBins, cosine, sine, Uinstr, Vinstr);
+		}
+		else{
+			Uinstr = Vinstr = NULL;
+		}
 	}
 	else {
 		cosine = sine = NULL;
 	}
-
-	float* temp_trans = allocate_temp_2d_row(flim->common->trans);
-	float* temp_fitted = allocate_temp_2d_row(flim->common->fitted);
-	float* temp_residuals = allocate_temp_2d_row(flim->common->residuals);
 
 	for (int i = 0; i < flim->common->trans->sizes[0]; i++) {
 		if (flim->common->fit_mask == NULL || *array1d_int8_ptr(flim->common->fit_mask, i)) {
@@ -405,8 +417,8 @@ int GCI_Phasor_many(struct flim_params* flim) {
 				error_code = -1;
 			}
 			else{
-				error_code = GCI_Phasor_compute(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
-					array1d_float_ptr(flim->phasor->Z, i), cosine, sine, array1d_float_ptr(flim->phasor->u, i), 
+				error_code = GCI_Phasor_compute_instr(flim->common->xincr, unstrided_trans, flim->common->fit_start, flim->common->fit_end,
+					array1d_float_ptr(flim->phasor->Z, i), cosine, sine, Uinstr, Vinstr, array1d_float_ptr(flim->phasor->u, i), 
 					array1d_float_ptr(flim->phasor->v, i), array1d_float_ptr(flim->phasor->taup, i), 
 					array1d_float_ptr(flim->phasor->taum, i), array1d_float_ptr(flim->phasor->tau, i),
 					unstrided_fitted, unstrided_residuals, unstrided_chisq);
@@ -430,6 +442,7 @@ int GCI_Phasor_many(struct flim_params* flim) {
 			}
 		}
 	}
+	free(temp_instr);
 	free(temp_trans);
 	free(temp_fitted);
 	free(temp_residuals);
