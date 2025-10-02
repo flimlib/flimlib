@@ -14,18 +14,18 @@ jobs:
     strategy:
       matrix:
         runner:
-          - ubuntu-22.04
-          - windows-2022
-          - macos-13
+          - ubuntu-24.04
+          - windows-2025
+          - macos-15
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
       - uses: pypa/cibuildwheel@v2.23.3
         env:
-          # On macOS/x86_64, default is x86_64 only
+          # For macOS, select all here and constrain in pyproject.toml
           CIBW_ARCHS_MACOS: x86_64 universal2 arm64
-          # Do not warn about the arm64 portion of universal2 not being tested
-          CIBW_TEST_SKIP: "*-macosx_universal2:arm64"
+          # Do not warn about the x86_64 portion of universal2 not being tested
+          CIBW_TEST_SKIP: "*-macosx_universal2:x86_64"
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.runner }}-wheels
