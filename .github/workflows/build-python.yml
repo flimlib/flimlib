@@ -20,7 +20,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
-      - uses: pypa/cibuildwheel@v2.23.3
+      - uses: pypa/cibuildwheel@v3.2.0
         env:
           # For macOS, select all here and constrain in pyproject.toml
           CIBW_ARCHS_MACOS: x86_64 universal2 arm64
