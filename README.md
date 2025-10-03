@@ -1,6 +1,6 @@
 # FLIMLib
 [![](https://github.com/flimlib/flimlib/actions/workflows/build.yml/badge.svg)](https://github.com/flimlib/flimlib/actions/workflows/build.yml)
-[![](https://ci.appveyor.com/api/projects/status/github/flimlib/flimlib?svg=true)](https://ci.appveyor.com/project/scijava/flimlib "AppVeyor")
+[![](https://github.com/flimlib/flimlib/actions/workflows/build-python.yml/badge.svg)](https://github.com/flimlib/flimlib/actions/workflows/build-python.yml)
 
 FLIMLib is a curve fitting library used for Fluorescent Lifetime Imaging or
 FLIM. It is developed by Paul Barber (UCL and KCL, London) and the Advanced Technology Group at the
