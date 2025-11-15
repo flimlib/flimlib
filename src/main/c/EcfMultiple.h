@@ -90,6 +90,12 @@ struct common_params {
 	int fit_end; 
 
 	/**
+	 * [in] instr The instrument reponse(IRF) or prompt signal to be used
+	 * (optional, can pass NULL).
+	 */
+	struct array1d* instr;
+
+	/**
 	 * [out] Fitted values coincident in time with data points 
 	 * (optional, can pass NULL).
 	 */
@@ -116,12 +122,6 @@ struct common_params {
 
 /** A structure containing parameters used in LMA */
 struct marquardt_params {
-	/**
-	 * [in] instr The instrument reponse(IRF) or prompt signal to be used
-	 * (optional, can pass NULL).
-	 */
-	struct array1d* instr;
-
 	/**
 	 * [in] The noise_type to be used
 	 */
@@ -231,12 +231,6 @@ struct phasor_params {
 
 /** A structure containing parameters used in RLD */
 struct triple_integral_params {
-	/**
-	 * [in] instr The instrument reponse(IRF) or prompt signal to be used 
-	 * (optional, can pass NULL).
-	 */
-	struct array1d* instr; 
-
 	/**
 	 * [in] The noise_type to be used
 	 */

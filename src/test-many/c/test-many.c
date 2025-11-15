@@ -80,9 +80,9 @@ int main() {
 	float *chisq_data[NROWS];
 	struct array1d chisq = {chisq_data, NROWS, sizeof(float)};
 
-	struct common_params common_in = {.xincr=period, .trans=&photonCount2d, .fit_start=0, .fit_end=NDATA, .fitted=&fitted2d, .residuals=&residuals2d, .chisq=&chisq, .fit_mask=NULL};
+	struct common_params common_in = {.xincr=period, .trans=&photonCount2d, .fit_start=0, .fit_end=NDATA, .instr=NULL, .fitted=&fitted2d, .residuals=&residuals2d, .chisq=&chisq, .fit_mask=NULL};
 
-	struct marquardt_params marquardt_in = {.instr=NULL, .noise=NOISE_POISSON_FIT, .sig=NULL, .param=&param2d, .paramfree=NULL, 
+	struct marquardt_params marquardt_in = {.noise=NOISE_POISSON_FIT, .sig=NULL, .param=&param2d, .paramfree=NULL, 
 		.restrain=ECF_RESTRAIN_DEFAULT, .fitfunc=GCI_multiexp_tau, .covar=&covar, .alpha=&alpha, .erraxes=&erraxes, .chisq_target=1.1, .chisq_delta=1E-5, .chisq_percent=95 };
 
 	struct flim_params flim_in = { &common_in, &marquardt_in };

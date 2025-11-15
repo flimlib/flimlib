@@ -229,6 +229,7 @@ class _CommonParams(ctypes.Structure):
         ("trans", ctypes.POINTER(_Array2D)),
         ("fit_start", ctypes.c_int),
         ("fit_end", ctypes.c_int),
+        ("instr", ctypes.POINTER(_Array1D)),
         ("fitted", ctypes.POINTER(_Array2D)),
         ("residuals", ctypes.POINTER(_Array2D)),
         ("chisq", ctypes.POINTER(_Array1D)),
@@ -238,7 +239,6 @@ class _CommonParams(ctypes.Structure):
 
 class _MarquardtParams(ctypes.Structure):
     _fields_ = [
-        ("instr", ctypes.POINTER(_Array1D)),
         ("noise", ctypes.c_int),
         ("sig", ctypes.POINTER(_Array1D)),
         ("param", ctypes.POINTER(_Array2D)),
@@ -256,7 +256,6 @@ class _MarquardtParams(ctypes.Structure):
 
 class _TripleIntegralParams(ctypes.Structure):
     _fields_ = [
-        ("instr", ctypes.POINTER(_Array1D)),
         ("noise", ctypes.c_int),
         ("sig", ctypes.POINTER(_Array1D)),
         ("Z", ctypes.POINTER(_Array1D)),
@@ -450,6 +449,7 @@ def _prep_common_params(
     photon_count,
     fit_start,
     fit_end,
+    instr,
     fit_mask,
     fitted,
     residuals,
@@ -485,6 +485,11 @@ def _prep_common_params(
     common.trans, referenced_trans = _as_strided_array(
         photon_count, ..., (npixels, dshape[-1])
     )
+    common.instr, referenced_instr = (
+        (None, None)
+        if instr is None
+        else _as_strided_array(instr, (...,), (-1,))
+    )
     common.fitted, fitted_out = _prep_optional_output(
         fitted, data_shape, (npixels, data_shape[-1]), fit_mask, flag=compute_fitted
     )
@@ -513,6 +518,7 @@ def _prep_common_params(
     referenced_objects = (
         referenced_trans,
         referenced_fit_mask,
+        referenced_instr,
     )
     return (
         common,
@@ -616,7 +622,7 @@ def GCI_marquardt_fitting_engine(
         `fitfunc`
     fit_start : {None, int}, optional
         The index of the start of the fit. Some data before this start index is
-        required if convolving with the prompt. If is None, the fit will begin
+        required if convolving with `instr`. If is None, the fit will begin
         at index 0 (default is None)
     fit_end : {None, int}, optional
         The index of the end of the fit. If is None, the fit will cover the
@@ -709,6 +715,17 @@ def GCI_marquardt_fitting_engine(
         that fails, its corresponding outputs are filled with `NaN`
     """
 
+    # this edge case must be avoided because of a bug with flimlib
+    # it would result in the result being shifted by `fit_start`
+    if not (
+        fitfunc is GCI_multiexp_tau or
+        fitfunc is GCI_multiexp_lambda or
+        fitfunc is GCI_stretchedexp or
+        fit_start is None or 
+        fit_start == 0
+    ):
+        raise ValueError("If using a custom fitfunc, `fit_start` must be None or 0")
+
     (
         common_in,
         fitted_out,
@@ -722,6 +739,7 @@ def GCI_marquardt_fitting_engine(
         photon_count,
         fit_start,
         fit_end,
+        instr,
         fit_mask,
         fitted,
         residuals,
@@ -735,7 +753,7 @@ def GCI_marquardt_fitting_engine(
     marquardt_in = _MarquardtParams()
 
     # must pass unit instr because of a bug with flimlib
-    marquardt_in.instr, referenced_instr = (
+    common_in.instr, referenced_instr = (
         _as_strided_array([1.0], (1,), (1,))
         if instr is None
         else _as_strided_array(instr, (...,), (-1,))
@@ -913,13 +931,14 @@ def GCI_triple_integral_fitting_engine(
         preserved in the outputs.
     fit_start : {None, int}, optional
         The index of the start of the fit. Some data before this start index is
-        required if convolving with the prompt.
+        required if convolving with `instr`.
         If is None, the fit will begin at index 0 (default is None)
     fit_end : {None, int}, optional
         The index of the end of the fit. If is None, the fit will cover the
         entire time axis of `photon_count`
     instr : {None, array_like}, optional
         A 1D array containing the instrument response (IRF) or prompt signal.
+        May improve estimate of `A`.
         If is None, no instrument response will be used (default is None)
     noise_type : str, optional
         The noise type to use. Valid values are: 'NOISE_CONST', 'NOISE_GIVEN',
@@ -993,6 +1012,7 @@ def GCI_triple_integral_fitting_engine(
         photon_count,
         fit_start,
         fit_end,
+        instr,
         fit_mask,
         fitted,
         residuals,
@@ -1003,11 +1023,6 @@ def GCI_triple_integral_fitting_engine(
         False,
     )
     triple_integral_in = _TripleIntegralParams()
-    triple_integral_in.instr, referenced_instr = (
-        (None, None)
-        if instr is None
-        else _as_strided_array(instr, (...,), (-1,))
-    )
     # this lack of implementation is unique to triple integral
     if noise_type == "NOISE_GAUSSIAN_FIT" or noise_type == "NOISE_MLE":
         raise ValueError(
@@ -1037,7 +1052,6 @@ def GCI_triple_integral_fitting_engine(
     _GCI_triple_integral_fitting_engine(flim_in)
 
     # Verify that reference was held until after above call
-    referenced_instr
     referenced_sig
     referenced_objects
 
@@ -1105,6 +1119,7 @@ def GCI_Phasor(
     photon_count,
     fit_start=None,
     fit_end=None,
+    instr=None,
     Z=0.0,
     u=None,
     v=None,
@@ -1132,11 +1147,15 @@ def GCI_Phasor(
         preserved in the outputs.
     fit_start : {None, int}, optional
         The index of the start of the fit. Some data before this start index is
-        required if convolving with the prompt.
+        required if convolving with `instr`.
         If is None, the fit will begin at index 0 (default is None)
     fit_end : {None, int}, optional
         The index of the end of the fit. If is None, the fit will cover the
         entire time axis of `photon_count`
+    instr : {None, array_like}, optional
+        A 1D array containing the instrument response (IRF) or prompt signal.
+        May improve accuracy of the phasor coordinates `u` and `v`.
+        If is None, no instrument response will be used (default is None)
     Z : {float, array_like}, optional
         The background to be subtracted from the data. If is a float, it will
         be constant for all pixels. (default is 0.0)
@@ -1208,6 +1227,7 @@ def GCI_Phasor(
         photon_count,
         fit_start,
         fit_end,
+        instr,
         fit_mask,
         fitted,
         residuals,
