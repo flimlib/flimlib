@@ -709,6 +709,17 @@ def GCI_marquardt_fitting_engine(
         that fails, its corresponding outputs are filled with `NaN`
     """
 
+    # this edge case must be avoided because of a bug with flimlib
+    # it would result in the result being shifted by `fit_start`
+    if not (
+        fitfunc is GCI_multiexp_tau or
+        fitfunc is GCI_multiexp_lambda or
+        fitfunc is GCI_stretchedexp or
+        fit_start is None or 
+        fit_start == 0
+    ):
+        raise ValueError("If using a custom fitfunc, `fit_start` must be None or 0")
+
     (
         common_in,
         fitted_out,
